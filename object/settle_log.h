@@ -7,8 +7,16 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	bool init_data()
+	/*決算ログ*/
+	class Settle_log
 	{
-		return false;
-	}
-};
+	private:
+	public:
+		//給料支払い、月
+		//従業員数、月
+		//収入、日、月
+		//その他支出、日、月
+		//資金、日、月
+
+	};
+}

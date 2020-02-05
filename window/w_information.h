@@ -1,18 +1,22 @@
-﻿//Copyright © 2017 (´･@･)
+﻿//Copyright © 2019 (´･@･)
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
-//#include "../system/enum_type.h"
+
 namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/**/
-	class
+	/*ヘルプメッセージ用ウィンドウ*/
+
+	//gui_objectで実装
+
+	class Information
 	{
 	private:
 
 	public:
+
 
 	};
 }

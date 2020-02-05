@@ -1,18 +1,21 @@
-﻿//Copyright © 2017 (´･@･)
+﻿//Copyright © 2019 (´･@･)
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
-//#include "../system/enum_type.h"
+
 namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/**/
-	class
+	/*素材*/
+	class Material
 	{
 	private:
-
 	public:
-
+		std::string 名前;
+		std::string 説明;
+		MaterialType 種類;
+		int 基本価格;
+		int レア度;
 	};
 }
