@@ -70,7 +70,7 @@ namespace SDX_BSC
 				{
 					部屋[a].種類 = RoomType::ボス;
 					部屋[a].地図 = 次ダンジョン[0];
-					部屋[a].素材種 = MaterialType::宝石;
+					部屋[a].素材種 = MaterialType::遺物;
 				}
 				else if (a == 部屋数 - 2)
 				{

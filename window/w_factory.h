@@ -45,7 +45,7 @@ namespace SDX_BSC
 				Screen::SetBright();
 
 				//製造割当と矢印
-				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(45), py + LV(46) });
+				MIcon::アイコン[IconType::団員].Draw({ px + LV(45), py + LV(46) });
 				MFont::BArial中.DrawBold({ px + LV(43) ,py + LV(44) }, Color::White, Color::Black, Guild::P->製造割当[id]);
 
 				if (Game::is仕事中 == false)
@@ -54,14 +54,18 @@ namespace SDX_BSC
 					MIcon::アイコン[IconType::三角].Draw({ px + LV(36),py + LV(37) }, true);
 				}
 				//ダイア使用ON/OFF
-				if (Guild::P->is宝石[id] == true)
+				int total_c = 0;
+				for (auto& it : Guild::P->製造割当)
 				{
-					MIcon::素材[MaterialType::宝石].DrawRotate({ px + LV(33), py + LV(34) }, 1, 0);
-					MFont::BArial小.DrawBold({ px + LV(47) ,py + LV(49) }, Color::White, Color::Black, "ON");
-				} else {
-					MIcon::アイコン[IconType::灰石].DrawRotate({ px + LV(33), py + LV(34) }, 1, 0);
-					MFont::BArial小.DrawBold({ px + LV(48) ,py + LV(49) }, Color::White, Color::Black, "OFF");
+					total_c += it;
 				}
+				if (total_c == 0) { total_c = 1; }
+
+				double 実製造 = std::round(Guild::P->合計製造力 * Guild::P->製造割当[id] / total_c);
+
+				MIcon::アイコン[IconType::ハンマー].DrawRotate({ px + LV(33), py + LV(34) }, 1, 0);
+				MFont::BArial小.DrawBold({ px + LV(47) ,py + LV(49) }, Color::White, Color::Black, 実製造,true);
+				
 
 				//製造進捗ゲージ
 				double rate = Guild::P->製造進行度[id] / Guild::P->必要製造力;
@@ -114,9 +118,6 @@ namespace SDX_BSC
 				MFont::BArial中.DrawBold({ px + LV(58) ,py + LV(59) }, Color::White, Color::Black, "Lv10");
 				MSystem::DrawBar({ px + LV(54),py + LV(55) }, LV(56), LV(57), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-
-
-
 			}
 
 			void Click(double px, double py)
@@ -136,11 +137,6 @@ namespace SDX_BSC
 						Guild::P->製造割当[id]++;
 						if (Guild::P->製造割当[id] > 9) { Guild::P->製造割当[id] = 0; }
 					}
-				}
-				//宝石使用ON/OFF
-				if (px > LV(33) -10 && px < LV(33) + 10 && py > LV(34) - 10 && py < LV(34) + 10)
-				{
-					Guild::P->is宝石[id] = !Guild::P->is宝石[id];
 				}
 			}
 

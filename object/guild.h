@@ -53,10 +53,10 @@ namespace SDX_BSC
 		EnumArray<double, CraftType> 製造進行度;
 		EnumArray<double, CraftType> 実製造力;
 		EnumArray<double, CraftType> 使用素材ランク;
-		EnumArray<double, CraftType> 使用宝石ランク;
+		EnumArray<bool, CraftType> is装備修復;
 		;
 		EnumArray<int, CraftType> 製造割当;
-		EnumArray<bool, CraftType> is宝石;
+		EnumArray<int, CraftType> 壊れた装備;
 		//--製造特殊効果とか(未実装)
 
 		//装備品
@@ -135,7 +135,8 @@ namespace SDX_BSC
 			int 抽選ランク[4];
 			int 何個目 = 0;
 
-			//宝石チェック
+			//壊れた装備所持判定
+			/*
 			使用宝石ランク[種類] = 0;
 			if (is宝石[種類] == true)
 			{
@@ -168,6 +169,7 @@ namespace SDX_BSC
 					}
 				}
 			}
+			*/
 
 			//素材所持チェック
 			for (int b = 0; b < 2; b++)
@@ -216,7 +218,7 @@ namespace SDX_BSC
 			
 			int rank = Rand::Get((int)n) / 100;
 
-			rank += (int)使用宝石ランク[種類];
+			//rank += (int)使用宝石ランク[種類];
 			if (rank > 4) { rank = 4; }
 			
 			装備所持数[itemID + rank * 9]++;

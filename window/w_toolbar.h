@@ -18,7 +18,7 @@ namespace SDX_BSC
 	private:
 		static const int 表示枠 = 1;
 		static const int ボタン枠 = 1;
-		static const int ボタン押 = 4;
+		static const int ボタン押 = 3;
 
 		class G_日付 : public GUI_Object
 		{
@@ -29,7 +29,7 @@ namespace SDX_BSC
 				int m = (Game::日付 / 28)%12 + 1;
 				int d = Game::日付 % 28 + 1;
 
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, -1);
+				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::日付].DrawRotate({ px+14,py + 14 }, 2, 0);
 				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { y,"/", m/10, m%10 , "/" , d/10, d%10 }, true);
 				MFont::Arial大.DrawBold({ px + 210,py - 3 }, Color::White, Color::Black, "Sun", true);
@@ -46,7 +46,7 @@ namespace SDX_BSC
 				if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 文字色 = Color::Blue; }
 				else if (Game::is仕事中 == true) { 文字色 = {255,128,128}; }
 
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, -1);
+				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
 				MFont::Arial大.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
 			}
@@ -56,7 +56,7 @@ namespace SDX_BSC
 		public:
 			void Draw派生(double px, double py)
 			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, -1);
+				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
 				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, {Game::人口},true);
 			}
@@ -66,7 +66,7 @@ namespace SDX_BSC
 		public:
 			void Draw派生(double px, double py)
 			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, -1);
+				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::順位].DrawRotate({ px + 14,py + 14 }, 2, 0);
 				MFont::Arial大.DrawBold({ px+40,py - 3 }, Color::White, Color::Black, "1st");
 
@@ -78,7 +78,7 @@ namespace SDX_BSC
 		public:
 			void Draw派生(double px, double py)
 			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, -1);
+				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::資金].DrawRotate({ px + 14,py + 14 }, 2, 0);
 
 				std::string str = "G";
@@ -277,8 +277,8 @@ namespace SDX_BSC
 		{
 			GUI_init();
 
-			MSystem::DrawWindow({0,0}, Window::GetWidth(),40,8);
-			MSystem::DrawWindow({0,40},Window::GetWidth(), WindowBox::ツールバー高さ-40,7);
+			//MSystem::DrawWindow({0,0}, Window::GetWidth(),40,8);
+			MSystem::DrawWindow({0,0},Window::GetWidth(), WindowBox::ツールバー高さ,7);
 
 			for (auto& it : gui_objects)
 			{

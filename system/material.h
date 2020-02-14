@@ -131,7 +131,7 @@ namespace SDX_BSC
 			素材[MaterialType::皮革].Load("File/system/mat_003.png");
 			素材[MaterialType::骨牙].Load("File/system/mat_004.png");
 			素材[MaterialType::羽毛].Load("File/system/mat_005.png");
-			素材[MaterialType::宝石].Load("File/system/mat_006.png");
+			素材[MaterialType::遺物].Load("File/system/mat_006.png");
 			//アイコン
 			アイコン[IconType::閉じる].Load("File/icon/s_057.png");
 			アイコン[IconType::星].Load("File/icon/s_014.png");

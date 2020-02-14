@@ -179,8 +179,9 @@ namespace SDX_BSC
 			}
 			catch (const std::invalid_argument& err) {
 				//変換出来ない場合は処理を飛ばす
-				err.what();
+				System::inputText = err.what();
 			}
+
 
 			System::inputText = "";
 		}

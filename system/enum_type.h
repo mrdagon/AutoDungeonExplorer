@@ -352,7 +352,7 @@ namespace SDX_BSC
 		皮革,
 		羽毛,
 		骨牙,
-		宝石,
+		遺物,
 		COUNT
 	};
 

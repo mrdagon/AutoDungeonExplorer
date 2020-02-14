@@ -40,8 +40,10 @@ namespace SDX_BSC
 					MSystem::DrawBoxBold({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::White, 2, Color::White);
 				}
 
-				MUnit::ユニット[参照先->見た目][1]->DrawRotate({ px + 位置.GetW()/2 ,py + 位置.GetH()/2 }, 2, 0);
-				MFont::BArial小.DrawBold({ px + LV(6) ,py + LV(7) }, Color::White, Color::Black, 参照先->Lv, true);
+				MUnit::ユニット[参照先->見た目][1]->DrawRotate({ px + LV(9) ,py + LV(9) }, 2, 0);
+				MFont::BArial小.DrawBold({ px + LV(6) ,py + LV(8) }, Color::White, Color::Black, 参照先->Lv, true);
+
+				MFont::BArial小.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, "Lv", true);
 
 			}
 

@@ -151,6 +151,13 @@ namespace SDX_BSC
 				}
 			}
 
+			//初期求人
+			for (int a = 0; a < 10; a++)
+			{
+				Warker::data.emplace_back();
+				Warker::data.back().Make((int)Warker::data.size() - 1, Rand::Get(4), 1, "ナナシ");
+			}
+
 			//仮ダンジョン
 			for (int a = 0; a < 100; a++)
 			{
@@ -396,8 +403,6 @@ namespace SDX_BSC
 			EmployMember();
 
 			//求人追加、仮処理
-			
-
 			if (Warker::data.size() < 45)
 			{
 				Warker::data.emplace_back();
