@@ -22,10 +22,18 @@ namespace SDX_BSC
 			IconType アイコン;
 			int id;
 
+			void Set(const char* 名前, const char* 単位, IconType アイコン, int id)
+			{
+				this->名前 = 名前;
+				this->単位 = 単位;
+				this->アイコン = アイコン;
+				this->id = id;
+			}
+
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				MIcon::アイコン[IconType::資金].Draw({px+LV(6),py+LV(7)});
+				MIcon::アイコン[アイコン].Draw({px+LV(6),py+LV(7)});
 
 				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);
 				MFont::BArial中.DrawBold({ px + LV(10) ,py + LV(8) }, Color::White, Color::Black, { "1234 ", 単位 }, true);
@@ -73,6 +81,13 @@ namespace SDX_BSC
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
 
+			総資金.Set( "資金","G",IconType::資金,0);
+			集客力.Set( "集客","人/日", IconType::資金, 1);
+			地図数.Set( "地図","枚", IconType::資金, 2);
+			開発数.Set( "装備","種", IconType::資金, 3);
+			討伐数.Set( "討伐","体", IconType::資金, 4);
+			名声値.Set( "名声","P", IconType::資金, 5);
+
 			gui_objects.push_back(&ギルマス);
 			gui_objects.push_back(&総資金);
 			gui_objects.push_back(&集客力);//人/日
@@ -80,21 +95,7 @@ namespace SDX_BSC
 			gui_objects.push_back(&開発数);//種
 			gui_objects.push_back(&討伐数);//体
 			gui_objects.push_back(&名声値);//P
-
-			総資金.名前 = "資金";
-			総資金.単位 = "G";
-			集客力.名前 = "集客";
-			集客力.単位 = "人/日";
-			地図数.名前 = "地図";
-			地図数.単位 = "枚";
-			開発数.名前 = "装備";
-			開発数.単位 = "種";
-			討伐数.名前 = "討伐";
-			討伐数.単位 = "体";
-			名声値.名前 = "名声";
-			名声値.単位 = "P";
 		}
-
 
 		void GUI_Init()
 		{

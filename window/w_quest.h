@@ -6,7 +6,7 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[2][a]
+#define LV(a) DV::I[15][a]
 
 
 

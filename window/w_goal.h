@@ -11,6 +11,7 @@ namespace SDX_BSC
 
 
 	/*経営目標ウィンドウ*/
+	/*削除しました*/
 	class W_Goal : public WindowBox
 	{
 	private:
