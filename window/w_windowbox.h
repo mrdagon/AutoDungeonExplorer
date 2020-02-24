@@ -50,6 +50,9 @@ namespace SDX_BSC
 		//最前面移動用
 		bool is最前面 = false;
 
+		bool isポップアップ = false;
+		int ポップアップ戻り値 = 0;
+
 		/*各種初期化*/
 		virtual void init()
 		{
@@ -150,8 +153,11 @@ namespace SDX_BSC
 			MIcon::アイコン[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン
-			MSystem::DrawWindow({ 座標.x + 横幅 - 25,座標.y + 6 }, タイトル枠高さ - 12 , タイトル枠高さ - 12, 11);
-			MIcon::アイコン[IconType::閉じる].DrawRotate({ 座標.x + 横幅 -16 ,座標.y + 15 },1,0);
+			if (isポップアップ == false)
+			{
+				MSystem::DrawWindow({ 座標.x + 横幅 - 25,座標.y + 6 }, タイトル枠高さ - 12, タイトル枠高さ - 12, 11);
+				MIcon::アイコン[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
+			}
 
 			//メイン部分描画
 			MSystem::DrawWindow({ 座標.x,座標.y+ タイトル枠高さ }, 横幅, 縦幅, 枠No);
@@ -245,10 +251,6 @@ namespace SDX_BSC
 					縦幅 = 最小縦;
 					is最小縮小 = true;
 				}
-
-
-
-
 			}
 
 			//下側掴んで拡大縮小中
@@ -383,16 +385,40 @@ namespace SDX_BSC
 		/*falseなら固定部分のみ、trueなら全体*/
 		void 描画範囲(bool is全体)
 		{
+			int スクロールバー太さ = 28;
+			if (isポップアップ) { スクロールバー太さ = 0; }
+
 			if (is全体)
 			{
 				//固定部分外して相対座標
 				SDX::Camera::Get()->position = { -相対座標.x,-相対座標.y };
-				Screen::GetRenderer()->SetClip({ 4,4 + スクロール位置,横幅 - 28,縦幅 - 8 - 固定縦});
+				Screen::GetRenderer()->SetClip({ 4,4 + スクロール位置,横幅 - スクロールバー太さ,縦幅 - 8 - 固定縦});
 			} else {
 				//固定部分
 				SDX::Camera::Get()->position = { -座標.x,-座標.y - タイトル枠高さ };
-				Screen::GetRenderer()->SetClip({ 4,4 ,横幅 - 28,縦幅 - 8 });
+				Screen::GetRenderer()->SetClip({ 4,4 ,横幅 - スクロールバー太さ,縦幅 - 8 });
 			}
 		}
+
+		int サブ呼び出し()
+		{
+			//裏をやや暗くする
+			Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
+
+			while (System::Update(true,false))
+			{
+				Draw();
+				派生操作();
+
+				if (is表示 == false)
+				{
+					break;
+				}
+			}
+
+			return ポップアップ戻り値;
+		}
+
 	};
+
 }

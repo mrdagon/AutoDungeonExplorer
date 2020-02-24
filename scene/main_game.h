@@ -30,6 +30,9 @@ namespace SDX_BSC
 		W_Recruit Win_Recruit;//求職
 		W_SettleLog Win_Settlelog;//収支ウィンドウ
 
+		W_Config Win_Config;//設定ウィンドウ
+		W_Popup Win_Title;//タイトルに戻る
+
 		//ゲーム開始時の初期化処理
 		void Init()
 		{
@@ -53,9 +56,12 @@ namespace SDX_BSC
 			windows.push_back(&Win_Settlelog);
 
 			ToolBar.SetWindow(windows);
+			ToolBar.SetConfig(&Win_Config,&Win_Title);
+
+			Win_Config.init();
+			Win_Title.init();
 
 			ToolBar.init();
-
 
 			int XXX = 100;
 			for (auto& it : windows)
@@ -73,6 +79,9 @@ namespace SDX_BSC
 			Win_Party.is表示 = true;
 			Win_Recruit.is表示 = true;
 			Win_Material.is表示 = true;
+
+			Win_Config.is表示 = true;
+			Win_Title.is表示 = false;
 
 			for (int a = 0; a < CV::最大パーティ数; a++)
 			{
@@ -211,7 +220,7 @@ namespace SDX_BSC
 			double frame = 0;
 			double time = Time::GetNowCount();
 
-			while (System::Update())
+			while (System::Update(true,false))
 			{
 				frame++;
 				
@@ -282,12 +291,12 @@ namespace SDX_BSC
 			}
 
 			ToolBar.Draw();
+
 			bool isH = ToolBar.CheckInformation();
 			if (Input::mouse.y < WindowBox::ツールバー高さ)
 			{
 				isH = true;
 			}
-
 
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{
@@ -305,6 +314,9 @@ namespace SDX_BSC
 				no_help.SetHelp("右クリックでヘルプ表示ON/OFF",40);
 				no_help.Info();
 			}
+
+			//Win_Title.Draw();
+			//Win_Config.Draw();
 
 			W_Drag_Drop::Draw();
 
@@ -446,8 +458,6 @@ namespace SDX_BSC
 		}
 
 		//●探索処理
-
-
 
 		//●戦闘処理
 	};

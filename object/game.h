@@ -21,10 +21,13 @@ namespace SDX_BSC
 		static bool is翌日スキップ = false;
 		
 		//コンフィグ項目
-		static double BGM音量 = 0.3;
-		static double SE音量 = 0.3;
+		static double BGM音量 = 0.3;//
+		static double SE音量 = 0.3;//
 		static bool isフルスクリーン = false;
-		static int 解像度W, 解像度H;
+		static int 解像度W = 1600 , 解像度H = 900;
+		static int 最大解像度W = 1600, 最大解像度H = 900;
+
+		static int BGM設定 = 5, SE設定 =5 ,解像度設定 = 8;
 
 		static bool is夜間加速 = true;
 

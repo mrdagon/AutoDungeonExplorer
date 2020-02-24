@@ -10,12 +10,24 @@
 
 #include "system/save_and_load.h"
 
+#include <windows.h>
+
 using namespace SDX;
 using namespace SDX_BSC;
 
 int main(int argc, char* argv[])
 {
-	System::Initialise("ギルドマスターマインド(仮) ver.demo", 16*100, 9*100);//ライブラリの初期化
+	Game::解像度W = Game::解像度設定 * 160;
+	Game::解像度H = Game::解像度設定 * 90;
+
+	Game::最大解像度W = GetSystemMetrics(SM_CXSCREEN);
+	Game::最大解像度H = GetSystemMetrics(SM_CYSCREEN);
+
+	Game::解像度W = min(Game::解像度W, Game::最大解像度W);
+	Game::解像度H = min(Game::解像度H, Game::最大解像度H);
+
+
+	System::Initialise("ギルドマスターマインド(仮) ver.demo", Game::解像度W, Game::解像度H);//ライブラリの初期化
 	
 	//各種リソース読み込み
 	LoadMaterial();

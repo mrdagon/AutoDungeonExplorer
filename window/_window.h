@@ -25,6 +25,5 @@
 #include "w_party.h"
 #include "w_factory.h"
 
-//#include "w_customer.h"
-//#include "w_information.h"
-//#include "w_goal.h"
+#include "w_config.h"
+#include "w_popup.h"

@@ -61,17 +61,6 @@ namespace SDX_BSC
 				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, {Game::人口},true);
 			}
 		};
-		class G_順位 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::順位].DrawRotate({ px + 14,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px+40,py - 3 }, Color::White, Color::Black, "1st");
-
-			}
-		};
 
 		class G_資金 : public GUI_Object
 		{
@@ -194,22 +183,43 @@ namespace SDX_BSC
 		class G_設定 : public GUI_Object
 		{
 		public:
+			WindowBox* 対象ウィンドウ;
+
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::設定].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "設定");
 			}
+
+			void Click(double px, double py)
+			{
+				//設定ウィンドウ開く
+				対象ウィンドウ->is表示 = true;
+				対象ウィンドウ->is最前面 = true;
+				対象ウィンドウ->サブ呼び出し();
+			}
+
 		};
 
 		class G_タイトル : public GUI_Object
 		{
 		public:
+			WindowBox* 対象ウィンドウ;
+
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::出口].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "終了");
+			}
+
+			void Click(double px, double py)
+			{
+				//確認ウィンドウを出す
+				対象ウィンドウ->is表示 = true;
+				対象ウィンドウ->is最前面 = true;
+				対象ウィンドウ->サブ呼び出し();
 			}
 		};
 	public:
@@ -217,7 +227,6 @@ namespace SDX_BSC
 
 		G_日付 日付;
 		G_時刻 時刻;
-		G_順位 順位;
 		G_人口 人口;
 		G_資金 資金;
 		G_ウィンドウ ウィンドウ[CV::ウィンドウ数];
@@ -235,11 +244,16 @@ namespace SDX_BSC
 			}
 		}
 
+		void SetConfig(WindowBox* config, WindowBox* title)
+		{
+			設定.対象ウィンドウ = config;
+			タイトル.対象ウィンドウ = title;
+		}
+
 		void init()
 		{
 			gui_objects.push_back(&日付);
 			gui_objects.push_back(&時刻);
-			//gui_objects.push_back(&順位);
 			gui_objects.push_back(&人口);
 			gui_objects.push_back(&資金);
 			for (int a = 0; a < CV::ウィンドウ数; a++)
@@ -261,7 +275,6 @@ namespace SDX_BSC
 			}
 			日付.位置 = { LV(5),LV(6),LV(7),LV(8)};
 			時刻.位置 = { LV(9),LV(6),LV(10),LV(8) };
-			順位.位置 = { Window::GetWidth() - LV(11),LV(6),LV(12),LV(8) };
 			人口.位置 = { Window::GetWidth() - LV(13),LV(6),LV(14),LV(8) };
 			資金.位置 = { Window::GetWidth() - LV(15),LV(6),LV(16),LV(8) };
 
