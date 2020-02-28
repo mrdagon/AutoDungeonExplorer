@@ -27,7 +27,7 @@ namespace SDX_BSC
 		static int 解像度W = 1600 , 解像度H = 900;
 		static int 最大解像度W = 1600, 最大解像度H = 900;
 
-		static int BGM設定 = 5, SE設定 =5 ,解像度設定 = 8;
+		static int BGM設定 = 5, SE設定 =5 ,解像度設定 = 9;
 
 		static bool is夜間加速 = true;
 

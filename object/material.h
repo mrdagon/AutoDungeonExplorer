@@ -14,7 +14,6 @@ namespace SDX_BSC
 	public:
 		std::string 名前;
 		std::string 説明;
-		MaterialType 種類;
 		int 基本価格;
 		int レア度;
 	};

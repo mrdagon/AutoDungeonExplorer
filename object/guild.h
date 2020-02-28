@@ -25,11 +25,12 @@ namespace SDX_BSC
 		//素材所持数
 		int id = 0;
 
-		EnumArray<int, MaterialType> 素材数[CV::最大素材ランク];
+		int 素材数[CV::最大素材ランク];
 
 		double 資金 = 123456789;
 		double 現在MP = 100;
 		Management* 選択戦術 = 0;
+		int 人事ポイント = 10;
 
 		//従業員一覧
 		std::vector<Warker*> ギルメン;
@@ -65,21 +66,6 @@ namespace SDX_BSC
 		int 装備所持数[CV::装備種];
 
 		EnumArray < bool,ItemType> is新開発タブ;
-
-		void 雇用処理()
-		{
-			for (auto& it : Warker::data)
-			{
-				if (it.is内定 == true && it.就活 == id)
-				{
-					it.is内定 = false;
-					it.就活 = -1;
-					it.所属 = id;
-					製造メンバー.push_back(&it);
-
-				}
-			}
-		}
 
 		void 製造力計算()
 		{
@@ -132,8 +118,6 @@ namespace SDX_BSC
 		bool 素材チェック(CraftType 種類)
 		{
 			Recipe* レシピ = &Recipe::data[種類];
-			int 抽選ランク[4];
-			int 何個目 = 0;
 
 			//壊れた装備所持判定
 			/*
@@ -171,41 +155,21 @@ namespace SDX_BSC
 			}
 			*/
 
-			//素材所持チェック
-			for (int b = 0; b < 2; b++)
+			//素材所持チェックと消費		
+			int 要求数 = レシピ->素材数;
+			int 使用ランク = 0;
+
+			for (int a = CV::最大素材ランク-1; a >= 0; a--)
 			{
-				int 要求数 = レシピ->素材数;
-
-				if (レシピ->素材[b] == MaterialType::COUNT) { continue; }
-
-				for (int a = 0; a < CV::最大素材ランク; a++)
+				if (素材数[a] >= 要求数)
 				{
-					要求数 -= 素材数[a][レシピ->素材[b]];
-				}
-				if (要求数 > 0) { return false; }
-			}
-
-			//素材消費処理
-			使用素材ランク[種類] = 0;
-			for (int b = 0; b < 2; b++)
-			{
-				int 要求数 = レシピ->素材数;
-
-				if (レシピ->素材[b] == MaterialType::COUNT) { continue; }
-
-				for (int a = CV::最大素材ランク - 1; a >= 0; a--)
-				{
-					while (要求数 > 0 && 素材数[a][レシピ->素材[b]] > 0)
-					{
-						素材数[a][レシピ->素材[b]]--;
-						要求数--;
-						抽選ランク[何個目] = a;
-						何個目++;
-					}
+					使用ランク = a;
+					使用素材ランク[種類] = a;
+					素材数[a]--;
+					break;
 				}
 			}
-
-			使用素材ランク[種類] = 抽選ランク[Rand::Get(3)] + 1;
+			if (使用ランク < 0) { return false; }
 
 			return true;
 		}

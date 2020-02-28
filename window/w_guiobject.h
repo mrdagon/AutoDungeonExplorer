@@ -313,7 +313,7 @@ namespace SDX_BSC
 
 			MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(16),座標.y + LV(17) });
 			MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(18),座標.y + LV(19) });
-			MIcon::素材[MaterialType::金属].Draw({ 座標.x + LV(20),座標.y + LV(21) });
+			//MIcon::素材[MaterialType::金属].Draw({ 座標.x + LV(20),座標.y + LV(21) });
 
 			//ボス状態、雑魚モンスター
 
@@ -379,11 +379,15 @@ namespace SDX_BSC
 				if (Input::mouse.Left.on == true)
 				{
 					Click(Input::mouse.x-位置.x-px,Input::mouse.y-位置.y-py);
+					return;
 				}
-				if (Input::mouse.Left.off == true)
+				else if (Input::mouse.Left.off == true)
 				{
 					Drop(Input::mouse.x - 位置.x-px, Input::mouse.y - 位置.y-py);
+					return;
 				}
+				
+				Over(Input::mouse.x - 位置.x - px, Input::mouse.y - 位置.y - py);
 			}
 		}
 
@@ -399,7 +403,11 @@ namespace SDX_BSC
 
 		}
 
+		/*マウスオーバー時の処理*/
+		virtual void Over(double px, double py)
+		{
 
+		}
 
 	};
 

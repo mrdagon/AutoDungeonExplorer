@@ -31,7 +31,7 @@ namespace SDX_BSC
 
 			所属 = -1;
 			就活 = 0;//とりあえずプレイヤーギルドに求職
-			is内定 = false;
+
 			評価[0] = 50;
 			評価[1] = 0;
 			評価[2] = 0;
@@ -129,7 +129,7 @@ namespace SDX_BSC
 
 		int 所属;//-1なら無所属
 		int 就活;//-1なら非就活
-		bool is内定 = false;
+
 		double 評価[CV::最大ギルド数];
 
 		double 忠誠度;//0.0～100.0

@@ -14,7 +14,7 @@ namespace SDX_BSC
 	public:
 		ClientS 依頼者;
 		QuestType 依頼系統;
-		MaterialType 要求素材;//素材依頼時
+		int 要求素材[2];//素材依頼時のランクと数
 		ItemNo 要求アイテム;//アイテム依頼時
 		MonsterNo 要求魔獣;//討伐依頼時
 		int 要求数;

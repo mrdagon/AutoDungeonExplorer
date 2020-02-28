@@ -17,7 +17,6 @@ namespace SDX_BSC
 		}
 
 		RoomType 種類;
-		MaterialType 素材種;
 		bool is探索[CV::最大ギルド数];//誰かが探索し終わったかどうか
 
 		int 地図;//0以上なら接続先MapIndex

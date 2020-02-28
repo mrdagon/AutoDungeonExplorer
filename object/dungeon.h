@@ -70,40 +70,19 @@ namespace SDX_BSC
 				{
 					部屋[a].種類 = RoomType::ボス;
 					部屋[a].地図 = 次ダンジョン[0];
-					部屋[a].素材種 = MaterialType::遺物;
 				}
 				else if (a == 部屋数 - 2)
 				{
 					部屋[a].地図 = 次ダンジョン[1];
 					部屋[a].種類 = RoomType::素材;
-
-					switch (Rand::Get(2))
-					{
-					case 0:部屋[a].素材種 = MaterialType::金属; break;
-					case 1:部屋[a].素材種 = MaterialType::石材; break;
-					case 2:部屋[a].素材種 = MaterialType::木材; break;
-					}
 				}
 				else if (a % 2 == 0)
 				{
 					部屋[a].種類 = RoomType::魔物;
-					switch (Rand::Get(2))
-					{
-					case 0:部屋[a].素材種 = MaterialType::羽毛;break;
-					case 1:部屋[a].素材種 = MaterialType::骨牙;break;
-					case 2:部屋[a].素材種 = MaterialType::皮革;break;
-					}
 				}
 				else
 				{
 					部屋[a].種類 = RoomType::素材;
-
-					switch (Rand::Get(2))
-					{
-					case 0:部屋[a].素材種 = MaterialType::金属;break;
-					case 1:部屋[a].素材種 = MaterialType::石材;break;
-					case 2:部屋[a].素材種 = MaterialType::木材;break;
-					}
 				}
 			}
 		}
@@ -139,7 +118,6 @@ namespace SDX_BSC
 
 		MonsterNo ボスモンスター;
 		MonsterNo 雑魚モンスター[3];//地形種で固定？
-		MaterialType 獲得素材[2];//地形種で固定？
 		int 次ダンジョン[3];//要らない？
 
 		double 探索率[CV::最大ギルド数];

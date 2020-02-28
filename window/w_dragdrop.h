@@ -123,10 +123,13 @@ namespace SDX_BSC
 
 		void 求人to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
 		{
+			//人事点を消費
+			if (Guild::P->人事ポイント < 2) { return; }
+			Guild::P->人事ポイント -= 2;
+
 			//製造の最後に追加
 			Guild::P->製造メンバー.push_back(ギルメン);
 
-			ギルメン->is内定 = false;
 			ギルメン->就活 = -1;
 			ギルメン->所属 = Guild::P->id;
 
@@ -136,16 +139,21 @@ namespace SDX_BSC
 
 		void 求人toパーティ(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
 		{
-			if (移動先メンバー == nullptr)
-			{
-				//パーティに空きがある場合
+			//人事点を消費
+			if (Guild::P->人事ポイント < 2) { return; }
 
-				ギルメン->is内定 = false;
-				ギルメン->就活 = -1;
-				ギルメン->所属 = Guild::P->id;
-				Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-				Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
+			if (移動先メンバー != nullptr)
+			{
+				//元メンバーは製造に送る
+				Guild::P->製造メンバー.push_back(移動先メンバー);
 			}
+
+			Guild::P->人事ポイント -= 2;
+			ギルメン->就活 = -1;
+			ギルメン->所属 = Guild::P->id;
+			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
+			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
+
 		}
 
 		/*求人で入れ替え(未実装)*/

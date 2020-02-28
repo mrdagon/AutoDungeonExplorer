@@ -109,16 +109,7 @@ namespace SDX_BSC
 
 			for (int a = 0; a < CV::最大素材ランク; a++)
 			{
-				for (int b = 0; b < 6 ; b++)
-				{
-					if (a == 0)
-					{
-						Guild::P->素材数[a][MaterialType(b)] = 20;
-					} else {
-						Guild::P->素材数[a][MaterialType(b)] = 0;
-					}
-
-				}
+				Guild::P->素材数[a] = 20;
 			}
 
 			Guild::P->部門経験値[ManagementType::経営] = Rand::Get(100);
@@ -149,7 +140,6 @@ namespace SDX_BSC
 			{
 				Warker::data.emplace_back();
 				Warker::data[a].Make(a, a%5 , 1, "ナナシ");
-				Warker::data[a].表示ステ計算();
 				if (a < 15)
 				{
 					Warker::data[a].所属 = 0;
@@ -181,7 +171,7 @@ namespace SDX_BSC
 				Guild::P->ギルメン.push_back(&Warker::data[a]);
 			}
 
-			for (int a = 0; a < 10; a++)
+			for (int a = 0; a < 12; a++)
 			{
 				Guild::P->製造メンバー.push_back(&Warker::data[a] + 15);
 			}
@@ -412,7 +402,6 @@ namespace SDX_BSC
 			Game::is仕事中 = false;
 
 			UseTactics();
-			EmployMember();
 
 			//求人追加、仮処理
 			if (Warker::data.size() < 45)
@@ -450,11 +439,6 @@ namespace SDX_BSC
 		void UseTactics()
 		{
 
-		}
-		//雇用確定
-		void EmployMember()
-		{
-			Guild::P->雇用処理();
 		}
 
 		//●探索処理

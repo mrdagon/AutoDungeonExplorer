@@ -34,7 +34,7 @@ namespace SDX_BSC
 		Dungeon* 探索先;
 		Order 探索指示;
 
-		EnumArray<int, MaterialType> 獲得素材[CV::最大素材ランク];
+		int 獲得素材[CV::最大素材ランク];
 		std::vector <Monster> 魔物;
 
 		std::vector<Warker*> メンバー;
@@ -91,17 +91,13 @@ namespace SDX_BSC
 			else { is全滅 = false; }
 		}
 
-		void 探索終了(EnumArray<int, MaterialType> *素材数)
+		void 探索終了(int 素材数[30])
 		{
 			//素材獲得
 			for (int a = 0; a < CV::最大素材ランク; a++)
 			{
-				for (int b = 0; b < CV::素材種; b++)
-				{
-					MaterialType mat = MaterialType(b);
-					素材数[a][mat] += 獲得素材[a][mat];
-					獲得素材[a][mat] = 0;
-				}
+				素材数[a] += 獲得素材[a];
+				獲得素材[a] = 0;
 			}
 			//レベルアップ
 			for (int a = 0; a < CV::パーティ人数; a++)
@@ -114,7 +110,7 @@ namespace SDX_BSC
 			スキルステ計算();
 		}
 
-		void 探索処理(EnumArray<int, MaterialType> *素材数)
+		void 探索処理(int 素材数[30])
 		{
 			//探索終了判定
 			if (is探索中 == false)
@@ -283,7 +279,7 @@ namespace SDX_BSC
 		{
 			残り待機時間 = 600;
 			//素材獲得処理
-			獲得素材[探索先->ランク][探索先->部屋[部屋ID].素材種]++;
+			獲得素材[探索先->ランク]++;
 
 			地図発見処理();
 		}
@@ -497,10 +493,7 @@ namespace SDX_BSC
 				}
 			}
 
-			if (探索先->部屋[部屋ID].素材種 != MaterialType::遺物)
-			{
-				獲得素材[探索先->ランク][探索先->部屋[部屋ID].素材種]++;
-			}
+			獲得素材[探索先->ランク]++;
 
 			is移動中 = true;
 			残り移動時間 = 100;

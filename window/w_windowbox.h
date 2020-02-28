@@ -19,7 +19,7 @@ namespace SDX_BSC
 		std::vector <GUI_Object*> gui_objects;
 
 		//定数
-		static const int ツールバー高さ = 100;
+		static const int ツールバー高さ = 90;
 		static const int タイトル枠高さ = 30;
 		static const int 枠No = 6;
 		static const int タイトル枠No = 8;

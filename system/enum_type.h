@@ -344,6 +344,7 @@ namespace SDX_BSC
 	};
 
 	//素材種-6種+宝石×ランク
+
 	enum class MaterialType
 	{
 		金属,
@@ -356,9 +357,11 @@ namespace SDX_BSC
 		COUNT
 	};
 
+
 	enum class FormationType
 	{
 		前列,
+		中列,
 		後列,
 		COUNT
 	};

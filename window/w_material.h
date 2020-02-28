@@ -8,12 +8,6 @@ namespace SDX_BSC
 	using namespace SDX;
 #define LV(a) DV::I[3][a]
 
-
-
-
-
-
-
 	/*素材とアイテムウィンドウ*/
 	class W_Material: public WindowBox
 	{
@@ -54,14 +48,14 @@ namespace SDX_BSC
 			}
 		};
 
-		/*素材と数*/
+		/*素材と数とランク*/
 		class GUI_Mat_num :public GUI_Object
 		{
 		public:
 			int ランク;
 			MaterialType 素材種;
 
-			void Set(Rect 位置, int ランク , MaterialType 素材種)
+			void Set(Rect 位置, int ランク, MaterialType 素材種)
 			{
 				this->位置 = 位置;
 				this->ランク = ランク;
@@ -73,24 +67,25 @@ namespace SDX_BSC
 				//枠の描画
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 12);
 
-				//素材数-獲得数-消費数
-				int len = MFont::BArial中.GetDrawStringWidth(Guild::P->素材数[ランク][素材種]) / 2;
+				//素材アイコン
+				MIcon::素材[素材種].DrawRotate({ px + LV(6), py + LV(7) }, 1, 0);
 
-				MFont::BArial中.DrawBold({ px + LV(20) + len ,py + LV(21) }, Color::White, Color::Black, Guild::P->素材数[ランク][素材種],true);
+				//ランク
+				//MIcon::アイコン[IconType::星].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
+				//MFont::BArial小.DrawBold({ px + LV(8) ,py + LV(9) }, Color::White, Color::Black, { "Lv ",ランク }, true);
+				//MFont::BArial小.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, ランク, true);
 
-				//獲得量と消費量
-				//Screen::SetBright({128,255,128});
-				//MFont::BArial小.DrawBold({ px + LV(22) ,py + LV(23) }, Color::White, Color::Black, { Guild::P->素材数[ランク][素材種] }, true);
-				//Screen::SetBright({ 255,128,128 });
-				//MFont::BArial小.DrawBold({ px + LV(24) ,py + LV(25) }, Color::White, Color::Black, { Guild::P->素材数[ランク][素材種] }, true);
-				//Screen::SetBright();
+				//所持数
+				MFont::BArial小.DrawBold({ px + LV(12) ,py + LV(13) }, Color::White, Color::Black, "x", true);
+				MFont::BArial小.DrawBold({ px + LV(14)  ,py + LV(15) }, Color::White, Color::Black, Guild::P->素材数[ランク],true);
+
 			}
 		};
 
 	public:
-		GUI_Mat_left GUI_ランク[CV::最大素材ランク];
-		GUI_Mat_top GUI_素材[CV::素材種];
-		GUI_Mat_num GUI_素材数[CV::素材種 * CV::最大素材ランク];
+		//GUI_Mat_left GUI_ランク[CV::最大素材ランク];
+		//GUI_Mat_top GUI_素材[CV::素材種];
+		GUI_Mat_num GUI_素材数[CV::最大素材ランク];
 
 		void init()
 		{
@@ -98,31 +93,20 @@ namespace SDX_BSC
 			名前 = "素材";
 			略記 = "素材";
 			アイコン = IconType::素材;
-			横幅 = 365;
+			横幅 = 250;
 			縦幅 = 240;
 			最小縦 = 240;
 			最大縦 = 240;
-			縦内部幅 = 240;//120☓ランク数
+			縦内部幅 = 480;//120☓ランク数
 			スクロール位置 = 0;
 
 			SetHelp("各種素材の在庫");
 
-			for (auto& it : GUI_ランク)
-			{
-				gui_objects.push_back(&it);
-			}
 
 			for (auto& it : GUI_素材数)
 			{
 				gui_objects.push_back(&it);
 			}
-
-			for (int a = 0; a < CV::素材種; a++)
-			{
-				gui_objects.push_back(&GUI_素材[a]);
-				GUI_素材[a].素材種 = MaterialType(a);
-			}
-
 
 			GUI_init();
 		}
@@ -130,23 +114,11 @@ namespace SDX_BSC
 
 		void GUI_init()
 		{
-			for (int a = 0; a < CV::最大素材ランク; a++)
-			{
-				GUI_ランク[a].Set({ LV(0) , LV(1) + LV(2) * a, LV(3), LV(4) }, a+1);
-			}
-
-			for (int a = 0; a < CV::素材種; a++)
-			{
-				GUI_素材[a].位置 = {LV(5)+LV(6) * a ,LV(7),LV(8),LV(9)};
-			}
+			int line = 5;
 
 			for (int a = 0; a < CV::最大素材ランク; a++)
 			{
-
-				for (int b = 0; b < CV::素材種; b++)
-				{
-					GUI_素材数[a + b * CV::最大素材ランク].Set({ LV(10) + b * LV(11), LV(12) + a * LV(13), LV(8), LV(4) }, a , MaterialType(b));
-				}
+				GUI_素材数[a].Set({ LV(0) + a%line * LV(1), LV(2) + a / line * LV(3), LV(4), LV(5) }, a , MaterialType::金属);
 			}
 		}
 

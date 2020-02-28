@@ -13,29 +13,10 @@ namespace SDX_BSC
 	public:
 		static EnumArray<Recipe, CraftType> data;
 		SkillType 種類;
-		int 素材数 = 4;
-		MaterialType 素材[2] = { MaterialType::COUNT,MaterialType::COUNT };
+		int 素材数 = 1;
 
 		static void Init()
 		{
-			data[CraftType::STR鎧].素材数 = 2;
-			data[CraftType::DEX鎧].素材数 = 2;
-			data[CraftType::INT鎧].素材数 = 2;
-
-			data[CraftType::斬撃].素材[0] = MaterialType::金属;
-			data[CraftType::打撃].素材[0] = MaterialType::石材;
-			data[CraftType::刺突].素材[0] = MaterialType::木材;
-			data[CraftType::射撃].素材[0] = MaterialType::皮革;
-			data[CraftType::魔術].素材[0] = MaterialType::骨牙;
-			data[CraftType::神秘].素材[0] = MaterialType::羽毛;
-
-			data[CraftType::STR鎧].素材[0] = MaterialType::石材;
-			data[CraftType::STR鎧].素材[1] = MaterialType::金属;
-			data[CraftType::DEX鎧].素材[0] = MaterialType::木材;
-			data[CraftType::DEX鎧].素材[1] = MaterialType::皮革;
-			data[CraftType::INT鎧].素材[0] = MaterialType::骨牙;
-			data[CraftType::INT鎧].素材[1] = MaterialType::羽毛;
-
 			data[CraftType::斬撃].種類 = SkillType::剣;
 			data[CraftType::打撃].種類 = SkillType::槌;
 			data[CraftType::刺突].種類 = SkillType::槍;
