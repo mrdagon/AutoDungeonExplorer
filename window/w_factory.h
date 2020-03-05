@@ -22,139 +22,21 @@ namespace SDX_BSC
 			}
 		};
 
-		class GUI_製造割当 : public GUI_Object
-		{
-		public:
-			CraftType id;
-			Recipe* レシピ;
-
-			void Set(CraftType id)
-			{
-				this->id = id;
-				this->レシピ = &Recipe::data[id];
-			}
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				//craft種アイコン
-				//MSystem::DrawSkill(レシピ->種類, { px + LV(31) , py + LV(32) }, { 128,255,128 });
-				Drawing::Rect({ px + LV(31), py + LV(32) ,27,27 }, Color::White);
-				Screen::SetBright(Color::Black);
-				MIcon::スキル[レシピ->種類].Draw({ px + LV(31) , py + LV(32) });
-				Screen::SetBright();
-
-				//製造割当と矢印
-				MIcon::アイコン[IconType::団員].Draw({ px + LV(45), py + LV(46) });
-				MFont::BArial中.DrawBold({ px + LV(43) ,py + LV(44) }, Color::White, Color::Black, Guild::P->製造割当[id]);
-
-				if (Game::is仕事中 == false)
-				{
-					MIcon::アイコン[IconType::三角].Draw({ px + LV(35),py + LV(37) });
-					MIcon::アイコン[IconType::三角].Draw({ px + LV(36),py + LV(37) }, true);
-				}
-				//ダイア使用ON/OFF
-				int total_c = 0;
-				for (auto& it : Guild::P->製造割当)
-				{
-					total_c += it;
-				}
-				if (total_c == 0) { total_c = 1; }
-
-				double 実製造 = std::round(Guild::P->合計製造力 * Guild::P->製造割当[id] / total_c);
-
-				MIcon::アイコン[IconType::ハンマー].DrawRotate({ px + LV(33), py + LV(34) }, 1, 0);
-				MFont::BArial小.DrawBold({ px + LV(47) ,py + LV(49) }, Color::White, Color::Black, 実製造,true);
-				
-
-				//製造進捗ゲージ
-				double rate = Guild::P->製造進行度[id] / Guild::P->必要製造力;
-				//50~53
-				Point p1, p2, p3, p4 , p5;
-				p1.SetPos(px + LV(50) , py + LV(52));
-				p2.SetPos(px + LV(50) + LV(51) , py + LV(52));
-				p3.SetPos(px + LV(50) + LV(51), py + LV(52) + LV(53));
-				p4.SetPos(px + LV(50) , py + LV(52) + LV(53));
-				p5 = p1;
-
-				//裏色
-				Drawing::Line( p1 , p2 , Color::Blue, 2);
-				Drawing::Line( p2 , p3 , Color::Blue, 2);
-				Drawing::Line( p3 , p4 , Color::Blue, 2);
-				Drawing::Line( p4 , p1 , Color::Blue, 2);
-				//表
-				if (rate < 0.25)
-				{
-					p2.x = px + LV(50) + LV(51) * rate * 4;
-					Drawing::Line(p1, p2, Color::Red, 2);				
-				}
-				else
-				if (rate < 0.5)
-				{
-					p3.y = py + LV(52) + LV(53) * (rate-0.25) * 4;
-					Drawing::Line(p1, p2, Color::Red, 2);
-					Drawing::Line(p2, p3, Color::Red, 2);
-				
-				}
-				else if (rate < 0.75)
-				{
-					p4.x = px + LV(50) + LV(51) * (0.75-rate) * 4;
-					Drawing::Line(p1, p2, Color::Red, 2);
-					Drawing::Line(p2, p3, Color::Red, 2);
-					Drawing::Line(p3, p4, Color::Red, 2);
-				}
-				else
-				{
-					p5.y = py + LV(52) + LV(53) * (1.0 - rate) * 4;
-					Drawing::Line(p1, p2, Color::Red, 2);
-					Drawing::Line(p2, p3, Color::Red, 2);
-					Drawing::Line(p3, p4, Color::Red, 2);
-					Drawing::Line(p4, p5, Color::Red, 2);
-				}
-
-
-				//技術レベルと経験値
-				rate = 0.5;
-				MFont::BArial中.DrawBold({ px + LV(58) ,py + LV(59) }, Color::White, Color::Black, "Lv10");
-				MSystem::DrawBar({ px + LV(54),py + LV(55) }, LV(56), LV(57), rate, 1, Color::Blue, Color::White, Color::White, true);
-
-			}
-
-			void Click(double px, double py)
-			{
-				if (Game::is仕事中 == true) { return; }
-
-				//製造割当の増減
-				if (py > LV(37) && py < LV(37) + 20)
-				{
-					if (px > LV(35) - 5 && px < LV(35) + 15)
-					{
-						Guild::P->製造割当[id]--;
-						if (Guild::P->製造割当[id] < 0) { Guild::P->製造割当[id] = 9; }
-					}
-					if (px > LV(36) - 5 && px < LV(36) + 15)
-					{
-						Guild::P->製造割当[id]++;
-						if (Guild::P->製造割当[id] > 9) { Guild::P->製造割当[id] = 0; }
-					}
-				}
-			}
-
-			//Drop操作無し
-		};
-
 		class GUI_メンバーゾーン : public GUI_Object
 		{
 		public:
+			CraftType 部門;
 			W_Factory* 親ウィンドウ;
 
 			void Draw派生(double px, double py)
 			{
+				//Screen::SetDrawMode(Color(255, 255, 255, 128), BlendMode::Alpha);
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
+				//Screen::SetDrawMode();
 				//合計製造力
-				MSystem::DrawBox({ px + LV(25) , py + LV(26) }, 70, 18, Color::White);
+				MSystem::DrawWindow({ px + LV(25) , py + LV(26) }, 70, 18, 11);
 				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(27), py + LV(28) });
-				MFont::Arial中.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, (int)Guild::P->合計製造力,true);
+				//MFont::BArial中.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, (int)Guild::P->合計製造力,true);
 			}
 
 			void Click(double px, double py)
@@ -189,12 +71,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				MSystem::DrawBox({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::White);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 				MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + LV(19) , py + LV(20) }, 2, 0);
 				MFont::BArial小.DrawBold({ px + LV(21) ,py + LV(22) }, Color::White, Color::Black, ギルメン->製造力 , true);
 				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(23) , py + LV(24) });
-				//MFont::BArial中.DrawBold({ px + LV(60) ,py + LV(61) }, Color::White, Color::Black, ギルメン->Lv, true);
-				//MFont::BArial小.DrawBold({ px + LV(62) ,py + LV(63) }, Color::White, Color::Black, "Lv", true);
 			}
 
 			void Click(double px, double py)
@@ -228,11 +108,9 @@ namespace SDX_BSC
 
 	public:
 		//生産割り当て、武器６系統、防具３系統
-		GUI_割当ゾーン 割当ゾーン;
-		std::vector<GUI_製造割当> 製造割当;
+		EnumArray<GUI_メンバーゾーン,CraftType> メンバーゾーン;//製造メンバーの表示領域
 
-		GUI_メンバーゾーン メンバーゾーン;//製造メンバーの表示領域
-		std::vector<GUI_製造メンバー> 製造メンバー;
+		EnumArray < std::vector<GUI_製造メンバー>, CraftType> 製造メンバー;
 
 		void init()
 		{
@@ -249,121 +127,97 @@ namespace SDX_BSC
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
-
-			製造割当.resize(9);
-
-			製造割当[0].Set(CraftType::斬撃);
-			製造割当[1].Set(CraftType::打撃);
-			製造割当[2].Set(CraftType::刺突);
-			製造割当[3].Set(CraftType::射撃);
-			製造割当[4].Set(CraftType::魔術);
-			製造割当[5].Set(CraftType::神秘);
-			製造割当[6].Set(CraftType::STR鎧);
-			製造割当[7].Set(CraftType::DEX鎧);
-			製造割当[8].Set(CraftType::INT鎧);
 		}
 
 		void GUI_Init()
 		{
 			//オブジェクト初期化
-			製造メンバー.clear();
+			for (auto& it : 製造メンバー)
+			{
+				it.clear();
+			}
+			//製造メンバー.clear();
 			gui_objects.clear();
 
-			メンバーゾーン.SetHelp("製造力と製造人員\nドラッグ＆ドロップで配置転換",80);
-			メンバーゾーン.親ウィンドウ = this;
-
-			for (int a = 0; a < Guild::P->製造メンバー.size(); a++)
+			for (auto& it : メンバーゾーン)
 			{
-				if (Guild::P->製造メンバー[a] == nullptr) { break; }
-
-				製造メンバー.emplace_back(Guild::P->製造メンバー[a]);
-				製造メンバー[a].並びID = a;
-				製造メンバー[a].親ウィンドウ = this;
+				it.SetHelp("製造力と製造人員\nドラッグ＆ドロップで配置転換", 80);
+				it.親ウィンドウ = this;
 			}
 
-
-			for (int a = 0; a < 製造メンバー.size(); a++)
+			for (int b = 0; b < (int)CraftType::COUNT;b++)
 			{
-				gui_objects.push_back(&製造メンバー[a]);
-				製造メンバー[a].親ウィンドウ = this;
+				CraftType t = (CraftType)b;
+
+				for (int a = 0; a < Guild::P->製造メンバー[t].size(); a++)
+				{
+					if (Guild::P->製造メンバー[t][a] == nullptr) { break; }
+
+					製造メンバー[t].emplace_back(Guild::P->製造メンバー[t][a]);
+					製造メンバー[t][a].並びID = a;
+					製造メンバー[t][a].親ウィンドウ = this;
+					gui_objects.push_back(&製造メンバー[t][a]);
+				}
 			}
 
-			gui_objects.push_back(&メンバーゾーン);
-
-			for (int a = 0; a < 製造割当.size(); a++)
-			{
-				gui_objects.push_back(&製造割当[a]);
-			}
-			
-			gui_objects.push_back(&割当ゾーン);
+			gui_objects.push_back(&メンバーゾーン[CraftType::鍛造]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::裁縫]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::魔術]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::木工]);
 
 			//座標初期化
 			int n = 0;
+			int y = 0;
+			const int 列数 = 6;
 
 			横幅 = LV(0);
 
-			//割当ゾーン.位置 = { LV(1),LV(3),LV(2),LV(4) };
-
-			メンバーゾーン.位置 = { LV(1) , LV(4) + LV(5) , LV(2) , LV(6) + ((int)製造メンバー.size()+7) / 7 * LV(7) };
-
-			for (int a = 0; a < 製造割当.size(); a++)
+			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
-				製造割当[a].位置 = { LV(8) , LV(9) + LV(12) * a , LV(10) , LV(11) };
+				CraftType t = CraftType(b);				
+				//人数に応じてメンバーゾーンのサイズは変動
+				メンバーゾーン[t].位置 = { LV(1) , LV(2)+y , LV(0) - LV(3) , LV(4) + ((int)製造メンバー[t].size() + 列数) / 列数 * LV(5) };
+				
+				for (int a = 0; a < 製造メンバー[t].size(); a++)
+				{
+					製造メンバー[t][a].位置 = { LV(1) + LV(8) + LV(9) * (a % 列数) , LV(2) + LV(10) + LV(11) * (a / 列数) + y ,LV(12),LV(13) };
+				}
+
+				y += LV(4) + LV(7) + ((int)製造メンバー[t].size() + 列数) / 列数 * LV(6);
 			}
 
-			製造割当[0].位置 = { LV(8) , LV(9) , LV(10) , LV(11) };
-			製造割当[1].位置 = { LV(8) + 100 , LV(9) , LV(10) , LV(11) };
-			製造割当[2].位置 = { LV(8) , LV(9) + LV(12) * 1 , LV(10) , LV(11) };
-			製造割当[3].位置 = { LV(8) + 100 , LV(9) + LV(12) * 1 , LV(10) , LV(11) };
-			製造割当[4].位置 = { LV(8) , LV(9) + LV(12) * 2 , LV(10) , LV(11) };
-			製造割当[5].位置 = { LV(8) + 100 , LV(9) + LV(12) * 2 , LV(10) , LV(11) };
-			製造割当[6].位置 = { LV(8) + 100 *2, LV(9) + LV(12) * 0 , LV(10) , LV(11) };
-			製造割当[7].位置 = { LV(8) + 100 * 2, LV(9) + LV(12) * 1 , LV(10) , LV(11) };
-			製造割当[8].位置 = { LV(8) + 100 * 2, LV(9) + LV(12) * 2 , LV(10) , LV(11) };
-
-			for (int a = 0; a < Guild::P->製造メンバー.size(); a++)
-			{
-				if (Guild::P->製造メンバー[a] == nullptr) { break; }
-				n++;
-				製造メンバー[a].位置 = { LV(1) + LV(13) + LV(14) * (a % 7) , LV(4) + LV(5) + LV(15) + LV(16) * (a / 7) ,LV(17),LV(18) };
-			}
-
-			縦内部幅 = 300 + (((int)製造メンバー.size() + 7) / 7 )* LV(16);
+			//
+			縦内部幅 = 300 + y + (((int)製造メンバー.size() + 7) / 7 )* LV(14);
 		}
 
 		void 派生Draw()
 		{
 			GUI_Init();
 
-			割当ゾーン.Draw();
 
-			for (int a = 0; a < 製造割当.size(); a++)
+			for (auto& it : メンバーゾーン)
 			{
-				製造割当[a].Draw();
+				it.Draw();
 			}
 
-			メンバーゾーン.Draw();
 
-			for (int a = 0; a < 製造メンバー.size(); a++)
+			for (auto& it : 製造メンバー)
 			{
-				製造メンバー[a].Draw();
+				for(int a = 0; a < it.size(); a++)
+				{
+					it[a].Draw();
+				}	
 			}
 		}
 
 		bool 派生操作()
 		{
-			for (int a = 0; a < 製造メンバー.size(); a++)
+			return false;
+
+			for ( auto& it : gui_objects )
 			{
-				製造メンバー[a].操作チェック(相対座標.x, 相対座標.y);
+				it->操作チェック(相対座標.x, 相対座標.y);
 			}
-
-			メンバーゾーン.操作チェック(相対座標.x, 相対座標.y);
-
-			for (int a = 0; a < 製造割当.size(); a++)
-			{
-				製造割当[a].操作チェック(相対座標.x, 相対座標.y);
-			}
-
 			return false;
 		}
 	};

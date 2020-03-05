@@ -12,7 +12,7 @@ namespace SDX_BSC
 
 		constexpr int 最大ギルド数 = 4;
 		constexpr int パーティ人数 = 5;
-		constexpr int 最大パーティ数 = 10;
+		constexpr int 最大パーティ数 = 5;
 		constexpr int 最大素材ランク = 30;
 		constexpr int 装備種 = 45;
 

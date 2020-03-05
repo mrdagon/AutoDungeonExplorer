@@ -21,8 +21,8 @@ namespace SDX_BSC
 		//定数
 		static const int ツールバー高さ = 90;
 		static const int タイトル枠高さ = 30;
-		static const int 枠No = 6;
-		static const int タイトル枠No = 8;
+		static const int 枠No = 1;
+		static const int タイトル枠No = 3;
 		//状態
 		bool is表示 = true;//
 		std::string 名前 = "未設定";

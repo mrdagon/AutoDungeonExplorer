@@ -7,30 +7,6 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/*製造レシピ*/
-	class Recipe
-	{
-	public:
-		static EnumArray<Recipe, CraftType> data;
-		SkillType 種類;
-		int 素材数 = 1;
-
-		static void Init()
-		{
-			data[CraftType::斬撃].種類 = SkillType::剣;
-			data[CraftType::打撃].種類 = SkillType::槌;
-			data[CraftType::刺突].種類 = SkillType::槍;
-			data[CraftType::射撃].種類 = SkillType::弓;
-			data[CraftType::魔術].種類 = SkillType::魔杖;
-			data[CraftType::神秘].種類 = SkillType::神杖;
-			data[CraftType::STR鎧].種類 = SkillType::鎧;
-			data[CraftType::DEX鎧].種類 = SkillType::革鎧;
-			data[CraftType::INT鎧].種類 = SkillType::ローブ;
-		}
-	};
-
-	EnumArray<Recipe, CraftType> Recipe::data;
-
 	/*装備品、アイテム*/
 	class Item
 	{
@@ -91,8 +67,6 @@ namespace SDX_BSC
 
 	void LoadItem()
 	{
-		Recipe::Init();
-		
 		Item::data.emplace_back(0, "鉄の斧", "STR武器", ItemImageType::鉄の斧);
 		Item::data.emplace_back(1, "鉄の剣", "STR武器", ItemImageType::鉄の剣);
 		Item::data.emplace_back(2, "木の弓", "DEX武器", ItemImageType::木の弓);

@@ -16,7 +16,7 @@ namespace SDX_BSC
 	class W_ToolBar
 	{
 	private:
-		static const int 表示枠 = 1;
+		static const int 表示枠 = 11;
 		static const int ボタン枠 = 1;
 		static const int ボタン押 = 3;
 

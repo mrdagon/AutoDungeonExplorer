@@ -19,7 +19,6 @@ namespace SDX_BSC
 		Warker()
 		{
 			見た目 = UnitImageType(Rand::Get(int(UnitImageType::COUNT) - 1));
-			就活 = Rand::Get(-1, CV::最大ギルド数 - 1);
 			Lv = Rand::Get(100);			
 		}
 
@@ -30,7 +29,6 @@ namespace SDX_BSC
 			this->ジョブ = ジョブ;
 
 			所属 = -1;
-			就活 = 0;//とりあえずプレイヤーギルドに求職
 
 			評価[0] = 50;
 			評価[1] = 0;
@@ -128,7 +126,7 @@ namespace SDX_BSC
 		int ID;
 
 		int 所属;//-1なら無所属
-		int 就活;//-1なら非就活
+		CraftType 製造配置;//
 
 		double 評価[CV::最大ギルド数];
 

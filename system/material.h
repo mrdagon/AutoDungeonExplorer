@@ -261,11 +261,15 @@ namespace SDX_BSC
 	{
 		ImagePack ウィンドウ枠;
 		Image 背景;
+		Image ダンジョン背景[5];
 
 		static void Load()
 		{
 			ウィンドウ枠.Load("File/system/window_skin.png", 60, 10, 6);
-			背景.Load("File/system/back4.png");
+			背景.Load("File/system/town02.png");
+			ダンジョン背景[0].Load("File/system/dunback00.png");
+			ダンジョン背景[1].Load("File/system/dunback01.png");
+			ダンジョン背景[2].Load("File/system/facback.png");
 		}
 
 		/*立体が＋なら飛び出す、マイナスならへこむ*/

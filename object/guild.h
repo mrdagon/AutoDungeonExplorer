@@ -35,7 +35,7 @@ namespace SDX_BSC
 		//従業員一覧
 		std::vector<Warker*> ギルメン;
 
-		std::vector<Warker*> 製造メンバー;
+		EnumArray<std::vector<Warker*>, CraftType> 製造メンバー;
 		Party 探索パーティ[CV::最大パーティ数];
 
 		int 最大パーティ数 = 3;
@@ -50,13 +50,12 @@ namespace SDX_BSC
 		//製造関連
 		double 必要製造力 = 1000;
 
-		double 合計製造力 = 0;
+		EnumArray<double, CraftType> 合計製造力;
 		EnumArray<double, CraftType> 製造進行度;
 		EnumArray<double, CraftType> 実製造力;
 		EnumArray<double, CraftType> 使用素材ランク;
-		EnumArray<bool, CraftType> is装備修復;
-		;
-		EnumArray<int, CraftType> 製造割当;
+		EnumArray<int, CraftType> is装備修復;
+
 		EnumArray<int, CraftType> 壊れた装備;
 		//--製造特殊効果とか(未実装)
 
@@ -69,25 +68,19 @@ namespace SDX_BSC
 
 		void 製造力計算()
 		{
-			合計製造力 = 0;
-			for (auto &it : 製造メンバー)
-			{
-				it->表示ステ計算();
-				合計製造力 += it->製造力;
-			}
+			合計製造力[CraftType::裁縫] = 0;
+			合計製造力[CraftType::鍛造] = 0;
+			合計製造力[CraftType::魔術] = 0;
+			合計製造力[CraftType::木工] = 0;
 
-			double 合計割当 = 0;
-			for (auto &it : 製造割当)
-			{
-				合計割当 += it;
-			}
 
-			if (合計割当 == 0) { 合計割当 = 1; }
-
-			for (int a = 0; a < (int)CraftType::COUNT; a++)
+			for (int a= 0 ; a< (int)CraftType::COUNT ; a++)
 			{
-				CraftType n = (CraftType)a;
-				実製造力[n] = 製造割当[n] / 合計割当;
+				for (auto& it : 製造メンバー[CraftType(a)])
+				{
+					it->表示ステ計算();
+					合計製造力[CraftType(a)] += it->製造力;
+				}
 			}
 		}
 
@@ -117,46 +110,8 @@ namespace SDX_BSC
 
 		bool 素材チェック(CraftType 種類)
 		{
-			Recipe* レシピ = &Recipe::data[種類];
-
-			//壊れた装備所持判定
-			/*
-			使用宝石ランク[種類] = 0;
-			if (is宝石[種類] == true)
-			{
-				int 宝石合計 = 0;
-
-				for (int a = CV::最大素材ランク - 1; a >= 0; a--)
-				{
-					宝石合計 += 素材数[a][MaterialType::宝石];
-				}
-
-				//4つ以上宝石必要
-				if (宝石合計 >= 4)
-				{
-					//高ランクからチェック
-					for (int a = CV::最大素材ランク - 1; a >= 0; a--)
-					{
-						while (素材数[a][MaterialType::宝石] > 0)
-						{
-							抽選ランク[何個目] = a;
-							素材数[a][MaterialType::宝石]--;
-							何個目++;
-
-							if (何個目 >= 4)
-							{
-								使用宝石ランク[種類] = 抽選ランク[Rand::Get(3)] + 1;
-								使用素材ランク[種類] = 使用宝石ランク[種類];
-								return true;
-							}
-						}
-					}
-				}
-			}
-			*/
-
 			//素材所持チェックと消費		
-			int 要求数 = レシピ->素材数;
+			int 要求数 = 10;
 			int 使用ランク = 0;
 
 			for (int a = CV::最大素材ランク-1; a >= 0; a--)

@@ -25,9 +25,10 @@ namespace SDX_BSC
 		{
 			if (Game::isヘルプ == false) { return; }
 
-			Point p = { Input::mouse.x ,Input::mouse.y };
-
-			Info派生( p );
+			//Point 補正座標;
+			//補正座標.x = 座標.x - 親ウィンドウ->相対座標.x - 位置.x;
+			//補正座標.y = 座標.y - 親ウィンドウ->相対座標.y - 位置.y;
+			Info派生( Input::mouse.GetPoint() );
 		}
 		
 		void Info座標補正(Point &座標)
@@ -47,9 +48,7 @@ namespace SDX_BSC
 		/*ヘルプ描画内容*/
 		virtual void Info派生(Point 座標)
 		{
-			Info座標補正(座標);
-			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン);
-			MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White,Color::Black, ヘルプメッセージ);
+			InfoMessage(座標);
 		}
 
 		void SetHelp(std::string メッセージ, int 高さ = 40)
@@ -59,6 +58,12 @@ namespace SDX_BSC
 			ヘルプ縦幅 = 高さ;
 		}
 
+		void InfoMessage(Point 座標)
+		{
+			Info座標補正(座標);
+			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン);
+			MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+		}
 
 		void InfoHunter(Warker* it,Point 座標)
 		{
@@ -136,21 +141,8 @@ namespace SDX_BSC
 				if (it->isパッシブスキル習得[a] == true)
 				{
 					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color(0, 141, 255));
-
-					//Drawing::Rect({ 座標.x + LV(36)-2,座標.y + LV(37)-2 ,29,29 }, Color::Blue, true);
-					//Drawing::Rect({ 座標.x + LV(36)-1,座標.y + LV(37)-1 ,27,27 }, Color::White, true);
-					//Drawing::Rect({ 座標.x + LV(36),座標.y + LV(37) ,25,25}, Color::Blue, true);
-
-					//MIcon::スキル[pskill->系統].Draw({ 座標.x + LV(36),座標.y + LV(37) });//スキルアイコンと習得状態
-					//MFont::Bメイリオ小.DrawBold({ 座標.x + LV(38) , 座標.y + LV(39) }, Color::White, Color::Black, "習得");//習得状態と必要レベル
 				} else {
-					Drawing::Rect({ 座標.x + LV(36) - 2,座標.y + LV(37) - 2 ,29,29 }, Color::Gray, true);
-					Drawing::Rect({ 座標.x + LV(36) - 1,座標.y + LV(37) - 1 ,27,27 }, Color::White, true);
-					Drawing::Rect({ 座標.x + LV(36),座標.y + LV(37) ,25,25 }, Color::Gray, true);
-
-					//Screen::SetBright({ 128,128,128 });
-					MIcon::スキル[pskill->系統].Draw({ 座標.x + LV(36),座標.y + LV(37) });//スキルアイコンと習得状態
-					//Screen::SetBright();
+					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color::Gray);
 
 					int slv = pskill->必要SP - sp + it->Lv;
 					sp -= pskill->必要SP;

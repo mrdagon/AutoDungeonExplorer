@@ -46,24 +46,31 @@ namespace SDX_BSC
 
 
 		/*製造同士で入れ替え*/
-		void 製造to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
+		void 製造to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID , CraftType 移動部署)
 		{
+			CraftType 部署A = 移動先メンバー->製造配置;
+
+			//移動先が空き
 			if (移動先メンバー == nullptr)
 			{
 				//最後に移動
-				for (int a = 0; a < Guild::P->製造メンバー.size(); a++)
+				for (int a = 0; a < Guild::P->製造メンバー[部署A].size(); a++)
 				{
-					if (ギルメン == Guild::P->製造メンバー[a])
+					if (ギルメン == Guild::P->製造メンバー[部署A][a])
 					{
-						Guild::P->製造メンバー.erase(Guild::P->製造メンバー.begin() + a);
+						Guild::P->製造メンバー[部署A].erase(Guild::P->製造メンバー[部署A].begin() + a);
 						break;
 					}
 				}
-				Guild::P->製造メンバー.emplace_back(ギルメン);
+				Guild::P->製造メンバー[移動部署].emplace_back(ギルメン);
+				ギルメン->製造配置 = 移動部署;
 			} else {
 				//入れ替え
-				Guild::P->製造メンバー[移動先ID] = ギルメン;
-				Guild::P->製造メンバー[並びID] = 移動先メンバー;
+				Guild::P->製造メンバー[移動部署][移動先ID] = ギルメン;
+				Guild::P->製造メンバー[部署A][並びID] = 移動先メンバー;
+
+				ギルメン->製造配置 = 移動部署;
+				移動先メンバー->製造配置 = 部署A;
 			}
 
 			移動先->GUI_Init();
@@ -85,11 +92,12 @@ namespace SDX_BSC
 		{
 			if (移動先メンバー == nullptr)
 			{
-				//移動先が空きなら製造は削除
-				Guild::P->製造メンバー.erase(Guild::P->製造メンバー.begin() + 並びID);
+				//移動先が空きなら製造は削除だけ
+				Guild::P->製造メンバー[ギルメン->製造配置].erase(Guild::P->製造メンバー[ギルメン->製造配置].begin() + 並びID);
 			} else {
 				//移動先にいるなら入れ替え
-				Guild::P->製造メンバー[並びID] = 移動先メンバー;
+				Guild::P->製造メンバー[ギルメン->製造配置][並びID] = 移動先メンバー;
+				移動先メンバー->製造配置 = ギルメン->製造配置;
 				移動先メンバー->表示ステ計算();
 			}
 
@@ -101,19 +109,20 @@ namespace SDX_BSC
 
 		}
 
-		void パーティto製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
+		void パーティto製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID, CraftType 製造部署)
 		{
 			if (移動先メンバー == nullptr)
 			{
-				//移動先が空きならパーティは空き
-				Guild::P->製造メンバー.push_back(ギルメン);
-			}
-			else {
+				//移動先が空きなら最後に追加
+				Guild::P->製造メンバー[製造部署].push_back(ギルメン);	
+			} else {
 				//移動先にいるなら入れ替え
-				Guild::P->製造メンバー[移動先ID] = ギルメン;
+				Guild::P->製造メンバー[製造部署][移動先ID] = ギルメン;
 				ギルメン->表示ステ計算();
 			}
+			ギルメン->製造配置 = 製造部署;
 
+			//移動先メンバーがnullなら空きに居るなら代入処理になる
 			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
 			Guild::P->探索パーティ[並びID / 5].スキルステ計算();
 
@@ -121,17 +130,17 @@ namespace SDX_BSC
 			ウィンドウ->GUI_Init();
 		}
 
-		void 求人to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
+		void 求人to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID, CraftType 製造部署)
 		{
 			//人事点を消費
 			if (Guild::P->人事ポイント < 2) { return; }
 			Guild::P->人事ポイント -= 2;
 
 			//製造の最後に追加
-			Guild::P->製造メンバー.push_back(ギルメン);
+			Guild::P->製造メンバー[製造部署].push_back(ギルメン);
 
-			ギルメン->就活 = -1;
 			ギルメン->所属 = Guild::P->id;
+			ギルメン->製造配置 = 製造部署;
 
 			移動先->GUI_Init();
 			ウィンドウ->GUI_Init();
@@ -144,12 +153,12 @@ namespace SDX_BSC
 
 			if (移動先メンバー != nullptr)
 			{
-				//元メンバーは製造に送る
-				Guild::P->製造メンバー.push_back(移動先メンバー);
+				//元メンバーがいるなら鍛造に送る
+				Guild::P->製造メンバー[CraftType::鍛造].push_back(移動先メンバー);
+				移動先メンバー->製造配置 = CraftType::鍛造;
 			}
 
 			Guild::P->人事ポイント -= 2;
-			ギルメン->就活 = -1;
 			ギルメン->所属 = Guild::P->id;
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
 			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
@@ -162,7 +171,7 @@ namespace SDX_BSC
 
 		}
 
-		void メンバー移動(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
+		void メンバー移動(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID , CraftType 製造部門 = CraftType::鍛造)
 		{
 			switch (移動先->種類)
 			{
@@ -184,13 +193,13 @@ namespace SDX_BSC
 				switch (ウィンドウ->種類)
 				{
 				case WindowType::Party:
-					パーティto製造(移動先, 移動先メンバー, 移動先ID);
+					パーティto製造(移動先, 移動先メンバー, 移動先ID,製造部門);
 					break;
 				case WindowType::Factory:
-					製造to製造(移動先, 移動先メンバー, 移動先ID);
+					製造to製造(移動先, 移動先メンバー, 移動先ID,製造部門);
 					break;
 				case WindowType::Recruit:
-					求人to製造(移動先, 移動先メンバー, 移動先ID);
+					求人to製造(移動先, 移動先メンバー, 移動先ID,製造部門);
 					break;
 				}
 				break;

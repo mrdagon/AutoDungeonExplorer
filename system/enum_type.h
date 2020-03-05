@@ -249,15 +249,10 @@ namespace SDX_BSC
 
 	enum class CraftType
 	{
-		斬撃,
-		打撃,
-		刺突,
-		射撃,
+		鍛造,
+		木工,
+		裁縫,
 		魔術,
-		神秘,
-		STR鎧,
-		DEX鎧,
-		INT鎧,
 		COUNT
 	};
 

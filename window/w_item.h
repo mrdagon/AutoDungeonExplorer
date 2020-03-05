@@ -26,7 +26,8 @@ namespace SDX_BSC
 				const int zaiko = Guild::P->装備所持数[id];
 
 				//外枠
-				MSystem::DrawBoxBold({ px,py }, w, h, Color::White, 0, Color::Black);
+				MSystem::DrawWindow({ px,py }, w, h, 1);
+				//MSystem::DrawBoxBold({ px,py }, w, h, Color::White, 0, Color::Black);
 				//アイコン
 				MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(11),py+LV(12) });
 				//在庫数

@@ -140,14 +140,8 @@ namespace SDX_BSC
 			{
 				Warker::data.emplace_back();
 				Warker::data[a].Make(a, a%5 , 1, "ナナシ");
-				if (a < 15)
-				{
-					Warker::data[a].所属 = 0;
-					Warker::data[a].就活 = -1;
-				} else {
-					Warker::data[a].所属 = 0;
-					Warker::data[a].就活 = -1;
-				}
+				
+				Warker::data[a].所属 = 0;
 			}
 
 			//初期求人
@@ -171,9 +165,9 @@ namespace SDX_BSC
 				Guild::P->ギルメン.push_back(&Warker::data[a]);
 			}
 
-			for (int a = 0; a < 12; a++)
+			for (int a = 0; a < 10; a++)
 			{
-				Guild::P->製造メンバー.push_back(&Warker::data[a] + 15);
+				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Warker::data[a] + 15);
 			}
 
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
@@ -194,11 +188,6 @@ namespace SDX_BSC
 
 			Guild::P->最大パーティ数 = 3;
 
-			for (auto& it : Guild::P->製造割当)
-			{
-				it = 5;
-			}
-		
 			Game::is停止 = true;
 
 			Guild::P->製造力計算();
@@ -272,7 +261,7 @@ namespace SDX_BSC
 			else if (Game::時間 < 6 * 360) { MSystem::背景.SetColor({ (Game::時間 - 4 * 360)*255/720,(Game::時間 - 4 * 360) * 255 / 720,(Game::時間 - 4 * 360) * 255 / 720 }); }//4~6で明るくなる
 			else { MSystem::背景.SetColor(Color::White); }
 
-			MSystem::背景.DrawExtend({ 0,WindowBox::ツールバー高さ,Window::GetWidth(),Window::GetHeight() - WindowBox::ツールバー高さ });
+			MSystem::背景.DrawExtend({ 0,0,Window::GetWidth(),Window::GetHeight()});
 
 			for (auto& it : windows)
 			{

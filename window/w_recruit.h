@@ -34,7 +34,7 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				//枠の描画
-				MSystem::DrawWindow({ px      , py }, 位置.GetW(), 位置.GetH(), 30);
+				MSystem::DrawWindow({ px      , py }, 位置.GetW(), 位置.GetH(), 11);
 
 				MIcon::アイコン[IconType::求人].DrawRotate({ px + LV(22),py + LV(23) },1,0, true);
 
@@ -139,10 +139,9 @@ namespace SDX_BSC
 				//キャラアイコン,レベル,雇用予定表示
 				if (参照先->所属 >= 0)
 				{
-					MSystem::DrawBoxBold({ px,py }, (int)位置.GetW(), (int)位置.GetH(), {255,128,128}, 2, Color::Red);
-
+					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 				} else {
-					MSystem::DrawBoxBold({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::White, 2, Color::White);
+					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 				}
 
 				MUnit::ユニット[参照先->見た目][1]->DrawRotate({ px + LV(9) ,py + LV(9) }, 2, 0);
@@ -200,7 +199,7 @@ namespace SDX_BSC
 
 			for (auto &it : Warker::data)
 			{
-				if (it.就活 == Guild::P->id)
+				if (it.所属 == -1)
 				{
 					求職者.emplace_back(&it);
 				}
