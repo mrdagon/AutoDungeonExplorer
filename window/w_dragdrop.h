@@ -48,7 +48,7 @@ namespace SDX_BSC
 		/*製造同士で入れ替え*/
 		void 製造to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID , CraftType 移動部署)
 		{
-			CraftType 部署A = 移動先メンバー->製造配置;
+			CraftType 部署A = ギルメン->製造配置;
 
 			//移動先が空き
 			if (移動先メンバー == nullptr)
@@ -65,6 +65,8 @@ namespace SDX_BSC
 				Guild::P->製造メンバー[移動部署].emplace_back(ギルメン);
 				ギルメン->製造配置 = 移動部署;
 			} else {
+
+
 				//入れ替え
 				Guild::P->製造メンバー[移動部署][移動先ID] = ギルメン;
 				Guild::P->製造メンバー[部署A][並びID] = 移動先メンバー;

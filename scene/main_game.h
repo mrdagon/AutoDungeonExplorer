@@ -167,7 +167,9 @@ namespace SDX_BSC
 
 			for (int a = 0; a < 10; a++)
 			{
-				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Warker::data[a] + 15);
+
+				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Warker::data[a+15]);
+				Warker::data[a + 15].製造配置 = CraftType(a % 4);
 			}
 
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)

@@ -14,14 +14,6 @@ namespace SDX_BSC
 	class W_Factory: public WindowBox
 	{
 	private:
-		class GUI_割当ゾーン : public GUI_Object
-		{
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 15);
-			}
-		};
-
 		class GUI_メンバーゾーン : public GUI_Object
 		{
 		public:
@@ -51,7 +43,7 @@ namespace SDX_BSC
 				//ギルメン移動して最後に追加
 				if (W_Drag_Drop::ギルメン != nullptr)
 				{
-					W_Drag_Drop::メンバー移動(親ウィンドウ, nullptr, 0);
+					W_Drag_Drop::メンバー移動(親ウィンドウ, nullptr, 0,部門);
 					W_Drag_Drop::ギルメン = nullptr;
 				}
 			}
@@ -93,7 +85,7 @@ namespace SDX_BSC
 				//ギルメン入れ替え
 				if (W_Drag_Drop::ギルメン != nullptr)
 				{
-					W_Drag_Drop::メンバー移動(親ウィンドウ, ギルメン, 並びID);
+					W_Drag_Drop::メンバー移動(親ウィンドウ, ギルメン, 並びID,ギルメン->製造配置);
 					W_Drag_Drop::ギルメン = nullptr;
 				}
 			}
@@ -127,6 +119,12 @@ namespace SDX_BSC
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
+
+			for (int a = 0; a < (int)CraftType::COUNT; a++)
+			{
+				メンバーゾーン[CraftType(a)].部門 = CraftType(a);
+			}
+
 		}
 
 		void GUI_Init()
@@ -156,14 +154,9 @@ namespace SDX_BSC
 					製造メンバー[t].emplace_back(Guild::P->製造メンバー[t][a]);
 					製造メンバー[t][a].並びID = a;
 					製造メンバー[t][a].親ウィンドウ = this;
-					gui_objects.push_back(&製造メンバー[t][a]);
 				}
 			}
 
-			gui_objects.push_back(&メンバーゾーン[CraftType::鍛造]);
-			gui_objects.push_back(&メンバーゾーン[CraftType::裁縫]);
-			gui_objects.push_back(&メンバーゾーン[CraftType::魔術]);
-			gui_objects.push_back(&メンバーゾーン[CraftType::木工]);
 
 			//座標初期化
 			int n = 0;
@@ -185,6 +178,22 @@ namespace SDX_BSC
 
 				y += LV(4) + LV(7) + ((int)製造メンバー[t].size() + 列数) / 列数 * LV(6);
 			}
+
+			for (int b = 0; b < (int)CraftType::COUNT; b++)
+			{
+				CraftType t = (CraftType)b;
+
+				for (int a = 0; a < 製造メンバー[t].size(); a++)
+				{
+					gui_objects.push_back(&製造メンバー[t][a]);
+				}
+			}
+
+			gui_objects.push_back(&メンバーゾーン[CraftType::鍛造]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::裁縫]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::魔術]);
+			gui_objects.push_back(&メンバーゾーン[CraftType::木工]);
+
 
 			//
 			縦内部幅 = 300 + y + (((int)製造メンバー.size() + 7) / 7 )* LV(14);
@@ -212,8 +221,6 @@ namespace SDX_BSC
 
 		bool 派生操作()
 		{
-			return false;
-
 			for ( auto& it : gui_objects )
 			{
 				it->操作チェック(相対座標.x, 相対座標.y);
