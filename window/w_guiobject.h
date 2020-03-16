@@ -347,6 +347,7 @@ namespace SDX_BSC
 
 		Rect 位置;
 		bool is固定 = false;//スクロールしない
+		bool is表示 = true;
 
 		/*描画内容*/
 		virtual void Draw()
@@ -364,6 +365,8 @@ namespace SDX_BSC
 		/*クリックチェック*/
 		void 操作チェック(double px , double py)
 		{
+			if (is表示 == false) { return; }
+
 			Rect pt = { 位置.x + px, 位置.y +py , 位置.GetW() , 位置.GetH()};
 
 			if (Input::mouse.GetPoint().Hit(&pt))
@@ -442,7 +445,7 @@ namespace SDX_BSC
 			}
 
 			px -= MFont::メイリオ中.GetDrawStringWidth(文字)/2;
-			MFont::メイリオ中.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
+			MFont::Bメイリオ中.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
 		}
 
 		void Click(double px, double py)

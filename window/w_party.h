@@ -143,7 +143,8 @@ namespace SDX_BSC
 				//未配置時の表示
 				if (ギルメン == nullptr)
 				{
-					MSystem::DrawBox({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::Gray);
+					//MSystem::DrawBox({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::Gray);
+					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 4);
 					return;
 				}
 

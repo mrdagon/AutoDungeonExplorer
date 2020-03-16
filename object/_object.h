@@ -4,8 +4,6 @@
 #pragma once
 #include <SDXFramework.h>
 
-#include "game.h"
-
 #include "monster_class.h"
 #include "warker_class.h"
 
@@ -31,5 +29,6 @@
 #include "settle_log.h"
 #include "warker.h"
 
+#include "i_guild.h"
 #include "party.h"
 #include "guild.h"

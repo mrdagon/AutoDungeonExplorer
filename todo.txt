@@ -90,3 +90,7 @@ SDL_RendererのSDL_RENDERER_PRESENTVSYNCとMouseのXY座標更新を修正
 ☆Colorの規定のコンストラクタ追加
 
 ☆verを2.10に上げて、DLLなど入れ替えた
+
+☆SetVolume関数の定数間違い、音量を切り捨てないように修正
+
+☆SDL_mixerのDLL更新

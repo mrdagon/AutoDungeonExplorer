@@ -314,9 +314,10 @@ namespace SDX_BSC
 	//依頼系統
 	enum class QuestType
 	{
-		//製造
-		//雑魚討伐
-		//ボス討伐
+		装備製造,
+		雑魚討伐,
+		ダンジョン発見,
+		ボス討伐,
 		COUNT
 	};
 
@@ -339,18 +340,17 @@ namespace SDX_BSC
 	};
 
 	//素材種-6種+宝石×ランク
-
-	enum class MaterialType
-	{
-		金属,
-		石材,
-		木材,
-		皮革,
-		羽毛,
-		骨牙,
-		遺物,
-		COUNT
-	};
+	//enum class MaterialType
+	//{
+	//	金属,
+	//	石材,
+	//	木材,
+	//	皮革,
+	//	羽毛,
+	//	骨牙,
+	//	遺物,
+	//	COUNT
+	//};
 
 
 	enum class FormationType
@@ -380,12 +380,6 @@ namespace SDX_BSC
 
 	//経営戦術
 	enum class mentS
-	{
-		COUNT
-	};
-
-	//依頼人
-	enum class ClientS
 	{
 		COUNT
 	};

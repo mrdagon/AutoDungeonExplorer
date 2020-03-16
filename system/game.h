@@ -21,13 +21,13 @@ namespace SDX_BSC
 		static bool is翌日スキップ = false;
 		
 		//コンフィグ項目
-		static double BGM音量 = 0.3;//
-		static double SE音量 = 0.3;//
+		static double BGM音量;//
+		static double SE音量;//
 		static bool isフルスクリーン = false;
 		static int 解像度W = 1600 , 解像度H = 900;
 		static int 最大解像度W = 1600, 最大解像度H = 900;
 
-		static int BGM設定 = 5, SE設定 =5 ,解像度設定 = 9;
+		static int BGM設定 = 1, SE設定 =1 ,解像度設定 = 9;
 
 		static bool is夜間加速 = true;
 
@@ -38,5 +38,10 @@ namespace SDX_BSC
 		static int 就寝時間 = CV::一時間フレーム数 * 22;//22時
 
 		static bool is仕事中;
+
+		//UI関連の変数
+		static EnumArray<CraftType, ItemType> 対応レシピ;
+
+		static std::vector<std::string> ローマ数字;
 	};
 }

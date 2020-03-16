@@ -8,7 +8,7 @@ namespace SDX_BSC
 	using namespace SDX;
 
 	/*ギルド*/
-	class Guild
+	class Guild : public I_Guild
 	{
 	private:
 
@@ -16,55 +16,12 @@ namespace SDX_BSC
 		static Guild* P;//プレイヤーのギルド
 		static Guild data[CV::最大ギルド数];
 
-		//ダンジョン発見済み、部屋攻略フラグ
-		//イベントログ
-		//Management 習得フラグ、使用フラグ
-		//依頼人別の評価
-		//ギルドマスターが誰か
-		//アイテム所持数、開発可フラグ、在庫目標数
-		//素材所持数
-		int id = 0;
-
-		int 素材数[CV::最大素材ランク];
-
-		double 資金 = 123456789;
-		double 現在MP = 100;
-		Management* 選択戦術 = 0;
-		int 人事ポイント = 10;
-
-		//従業員一覧
-		std::vector<Warker*> ギルメン;
-
-		EnumArray<std::vector<Warker*>, CraftType> 製造メンバー;
 		Party 探索パーティ[CV::最大パーティ数];
 
-		int 最大パーティ数 = 3;
+		void Init()
+		{
 
-		//パーティーと配属人員
-		EnumArray<int, ManagementType> 部門Lv;
-		EnumArray<double, ManagementType> 部門経験値;
-
-		double 集客力;
-		double 集客待ち;
-
-		//製造関連
-		double 必要製造力 = 1000;
-
-		EnumArray<double, CraftType> 合計製造力;
-		EnumArray<double, CraftType> 製造進行度;
-		EnumArray<double, CraftType> 実製造力;
-		EnumArray<double, CraftType> 使用素材ランク;
-		EnumArray<int, CraftType> is装備修復;
-
-		EnumArray<int, CraftType> 壊れた装備;
-		//--製造特殊効果とか(未実装)
-
-		//装備品
-		bool is装備開発[CV::装備種];
-		bool is新規[CV::装備種];
-		int 装備所持数[CV::装備種];
-
-		EnumArray < bool,ItemType> is新開発タブ;
+		}
 
 		void 製造力計算()
 		{
@@ -93,55 +50,80 @@ namespace SDX_BSC
 			{
 				CraftType n = (CraftType)a;
 				//素材チェック
-				if (製造進行度[n] == 0 && 実製造力[n] > 0)
+				if (製造進行度[n] == 0 && 合計製造力[n] > 0)
 				{
-					if (素材チェック(n) == false) { continue; }
+					if (製造開始(n) == false) { continue; }
 				}
 
-				製造進行度[n] += 実製造力[n];
+				製造進行度[n] += 合計製造力[n];
 
-				if (製造進行度[n] >= 必要製造力)
+				if (製造進行度[n] >= 必要製造力[n])
 				{
 					装備完成処理(n);
-					製造進行度[n] = 0;
 				}
 			}
 		}
 
-		bool 素材チェック(CraftType 種類)
+		bool 製造開始(CraftType 種類)
 		{
 			//素材所持チェックと消費		
-			int 要求数 = 10;
-			int 使用ランク = 0;
+			int 要求数 = 1;
+			int 素材ランク = 0;
 
 			for (int a = CV::最大素材ランク-1; a >= 0; a--)
 			{
-				if (素材数[a] >= 要求数)
+				if (素材数[種類][a] >= 要求数)
 				{
-					使用ランク = a;
-					使用素材ランク[種類] = a;
-					素材数[a]--;
+					必要製造力[種類] = 10000;
+					素材ランク = a;
+					素材数[種類][a]-= 要求数;
 					break;
 				}
 			}
-			if (使用ランク < 0) { return false; }
+			if (素材ランク < 0) { return false; }
+
+			//何を作るか？必要製造力がいくつかを計算
+			int 完成ランク = 素材ランク + 製造Lv[種類];
+			std::vector<int> 抽選リスト;
+			int 抽選数 = 0;
+
+			for (auto& it : Item::data)
+			{
+				if (Game::対応レシピ[it.種類] == 種類 && it.ランク <= 完成ランク)
+				{
+					抽選リスト.emplace_back(it.id);
+					抽選数++;
+				}
+			}
+
+			完成品[種類] = 抽選リスト[Rand::Get(抽選数-1)];
+			必要製造力[種類] = Item::data[完成品[種類]].必要製造力;
+			製造進行度[種類] = 0;
 
 			return true;
 		}
 
 		void 装備完成処理(CraftType 種類)
 		{
-			int itemID = (int)種類;
-			double n = 使用素材ランク[種類];
-			n = n * 100 + 5;
-			
-			int rank = Rand::Get((int)n) / 100;
+			int itemID = 完成品[種類];
 
-			//rank += (int)使用宝石ランク[種類];
-			if (rank > 4) { rank = 4; }
-			
-			装備所持数[itemID + rank * 9]++;
-			is装備開発[itemID + rank*9] = true;
+			装備所持数[itemID]++;
+			is装備開発[itemID] = true;
+
+			製造経験[種類] += 必要製造力[種類];
+
+
+			//LvUP判定
+			if (製造経験[種類] >= (製造Lv[種類]*2 + 1) * 100000)
+			{
+				製造経験[種類] -= (製造Lv[種類]*2 + 1) * 100000;
+				製造Lv[種類] ++;
+			}
+
+			//非製造状態にする
+			完成品[種類] = -1;
+			製造進行度[種類] = 0;
+			製造ゲージ色[種類] = !製造ゲージ色[種類];
 		}
 
 		void 探索開始()
@@ -157,7 +139,7 @@ namespace SDX_BSC
 		{
 			for (int a = 0; a < 最大パーティ数; a++)
 			{
-				if (探索パーティ[a].味方.size() > 0 && 探索パーティ[a].is全滅 == false){探索パーティ[a].探索処理(素材数);}
+				if (探索パーティ[a].味方.size() > 0 && 探索パーティ[a].is全滅 == false){探索パーティ[a].探索処理(this);}
 			}
 		}
 	};

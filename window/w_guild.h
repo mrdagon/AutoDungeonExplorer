@@ -60,13 +60,26 @@ namespace SDX_BSC
 	public:
 
 		GUI_ギルマス ギルマス;//+ギルド名
-		GUI_数値 総資金;//G
+		GUI_数値 団員数;//ギルド人数
+
+		GUI_数値 資金;//G
+		GUI_数値 販売数;//販売数
+		GUI_数値 売上;//売上
 		GUI_数値 集客力;//人/日
-		GUI_数値 地図数;//枚
+
+
+		GUI_数値 製造数;//個
 		GUI_数値 開発数;//種
+		GUI_数値 素材在庫;//個
+
+		GUI_数値 地図数;//枚
 		GUI_数値 討伐数;//体
+		GUI_数値 撤退数;//回
+
 		GUI_数値 名声値;//P
 
+
+		
 		void init()
 		{
 			種類 = WindowType::Guild;
@@ -81,31 +94,51 @@ namespace SDX_BSC
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
 
-			総資金.Set( "資金","G",IconType::資金,0);
-			集客力.Set( "集客","人/日", IconType::資金, 1);
+			団員数.Set("団員", "人", IconType::資金, 4);
+			名声値.Set("名声", "点", IconType::資金, 5);
+
+			資金.Set( "資金","Ｇ",IconType::資金,0);
+			販売数.Set("討伐", "体", IconType::資金, 4);
+			売上.Set("売上", "Ｇ", IconType::資金, 4);
+			集客力.Set( "集客","人", IconType::資金, 1);
+
+			製造数.Set("製造", "種", IconType::資金, 3);;//個
+			開発数.Set("開発", "種", IconType::資金, 3);
+			素材在庫.Set("素材", "個", IconType::資金, 4);
+
 			地図数.Set( "地図","枚", IconType::資金, 2);
-			開発数.Set( "装備","種", IconType::資金, 3);
 			討伐数.Set( "討伐","体", IconType::資金, 4);
-			名声値.Set( "名声","P", IconType::資金, 5);
+			撤退数.Set("撤退", "回", IconType::資金, 4);
 
 			gui_objects.push_back(&ギルマス);
-			gui_objects.push_back(&総資金);
-			gui_objects.push_back(&集客力);//人/日
-			gui_objects.push_back(&地図数);//枚
-			gui_objects.push_back(&開発数);//種
-			gui_objects.push_back(&討伐数);//体
-			gui_objects.push_back(&名声値);//P
+			gui_objects.push_back(&団員数);
+
+			gui_objects.push_back(&資金);
+			gui_objects.push_back(&販売数);
+			gui_objects.push_back(&売上);
+			gui_objects.push_back(&集客力);
+
+
+			gui_objects.push_back(&製造数);
+			gui_objects.push_back(&開発数);
+			gui_objects.push_back(&素材在庫);
+
+			gui_objects.push_back(&地図数);
+			gui_objects.push_back(&討伐数);
+			gui_objects.push_back(&撤退数);
+
+			gui_objects.push_back(&名声値);
 		}
 
 		void GUI_Init()
 		{
 			ギルマス.位置 = { LV(0),LV(1) ,LV(2),LV(5)-2 };
-			総資金.位置 = { LV(0),LV(1) + LV(4) * 0 + LV(5),LV(2),LV(3) };
-			集客力.位置 = { LV(0),LV(1) + LV(4) * 1 + LV(5),LV(2),LV(3) };
-			地図数.位置 = { LV(0),LV(1) + LV(4) * 2 + LV(5),LV(2),LV(3) };
-			開発数.位置 = { LV(0),LV(1) + LV(4) * 3 + LV(5),LV(2),LV(3) };
-			討伐数.位置 = { LV(0),LV(1) + LV(4) * 4 + LV(5),LV(2),LV(3) };
-			名声値.位置 = { LV(0),LV(1) + LV(4) * 5 + LV(5),LV(2),LV(3) };
+
+			for (int a = 1 ; a < gui_objects.size() ; a++)
+			{
+				gui_objects[a]->位置 = { LV(0),LV(1) + LV(4) * (a-1) + LV(5),LV(2),LV(3) };
+			}
+
 		}
 
 		void 派生Draw()

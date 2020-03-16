@@ -5,6 +5,7 @@
 
 #include "const_value.h"
 #include "enum_type.h"
+#include "game.h"
 #include "init_data.h"
 #include "material.h"
 #include "debug.h"

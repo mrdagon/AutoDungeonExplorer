@@ -12,16 +12,41 @@ namespace SDX_BSC
 	{
 	private:
 	public:
-		ClientS 依頼者;
-		QuestType 依頼系統;
-		int 要求素材[2];//素材依頼時のランクと数
-		ItemNo 要求アイテム;//アイテム依頼時
-		MonsterNo 要求魔獣;//討伐依頼時
-		int 要求数;
-		bool is受注;//受注前かどうか
-		int 受注日;
-		int 期日;
+		static std::vector<Quest> data;
 
-		bool is共通;//全ギルド共通依頼
+		QuestType 種類;
+		std::string 名前;
+
+		bool isメイン;//main or sub
+		int id;
+		int 条件数値;//作る装備の数、倒すモンスターの数など
+		int 条件番号;//ダンジョンIDやら
+		bool is受注;//受注前かどうか
+		bool is完了 = false;//完了したかどうか
+
+		int 次依頼[3] = {-1,-1,-1};//完了したら受注される依頼
+		
+		int 報酬金 = 0;
+		int 報酬名誉 = 0;
+
+		Quest(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注):
+			名前(名前),種類(種類),条件数値(条件数値),条件番号(条件番号),is受注(is受注)
+		{
+			id = data.size();
+		}
+
+
+		static void Add(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注)
+		{
+			data.emplace_back(名前,種類, 条件番号, 条件数値, is受注);
+		}
+
+		int 達成度計算()
+		{
+			return 1;
+		}
+
 	};
+
+	std::vector<Quest> Quest::data;
 }

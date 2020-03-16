@@ -25,13 +25,9 @@ namespace SDX_BSC
 		public:
 			void Draw派生(double px,double py)
 			{
-				int y = Game::日付 / 336 + 1;
-				int m = (Game::日付 / 28)%12 + 1;
-				int d = Game::日付 % 28 + 1;
-
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::日付].DrawRotate({ px+14,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { y,"/", m/10, m%10 , "/" , d/10, d%10 }, true);
+				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 ," 日目" }, true);
 				MFont::Arial大.DrawBold({ px + 210,py - 3 }, Color::White, Color::Black, "Sun", true);
 			}
 		};

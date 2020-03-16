@@ -9,7 +9,7 @@ namespace SDX_BSC
 #define LV(a) DV::I[14][a]
 
 
-
+	//ギルド情報と統合したのでボツ
 	/*決算ログ*/
 	class W_SettleLog : public WindowBox
 	{

@@ -13,17 +13,17 @@ namespace SDX_BSC
 		constexpr int 最大ギルド数 = 4;
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 5;
-		constexpr int 最大素材ランク = 30;
+		constexpr int 最大素材ランク = 20;
 		constexpr int 装備種 = 45;
 
-		constexpr int 月日数 = 20;
+		//constexpr int 月日数 = 20;
 
 		constexpr int 最大Aスキル数 = 3;
 		constexpr int 最大Pスキル数 = 6;
 		
 		constexpr bool isデバッグ = true;
 
-		constexpr int ウィンドウ数 = 11;
+		constexpr int ウィンドウ数 = 10;
 
 		constexpr int 要求経験値 = 200;
 
@@ -39,8 +39,7 @@ namespace SDX_BSC
 			300,
 			400,
 			500
-		};
-		
+		};		
 	}
 	//各種変数
 	namespace SV

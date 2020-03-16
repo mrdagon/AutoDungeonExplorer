@@ -34,7 +34,7 @@ namespace SDX_BSC
 		Dungeon* 探索先;
 		Order 探索指示;
 
-		int 獲得素材[CV::最大素材ランク];
+		EnumArray<int[CV::最大素材ランク], CraftType> 獲得素材;
 		std::vector <Monster> 魔物;
 
 		std::vector<Warker*> メンバー;
@@ -91,13 +91,16 @@ namespace SDX_BSC
 			else { is全滅 = false; }
 		}
 
-		void 探索終了(int 素材数[30])
+		void 探索終了(I_Guild *親)
 		{
 			//素材獲得
-			for (int a = 0; a < CV::最大素材ランク; a++)
+			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
-				素材数[a] += 獲得素材[a];
-				獲得素材[a] = 0;
+				for (int a = 0; a < CV::最大素材ランク; a++)
+				{
+					親->素材数[CraftType(b)][a] += 獲得素材[CraftType(b)][a];
+					獲得素材[CraftType(b)][a] = 0;
+				}
 			}
 			//レベルアップ
 			for (int a = 0; a < CV::パーティ人数; a++)
@@ -110,7 +113,7 @@ namespace SDX_BSC
 			スキルステ計算();
 		}
 
-		void 探索処理(int 素材数[30])
+		void 探索処理(I_Guild* 親)
 		{
 			//探索終了判定
 			if (is探索中 == false)
@@ -119,7 +122,7 @@ namespace SDX_BSC
 			}
 			if (Game::時間 >= Game::終業時間 && is移動中)
 			{
-				探索終了(素材数);
+				探索終了(親);
 				is探索中 = false;
 				return;
 			}
@@ -279,7 +282,8 @@ namespace SDX_BSC
 		{
 			残り待機時間 = 600;
 			//素材獲得処理
-			獲得素材[探索先->ランク]++;
+			獲得素材[CraftType::木工][探索先->ランク]++;
+			獲得素材[CraftType::鍛造][探索先->ランク]++;
 
 			地図発見処理();
 		}
@@ -493,11 +497,11 @@ namespace SDX_BSC
 				}
 			}
 
-			獲得素材[探索先->ランク]++;
+			獲得素材[CraftType::裁縫][探索先->ランク]++;
+			獲得素材[CraftType::魔術][探索先->ランク]++;
 
 			is移動中 = true;
 			残り移動時間 = 100;
-
 
 			地図発見処理();
 		}

@@ -53,7 +53,7 @@ namespace SDX_BSC
 			windows.push_back(&Win_Quest);
 			windows.push_back(&Win_Guild);
 			windows.push_back(&Win_EventLog);
-			windows.push_back(&Win_Settlelog);
+			//windows.push_back(&Win_Settlelog);
 
 			ToolBar.SetWindow(windows);
 			ToolBar.SetConfig(&Win_Config,&Win_Title);
@@ -87,7 +87,6 @@ namespace SDX_BSC
 			{
 				Guild::P->探索パーティ[a].ギルドID = Guild::P->id;
 			}
-
 		}
 
 		//デモ版用初期化処理
@@ -95,10 +94,12 @@ namespace SDX_BSC
 		{
 			//仮データ作成
 
+			//とりあえずBGM鳴らす
+			auto test = MMusic::メインBGM.Play(true);
+
 			tm time;//とりあえず乱数初期化
 			Time::GetDate(&time);
 			Rand::Reset(time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec);
-
 
 			for (int a = 0; a < 9; a++)
 			{
@@ -107,9 +108,16 @@ namespace SDX_BSC
 				Guild::P->装備所持数[a] = 3;
 			}
 
-			for (int a = 0; a < CV::最大素材ランク; a++)
+			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
-				Guild::P->素材数[a] = 20;
+				for (int a = 0; a < CV::最大素材ランク; a++)
+				{
+					Guild::P->素材数[CraftType(b)][a] = Rand::Get(20);
+					if (Guild::P->素材数[CraftType(b)][a] > 0)
+					{
+						Guild::P->is素材発見[CraftType(b)][a] = true;
+					}
+				}
 			}
 
 			Guild::P->部門経験値[ManagementType::経営] = Rand::Get(100);
@@ -122,10 +130,18 @@ namespace SDX_BSC
 			Guild::P->部門Lv[ManagementType::製造] = 1;
 			Guild::P->部門Lv[ManagementType::探索] = 1;
 
+			Guild::P->資金 = 123456789;
+
+			for (int a = 0; a < (int)CraftType::COUNT; a++)
+			{
+				Guild::P->製造Lv[CraftType(a)] = 1;
+				Guild::P->完成品[CraftType(a)] = -1;
+			}
+
 			//戦術ダミー
 			for (int a = 0; a < 100; a++)
 			{
-				Management::managements.emplace_back(a, a / 20, ManagementType(Rand::Get(3)), Rand::Get(200) + 10, Rand::Get(200000000), Rand::Coin(0.5));
+				Management::data.emplace_back(a, a / 20, ManagementType(Rand::Get(3)), Rand::Get(200) + 10, Rand::Get(200000000), Rand::Coin(0.5));
 			}
 			//来客ダミー
 			for (int a = 0; a < 100; a++)
@@ -324,10 +340,10 @@ namespace SDX_BSC
 			{
 				if (Game::時間 == Game::起床時間)
 				{
-					if ( Game::日付 % CV::月日数 == 0)
-					{
-						StartMonth();
-					}
+					//if ( Game::日付 % CV::月日数 == 0)
+					//{
+					//	StartMonth();
+					//}
 					StartDay();
 				}
 				if (Game::時間 == Game::始業時間)
@@ -341,10 +357,10 @@ namespace SDX_BSC
 				if (Game::時間 == Game::就寝時間)
 				{
 					EndDay();
-					if (Game::日付 % CV::月日数 == CV::月日数 - 1)
-					{
-						EndMonth();
-					}
+					//if (Game::日付 % CV::月日数 == CV::月日数 - 1)
+					//{
+					//	EndMonth();
+					//}
 				}
 				if (Game::時間 >= 360 * 24) 
 				{
@@ -408,10 +424,10 @@ namespace SDX_BSC
 
 		}
 		//月末の処理
-		void EndMonth()
-		{
-
-		}
+		//void EndMonth()
+		//{
+		//
+		//}
 
 		//製造処理
 		void MakeItem()

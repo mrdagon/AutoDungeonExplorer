@@ -104,7 +104,7 @@ namespace SDX_BSC
 	namespace MIcon
 	{
 		EnumArray<Image, ItemImageType> アイテム;
-		EnumArray<Image, MaterialType> 素材;
+		EnumArray<Image, CraftType> 素材;
 		EnumArray<Image, IconType> アイコン;
 		EnumArray<Image, EmoteType> エモート;
 		EnumArray<Image, DungeonType> ダンジョン;
@@ -125,13 +125,10 @@ namespace SDX_BSC
 			アイテム[ItemImageType::鎖帷子].Load("File/armor/armor016.png");
 			アイテム[ItemImageType::皮のローブ].Load("File/armor/armor066.png");
 			//素材
-			素材[MaterialType::石材].Load("File/system/mat_000.png");
-			素材[MaterialType::金属].Load("File/system/mat_001.png");
-			素材[MaterialType::木材].Load("File/system/mat_002.png");
-			素材[MaterialType::皮革].Load("File/system/mat_003.png");
-			素材[MaterialType::骨牙].Load("File/system/mat_004.png");
-			素材[MaterialType::羽毛].Load("File/system/mat_005.png");
-			素材[MaterialType::遺物].Load("File/system/mat_006.png");
+			素材[CraftType::鍛造].Load("File/system/mat_001.png");
+			素材[CraftType::木工].Load("File/system/mat_002.png");
+			素材[CraftType::裁縫].Load("File/system/mat_003.png");
+			素材[CraftType::魔術].Load("File/system/mat_004.png");
 			//アイコン
 			アイコン[IconType::閉じる].Load("File/icon/s_057.png");
 			アイコン[IconType::星].Load("File/icon/s_014.png");
@@ -262,6 +259,7 @@ namespace SDX_BSC
 		ImagePack ウィンドウ枠;
 		Image 背景;
 		Image ダンジョン背景[5];
+		EnumArray<Image, CraftType> クラフト台;
 
 		static void Load()
 		{
@@ -270,6 +268,11 @@ namespace SDX_BSC
 			ダンジョン背景[0].Load("File/system/dunback00.png");
 			ダンジョン背景[1].Load("File/system/dunback01.png");
 			ダンジョン背景[2].Load("File/system/facback.png");
+
+			クラフト台[CraftType::鍛造].Load("File/system/craft00.png");
+			クラフト台[CraftType::裁縫].Load("File/system/craft01.png");
+			クラフト台[CraftType::木工].Load("File/system/craft02.png");
+			クラフト台[CraftType::魔術].Load("File/system/craft03.png");
 		}
 
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
@@ -353,6 +356,71 @@ namespace SDX_BSC
 			MIcon::スキル[スキル種].Draw({ 座標.x + 2,座標.y+2 });
 		}
 
+		static void DrawCircleBar(Rect 座標, double ゲージ率, Color 表色, Color 裏色, double 太さ, double 裏太さ)
+		{
+			Point p1, p2, p3, p4, p5;
+			p1.SetPos(座標.x, 座標.y);
+			p2.SetPos(座標.x + 座標.GetW(), 座標.y);
+			p3.SetPos(座標.x + 座標.GetW(), 座標.y + 座標.GetH());
+			p4.SetPos(座標.x, 座標.y + 座標.GetH());
+			p5 = p1;
+
+			//裏色
+			Drawing::Line(p1, p2, 裏色, (int)裏太さ);
+			Drawing::Line(p2, p3, 裏色, (int)裏太さ);
+			Drawing::Line(p3, p4, 裏色, (int)裏太さ);
+			Drawing::Line(p4, p1, 裏色, (int)裏太さ);
+
+			Drawing::Circle({ p1.x, p1.y, 裏太さ/2 }, 裏色);
+			Drawing::Circle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
+			Drawing::Circle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
+			Drawing::Circle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
+
+			//表
+			if (ゲージ率 == 0) { return; }
+
+			if (ゲージ率 < 0.25)
+			{
+				p2.x = 座標.x + 座標.GetW() * ゲージ率 * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+			}
+			else if (ゲージ率 < 0.5)
+			{
+				p3.y = 座標.y + 座標.GetH() * (ゲージ率 - 0.25) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+			}
+			else if (ゲージ率 < 0.75)
+			{
+				p4.x = 座標.x + 座標.GetW() - 座標.GetW() * ( ゲージ率 - 0.5 ) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Line(p3, p4, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
+			}
+			else
+			{
+				p5.y = 座標.y + 座標.GetH() - 座標.GetH() * (ゲージ率 - 0.75) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Line(p3, p4, 表色, (int)太さ);
+				Drawing::Line(p4, p5, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
+			}
+		}
+
 	}
 
 	//文字データ
@@ -429,14 +497,18 @@ namespace SDX_BSC
 		Music 戦闘開始;
 		Music 内政中;
 		Music 勝利;
+		Music メインBGM;
 
 		static void Load()
 		{
-			戦闘中.Load("file/music/c18.mp3");
-			敗北.Load("file/music/c18.mp3");
-			戦闘開始.Load("file/music/c18.mp3");
-			内政中.Load("file/music/c18.mp3");
-			勝利.Load("file/music/c18.mp3");
+			戦闘中.Load("File/music/c18.mp3");
+			敗北.Load("File/music/c18.mp3");
+			戦闘開始.Load("File/music/c18.mp3");
+			内政中.Load("File/music/c18.mp3");
+			勝利.Load("File/music/c18.mp3");
+			//メインBGM.Load("File/music/nemuikana.mp3");
+			メインBGM.Load("File/music/outletpark.mp3");
+			メインBGM.SetVolume(0.5);
 		}
 	}
 
@@ -447,7 +519,7 @@ namespace SDX_BSC
 
 		static void Load()
 		{
-			効果音[SEType::決定].Load("file/sound/coin04.wav");
+			効果音[SEType::決定].Load("File/sound/coin04.wav");
 		}
 	}
 

@@ -22,13 +22,52 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				//Screen::SetDrawMode(Color(255, 255, 255, 128), BlendMode::Alpha);
+				//todo-完成時のポップアップなどの演出、初製造装備の表示変更
+
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				//Screen::SetDrawMode();
+				MSystem::DrawWindow({ px+LV(23),py+LV(24) }, LV(25), LV(26), LV(41));
+				//作業台
+				MSystem::クラフト台[部門].DrawRotate({ px + LV(15) ,py + LV(16) }, 2, 0);
+
+				//技術レベルとEXP
+				double rate = Guild::P->製造経験[部門] / ((Guild::P->製造Lv[部門]*2+1) * 100000);
+				MSystem::DrawBar({ px + LV(19),py + LV(20) }, LV(21), LV(22), rate, 1, Color::Blue, Color::White, Color::White, true);
+				MFont::BArial中.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Guild::P->製造Lv[部門] });
+
 				//合計製造力
-				MSystem::DrawWindow({ px + LV(25) , py + LV(26) }, 70, 18, 11);
-				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(27), py + LV(28) });
-				//MFont::BArial中.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, (int)Guild::P->合計製造力,true);
+				//MSystem::DrawWindow({ px + LV(23) , py + LV(24) }, 70, 18, 11);
+				//MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(25), py + LV(26) });
+			
+				//製造アイコンと製造進行度合い
+				//craft種アイコン
+				int id = Guild::P->完成品[部門];
+				MSystem::DrawBox({ px + LV(29) , py + LV(30) }, LV(31), LV(32), Color::White);
+				if (id >= 0)
+				{
+					MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(27) , py + LV(28) });
+					MFont::BArial中.DrawBold({ px + LV(42) , py + LV(43) }, Color::Yellow, Color::Black, {Item::data[id].ランク+1},true);
+				}
+				
+				//製造進捗ゲージ
+				if (Guild::P->必要製造力[部門] > 0)
+				{
+					rate = Guild::P->製造進行度[部門] / Guild::P->必要製造力[部門];
+				} else {
+					rate = 0;
+				}
+
+				Color ca, cb;
+
+				if (Guild::P->製造ゲージ色[部門])
+				{
+					ca.SetColor(255, 128, 128);
+					cb.SetColor(64, 64, 255);
+				} else {
+					cb.SetColor(255, 128, 128);
+					ca.SetColor(64, 64, 255);
+				}
+
+				MSystem::DrawCircleBar({ px + LV(29) , py + LV(30) , LV(31) , LV(32) }, rate, ca , cb , 4 , 4);
 			}
 
 			void Click(double px, double py)
@@ -63,10 +102,23 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
+				//todo-製造中はアニメーションさせる
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + LV(19) , py + LV(20) }, 2, 0);
-				MFont::BArial小.DrawBold({ px + LV(21) ,py + LV(22) }, Color::White, Color::Black, ギルメン->製造力 , true);
-				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(23) , py + LV(24) });
+				if (Game::is仕事中 == true)
+				{
+					//製造中
+					int n = Game::アニメーション時間 / 10  %  4 ;
+					if (n == 3) { n = 1; }
+					n += 6;
+
+					MUnit::ユニット[ギルメン->見た目][n]->DrawRotate({ px + LV(35) , py + LV(36) }, 2, 0);
+				} else {
+					//休み中
+					MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + LV(35) , py + LV(36) }, 2, 0);
+				}
+
+				MFont::BArial小.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, ギルメン->製造力 , true);
+				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(39) , py + LV(40) });
 			}
 
 			void Click(double px, double py)
@@ -162,21 +214,25 @@ namespace SDX_BSC
 			int n = 0;
 			int y = 0;
 			const int 列数 = 6;
+			int 段数 = 0;
 
 			横幅 = LV(0);
 
 			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
-				CraftType t = CraftType(b);				
+				CraftType t = CraftType(b);
+				段数 = (int)製造メンバー[t].size() / 列数 + 1;
+				if (段数 < 2) { 段数 = 2; }
+
 				//人数に応じてメンバーゾーンのサイズは変動
-				メンバーゾーン[t].位置 = { LV(1) , LV(2)+y , LV(0) - LV(3) , LV(4) + ((int)製造メンバー[t].size() + 列数) / 列数 * LV(5) };
+				メンバーゾーン[t].位置 = { LV(1) , LV(2)+y , LV(0) - LV(3) , LV(4) + 段数 * LV(5) };
 				
 				for (int a = 0; a < 製造メンバー[t].size(); a++)
 				{
 					製造メンバー[t][a].位置 = { LV(1) + LV(8) + LV(9) * (a % 列数) , LV(2) + LV(10) + LV(11) * (a / 列数) + y ,LV(12),LV(13) };
 				}
 
-				y += LV(4) + LV(7) + ((int)製造メンバー[t].size() + 列数) / 列数 * LV(6);
+				y += LV(4) + LV(7) + 段数 * LV(6);
 			}
 
 			for (int b = 0; b < (int)CraftType::COUNT; b++)
@@ -196,7 +252,7 @@ namespace SDX_BSC
 
 
 			//
-			縦内部幅 = 300 + y + (((int)製造メンバー.size() + 7) / 7 )* LV(14);
+			縦内部幅 = y + LV(14);
 		}
 
 		void 派生Draw()

@@ -7,6 +7,19 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
+	bool ConfigSaveAndLoad(FileMode 保存or読み込み)
+	{
+		//バイナリ形式で保存
+		File file("file/save/config.sav", 保存or読み込み, false);
+
+		file.ReadWrite(Game::BGM設定);
+		file.ReadWrite(Game::SE設定);
+		file.ReadWrite(Game::解像度設定);
+
+		return false;
+	}
+
+
 	bool SaveAndLoad(FileMode 保存or読み込み, int 読み込みスロット番号)
 	{
 		//バイナリ形式で保存

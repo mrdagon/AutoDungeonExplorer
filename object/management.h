@@ -12,7 +12,7 @@ namespace SDX_BSC
 	{
 	private:
 	public:
-		static std::vector<Management> managements;
+		static std::vector<Management> data;
 
 		Management(int ID,int Lv,ManagementType 系統,int MP , int 資金 , bool is永続):
 			ID(ID),Lv(Lv),系統(系統),消費MP(MP),消費資金(資金),is永続(is永続)
@@ -38,6 +38,6 @@ namespace SDX_BSC
 		}
 	};
 
-	std::vector<Management> Management::managements;
+	std::vector<Management> Management::data;
 
 }

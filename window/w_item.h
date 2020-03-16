@@ -31,11 +31,13 @@ namespace SDX_BSC
 				//アイコン
 				MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(11),py+LV(12) });
 				//在庫数
-				MFont::Arial小.DrawBold({ px + LV(19) ,py + LV(20) }, Color::White, Color::Black, { "x" }, true);
-				MFont::Arial中.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { zaiko }, true);
+				//MFont::Arial小.DrawBold({ px + LV(19) ,py + LV(20) }, Color::White, Color::Black, { "x" }, true);
+				MFont::BArial中.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { "x" , zaiko }, true);
 				//ランク表示
-				MFont::Arial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Lv " }, true);
-				MFont::Arial中.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { Item::data[id].ランク }, true);
+				//MIcon::アイコン[IconType::星].DrawRotate({ px + LV(15) ,py + LV(16) }, 1, 0);
+				//MFont::Arial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Lv " }, true);
+				MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク+1 }, true);
+				//MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, {255,64,64}, Color::Black, { Item::data[id].ランク+1 }, true);
 				//new表示
 
 			}
