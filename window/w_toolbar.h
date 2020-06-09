@@ -206,7 +206,7 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::出口].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
+				MIcon::アイコン[IconType::終了].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "終了");
 			}
 

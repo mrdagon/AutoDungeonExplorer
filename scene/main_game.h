@@ -53,7 +53,6 @@ namespace SDX_BSC
 			windows.push_back(&Win_Quest);
 			windows.push_back(&Win_Guild);
 			windows.push_back(&Win_EventLog);
-			//windows.push_back(&Win_Settlelog);
 
 			ToolBar.SetWindow(windows);
 			ToolBar.SetConfig(&Win_Config,&Win_Title);
@@ -110,13 +109,10 @@ namespace SDX_BSC
 
 			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
-				for (int a = 0; a < CV::最大素材ランク; a++)
+				for (int a = 0; a < 1; a++)
 				{
-					Guild::P->素材数[CraftType(b)][a] = Rand::Get(20);
-					if (Guild::P->素材数[CraftType(b)][a] > 0)
-					{
-						Guild::P->is素材発見[CraftType(b)][a] = true;
-					}
+					Guild::P->素材数[CraftType(b)][a] = 1000;
+					Guild::P->is素材発見[CraftType(b)][a] = true;
 				}
 			}
 
@@ -130,7 +126,7 @@ namespace SDX_BSC
 			Guild::P->部門Lv[ManagementType::製造] = 1;
 			Guild::P->部門Lv[ManagementType::探索] = 1;
 
-			Guild::P->資金 = 123456789;
+			Guild::P->資金 = 1000000;
 
 			for (int a = 0; a < (int)CraftType::COUNT; a++)
 			{
@@ -138,18 +134,9 @@ namespace SDX_BSC
 				Guild::P->完成品[CraftType(a)] = -1;
 			}
 
-			//戦術ダミー
-			for (int a = 0; a < 100; a++)
-			{
-				Management::data.emplace_back(a, a / 20, ManagementType(Rand::Get(3)), Rand::Get(200) + 10, Rand::Get(200000000), Rand::Coin(0.5));
-			}
-			//来客ダミー
-			for (int a = 0; a < 100; a++)
-			{
-				Customer::customers.emplace_back(0,Rand::Get(1300));
+			//戦術仮データ読み込み
+			Management::Load();
 
-				Customer::my_customers.push_back(Customer::customers[a]);
-			}
 			//求人＆初期人材ダミー
 			Warker::data.reserve(2048);
 			for (int a = 0; a < 25; a++)
@@ -340,10 +327,6 @@ namespace SDX_BSC
 			{
 				if (Game::時間 == Game::起床時間)
 				{
-					//if ( Game::日付 % CV::月日数 == 0)
-					//{
-					//	StartMonth();
-					//}
 					StartDay();
 				}
 				if (Game::時間 == Game::始業時間)
@@ -357,10 +340,6 @@ namespace SDX_BSC
 				if (Game::時間 == Game::就寝時間)
 				{
 					EndDay();
-					//if (Game::日付 % CV::月日数 == CV::月日数 - 1)
-					//{
-					//	EndMonth();
-					//}
 				}
 				if (Game::時間 >= 360 * 24) 
 				{
@@ -373,6 +352,7 @@ namespace SDX_BSC
 
 				if (Game::is仕事中 == true)
 				{
+					SellItem();
 					MakeItem();
 					ExploreDungeon();
 				}
@@ -386,8 +366,6 @@ namespace SDX_BSC
 		void StartDay()
 		{
 			Game::is仕事中 = false;
-			
-
 		}
 
 		//業務開始の処理
@@ -396,6 +374,7 @@ namespace SDX_BSC
 			Game::is仕事中 = true;
 			Guild::P->製造力計算();
 			Guild::P->探索開始();
+			Guild::P->装備取置解除();
 		}
 
 		//業務終了の処理
@@ -408,14 +387,14 @@ namespace SDX_BSC
 		{
 			Game::is仕事中 = false;
 
-			UseTactics();
-
 			//求人追加、仮処理
 			if (Warker::data.size() < 45)
 			{
 				Warker::data.emplace_back();
 				Warker::data.back().Make((int)Warker::data.size() - 1, Rand::Get(4), 1, "ナナシ");
 			}
+
+			Guild::P->装備自動更新();
 		}
 
 		//月初の処理
@@ -435,18 +414,18 @@ namespace SDX_BSC
 			Guild::P->製造処理();
 		}
 
+		//販売処理
+		void SellItem()
+		{
+			Guild::P->アイテム販売();
+		}
+
 		//探索処理
 		void ExploreDungeon()
 		{
 			Guild::P->探索処理();
 		}
 
-		//●終日処理
-		//経営戦術確定
-		void UseTactics()
-		{
-
-		}
 
 		//●探索処理
 

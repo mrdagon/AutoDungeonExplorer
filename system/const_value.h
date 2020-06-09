@@ -18,8 +18,8 @@ namespace SDX_BSC
 
 		//constexpr int 月日数 = 20;
 
-		constexpr int 最大Aスキル数 = 3;
-		constexpr int 最大Pスキル数 = 6;
+		constexpr int 最大Aスキル数 = 4;
+		constexpr int 最大Pスキル数 = 10;
 		
 		constexpr bool isデバッグ = true;
 

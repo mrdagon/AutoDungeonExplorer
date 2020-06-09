@@ -51,10 +51,11 @@ namespace SDX_BSC
 		//他ステータス
 		bool isボス;
 
-		int ASkill[CV::最大Aスキル数] = { 0 };//最大３個とか、レベルで増える？
+		int ASkill[CV::最大Aスキル数] = { 0 };//最大４個とか
 		int ASkillLv[CV::最大Aスキル数] = { 0 };
 
-		int PSkill習得率[31] = {0};//最大３１個、レベルで増える？
+		int PSkillID[10] = { 0 };//覚えるPスキル
+		int PSkillLv[10] = { 0 };//Pスキルの習得レベル
 	};
 
 	void LoadMonsterClass()

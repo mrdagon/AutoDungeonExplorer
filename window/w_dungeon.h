@@ -63,11 +63,11 @@ namespace SDX_BSC
 			ヘルプ横幅 = 200;
 			ヘルプ縦幅 = 100;
 
-			タブ.emplace_back(現在タブ, 0, IconType::星, "R1");
-			タブ.emplace_back(現在タブ, 1, IconType::星, "R2");
-			タブ.emplace_back(現在タブ, 2, IconType::星, "R3");
-			タブ.emplace_back(現在タブ, 3, IconType::星, "R4");
-			タブ.emplace_back(現在タブ, 4, IconType::星, "R5");
+			タブ.emplace_back(現在タブ, 0, IconType::ランク, "R1");
+			タブ.emplace_back(現在タブ, 1, IconType::ランク, "R2");
+			タブ.emplace_back(現在タブ, 2, IconType::ランク, "R3");
+			タブ.emplace_back(現在タブ, 3, IconType::ランク, "R4");
+			タブ.emplace_back(現在タブ, 4, IconType::ランク, "R5");
 
 			タブ[0].SetHelp("rank1");
 			タブ[1].SetHelp("rank2");

@@ -95,28 +95,29 @@ namespace SDX_BSC
 			スクロール位置 = 0;
 
 			団員数.Set("団員", "人", IconType::資金, 4);
-			名声値.Set("名声", "点", IconType::資金, 5);
+			名声値.Set("名声", "点", IconType::名声, 5);
 
 			資金.Set( "資金","Ｇ",IconType::資金,0);
-			販売数.Set("討伐", "体", IconType::資金, 4);
+			販売数.Set("販売", "個", IconType::装備, 4);
 			売上.Set("売上", "Ｇ", IconType::資金, 4);
-			集客力.Set( "集客","人", IconType::資金, 1);
+			//集客力.Set( "集客","CPD", IconType::集客, 1);
 
-			製造数.Set("製造", "種", IconType::資金, 3);;//個
-			開発数.Set("開発", "種", IconType::資金, 3);
-			素材在庫.Set("素材", "個", IconType::資金, 4);
+			製造数.Set("製造", "個", IconType::装備, 3);;//個
+			開発数.Set("開発", "種", IconType::開発, 3);
+			素材在庫.Set("素材", "個", IconType::素材, 4);
 
-			地図数.Set( "地図","枚", IconType::資金, 2);
-			討伐数.Set( "討伐","体", IconType::資金, 4);
-			撤退数.Set("撤退", "回", IconType::資金, 4);
+			地図数.Set( "地図","枚", IconType::地図, 2);
+			討伐数.Set( "討伐","体", IconType::ボス, 4);
+			撤退数.Set("撤退", "回", IconType::撤退, 4);
 
 			gui_objects.push_back(&ギルマス);
+			gui_objects.push_back(&名声値);
 			gui_objects.push_back(&団員数);
 
 			gui_objects.push_back(&資金);
 			gui_objects.push_back(&販売数);
 			gui_objects.push_back(&売上);
-			gui_objects.push_back(&集客力);
+			//gui_objects.push_back(&集客力);
 
 
 			gui_objects.push_back(&製造数);
@@ -127,7 +128,6 @@ namespace SDX_BSC
 			gui_objects.push_back(&討伐数);
 			gui_objects.push_back(&撤退数);
 
-			gui_objects.push_back(&名声値);
 		}
 
 		void GUI_Init()

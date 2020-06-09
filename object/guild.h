@@ -75,12 +75,12 @@ namespace SDX_BSC
 				if (素材数[種類][a] >= 要求数)
 				{
 					必要製造力[種類] = 10000;
-					素材ランク = a;
+					素材ランク = a + 1;
 					素材数[種類][a]-= 要求数;
 					break;
 				}
 			}
-			if (素材ランク < 0) { return false; }
+			if (素材ランク <= 0) { return false; }
 
 			//何を作るか？必要製造力がいくつかを計算
 			int 完成ランク = 素材ランク + 製造Lv[種類];
@@ -107,6 +107,7 @@ namespace SDX_BSC
 		{
 			int itemID = 完成品[種類];
 
+			//所持数だけ追加して販売可能数は+しない
 			装備所持数[itemID]++;
 			is装備開発[itemID] = true;
 
@@ -142,6 +143,94 @@ namespace SDX_BSC
 				if (探索パーティ[a].味方.size() > 0 && 探索パーティ[a].is全滅 == false){探索パーティ[a].探索処理(this);}
 			}
 		}
+
+		void 装備取置解除()
+		{
+			for (int a = 0; a < CV::装備種; a++)
+			{
+				販売可能数[a] = 装備所持数[a];
+			}
+		}
+
+
+		void 装備自動更新()
+		{
+			for (int a = 0; a < CV::最大パーティ数; a++)
+			{
+				for (int b = 0; b < CV::パーティ人数; b++)
+				{
+					auto it = 探索パーティ[a].メンバー[b];
+
+					個別装備更新(it,0);
+					個別装備更新(it,1);
+				}
+			}
+		}
+
+		//no 0-1 装備部位
+		void 個別装備更新(Warker* ギルメン , int no)
+		{
+			if (ギルメン == nullptr) { return; }
+			if (ギルメン->is装備更新 == false) { return; }
+
+			//同じ系統でランク上の装備があったら交換
+			auto item = Item::data[ギルメン->装備[no]];
+
+			if (item.isレア == true) { return; }
+
+			for (int b = CV::装備種 - 1; b >= 0; b--)
+			{
+				if ( 装備所持数[b] <= 0) { continue; }
+					
+				if ( Item::data[b].種類 == item.種類 &&
+					 Item::data[b].ランク > item.ランク&&
+					 Item::data[b].isレア == false )
+				{
+					装備所持数[ギルメン->装備[no]]++;
+					装備所持数[b]--;
+					ギルメン->装備[no] = b;
+					break;
+				}
+			}
+		}
+
+
+		void アイテム販売()
+		{
+			//客が来る判定
+			if (集客力 < Rand::Get(10000)) { return; }
+
+
+			//在庫から売るアイテムを抽選
+			int total_wait = 0;
+
+			for (int a = 0; a < CV::装備種; a++)
+			{
+				if (販売可能数[a] > 0 && 装備所持数[a] > 1)
+				{
+					total_wait += Item::data[a].ランク;
+				}			
+			}
+
+			int 乱数 = Rand::Get(total_wait);
+
+			for (int a = 0; a < CV::装備種; a++)
+			{
+				if (販売可能数[a] > 0 && 装備所持数[a] > 1)
+				{
+					乱数 -= Item::data[a].ランク;
+					if (乱数 <= 0)
+					{
+						販売可能数[a]--;
+						装備所持数[a]--;
+						資金 += Item::data[a].値段;
+						break;
+					}
+				}
+			}
+
+		}
+
 	};
 
 

@@ -60,6 +60,7 @@ namespace SDX_BSC
 		};
 		*/
 
+		//未使用
 		class GUI_実行 : public GUI_Object
 		{
 		public:
@@ -103,14 +104,22 @@ namespace SDX_BSC
 
 				//現在の資金
 				MIcon::アイコン[IconType::資金].Draw({ px + LV(34) , py + LV(35) });
-				MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
+				MFont::BArial中.DrawBold({ px + LV(32) ,py + LV(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
-				if (Guild::P->選択戦術 != nullptr)
+				if (GUI_Help::戦術 != nullptr)
+				{
+					Color fc = { 255,64,64 };
+					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
+					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, { "- " ,GUI_Help::戦術->消費資金 , " G" }, true);
+					GUI_Help::戦術 = nullptr;
+				}
+				else if (Guild::P->選択戦術 != nullptr)
 				{
 					Color fc = {255,64,64};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(38) }, fc, Color::Black, {"- " ,Guild::P->選択戦術->消費資金 , " G"}, true);
+					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, {"- " ,Guild::P->選択戦術->消費資金 , " G"}, true);
 				}
+
 			}
 		};
 		class GUI_Rank : public GUI_Object
@@ -124,7 +133,7 @@ namespace SDX_BSC
 
 				for (int a = 0; a < ランク; a++)
 				{
-					MIcon::アイコン[IconType::星].Draw({ px + LV(39) + a * 15 , py + LV(40) });
+					MIcon::アイコン[IconType::ランク].Draw({ px + LV(39) + a * 15 , py + LV(40) });
 				}
 
 				MFont::BArial中.DrawBold({ px + LV(41),py + LV(42) }, Color::White, Color::Black, "Rank");
@@ -147,6 +156,8 @@ namespace SDX_BSC
 			}
 			void Click(double px, double py)
 			{
+				//お金足りてたら使用、不足してたら予約状態にする
+
 				if (Guild::P->選択戦術 != 参照戦術)
 				{
 					Guild::P->選択戦術 = 参照戦術;
@@ -165,10 +176,9 @@ namespace SDX_BSC
 
 	public:
 		std::vector<GUI_Tab> タブ;
-		//GUI_MP gui_mp;//現在のMP
 		GUI_Gold gui_gold;//消費資金
 		GUI_MLv gui_mlv[4];//部門LVと経験値バー
-		GUI_実行 gui_実行;//実行or予約ボタン
+		//GUI_実行 gui_実行;//実行or予約ボタン
 
 		GUI_Rank gui_rank[10];//ランク毎の区切り-10個？
 		GUI_Skill gui_skill[100];//各種戦術アイコン、とりあえず最大100
@@ -189,17 +199,17 @@ namespace SDX_BSC
 			最小縦 = 200;
 			最大縦 = 600;
 			縦内部幅 = 600;//変動する
-			固定縦 = 115;
+			固定縦 = 85;
 			スクロール位置 = 0;
 
 			ヘルプメッセージ = "経営戦術と残りMP\n";
 			ヘルプ横幅 = MFont::メイリオ中.GetDrawStringWidth(ヘルプメッセージ) + 20;
 			ヘルプ縦幅 = 40;
 
-			タブ.emplace_back(現在タブ, 0, IconType::星, "経営");
-			タブ.emplace_back(現在タブ, 1, IconType::星, "人事");
-			タブ.emplace_back(現在タブ, 2, IconType::星, "製造");
-			タブ.emplace_back(現在タブ, 3, IconType::星, "探索");
+			タブ.emplace_back(現在タブ, 0, IconType::情報, "");//経営
+			タブ.emplace_back(現在タブ, 1, IconType::求人, "");//人事
+			タブ.emplace_back(現在タブ, 2, IconType::製造, "");//製造
+			タブ.emplace_back(現在タブ, 3, IconType::迷宮, "");//探索
 
 			gui_mlv[0].部門 = ManagementType::経営;
 			gui_mlv[1].部門 = ManagementType::人事;
@@ -211,7 +221,6 @@ namespace SDX_BSC
 			for (int a = 0; a < 4; a++) { gui_objects.push_back(&gui_mlv[a]); }
 			for (int a = 0; a < 10; a++) { gui_objects.push_back(&gui_rank[a]); }
 			for (int a = 0; a < 100; a++) { gui_objects.push_back(&gui_skill[a]); }
-			gui_objects.push_back(&gui_実行);
 
 			gui_gold.SetHelp("gold");
 			for (int a = 0; a < 4; a++) { タブ[a].SetHelp("tab"); }
@@ -250,7 +259,7 @@ namespace SDX_BSC
 			gui_mlv[2].位置 = { LV(5) + LV(14)*2,LV(11),LV(12),LV(13) };
 			gui_mlv[3].位置 = { LV(5) + LV(14)*3,LV(11),LV(12),LV(13) };
 
-			gui_実行.位置 = { LV(15) , LV(16) , LV(17) , LV(18) };
+			//gui_実行.位置 = { LV(15) , LV(16) , LV(17) , LV(18) };
 		}
 
 		void Tub_Change()
@@ -316,7 +325,6 @@ namespace SDX_BSC
 
 			//固定描画
 			gui_gold.Draw();
-			gui_実行.Draw();
 			for (auto &it : gui_mlv)
 			{
 				it.Draw();
@@ -352,9 +360,6 @@ namespace SDX_BSC
 
 				it.操作チェック(相対座標.x, 相対座標.y);
 			}
-
-			gui_実行.操作チェック(相対座標.x, 相対座標.y);
-
 
 			if (tubcheck != 現在タブ)
 			{

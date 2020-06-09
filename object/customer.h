@@ -7,7 +7,8 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/*客*/
+	/*客-廃止*/
+	/*
 	class Customer
 	{
 	private:
@@ -34,4 +35,5 @@ namespace SDX_BSC
 
 	std::vector<Customer> Customer::customers;
 	std::list<Customer> Customer::my_customers;
+	*/
 }

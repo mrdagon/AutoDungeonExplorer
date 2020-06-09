@@ -45,7 +45,7 @@ namespace SDX_BSC
 				if (id >= 0)
 				{
 					MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(27) , py + LV(28) });
-					MFont::BArial中.DrawBold({ px + LV(42) , py + LV(43) }, Color::Yellow, Color::Black, {Item::data[id].ランク+1},true);
+					MFont::BArial中.DrawBold({ px + LV(42) , py + LV(43) }, Color::Yellow, Color::Black, {Item::data[id].ランク},true);
 				}
 				
 				//製造進捗ゲージ
@@ -118,7 +118,7 @@ namespace SDX_BSC
 				}
 
 				MFont::BArial小.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, ギルメン->製造力 , true);
-				MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(39) , py + LV(40) });
+				MIcon::アイコン[IconType::製造力].Draw({ px + LV(39) , py + LV(40) });
 			}
 
 			void Click(double px, double py)
@@ -164,7 +164,7 @@ namespace SDX_BSC
 			種類 = WindowType::Factory;
 			名前 = "製造";
 			略記 = "製造";
-			アイコン = IconType::ハンマー;
+			アイコン = IconType::製造;
 			横幅 = 344;
 			縦幅 = 125;
 			最小縦 = 125;

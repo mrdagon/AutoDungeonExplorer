@@ -40,13 +40,13 @@ namespace SDX_BSC
 				MSystem::DrawBar({ px + LV(18) , py + LV(19) }, LV(20), LV(21), dun->探索率[Guild::P->id], 1 , Color::Blue, Color::White, Color::White, true);				
 				MFont::BArial小.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, { (int)(dun->探索率[Guild::P->id] * 100) , "%" }, true);				
 				//ボス状態
-				MIcon::アイコン[IconType::閉じる].DrawRotate({ px + LV(22),py + LV(23) }, 1, 0);
+				MIcon::アイコン[IconType::ボス].DrawRotate({ px + LV(22),py + LV(23) }, 1, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(23) - 9 }, Color::White, Color::Black, "？？？", true);
 				//地図状態
-				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + LV(22),py + LV(24) }, 1, 0);
+				MIcon::アイコン[IconType::地図].DrawRotate({ px + LV(22),py + LV(24) }, 1, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(24) - 9 }, Color::White, Color::Black, "0 /  2", true);
 				//財宝状態
-				MIcon::アイコン[IconType::資金].DrawRotate({ px + LV(22),py + LV(25) }, 1, 0);
+				MIcon::アイコン[IconType::宝箱].DrawRotate({ px + LV(22),py + LV(25) }, 1, 0);
 				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(25) - 9 }, Color::White, Color::Black, "0 / ??", true);
 
 
@@ -64,10 +64,8 @@ namespace SDX_BSC
 				std::string siji;
 				switch (Guild::P->探索パーティ[パーティID].探索指示)
 				{
-				case Order::探索重視: siji = "探索\n重視"; break;
-				case Order::ボス討伐: siji = "ボス\n討伐"; break;
-				case Order::戦闘重視: siji = "戦闘\n重視"; break;
-				case Order::収集重視: siji = "収集\n重視"; break;
+				case Order::探索: siji = "通常\n探索"; break;
+				case Order::ボス: siji = "ボス\n討伐"; break;
 				}
 
 				MFont::Bメイリオ小.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, siji, true);
@@ -155,16 +153,25 @@ namespace SDX_BSC
 				MFont::BArial小.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, "Lv 10");
 				MSystem::DrawBar({ px + LV(39),py + LV(40) }, LV(41), LV(42), 0.5, 1, Color::Blue, Color::White, Color::White, true);
 
-				//装備品 x 2or3と更新ボタン、自動更新設定
+				//装備品 x 2or3と更新ボタン、自動更新設定、装備ランク
 				MSystem::DrawWindow({ px + LV(43) ,py + LV(44) }, LV(45), LV(46), 0);
 				MSystem::DrawWindow({ px + LV(43) + LV(47) ,py + LV(44) }, LV(45), LV(46), 0);
 				MIcon::アイテム[Item::data[ギルメン->装備[0]].見た目].Draw({ px + LV(48) , py + LV(50) });
 				MIcon::アイテム[Item::data[ギルメン->装備[1]].見た目].Draw({ px + LV(49) , py + LV(50) });
 
+				MFont::BArial小.DrawBold({ px + LV(48) + 2, py + LV(50) + 11 }, Color::White, Color::Black, { "Lv " , Item::data[ギルメン->装備[0]].ランク });
+				MFont::BArial小.DrawBold({ px + LV(49) + 2, py + LV(50) + 11 }, Color::White, Color::Black, { "Lv " ,Item::data[ギルメン->装備[1]].ランク });
+
 				//装備更新ボタン
-				MSystem::DrawWindow({ px + LV(55) ,py + LV(56) }, LV(57), LV(58), 0, 1);
-				MFont::BArial小.DrawBold({ px + LV(59) ,py + LV(60) }, Color::White, Color::Black, "Auto");
-				MIcon::アイコン[IconType::三角].Draw({ px + LV(61),py + LV(62) });
+				if (ギルメン->is装備更新)
+				{
+					MSystem::DrawWindow({ px + LV(55) ,py + LV(56) }, LV(57), LV(58), 2, -1);
+				} else {
+					MSystem::DrawWindow({ px + LV(55) ,py + LV(56) }, LV(57), LV(58), 0, 1);
+				}
+
+				MFont::BArial小.DrawBold({ px + LV(59) ,py + LV(60) }, Color::White, Color::Black, "装備更新");
+				MIcon::アイコン[IconType::更新].Draw({ px + LV(61),py + LV(62) });
 
 				//スキル x 4
 				//スキルに適正ポジションF_M_B
@@ -188,6 +195,28 @@ namespace SDX_BSC
 			{
 				if (Game::is仕事中 == true) { return; }
 				if (ギルメン == nullptr) { return; }
+
+				//装備クリックで更新
+				if (Point(px, py).Hit(&Rect(LV(43), LV(44), LV(45), LV(46))) == true)
+				{
+					//武器クリック
+					Guild::P->個別装備更新(ギルメン, 0);
+					return;
+				}
+
+				if (Point(px, py).Hit(&Rect(LV(43)+LV(47), LV(44), LV(45), LV(46))) == true)
+				{
+					//防具クリック
+					Guild::P->個別装備更新(ギルメン, 0);
+					return;
+				}
+
+				//自動更新切り替え
+				if (Point(px, py).Hit(&Rect(LV(55), LV(56), LV(57), LV(58))) == true)
+				{
+					ギルメン->is装備更新 = !ギルメン->is装備更新;
+					return;
+				}
 
 				//ギルメン掴む
 				W_Drag_Drop::ギルメン = ギルメン;
@@ -364,7 +393,6 @@ namespace SDX_BSC
 				{
 				case RoomType::ボス:
 				case RoomType::魔物:
-				case RoomType::素材:
 				case RoomType::財宝:
 					break;
 				}
@@ -433,7 +461,7 @@ namespace SDX_BSC
 			種類 = WindowType::Party;
 			名前 = "ギルド員/割当";
 			略記 = "団員";
-			アイコン = IconType::団員;
+			アイコン = IconType::編成;
 			横幅 = 550;
 			縦幅 = 125;
 			最小縦 = 125;

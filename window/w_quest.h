@@ -35,7 +35,7 @@ namespace SDX_BSC
 				MFont::BArial中.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度計算() , " / " , Quest::data[id] .条件数値} , true );
 
 				//報酬、名誉
-				MIcon::アイコン[IconType::依頼].Draw({ px + LV(9), py + LV(10) });
+				MIcon::アイコン[IconType::名声].Draw({ px + LV(9), py + LV(10) });
 				MFont::BArial中.DrawBold({ px + LV(11) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
 				//報酬、資金
 				MIcon::アイコン[IconType::資金].Draw({ px + LV(13), py + LV(10) });
@@ -89,7 +89,7 @@ namespace SDX_BSC
 			}
 
 
-			縦内部幅 = LV(0)*2 + (LV(3) + LV(4)) * Quest::data.size();
+			縦内部幅 = double(LV(0)*2 + (LV(3) + LV(4)) * Quest::data.size());
 		}
 
 		void 派生Draw()

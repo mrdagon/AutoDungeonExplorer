@@ -20,6 +20,8 @@ namespace SDX_BSC
 		bool isヘルプ表示 = true;
 		std::string ヘルプメッセージ = "test";
 
+		static Management* 戦術;
+
 		/*ヘルプウィンドウ描画共通処理*/
 		void Info()
 		{
@@ -92,7 +94,7 @@ namespace SDX_BSC
 			MIcon::アイコン[IconType::資金].Draw({ 座標.x + LV(17),座標.y + LV(18) });
 			MIcon::アイコン[IconType::ヘルプ].Draw({ 座標.x + LV(17),座標.y + LV(18) + LV(19) });//忠誠度
 
-			MFont::BArial小.DrawBold({ 座標.x + LV(20) , 座標.y + LV(21) }, Color::White, Color::Black, it->現在賃金,true);
+			//MFont::BArial小.DrawBold({ 座標.x + LV(20) , 座標.y + LV(21) }, Color::White, Color::Black, it->現在賃金,true);
 			MFont::BArial小.DrawBold({ 座標.x + LV(20) , 座標.y + LV(21) + LV(22) }, Color::White, Color::Black, { it->忠誠度 , " %" }, true);
 
 			//装備品、Aスキル
@@ -222,7 +224,7 @@ namespace SDX_BSC
 				//MIcon::ステータス種[ActiveSkill::data[it->Aスキル[a]].依存ステータス].SetColor(Color::Red);
 				//MIcon::ステータス種[ActiveSkill::data[it->Aスキル[a]].依存ステータス].DrawRotate({ 座標.x + LV(22),座標.y + LV(23) + LV(32) * a },0.7,0);
 				
-				MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(24),座標.y + LV(25) + LV(32) * a });//チャージアイコン
+				MIcon::アイコン[IconType::New].Draw({ 座標.x + LV(24),座標.y + LV(25) + LV(32) * a });//チャージアイコン
 				
 				MFont::Bメイリオ中.DrawBold({ 座標.x + LV(26),座標.y + LV(27) + LV(32) * a }, Color::White, Color::Black, ActiveSkill::data[it->Aスキル[a]].名前);
 				MFont::Bメイリオ小.DrawBold({ 座標.x + LV(28),座標.y + LV(29) + LV(32) * a }, Color::White, Color::Black, ActiveSkill::data[it->Aスキル[a]].必要チャージ);
@@ -285,7 +287,7 @@ namespace SDX_BSC
 			//アイコン
 			MIcon::ダンジョン[it->種類].Draw({ 座標.x + LV(2),座標.y + LV(3) });
 			//ランク
-			MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(8),座標.y + LV(9) });
+			MIcon::アイコン[IconType::ランク].Draw({ 座標.x + LV(8),座標.y + LV(9) });
 			MFont::BArial中.DrawBold({ 座標.x + LV(10),座標.y + LV(11) }, Color::White, Color::Black, { it->ランク+1 });
 
 			//レベル
@@ -303,8 +305,8 @@ namespace SDX_BSC
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(37),座標.y + LV(34) }, Color::White, Color::Black, { "宝物" });
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(38),座標.y + LV(34) }, Color::White, Color::Black, { "特産" });
 
-			MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(16),座標.y + LV(17) });
-			MIcon::アイコン[IconType::星].Draw({ 座標.x + LV(18),座標.y + LV(19) });
+			MIcon::アイコン[IconType::地図].Draw({ 座標.x + LV(16),座標.y + LV(17) });
+			MIcon::アイコン[IconType::宝箱].Draw({ 座標.x + LV(18),座標.y + LV(19) });
 			//MIcon::素材[MaterialType::金属].Draw({ 座標.x + LV(20),座標.y + LV(21) });
 
 			//ボス状態、雑魚モンスター
@@ -335,11 +337,14 @@ namespace SDX_BSC
 			#define LV(a) DV::I[12][a]
 			//アイコン、ランク、名前、必要MP、必要資金、説明文
 			MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, "経営戦術");
+
+			戦術 = it;
 #undef LV
 		}
 
 	};
 
+	Management* GUI_Help::戦術 = nullptr;
 
 	class GUI_Object : public GUI_Help
 	{

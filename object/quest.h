@@ -32,7 +32,7 @@ namespace SDX_BSC
 		Quest(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注):
 			名前(名前),種類(種類),条件数値(条件数値),条件番号(条件番号),is受注(is受注)
 		{
-			id = data.size();
+			id = (int)data.size();
 		}
 
 

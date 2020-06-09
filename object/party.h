@@ -9,10 +9,8 @@ namespace SDX_BSC
 
 	enum class Order
 	{
-		探索重視,
-		収集重視,
-		戦闘重視,
-		ボス討伐,
+		探索,
+		ボス,
 		COUNT
 	};
 
@@ -81,7 +79,7 @@ namespace SDX_BSC
 			is移動中 = true;
 			is戦闘 = false;
 			isボス戦 = false;
-			残り移動時間 = 100;
+			残り移動時間 = 100000;//とりあえず探索しなくする
 			残り待機時間 = 0;
 			//パーティメンバーの体力回復、ステータス計算
 			味方.clear();
@@ -160,7 +158,10 @@ namespace SDX_BSC
 				return;
 			}
 			//戦闘中処理
-			戦闘処理();
+			if (is戦闘)
+			{
+				戦闘処理();
+			}
 		}
 
 		//部屋選択関係の処理
@@ -170,75 +171,14 @@ namespace SDX_BSC
 
 			switch (探索指示)
 			{
-			case Order::探索重視://50%で未探索から探索
-				if (Rand::Coin(0.5) == true)
-				{
-					//ボス部屋以外の未探索部屋
-					for (int a = 0; a < 探索先->部屋数; a++)
-					{
-						if (探索先->部屋[a].is探索[ギルドID] == false && 探索先->部屋[a].種類 != RoomType::ボス)
-						{
-							room_deck.push_back(a);
-						}
-					}
-
-				} else {
-					ランダム部屋選び(room_deck);
-				}
+			case Order::探索://50%で未探索から探索	
+				ランダム部屋選び(room_deck);
 				break;
-			case Order::戦闘重視://50%で魔物部屋を探索
-				if (Rand::Coin(0.5) == true)
-				{
-					//素材部屋回避
-					for (int a = 0; a < 探索先->部屋数; a++)
-					{
-						if (探索先->部屋[a].種類 != RoomType::素材 && 探索先->部屋[a].種類 != RoomType::ボス)
-						{
-							room_deck.push_back(a);
-						}
-					}
-				}
-				else {
-					ランダム部屋選び(room_deck);
-				}
-				break;
-			case Order::収集重視://50%で素材部屋を探索
-				if (Rand::Coin(0.5) == true)
-				{
-					//魔物部屋回避
-					for (int a = 0; a < 探索先->部屋数; a++)
-					{
-						if (探索先->部屋[a].種類 != RoomType::魔物 && 探索先->部屋[a].種類 != RoomType::ボス)
-						{
-							room_deck.push_back(a);
-						}
-					}
-				} else {
-					ランダム部屋選び(room_deck);
-				}
-				break;
-			case Order::ボス討伐://50%の確率でボス部屋
-				探索先->探索率計算(ギルドID);
-				double rate = 探索先->探索率[ギルドID]*2 - 1;
-
-				if (rate > 0 && Rand::Coin(rate) == true && 探索先->isボス戦中 == false && 探索先->isボス生存 )
-				{
-					//ボス部屋
-					for (int a = 0; a < 探索先->部屋数; a++)
-					{
-						if ( 探索先->部屋[a].種類 == RoomType::ボス)
-						{
-							room_deck.push_back(a);
-						}
-					}
-				} else {
-					ランダム部屋選び(room_deck);
-				}
+			case Order::ボス://発見済みならボス戦へ
+				ランダム部屋選び(room_deck);
 				break;
 			}
 
-			//部屋が無かった場合ランダム
-			if (room_deck.size() <= 0) { ランダム部屋選び(room_deck); };
 			//抽選
 			部屋ID = room_deck[Rand::Get((int)room_deck.size() - 1)];
 			部屋選択後処理();
@@ -260,14 +200,14 @@ namespace SDX_BSC
 		{
 			switch (探索先->部屋[部屋ID].種類)
 			{
-			case RoomType::素材:
-				素材処理();
-				break;
 			case RoomType::魔物:
 				is戦闘 = true;
 				戦闘開始(false);
 				break;
 			case RoomType::財宝:
+			case RoomType::回復:
+			case RoomType::石碑:
+			case RoomType::地図:
 				財宝処理();
 				break;
 			case RoomType::ボス:
@@ -295,7 +235,7 @@ namespace SDX_BSC
 			//壊れた装備を獲得
 
 			//素材部屋に変化
-			探索先->部屋[部屋ID].種類 = RoomType::素材;
+			探索先->部屋[部屋ID].種類 = RoomType::魔物;
 
 			地図発見処理();
 		}
@@ -307,7 +247,7 @@ namespace SDX_BSC
 
 
 			//敵の生成
-			int num = Rand::Get(4, 6);
+			int num = 5;
 			if (isボス == true)
 			{
 				探索先->isボス戦中 = true;

@@ -36,7 +36,7 @@ namespace SDX_BSC
 				//枠の描画
 				MSystem::DrawWindow({ px      , py }, 位置.GetW(), 位置.GetH(), 11);
 
-				MIcon::アイコン[IconType::求人].DrawRotate({ px + LV(22),py + LV(23) },1,0, true);
+				MIcon::アイコン[IconType::求人].DrawRotate({ px + LV(22),py + LV(23) },2,0);
 
 				MFont::BArial中.DrawBold({ px + LV(24) ,py + LV(25) }, Color::White, Color::Black, { Guild::P->人事ポイント }, true);
 
@@ -74,7 +74,7 @@ namespace SDX_BSC
 					MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 1, 1);
 				}
 
-				MIcon::アイコン[IconType::星].DrawRotate({ px + LV(28),py + LV(23) }, 1, 0, true);
+				MIcon::アイコン[IconType::再募集].DrawRotate({ px + LV(28),py + LV(23) }, 1, 0, true);
 				MFont::BArial中.DrawBold({ px + LV(29) ,py + LV(25) }, Color::White , Color::Black, { "Reroll" }, true);
 				連打防止--;
 			}

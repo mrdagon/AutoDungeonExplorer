@@ -110,7 +110,7 @@ namespace SDX_BSC
 			種類 = WindowType::Record;
 			名前 = "記録";
 			略記 = "記録";
-			アイコン = IconType::収支;
+			アイコン = IconType::サブクエ;
 			横幅 = 330;
 			縦幅 = 125;
 			最小縦 = 125;

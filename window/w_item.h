@@ -36,7 +36,7 @@ namespace SDX_BSC
 				//ランク表示
 				//MIcon::アイコン[IconType::星].DrawRotate({ px + LV(15) ,py + LV(16) }, 1, 0);
 				//MFont::Arial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Lv " }, true);
-				MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク+1 }, true);
+				MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク }, true);
 				//MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, {255,64,64}, Color::Black, { Item::data[id].ランク+1 }, true);
 				//new表示
 
@@ -77,16 +77,16 @@ namespace SDX_BSC
 			固定縦 = 43;
 			スクロール位置 = 0;
 
-			タブ.emplace_back(現在タブ, 0, IconType::星, "");
-			タブ.emplace_back(現在タブ, 1, IconType::星, "");
-			タブ.emplace_back(現在タブ, 2, IconType::星, "");
-			タブ.emplace_back(現在タブ, 3, IconType::星, "");
-			タブ.emplace_back(現在タブ, 4, IconType::星, "");
-			タブ.emplace_back(現在タブ, 5, IconType::星, "");
-			タブ.emplace_back(現在タブ, 6, IconType::星, "");
-			タブ.emplace_back(現在タブ, 7, IconType::星, "");
-			タブ.emplace_back(現在タブ, 8, IconType::星, "");
-			タブ.emplace_back(現在タブ, 9, IconType::星, "");
+			タブ.emplace_back(現在タブ, 0, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 1, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 2, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 3, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 4, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 5, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 6, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 7, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 8, IconType::全て, "");
+			タブ.emplace_back(現在タブ, 9, IconType::全て, "");
 
 			タブ[0].SetHelp("1");
 			タブ[1].SetHelp("2");

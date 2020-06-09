@@ -18,6 +18,7 @@ namespace SDX_BSC
 		std::string 名前;
 		std::string 説明;
 
+		bool isレア = false;
 		int ランク;
 		ItemType 種類;
 		StatusType 依存ステータス;
@@ -26,7 +27,7 @@ namespace SDX_BSC
 		int Pスキル;
 
 		int 必要製造力;
-		int 値段;
+		int 値段 = 10000;
 
 		//攻撃力等のステータス、追加されるスキル等
 		double 追加Str, 追加Int, 追加Dex, 追加Vit, 追加Agi;
@@ -69,6 +70,27 @@ namespace SDX_BSC
 
 	void LoadItem()
 	{
+		//鍛冶：剣、斧、重鎧
+		//木工：槍、弓、盾
+		//裁縫：ローブ、軽鎧
+		//錬金：魔杖、回復
+
+		//でメインハンド７種、防具３種をとりあえず実装。
+
+		//・武器
+		//剣　：　前。STRのみ上昇。CD短め、先頭対象。スキルは低CD単体ダメージ。
+		//斧　：　前。STRとHPが上昇。CD長、高威力低命中、先頭対象。スキルは長CD防御無視ダメージ。
+		//槍　：　前中。DEXとHPが上昇。CD普通。１～３列からランダム。スキルは前２体にダメージ。
+		//弓　：　中後。DEXのみ上昇。CD普通。ランダム対象。スキルは一番弱ってる的にダメージ。
+		//盾　：　前。HPとガード上昇。CD普通、低威力、先頭対象。スキルは挑発してターゲットを取る。
+		//魔　：　後。INTのみ上昇。CD長、高威力高命中。先頭対象。スキルは全体ダメージ。
+		//神　：　後。INTのみ上昇。CD普通、低威力、先頭対象。スキルは一番HP減少率が低い味方を単体回復。
+
+		//・防具
+		//重鎧：　HPが大きく上昇。
+		//軽鎧：　HPそこそこ、回避が少し上昇。
+		//ローブ：　HP少し、INTとレジストが上昇。
+
 		Game::対応レシピ[ItemType::剣] = CraftType::鍛造;
 		Game::対応レシピ[ItemType::斧] = CraftType::鍛造;
 		Game::対応レシピ[ItemType::盾] = CraftType::木工;
@@ -99,15 +121,15 @@ namespace SDX_BSC
 		Item::data.emplace_back(7, "鎖帷子", "隠密系防具", ItemImageType::鎖帷子);
 		Item::data.emplace_back(8, "ローブ", "対魔系防具", ItemImageType::皮のローブ);
 
-		Item::data[0].Set(0, ItemType::斧, StatusType::Str, 1, 0, 2, 0, 0, 2, 0);
-		Item::data[1].Set(0,ItemType::剣,StatusType::Str ,1,0			,4,0,0,0,0);
-		Item::data[2].Set(0, ItemType::弓, StatusType::Str, 2, 0, 0, 0, 4, 0, 0);
-		Item::data[3].Set(0, ItemType::盾, StatusType::Str, 4, 0		,0,0,0,4,0);
-		Item::data[4].Set(0, ItemType::神杖, StatusType::Str, 5, 0, 2, 2, 0, 0, 0);
-		Item::data[5].Set(0, ItemType::魔杖, StatusType::Str, 3, 0	,0,4,0,0,0);
-		Item::data[6].Set(0, ItemType::重鎧, StatusType::Str, 0, 0		,0,0,0,4,0);
-		Item::data[7].Set(0, ItemType::軽鎧, StatusType::Str, 0, 0		,0,0,1,2,1);
-		Item::data[8].Set(0, ItemType::隠鎧, StatusType::Str, 0, 0		,0,2,0,2,0);
+		Item::data[0].Set(1, ItemType::斧, StatusType::Str, 1, 0, 2, 0, 0, 2, 0);
+		Item::data[1].Set(1,ItemType::剣,StatusType::Str ,1,0			,4,0,0,0,0);
+		Item::data[2].Set(1, ItemType::弓, StatusType::Str, 2, 0, 0, 0, 4, 0, 0);
+		Item::data[3].Set(1, ItemType::盾, StatusType::Str, 4, 0		,0,0,0,4,0);
+		Item::data[4].Set(1, ItemType::神杖, StatusType::Str, 5, 0, 2, 2, 0, 0, 0);
+		Item::data[5].Set(1, ItemType::魔杖, StatusType::Str, 3, 0	,0,4,0,0,0);
+		Item::data[6].Set(1, ItemType::重鎧, StatusType::Str, 0, 0		,0,0,0,4,0);
+		Item::data[7].Set(1, ItemType::軽鎧, StatusType::Str, 0, 0		,0,0,1,2,1);
+		Item::data[8].Set(1, ItemType::隠鎧, StatusType::Str, 0, 0		,0,2,0,2,0);
 
 
 		for (int a = 1; a < 5; a++)
@@ -126,15 +148,15 @@ namespace SDX_BSC
 			name = "鎖帷子"; Item::data.emplace_back(7 + a * 9, name + num, "隠密系防具", ItemImageType::鎖帷子);
 			name = "ローブ"; Item::data.emplace_back(8 + a * 9, name + num, "対魔系防具", ItemImageType::皮のローブ);
 
-			Item::data[0 + a * 9].Set(a, ItemType::斧, StatusType::Str, 1, 0, 2 * b, 0, 0, 2 * b, 0);
-			Item::data[1 + a * 9].Set(a, ItemType::剣, StatusType::Str, 1, 0, 4 * b, 0, 0, 0, 0);
-			Item::data[2 + a * 9].Set(a, ItemType::弓, StatusType::Str, 2, 0, 0, 0, 4 * b, 0, 0);
-			Item::data[3 + a * 9].Set(a, ItemType::盾, StatusType::Str, 4, 0, 0, 0, 0, 4 * b, 0);
-			Item::data[4 + a * 9].Set(a, ItemType::神杖, StatusType::Str, 5, 0, 2 * b, 2 * b, 0, 0, 0);
-			Item::data[5 + a * 9].Set(a, ItemType::魔杖, StatusType::Str, 3, 0, 0, 4 * b, 0, 0, 0);
-			Item::data[6 + a * 9].Set(a, ItemType::重鎧, StatusType::Str, 0, 0, 0, 0, 0, 4 * b, 0);
-			Item::data[7 + a * 9].Set(a, ItemType::軽鎧, StatusType::Str, 0, 0, 0, 0, 1 * b, 2 * b, 1 * b);
-			Item::data[8 + a * 9].Set(a, ItemType::隠鎧, StatusType::Str, 0, 0, 0, 2 * b, 0, 2 * b, 0);
+			Item::data[0 + a * 9].Set(a+1, ItemType::斧, StatusType::Str, 1, 0, 2 * b, 0, 0, 2 * b, 0);
+			Item::data[1 + a * 9].Set(a+1, ItemType::剣, StatusType::Str, 1, 0, 4 * b, 0, 0, 0, 0);
+			Item::data[2 + a * 9].Set(a+1, ItemType::弓, StatusType::Str, 2, 0, 0, 0, 4 * b, 0, 0);
+			Item::data[3 + a * 9].Set(a + 1, ItemType::盾, StatusType::Str, 4, 0, 0, 0, 0, 4 * b, 0);
+			Item::data[4 + a * 9].Set(a + 1, ItemType::神杖, StatusType::Str, 5, 0, 2 * b, 2 * b, 0, 0, 0);
+			Item::data[5 + a * 9].Set(a + 1, ItemType::魔杖, StatusType::Str, 3, 0, 0, 4 * b, 0, 0, 0);
+			Item::data[6 + a * 9].Set(a + 1, ItemType::重鎧, StatusType::Str, 0, 0, 0, 0, 0, 4 * b, 0);
+			Item::data[7 + a * 9].Set(a + 1, ItemType::軽鎧, StatusType::Str, 0, 0, 0, 0, 1 * b, 2 * b, 1 * b);
+			Item::data[8 + a * 9].Set(a + 1, ItemType::隠鎧, StatusType::Str, 0, 0, 0, 2 * b, 0, 2 * b, 0);
 		}
 
 	}

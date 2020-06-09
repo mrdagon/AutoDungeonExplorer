@@ -32,7 +32,7 @@ namespace SDX_BSC
 		double 敵視;
 		//通常攻撃、スキルチャージ
 		double 行動値;
-		double スキル値[CV::最大Aスキル数];
+		double スキルチャージ[CV::最大Aスキル数];
 		//常時パッシブ補正
 		double チャージ量補正;
 		double スキルダメージ補正;
@@ -133,10 +133,10 @@ namespace SDX_BSC
 			{
 				if (アクティブスキル[a] <= 0) { continue; }
 
-				if (スキル値[a] > ActiveSkill::data[アクティブスキル[a]].必要チャージ)
+				if (スキルチャージ[a] > ActiveSkill::data[アクティブスキル[a]].必要チャージ)
 				{
 					Aスキル使用(ActiveSkill::data[アクティブスキル[a]], 味方, 敵);
-					スキル値[a] = 0;
+					スキルチャージ[a] = 0;
 					return true;
 				}
 			}
@@ -161,7 +161,7 @@ namespace SDX_BSC
 			//スキルチャージ
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				スキル値[a] += 10 * チャージ量補正;
+				スキルチャージ[a] += 10 * チャージ量補正;
 			}
 
 			//バフ効果時間減少
@@ -295,7 +295,7 @@ namespace SDX_BSC
 			行動値 = 0;
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				スキル値[a] = 0;
+				スキルチャージ[a] = 0;
 			}
 
 			//パッシブ効果の計算
@@ -322,7 +322,7 @@ namespace SDX_BSC
 			//スキルチャージ
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				スキル値[a] += 10 * チャージ量補正;
+				スキルチャージ[a] += 10 * チャージ量補正;
 			}
 
 			ステータス再計算(味方, 敵);
@@ -455,7 +455,7 @@ namespace SDX_BSC
 			case PSkillEffect::スキルチャージ獲得:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
-					スキル値[a] += スキル.効果量;
+					スキルチャージ[a] += スキル.効果量;
 				}
 				break;
 			case PSkillEffect::HP回復:

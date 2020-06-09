@@ -31,10 +31,10 @@ namespace SDX_BSC
 			スクロール位置 = 0;
 			固定縦 = 50;
 
-			種類アイコン[LogType::重要] = IconType::星;
-			種類アイコン[LogType::経営] = IconType::戦略;
+			種類アイコン[LogType::重要] = IconType::ランク;
+			種類アイコン[LogType::経営] = IconType::情報;
 			種類アイコン[LogType::人事] = IconType::求人;
-			種類アイコン[LogType::製造] = IconType::ハンマー;
+			種類アイコン[LogType::製造] = IconType::製造;
 			種類アイコン[LogType::探索] = IconType::迷宮;
 
 
@@ -43,7 +43,7 @@ namespace SDX_BSC
 			タブ.emplace_back(現在タブ, 2, 種類アイコン[LogType::経営], "経営");
 			タブ.emplace_back(現在タブ, 3, 種類アイコン[LogType::人事], "人事");
 			タブ.emplace_back(現在タブ, 4, 種類アイコン[LogType::探索], "探索");
-			タブ.emplace_back(現在タブ, 5, 種類アイコン[LogType::製造], "鍛冶");
+			タブ.emplace_back(現在タブ, 5, 種類アイコン[LogType::製造], "製造");
 
 			タブ[0].SetHelp("全ログ");
 			タブ[1].SetHelp("重要なログ");

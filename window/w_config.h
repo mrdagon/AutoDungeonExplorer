@@ -205,9 +205,9 @@ namespace SDX_BSC
 			SE設定仮 = Game::SE設定;
 			解像度仮 = Game::解像度設定;
 
-			BGM音量.Set( "ＢＧＭ","50 %",IconType::資金,0,this);
-			SE音量.Set( "効果音","50 %", IconType::資金, 1, this);
-			解像度.Set( "解像度","1600 x 900", IconType::資金, 2, this);
+			BGM音量.Set( "ＢＧＭ","50 %",IconType::BGM,0,this);
+			SE音量.Set( "効果音","50 %", IconType::効果音, 1, this);
+			解像度.Set( "解像度","1600 x 900", IconType::解像度, 2, this);
 
 			gui_objects.resize(0);
 

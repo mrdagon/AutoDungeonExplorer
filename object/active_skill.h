@@ -7,6 +7,13 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
+	enum class ASkillMode
+	{
+		通常,
+		スキル,
+		必殺
+	};
+
 	enum class ASkillTarget
 	{
 		自分,
@@ -96,6 +103,9 @@ namespace SDX_BSC
 		int id;
 		std::string 名前;
 		std::string 説明;
+		FormationType 隊列;
+		ASkillMode 区分;
+
 		SkillType 系統;//アイコン
 
 		ASkillTarget 対象;
@@ -111,12 +121,13 @@ namespace SDX_BSC
 		double 追加効果率;
 
 		double 必要チャージ;
-
-
 	};
 
 	void LoadActiveSkill()
 	{
+		//武器７系統✕２＋ジョブ別スキル５個
+
+
 		ActiveSkill::data.emplace_back(0, "なし", "スキルなし",SkillType::その他);
 		ActiveSkill::data.emplace_back(1, "スラッシュ", "単体にSTRx3.0ダメージ",SkillType::剣);
 		ActiveSkill::data.emplace_back(2, "乱れ撃ち", "単体にDEXx1.0ダメージを３回",SkillType::弓);
@@ -124,7 +135,7 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(4, "叩きつけ", "単体にVITx2.5ダメージ",SkillType::盾);
 		ActiveSkill::data.emplace_back(5, "ヒール", "味方一人のHPをINTx2.0回復",SkillType::神杖);
 
-		//敵スキル
+		//敵スキル、通常は共通。どのスキルも全列。雑魚はスキル１種。ボスは必殺含めて４種。
 		ActiveSkill::data.emplace_back(6, "体当たり", "単体にSTRx2.0ダメージ", SkillType::剣);
 		ActiveSkill::data.emplace_back(7, "噛みつき", "単体にSTRx2.5ダメージ", SkillType::剣);
 		ActiveSkill::data.emplace_back(8, "スラム", "単体にSTRx2.0ダメージ", SkillType::剣);

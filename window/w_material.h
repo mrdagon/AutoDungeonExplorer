@@ -71,7 +71,7 @@ namespace SDX_BSC
 				MIcon::素材[素材種].DrawRotate({ px + LV(6), py + LV(7) }, 1, 0);
 
 				//ランク
-				MIcon::アイコン[IconType::星].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
+				MIcon::アイコン[IconType::ランク].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
 				MFont::BArial小.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, ランク+1, true);
 
 				//所持数

@@ -42,23 +42,11 @@ namespace SDX_BSC
 
 			//位置-保留
 
-			//連結
-			次ダンジョン[0] = no + 10;
-			次ダンジョン[1] = no + 1;
-			次ダンジョン[2] = 0;
-
 			for (int a = 0; a < CV::最大ギルド数; a++)
 			{
 				is発見[a] = false;
 			}
 
-			for (int a = 0; a < 3; a++)
-			{
-				if (次ダンジョン[a] >= 100)
-				{
-					次ダンジョン[a] = 99;
-				}
-			}
 
 			for (int a = 0; a < 部屋数; a++)
 			{
@@ -69,20 +57,16 @@ namespace SDX_BSC
 				if (a == 部屋数 - 1)
 				{
 					部屋[a].種類 = RoomType::ボス;
-					部屋[a].地図 = 次ダンジョン[0];
+					部屋[a].地図 = std::min(99,no + 10);
 				}
 				else if (a == 部屋数 - 2)
 				{
-					部屋[a].地図 = 次ダンジョン[1];
-					部屋[a].種類 = RoomType::素材;
+					部屋[a].地図 = std::min(99, no + 1);
+					部屋[a].種類 = RoomType::地図;
 				}
 				else if (a % 2 == 0)
 				{
 					部屋[a].種類 = RoomType::魔物;
-				}
-				else
-				{
-					部屋[a].種類 = RoomType::素材;
 				}
 			}
 		}
@@ -114,15 +98,16 @@ namespace SDX_BSC
 		int Lv;//敵の強さ等
 		bool isボス戦中 = false;
 		bool isボス生存 = true;
-		int ボス痕跡 = 0;
+		int 残り財宝;
+		int 最大財宝;
+		int 残り地図;
+		int 最大地図;
 
 		MonsterNo ボスモンスター;
 		MonsterNo 雑魚モンスター[3];//地形種で固定？
-		int 次ダンジョン[3];//要らない？
 
 		double 探索率[CV::最大ギルド数];
 		bool is発見[CV::最大ギルド数];//ダンジョン発見済みフラグ
-
 		bool is新発見[CV::最大ギルド数];//UI用
 	};
 

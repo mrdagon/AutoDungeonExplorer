@@ -19,7 +19,6 @@ namespace SDX_BSC
 		EnumArray<bool[CV::最大素材ランク], CraftType> is素材発見;
 
 		double 資金 = 123456789;
-		//double 現在MP = 100;
 		Management* 選択戦術 = 0;
 		int 人事ポイント = 10;
 
@@ -34,8 +33,7 @@ namespace SDX_BSC
 		EnumArray<int, ManagementType> 部門Lv;
 		EnumArray<double, ManagementType> 部門経験値;
 
-		double 集客力;
-		double 集客待ち;
+		int 集客力 = 100;
 
 		//製造関連
 		EnumArray<double, CraftType> 必要製造力;
@@ -57,7 +55,20 @@ namespace SDX_BSC
 		bool is装備開発[CV::装備種];
 		bool is新規[CV::装備種];
 		int 装備所持数[CV::装備種];
+		int 販売可能数[CV::装備種];
 
 		EnumArray < bool,ItemType> is新開発タブ;
+
+		//各種記録_Record
+		std::vector<int> R団員;
+		std::vector<double> R資金;
+		std::vector<double> R販売;
+		std::vector<int> R製造;
+		std::vector<int> R開発;
+		std::vector<int> R素材在庫;
+		std::vector<int> R地図数;
+		std::vector<int> R討伐数;
+		std::vector<int> R撤退数;
+		std::vector<int> R名声;
 	};
 }
