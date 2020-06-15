@@ -111,10 +111,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BArial中.GetDrawStringWidth("決定") / 2;
+				int dif_x = MFont::BArial中.GetDrawStringWidth( TX::Config_決定 ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23),1);
-				MFont::BArial中.DrawBold({ px + LV(20) - dif_x ,py + LV(22) }, Color::White, Color::Black, "決定", false);
+				MFont::BArial中.DrawBold({ px + LV(20) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_決定 , false);
 			}
 
 			void Click(double px, double py)
@@ -155,10 +155,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BArial中.GetDrawStringWidth("キャンセル") / 2;
+				int dif_x = MFont::BArial中.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23), 1);
-				MFont::BArial中.DrawBold({ px + LV(21) - dif_x ,py + LV(22) }, Color::White, Color::Black, "キャンセル", false);
+				MFont::BArial中.DrawBold({ px + LV(21) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
 			}
 
 			void Click(double px, double py)
@@ -185,10 +185,12 @@ namespace SDX_BSC
 
 		void init()
 		{
-			種類 = WindowType::Guild;
+			種類 = WindowType::Config;
 
-			名前 = "設定変更";
-			略記 = "設定";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::情報;
 			横幅 = 320;
 			縦幅 = 170;
@@ -205,9 +207,9 @@ namespace SDX_BSC
 			SE設定仮 = Game::SE設定;
 			解像度仮 = Game::解像度設定;
 
-			BGM音量.Set( "ＢＧＭ","50 %",IconType::BGM,0,this);
-			SE音量.Set( "効果音","50 %", IconType::効果音, 1, this);
-			解像度.Set( "解像度","1600 x 900", IconType::解像度, 2, this);
+			BGM音量.Set( TX::Config_音楽.c_str() ,"50 %",IconType::BGM,0,this);
+			SE音量.Set( TX::Config_効果音.c_str() ,"50 %", IconType::効果音, 1, this);
+			解像度.Set( TX::Config_解像度.c_str() ,"1600 x 900", IconType::解像度, 2, this);
 
 			gui_objects.resize(0);
 

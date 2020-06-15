@@ -23,6 +23,37 @@ namespace SDX_BSC
 
 		}
 
+		void 求人リロール()
+		{
+			//人事点があるかチェックして-1する
+			if (人事ポイント <= 0)
+			{
+				return;
+			}
+
+			//志願者のリロール、とりあえず5人
+			int count = 0;
+			for (auto& it : Warker::data)
+			{
+				if (it.所属 == -1)
+				{
+					//再生成する
+					it.Make(it.ID, Rand::Get(4), 1, "ナナーシ");
+					count++;
+				}
+			}
+
+			//足りてない部分は新規作成
+			for (; count < 6; count++)
+			{
+				Warker::data.emplace_back();
+				Warker::data.back().Make((int)Warker::data.size() - 1, Rand::Get(4), 1, "シンキー");
+			}
+
+			人事ポイント--;
+			EventLog::Add(0, Game::日付, LogDetailType::再募集);
+		}
+
 		void 製造力計算()
 		{
 			合計製造力[CraftType::裁縫] = 0;
@@ -40,8 +71,6 @@ namespace SDX_BSC
 				}
 			}
 		}
-
-
 
 		void 製造処理()
 		{
@@ -70,26 +99,32 @@ namespace SDX_BSC
 			int 要求数 = 1;
 			int 素材ランク = 0;
 
-			for (int a = CV::最大素材ランク-1; a >= 0; a--)
+			//技術力以下で一番ランクが高い素材を選択
+
+			for (int a = 製造Lv[種類]; a >= 0; a--)
 			{
 				if (素材数[種類][a] >= 要求数)
 				{
-					必要製造力[種類] = 10000;
+					必要製造力[種類] = 10000 + 素材ランク * 2000;
 					素材ランク = a + 1;
 					素材数[種類][a]-= 要求数;
+					総素材 -= 要求数;
 					break;
 				}
 			}
 			if (素材ランク <= 0) { return false; }
 
 			//何を作るか？必要製造力がいくつかを計算
-			int 完成ランク = 素材ランク + 製造Lv[種類];
+			int 完成ランク = 素材ランク;
+
+			//スキルや制度によるランク変動
+
 			std::vector<int> 抽選リスト;
 			int 抽選数 = 0;
 
 			for (auto& it : Item::data)
 			{
-				if (Game::対応レシピ[it.種類] == 種類 && it.ランク <= 完成ランク)
+				if (Game::対応レシピ[it.種類] == 種類 && it.ランク == 完成ランク)
 				{
 					抽選リスト.emplace_back(it.id);
 					抽選数++;
@@ -97,7 +132,6 @@ namespace SDX_BSC
 			}
 
 			完成品[種類] = 抽選リスト[Rand::Get(抽選数-1)];
-			必要製造力[種類] = Item::data[完成品[種類]].必要製造力;
 			製造進行度[種類] = 0;
 
 			return true;
@@ -109,7 +143,12 @@ namespace SDX_BSC
 
 			//所持数だけ追加して販売可能数は+しない
 			装備所持数[itemID]++;
-			is装備開発[itemID] = true;
+			if ( is装備開発[itemID] == false )
+			{
+				is装備開発[itemID] = true;
+				EventLog::Add(0, Game::日付, LogDetailType::新装備開発, itemID);
+			}
+			総製造++;
 
 			製造経験[種類] += 必要製造力[種類];
 
@@ -119,6 +158,7 @@ namespace SDX_BSC
 			{
 				製造経験[種類] -= (製造Lv[種類]*2 + 1) * 100000;
 				製造Lv[種類] ++;
+				EventLog::Add(0, Game::日付, LogDetailType::技術Lv上昇, (int)種類);
 			}
 
 			//非製造状態にする
@@ -151,7 +191,6 @@ namespace SDX_BSC
 				販売可能数[a] = 装備所持数[a];
 			}
 		}
-
 
 		void 装備自動更新()
 		{
@@ -194,11 +233,10 @@ namespace SDX_BSC
 			}
 		}
 
-
 		void アイテム販売()
 		{
-			//客が来る判定
-			if (集客力 < Rand::Get(10000)) { return; }
+			//客が来る判定-一日に集客力/10人が期待値
+			if (集客力 < Rand::Get( (Game::終業時間 - Game::始業時間)*10 )) { return; }
 
 
 			//在庫から売るアイテムを抽選
@@ -224,6 +262,8 @@ namespace SDX_BSC
 						販売可能数[a]--;
 						装備所持数[a]--;
 						資金 += Item::data[a].値段;
+						総売上 += Item::data[a].値段;
+						総販売++;
 						break;
 					}
 				}

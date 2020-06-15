@@ -10,11 +10,13 @@ namespace SDX_BSC
 	{
 		constexpr double バージョン = 0.001;
 
-		constexpr int 最大ギルド数 = 4;
+		constexpr int 最大ギルド数 = 1;
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 5;
 		constexpr int 最大素材ランク = 20;
 		constexpr int 装備種 = 45;
+
+		constexpr int 最大装備ランク = 10;
 
 		//constexpr int 月日数 = 20;
 

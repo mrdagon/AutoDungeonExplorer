@@ -146,6 +146,8 @@ namespace SDX_BSC
 
 			移動先->GUI_Init();
 			ウィンドウ->GUI_Init();
+
+			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
 		}
 
 		void 求人toパーティ(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
@@ -165,6 +167,7 @@ namespace SDX_BSC
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
 			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
 
+			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
 		}
 
 		/*求人で入れ替え(未実装)*/

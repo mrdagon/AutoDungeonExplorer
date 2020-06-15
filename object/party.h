@@ -303,29 +303,8 @@ namespace SDX_BSC
 				int 未行動数 = 0;
 				double 最高速度 = -1000;
 				Fighter* 行動者 = nullptr;
-				bool is味方;
+				bool is味方 = true;
 
-				for (auto &it : 味方)
-				{
-					if (it->現在HP <= 0) { continue; }
-					if (it->残り行動数 > 0 && 最高速度 < it->基礎Agi)
-					{
-						行動者 = it;
-						最高速度 = it->補正Agi;
-						is味方 = true;
-					}
-				}
-
-				for (auto &it : 敵)
-				{
-					if (it->現在HP <= 0) { continue; }
-					if (it->残り行動数 > 0 && 最高速度 < it->基礎Agi)
-					{
-						行動者 = it;
-						最高速度 = it->補正Agi;
-						is味方 = false;
-					}
-				}
 
 				//行動判定,スキル処理
 				if (行動者 == nullptr)

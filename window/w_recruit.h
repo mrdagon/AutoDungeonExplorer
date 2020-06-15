@@ -81,37 +81,10 @@ namespace SDX_BSC
 
 			void Click(double px, double py)
 			{
-
 				//志願者のリロール
 				isPush = true;
 				if (連打防止 > 0) { return; }
-				//人事点があるかチェックして-1する
-				if (Guild::P->人事ポイント <= 0)
-				{
-					return;
-				}
-
-				//志願者のリロール、とりあえず5人
-				int count = 0;
-				for (auto&it : Warker::data )
-				{
-					if (it.所属 == -1)
-					{
-						//再生成する
-						it.Make(it.ID, Rand::Get(4), 1, "ナナーシ");
-						count++;
-					}
-				}
-
-				//足りてない部分は新規作成
-				for (; count < 6; count++)
-				{
-					Warker::data.emplace_back();
-					Warker::data.back().Make((int)Warker::data.size()-1, Rand::Get(4), 1, "シンキー");
-				}
-
-				Guild::P->人事ポイント--;
-
+				Guild::P->求人リロール();
 			}
 
 			void Over(double px, double py) override
@@ -178,8 +151,9 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::Recruit;
-			名前 = "求人";
-			略記 = "求人";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
 			アイコン = IconType::求人;
 			横幅 = 280;
 			縦幅 = 125;
@@ -230,12 +204,11 @@ namespace SDX_BSC
 			人事点.位置 = { LV(14) , LV(15) , LV(16) , LV(17) };
 			リロール.位置 = { LV(18) , LV(19) , LV(20) , LV(21) };
 
-			リロール.SetHelp("クリック：雇用Pを1消費して、志願者を新たに探します");
+			リロール.SetHelp( TX::Recruit_リロールヘルプ );
 
-
-			gui_objects.push_back(&求職枠);
 			gui_objects.push_back(&人事点);
 			gui_objects.push_back(&リロール);
+			gui_objects.push_back(&求職枠);
 		}
 
 		void 派生Draw()

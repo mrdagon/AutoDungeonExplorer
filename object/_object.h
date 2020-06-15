@@ -18,15 +18,11 @@
 #include "monster.h"
 #include "dungeon.h"
 #include "event_log.h"
-#include "guild_ai.h"
 #include "guild_master.h"
-
-#include "material.h"
 
 #include "quest.h"
 #include "customer.h"
 
-#include "settle_log.h"
 #include "warker.h"
 
 #include "i_guild.h"

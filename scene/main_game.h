@@ -28,7 +28,6 @@ namespace SDX_BSC
 		W_Party Win_Party;//ギルメン
 		W_Quest Win_Quest;//クエスト
 		W_Recruit Win_Recruit;//求職
-		W_SettleLog Win_Settlelog;//収支ウィンドウ
 
 		W_Config Win_Config;//設定ウィンドウ
 		W_Popup Win_Title;//タイトルに戻る
@@ -54,7 +53,6 @@ namespace SDX_BSC
 			windows.push_back(&Win_Guild);
 			windows.push_back(&Win_EventLog);
 
-			ToolBar.SetWindow(windows);
 			ToolBar.SetConfig(&Win_Config,&Win_Title);
 
 			Win_Config.init();
@@ -72,6 +70,8 @@ namespace SDX_BSC
 				XXX += 50;
 			}
 
+			ToolBar.SetWindow(windows);
+
 			Win_Item.is表示 = true;
 			Win_Factory.is表示 = true;
 			Win_Dungeon.is表示 = true;
@@ -86,6 +86,8 @@ namespace SDX_BSC
 			{
 				Guild::P->探索パーティ[a].ギルドID = Guild::P->id;
 			}
+
+
 		}
 
 		//デモ版用初期化処理
@@ -111,6 +113,7 @@ namespace SDX_BSC
 			{
 				for (int a = 0; a < 1; a++)
 				{
+					Guild::P->総素材 += 1000;
 					Guild::P->素材数[CraftType(b)][a] = 1000;
 					Guild::P->is素材発見[CraftType(b)][a] = true;
 				}
@@ -196,6 +199,8 @@ namespace SDX_BSC
 			Game::is停止 = true;
 
 			Guild::P->製造力計算();
+
+			Quest::BetaQuest();
 		}
 
 		//メインループ処理

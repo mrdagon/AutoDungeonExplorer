@@ -48,8 +48,10 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::Dungeon;
-			名前 = "ダンジョン";
-			略記 = "迷宮";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::迷宮;
 			横幅 = 320;
 			縦幅 = 300;
@@ -59,21 +61,13 @@ namespace SDX_BSC
 			固定縦 = 50;
 			スクロール位置 = 0;
 
-			ヘルプメッセージ = "発見済みダンジョン\n";
-			ヘルプ横幅 = 200;
-			ヘルプ縦幅 = 100;
+			for (int a = 0; a < 5; a++)
+			{
+				タブ.emplace_back(現在タブ, a, IconType::ランク, TX::Dungeon_タブ名[a]);
+				タブ[a].SetHelp( TX::Dungeon_タブヘルプ[a]);
+			}
 
-			タブ.emplace_back(現在タブ, 0, IconType::ランク, "R1");
-			タブ.emplace_back(現在タブ, 1, IconType::ランク, "R2");
-			タブ.emplace_back(現在タブ, 2, IconType::ランク, "R3");
-			タブ.emplace_back(現在タブ, 3, IconType::ランク, "R4");
-			タブ.emplace_back(現在タブ, 4, IconType::ランク, "R5");
 
-			タブ[0].SetHelp("rank1");
-			タブ[1].SetHelp("rank2");
-			タブ[2].SetHelp("rank3");
-			タブ[3].SetHelp("rank4");
-			タブ[4].SetHelp("rank5");
 
 			for (int a = 0; a < 50; a++)
 			{

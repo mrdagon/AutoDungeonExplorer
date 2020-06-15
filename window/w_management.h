@@ -30,69 +30,6 @@ namespace SDX_BSC
 
 			}
 		};
-		//未使用
-		/*
-		class GUI_MP : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				//ゲージで消費量と現在値、割合を表示
-
-				double rate = 0;
-				if (Guild::P->選択戦術 != nullptr)
-				{
-					rate = Guild::P->現在MP / Guild::P->選択戦術->消費MP;
-				}
-				
-				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Aqua, Color::White, Color::White, true);
-
-				MFont::Arial大.DrawBold({ px + 235,py }, Color::White, Color::Black, { Guild::P->現在MP , " / "}, true);
-
-
-				if (Guild::P->選択戦術 != nullptr)
-				{
-					MFont::Arial大.DrawBold({ px + 270,py }, Color::White, Color::Black, { Guild::P->選択戦術->消費MP },true);
-				} else {
-					MFont::Arial大.DrawBold({ px + 270,py }, Color::White, Color::Black, { "----" }, true);
-				}
-			}
-		};
-		*/
-
-		//未使用
-		class GUI_実行 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				//実行、予約ボタン
-
-				if( Guild::P->選択戦術 == nullptr )
-				{
-					MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 1);
-					int def = MFont::BArial中.GetDrawStringWidth("未選択") / 2;
-
-					MFont::BArial中.DrawBold({ px + LV(32) -def,py + LV(33) }, Color::White, Color::Black, { "未選択" });
-				}
-				else if (Guild::P->選択戦術->消費資金 <= Guild::P->資金)
-				{
-					//資金足りてる
-					int def = MFont::BArial中.GetDrawStringWidth("実行") / 2;
-					MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 0 , 1);
-					MFont::BArial中.DrawBold({ px + LV(32) - def,py + LV(33) }, Color::White, Color::Black, { "実行" });
-				}
-				else
-				{
-					//資金不足
-					int def = MFont::BArial中.GetDrawStringWidth("予約") / 2;
-					MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 0 , 1);
-					MFont::BArial中.DrawBold({ px + LV(32) - def ,py + LV(33) }, Color::White, Color::Black, { "予約" });
-				}
-			}
-
-		};
-
 
 		class GUI_Gold : public GUI_Object
 		{
@@ -131,12 +68,14 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
+				/*
 				for (int a = 0; a < ランク; a++)
 				{
 					MIcon::アイコン[IconType::ランク].Draw({ px + LV(39) + a * 15 , py + LV(40) });
 				}
+				*/
 
-				MFont::BArial中.DrawBold({ px + LV(41),py + LV(42) }, Color::White, Color::Black, "Rank");
+				MFont::BArial中.DrawBold({ px + LV(41),py + LV(42) }, Color::White, Color::Black, { "Lv " , ランク });
 
 			}
 		};
@@ -191,8 +130,10 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::Management;
-			名前 = "経営戦略";
-			略記 = "戦略";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::戦略;
 			横幅 = 320;
 			縦幅 = 300;
@@ -202,14 +143,15 @@ namespace SDX_BSC
 			固定縦 = 85;
 			スクロール位置 = 0;
 
-			ヘルプメッセージ = "経営戦術と残りMP\n";
-			ヘルプ横幅 = MFont::メイリオ中.GetDrawStringWidth(ヘルプメッセージ) + 20;
-			ヘルプ縦幅 = 40;
-
 			タブ.emplace_back(現在タブ, 0, IconType::情報, "");//経営
 			タブ.emplace_back(現在タブ, 1, IconType::求人, "");//人事
 			タブ.emplace_back(現在タブ, 2, IconType::製造, "");//製造
 			タブ.emplace_back(現在タブ, 3, IconType::迷宮, "");//探索
+
+			for (int a = 0; a < 4; a++)
+			{
+				タブ[a].SetHelp(TX::Manage_タブヘルプ[a]);
+			}
 
 			gui_mlv[0].部門 = ManagementType::経営;
 			gui_mlv[1].部門 = ManagementType::人事;
@@ -222,11 +164,7 @@ namespace SDX_BSC
 			for (int a = 0; a < 10; a++) { gui_objects.push_back(&gui_rank[a]); }
 			for (int a = 0; a < 100; a++) { gui_objects.push_back(&gui_skill[a]); }
 
-			gui_gold.SetHelp("gold");
-			for (int a = 0; a < 4; a++) { タブ[a].SetHelp("tab"); }
-			for (int a = 0; a < 4; a++) { gui_mlv[a].SetHelp("mlv"); }
-			for (int a = 0; a < 10; a++) { gui_rank[a].SetHelp("rank"); }
-			for (int a = 0; a < 100; a++) { gui_skill[a].SetHelp("skill"); }
+			gui_gold.SetHelp( TX::Manage_お金 );
 
 			gui_gold.isヘルプ表示 = true;
 			for (int a = 0; a < 4; a++) { タブ[a].isヘルプ表示 = true; }
@@ -289,7 +227,7 @@ namespace SDX_BSC
 					{
 						if (r != -1) { y += LV(25); }
 						r = it.Lv;
-						gui_rank[r].位置 = { LV(20) , y , LV(26),LV(27) };
+						gui_rank[r-1].位置 = { LV(20) , y , LV(26),LV(27) };
 						y += LV(28);
 						x = LV(20);
 					}

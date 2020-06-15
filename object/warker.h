@@ -19,7 +19,9 @@ namespace SDX_BSC
 		Warker()
 		{
 			見た目 = UnitImageType(Rand::Get(int(UnitImageType::COUNT) - 1));
-			Lv = Rand::Get(100);			
+			Lv = Rand::Get(100);
+			基礎防御[DamageType::物理] = 0;
+			基礎防御[DamageType::魔法] = 0;
 		}
 
 		void Make(int id , JobNo ジョブ , int Lv , std::string 名前)
@@ -191,20 +193,17 @@ namespace SDX_BSC
 			基礎Str = WarkerClass::data[(int)ジョブ].Str * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
 			基礎Dex = WarkerClass::data[(int)ジョブ].Dex * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
 			基礎Int = WarkerClass::data[(int)ジョブ].Int * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
-			基礎Vit = WarkerClass::data[(int)ジョブ].Vit * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Vit + Item::data[装備[1]].追加Vit;
-			基礎Agi = WarkerClass::data[(int)ジョブ].Agi * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Agi + Item::data[装備[1]].追加Agi;
 
 			//アクティブスキル更新
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
 			アクティブスキル[2] = 0;
 
-			基礎ブロック = 0;
 			基礎回避 = 0;
 
 			Pスキル条件チェック(PSkillTime::基礎計算時, 味方, 敵);
 
-			最大HP = 50 + 基礎Vit * 5;
+			最大HP = 基礎HP;
 			現在HP = 最大HP;
 
 			//製造能力(仮)

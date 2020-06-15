@@ -112,10 +112,13 @@ namespace SDX_BSC
 		StatusType 依存ステータス;
 		ASkillType 効果;
 		ASkillSubeffect 追加効果;
+		DamageType 属性;
 
-		int 効果回数;//ランダムだったり単体に多段攻撃
+		bool is奥義;
+
+		int 効果回数;//多段攻撃系
 		double 効果量;
-		double 命中;
+		double 命中 = 1.0;
 		double ステータス反映率;
 		double 効果時間;
 		double 追加効果率;
@@ -125,7 +128,7 @@ namespace SDX_BSC
 
 	void LoadActiveSkill()
 	{
-		//武器７系統✕２＋ジョブ別スキル５個
+		//武器７系統✕２＋ジョブ別スキル１０個
 
 
 		ActiveSkill::data.emplace_back(0, "なし", "スキルなし",SkillType::その他);
@@ -145,7 +148,7 @@ namespace SDX_BSC
 		ActiveSkill::data[1].Set(ASkillTarget::敵単体  , StatusType::Str, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,3.0, 0, 0,60);
 		ActiveSkill::data[2].Set(ASkillTarget::敵単体  , StatusType::Dex, ASkillType::ダメージ		, ASkillSubeffect::なし, 3, 0,1.0, 0, 0,60);
 		ActiveSkill::data[3].Set(ASkillTarget::敵全体  , StatusType::Int, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,1.5, 0, 0,60);
-		ActiveSkill::data[4].Set(ASkillTarget::敵単体  , StatusType::Vit, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,2.5, 0, 0,60);
+		ActiveSkill::data[4].Set(ASkillTarget::敵単体  , StatusType::Str, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,2.5, 0, 0,60);
 		ActiveSkill::data[5].Set(ASkillTarget::味方弱者, StatusType::Int, ASkillType::回復			, ASkillSubeffect::なし, 1, 0,2.0, 0, 0,60);
 		ActiveSkill::data[6].Set(ASkillTarget::敵単体  , StatusType::Str, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,2.0, 0, 0,60);
 		ActiveSkill::data[7].Set(ASkillTarget::敵単体  , StatusType::Str, ASkillType::ダメージ		, ASkillSubeffect::なし, 1, 0,2.5, 0, 0,60);

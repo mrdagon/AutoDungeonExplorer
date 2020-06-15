@@ -20,8 +20,10 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::EventLog;
-			名前 = "ログ";
-			略記 = "ログ";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::ログ;
 			横幅 = 330;
 			縦幅 = 125;
@@ -38,34 +40,22 @@ namespace SDX_BSC
 			種類アイコン[LogType::探索] = IconType::迷宮;
 
 
-			タブ.emplace_back(現在タブ, 0, IconType::ログ, "全て" );
-			タブ.emplace_back(現在タブ, 1, 種類アイコン[LogType::重要], "重要");
-			タブ.emplace_back(現在タブ, 2, 種類アイコン[LogType::経営], "経営");
-			タブ.emplace_back(現在タブ, 3, 種類アイコン[LogType::人事], "人事");
-			タブ.emplace_back(現在タブ, 4, 種類アイコン[LogType::探索], "探索");
-			タブ.emplace_back(現在タブ, 5, 種類アイコン[LogType::製造], "製造");
+			タブ.emplace_back(現在タブ, 0, IconType::ログ, TX::Log_タブ名[0] );
+			タブ.emplace_back(現在タブ, 1, 種類アイコン[LogType::重要], TX::Log_タブ名[1] );
+			タブ.emplace_back(現在タブ, 2, 種類アイコン[LogType::経営], TX::Log_タブ名[2] );
+			タブ.emplace_back(現在タブ, 3, 種類アイコン[LogType::人事], TX::Log_タブ名[3] );
+			タブ.emplace_back(現在タブ, 4, 種類アイコン[LogType::探索], TX::Log_タブ名[4] );
+			タブ.emplace_back(現在タブ, 5, 種類アイコン[LogType::製造], TX::Log_タブ名[5] );
 
-			タブ[0].SetHelp("全ログ");
-			タブ[1].SetHelp("重要なログ");
-			タブ[2].SetHelp("経営関連のログ");//雇用、経営戦術使用
-			タブ[3].SetHelp("冒険関連のログ");//ボス討伐/発見、地図発見
+			for (int a = 0; a < 6; a++)
+			{
+				タブ[a].SetHelp( TX::Log_タブヘルプ[a]);
+			}
 
-			for (int a = 0; a < 4; a++)
+			for (int a = 0; a < 6; a++)
 			{
 				gui_objects.push_back(&タブ[a]);
 			}
-
-			//EventLog
-			EventLog::Add(0, 0, LogDetailType::クエスト受注);
-			EventLog::Add(0, 1, LogDetailType::部門Lv上昇, 0);
-			EventLog::Add(0, 2, LogDetailType::経営戦術使用, 0);
-			EventLog::Add(0, 2, LogDetailType::雇用, 0);
-			EventLog::Add(0, 2, LogDetailType::再募集);
-			EventLog::Add(0, 5, LogDetailType::地図発見, 0);
-			EventLog::Add(0, 6, LogDetailType::ボス発見, 0);
-			EventLog::Add(0, 6, LogDetailType::ボス討伐, 0);
-			EventLog::Add(0, 8, LogDetailType::新装備開発, 0);
-			EventLog::Add(0, 100, LogDetailType::レア装備製造, 0);
 		}
 
 		void GUI_init()
@@ -91,7 +81,6 @@ namespace SDX_BSC
 
 			描画範囲(true);//以下非固定
 
-			int xx = 0;
 			int yy = 5;
 			int scr_max = 0;
 			int day = -1;
@@ -106,14 +95,14 @@ namespace SDX_BSC
 					//日付
 					MSystem::DrawWindow({ LV(10),LV(11) + yy }, LV(12), LV(13), LV(26));
 					//MSystem::DrawBox({ LV(10),LV(11) + yy }, LV(12), LV(13), { LV(26),LV(27),LV(28) });
-					MFont::Bメイリオ小.DrawBold({ LV(14),LV(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1," 日目" },true);
+					MFont::Bメイリオ小.DrawBold({ LV(14),LV(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1, TX::Log_日付 },true);
 					yy += LV(16);					
 				}
 				day = EventLog::logs[a].日付;
 
 				//メッセージ
 				MSystem::DrawWindow({ LV(17),LV(18) + yy }, LV(19), LV(20), LV(26));
-				MIcon::アイコン[種類アイコン[EventLog::logs[a].系統]].DrawRotate({ LV(21),LV(22) + yy }, 1, 0);
+				//MIcon::アイコン[種類アイコン[EventLog::logs[a].系統]].DrawRotate({ LV(21),LV(22) + yy }, 1, 0);
 
 				int id = EventLog::logs[a].参照ID;
 				std::string str;
@@ -121,70 +110,66 @@ namespace SDX_BSC
 				switch (EventLog::logs[a].種類)
 				{
 				case LogDetailType::クエスト受注:
-					str = "クエストを受注しました";
+					str = Quest::data[id].名前;
+					str += TX::Log_受注;
+					break;
+				case LogDetailType::クエスト完了:
+					str = Quest::data[id].名前;
+					str += TX::Log_完了;
 					break;
 				case LogDetailType::部門Lv上昇:
 					MIcon::アイコン[IconType::依頼].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
-					str = "部門がレベルアップ";
-					xx = LV(32);
+					str = TX::Log_部門Lv;
 					break;
 				case LogDetailType::経営戦術使用:
 					//経営戦術名
 					MIcon::アイコン[Management::data[id].アイコン].DrawRotate({LV(30),LV(31) + yy }, 2, 0);
 					str = Management::data[id].名前;
-					str += "を使用";
-					xx = LV(32);
+					str += TX::Log_投資;
 					break;
 				case LogDetailType::雇用:
 					//キャラアイコン
 					MUnit::ユニット[Warker::data[id].見た目][1]->DrawRotate({ LV(30) , LV(31) + yy }, 2, 0);
 					str = Warker::data[id].名前;
-					str += "を雇用";
-					xx = LV(32);
+					str += TX::Log_雇用;
 					break;
 				case LogDetailType::再募集:
-					str = "新たな人員を募集";
+					str = TX::Log_募集;
 					break;
 				case LogDetailType::地図発見:
 					//ダンジョンアイコンと名前
 					MIcon::ダンジョン[Dungeon::data[id].種類].DrawRotate({LV(30),LV(31) + yy },1,0);
 					str = Dungeon::data[id].名前;
-					str += "を発見";
-					xx = LV(32);
+					str += TX::Log_地図;
 					break;
 				case LogDetailType::ボス発見:
 					//魔物アイコン
 					MIcon::ダンジョン[Dungeon::data[id].種類].DrawRotate({ LV(30),LV(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
-					str += "の主を発見";
-					xx = LV(32);
+					str += TX::Log_ボス発見;
 					break;
 				case LogDetailType::ボス討伐:
 					//魔物アイコン
 					MIcon::ダンジョン[Dungeon::data[id].種類].DrawRotate({ LV(30),LV(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
-					str += "の主を討伐";
-					xx = LV(32);
+					str += TX::Log_ボス討伐;
 					break;
 				case LogDetailType::新装備開発:
 					//装備品のアイコン
 					MIcon::アイテム[Item::data[id].見た目].DrawRotate({ LV(30) , LV(31) + yy }, 1, 0);
 					str = Item::data[id].名前;
-					str += "を初めて製造";
-					xx = LV(32);
+					str += TX::Log_初製造;
 					break;
 				case LogDetailType::レア装備製造:
 					//装備アイコン
 					MIcon::アイテム[Item::data[id].見た目].DrawRotate({ LV(30) , LV(31) +yy},1,0);
 					str = Item::data[id].名前;
-					str += "を製造";
-					xx = LV(32);
+					str += TX::Log_レア製造;
 					break;
 				}
 
-				MFont::Bメイリオ中.DrawBold({ LV(23) + xx ,LV(24) + yy }, Color::White, Color::Black, str);
+				MFont::Bメイリオ中.DrawBold({ LV(23) + LV(32) ,LV(24) + yy }, Color::White, Color::Black, str);
 				yy += LV(25);
-				xx = 0;
 			}
 			scr_max = yy;
 

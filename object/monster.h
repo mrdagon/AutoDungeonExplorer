@@ -35,25 +35,19 @@ namespace SDX_BSC
 			//とりあえずパッシブスキル無し
 
 			//基礎ステータス
-			this->基礎Agi = type->Agi * (9.0 + Lv * 1.2) / 10;
 			this->基礎Str = type->Str * (9.0 + Lv * 1.2) / 10;
 			this->基礎Int = type->Int * (9.0 + Lv * 1.2) / 10;
 			this->基礎Dex = type->Dex * (9.0 + Lv * 1.2) / 10;
-			this->基礎Vit = type->Vit * (9.0 + Lv * 1.2) / 10;
-			this->最大HP = 50 + 基礎Vit * 5;
+			this->最大HP = 基礎HP;
 			
 			if (isボス)
 			{
-				this->基礎Agi *= 1.5;
-				this->基礎Vit *= 1.5;
-
 				this->最大HP *= 20;
 				this->経験値 *= 50;
 			}
 
 			this->現在HP = 最大HP;
 
-			基礎ブロック = 0;
 			基礎回避 = 0;
 
 		}

@@ -158,12 +158,13 @@ namespace SDX_BSC
 
 		void init()
 		{
-			//名前 = "ギルド員/\\cff00ff仕事\\cffffff割当";
 			gui_objects.reserve(256);
 
 			種類 = WindowType::Factory;
-			名前 = "製造";
-			略記 = "製造";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::製造;
 			横幅 = 344;
 			縦幅 = 125;
@@ -175,6 +176,7 @@ namespace SDX_BSC
 			for (int a = 0; a < (int)CraftType::COUNT; a++)
 			{
 				メンバーゾーン[CraftType(a)].部門 = CraftType(a);
+				メンバーゾーン[CraftType(a)].SetHelp(TX::Factory_部門説明[CraftType(a)]);
 			}
 
 		}
@@ -191,7 +193,6 @@ namespace SDX_BSC
 
 			for (auto& it : メンバーゾーン)
 			{
-				it.SetHelp("製造力と製造人員\nドラッグ＆ドロップで配置転換", 80);
 				it.親ウィンドウ = this;
 			}
 
@@ -208,7 +209,6 @@ namespace SDX_BSC
 					製造メンバー[t][a].親ウィンドウ = this;
 				}
 			}
-
 
 			//座標初期化
 			int n = 0;

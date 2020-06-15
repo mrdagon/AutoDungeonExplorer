@@ -8,6 +8,7 @@ namespace SDX_BSC
 	using namespace SDX;
 
 	/*ギルドとパーティ相互参照可能にするためのインターフェース*/
+	//素材、投資効果、ギルマス効果などを参照する必要があるのは一部
 	class I_Guild
 	{
 	private:
@@ -21,6 +22,7 @@ namespace SDX_BSC
 		double 資金 = 123456789;
 		Management* 選択戦術 = 0;
 		int 人事ポイント = 10;
+		int 名声 = 100;
 
 		//従業員一覧
 		std::vector<Warker*> ギルメン;
@@ -60,11 +62,20 @@ namespace SDX_BSC
 		EnumArray < bool,ItemType> is新開発タブ;
 
 		//各種記録_Record
+		int 総販売;
+		double 総売上;
+		double 総製造;
+		double 総素材;//探索後増加
+		double 総地図;//発見時増加
+		double 総討伐;//討伐時増加
+		double 総撤退;//全滅時増加
+
+		//日別記録
 		std::vector<int> R団員;
 		std::vector<double> R資金;
-		std::vector<double> R販売;
-		std::vector<int> R製造;
-		std::vector<int> R開発;
+		std::vector<double> R販売;//
+		std::vector<int> R製造;//
+		//std::vector<int> R開発;
 		std::vector<int> R素材在庫;
 		std::vector<int> R地図数;
 		std::vector<int> R討伐数;

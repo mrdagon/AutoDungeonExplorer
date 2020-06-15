@@ -16,6 +16,8 @@ using namespace SDX_BSC;
 
 void LoadAndInitData()
 {
+	TX::Load();
+
 	ConfigSaveAndLoad(FileMode::Read);
 
 	Game::解像度W = Game::解像度設定 * 160;
@@ -24,10 +26,10 @@ void LoadAndInitData()
 	Game::最大解像度W = GetSystemMetrics(SM_CXSCREEN);
 	Game::最大解像度H = GetSystemMetrics(SM_CYSCREEN);
 
-	Game::解像度W = min(Game::解像度W, Game::最大解像度W);
-	Game::解像度H = min(Game::解像度H, Game::最大解像度H);
+	Game::解像度W = std::min(Game::解像度W, Game::最大解像度W);
+	Game::解像度H = std::min(Game::解像度H, Game::最大解像度H);
 
-	System::Initialise("ギルドマスターマインド(仮) デモ0.2a", Game::解像度W, Game::解像度H);//ライブラリの初期化
+	System::Initialise( TX::タイトル.c_str() , Game::解像度W, Game::解像度H);//ライブラリの初期化
 
 	Game::BGM音量 = double(Game::BGM設定 * Game::BGM設定) / 100;
 	Game::SE音量 = double(Game::SE設定 * Game::SE設定) / 100;
@@ -36,6 +38,8 @@ void LoadAndInitData()
 	Sound::SetMainVolume(Game::SE音量);
 
 	//各種リソース読み込み
+
+
 	LoadMaterial();
 
 	LoadWarkerClass();

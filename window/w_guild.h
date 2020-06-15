@@ -35,10 +35,24 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 				MIcon::アイコン[アイコン].Draw({px+LV(6),py+LV(7)});
 
-				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);
-				MFont::BArial中.DrawBold({ px + LV(10) ,py + LV(8) }, Color::White, Color::Black, { "1234 ", 単位 }, true);
-				//MFont::BArial中.DrawBold({ px + LV(11) ,py + LV(8) }, Color::White, Color::Black, 単位, true);
+				double num = 0;
+				switch (id)
+				{
+					case 0:num = (double)Guild::P->ギルメン.size(); break;//団員 人
+					case 1:num = Guild::P->名声; break;//名声 点
+					case 2:num = Guild::P->資金; break;//資金 Ｇ
+					case 3:num = Guild::P->総販売; break;//販売 個
+					case 4:num = Guild::P->総売上; break;//売上 Ｇ
+					case 5:num = Guild::P->総製造; break;//製造 個
+					//case 6:num = 0; break;//開発 種
+					case 7:num = Guild::P->総素材; break;//素材 個
+					case 8:num = Guild::P->総地図; break;//地図 枚
+					case 9:num = Guild::P->総討伐; break;//討伐 体
+					case 10:num = Guild::P->総撤退; break;//撤退 回
+				}
 
+				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);
+				MFont::BArial中.DrawBold({ px + LV(10) ,py + LV(8) }, Color::White, Color::Black, { (long int)num , " " , 単位 }, true);
 			}
 		};
 
@@ -52,8 +66,8 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::資金].Draw({ px + LV(12),py + LV(13) });
 				MUnit::ユニット[UnitImageType::おじいさん][1]->DrawRotate({ px + LV(14) , py + LV(15) }, 2, 0);
 
-				MFont::BArial中.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, "ギルド名", false);
-				MFont::BArial中.DrawBold({ px + LV(18) ,py + LV(19) }, Color::White, Color::Black, "ギルマス名", false);
+				MFont::BArial中.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, TX::Guild_ギルマス[0], false);
+				MFont::BArial中.DrawBold({ px + LV(18) ,py + LV(19) }, Color::White, Color::Black, TX::Guild_ギルマス[1], false);
 			}
 		};
 
@@ -69,7 +83,7 @@ namespace SDX_BSC
 
 
 		GUI_数値 製造数;//個
-		GUI_数値 開発数;//種
+		//GUI_数値 開発数;//種
 		GUI_数値 素材在庫;//個
 
 		GUI_数値 地図数;//枚
@@ -77,15 +91,15 @@ namespace SDX_BSC
 		GUI_数値 撤退数;//回
 
 		GUI_数値 名声値;//P
-
-
 		
 		void init()
 		{
 			種類 = WindowType::Guild;
 
-			名前 = "ギルド情報";
-			略記 = "情報";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::情報;
 			横幅 = 280;
 			縦幅 = 125;
@@ -94,21 +108,19 @@ namespace SDX_BSC
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
 
-			団員数.Set("団員", "人", IconType::資金, 4);
-			名声値.Set("名声", "点", IconType::名声, 5);
+			団員数.Set(TX::Guild_項目[0].c_str(), TX::Guild_単位[0].c_str(), IconType::資金, 0);
+			名声値.Set(TX::Guild_項目[1].c_str(), TX::Guild_単位[1].c_str(), IconType::名声, 1);
 
-			資金.Set( "資金","Ｇ",IconType::資金,0);
-			販売数.Set("販売", "個", IconType::装備, 4);
-			売上.Set("売上", "Ｇ", IconType::資金, 4);
-			//集客力.Set( "集客","CPD", IconType::集客, 1);
+			資金.Set(TX::Guild_項目[2].c_str(), TX::Guild_単位[2].c_str(),IconType::資金,2);
+			販売数.Set(TX::Guild_項目[3].c_str(), TX::Guild_単位[3].c_str(), IconType::装備, 3);
+			売上.Set(TX::Guild_項目[4].c_str(), TX::Guild_単位[4].c_str(), IconType::資金, 4);
 
-			製造数.Set("製造", "個", IconType::装備, 3);;//個
-			開発数.Set("開発", "種", IconType::開発, 3);
-			素材在庫.Set("素材", "個", IconType::素材, 4);
+			製造数.Set(TX::Guild_項目[5].c_str(), TX::Guild_単位[5].c_str(), IconType::装備, 5);;//個
+			素材在庫.Set(TX::Guild_項目[6].c_str(), TX::Guild_単位[6].c_str(), IconType::素材, 7);
 
-			地図数.Set( "地図","枚", IconType::地図, 2);
-			討伐数.Set( "討伐","体", IconType::ボス, 4);
-			撤退数.Set("撤退", "回", IconType::撤退, 4);
+			地図数.Set(TX::Guild_項目[7].c_str(), TX::Guild_単位[7].c_str(), IconType::地図, 8);
+			討伐数.Set(TX::Guild_項目[8].c_str(), TX::Guild_単位[8].c_str(), IconType::ボス, 9);
+			撤退数.Set(TX::Guild_項目[9].c_str(), TX::Guild_単位[9].c_str(), IconType::撤退, 10);
 
 			gui_objects.push_back(&ギルマス);
 			gui_objects.push_back(&名声値);
@@ -121,7 +133,7 @@ namespace SDX_BSC
 
 
 			gui_objects.push_back(&製造数);
-			gui_objects.push_back(&開発数);
+			//gui_objects.push_back(&開発数);
 			gui_objects.push_back(&素材在庫);
 
 			gui_objects.push_back(&地図数);

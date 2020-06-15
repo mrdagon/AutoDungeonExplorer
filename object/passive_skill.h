@@ -185,8 +185,8 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(1, "STR+", "STRが5上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(2, "DEX+", "DEXが5上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(3, "INT+", "INTが5上昇する", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(4, "VIT+", "VITが5上昇する", SkillType::VIT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(5, "AGI+", "AGIが5上昇する", SkillType::AGI, ItemType::すべて, ASkillType::指定なし);
+		PassiveSkill::data.emplace_back(4, "VIT+", "VITが5上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
+		PassiveSkill::data.emplace_back(5, "AGI+", "AGIが5上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 
 		PassiveSkill::data.emplace_back(6, "剣技", "剣スキルの効果+20%", SkillType::剣, ItemType::剣, ASkillType::指定なし	);
 		PassiveSkill::data.emplace_back(7, "剣術", "剣スキルのチャージ+20%", SkillType::剣, ItemType::剣, ASkillType::指定なし	);
@@ -207,7 +207,7 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(20, "パリィ", "回避+10%", SkillType::防御, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(21, "挑発", "狙われやすさx1.2", SkillType::挑発, ItemType::すべて, ASkillType::指定なし);
 
-		PassiveSkill::data.emplace_back(22, "先駆け", "開戦時、スキルチャージ+20", SkillType::AGI, ItemType::すべて, ASkillType::指定なし);
+		PassiveSkill::data.emplace_back(22, "先駆け", "開戦時、スキルチャージ+20", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(23, "隠密", "狙われやすさx0.8", SkillType::隠密, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(24, "採取", "素材収集数+10%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 

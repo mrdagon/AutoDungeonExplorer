@@ -25,14 +25,20 @@ namespace SDX_BSC
 				//全体の枠
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 
-				//Main or Subをアイコン？
-				MFont::BArial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Main Quest" });
+				//Main or Subをアイコン？文字？
+
+				if (Quest::data[id].isメイン)
+				{
+					MFont::BArial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Main Quest" });
+				} else {
+					MFont::BArial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Sub Quest" });
+				}
 
 				//クエスト名
 				MFont::BArial大.DrawBold({ px + LV(5) ,py + LV(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
 
 				//達成条件と達成率＿complete表示
-				MFont::BArial中.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度計算() , " / " , Quest::data[id] .条件数値} , true );
+				MFont::BArial中.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
 
 				//報酬、名誉
 				MIcon::アイコン[IconType::名声].Draw({ px + LV(9), py + LV(10) });
@@ -52,8 +58,10 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::Quest;
-			名前 = "クエスト";
-			略記 = "依頼";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::依頼;
 			横幅 = 330;
 			縦幅 = 125;
@@ -61,14 +69,6 @@ namespace SDX_BSC
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
-
-			Quest::Add("洞窟の主を倒せ", QuestType::ボス討伐, 3, 1, true);
-			Quest::Add("町の安全確保", QuestType::雑魚討伐, 3, 1000, true);
-			Quest::Add("武器を供給せよ", QuestType::装備製造, 3, 100, true);
-
-			Quest::data[0].報酬金 = 1000;
-			Quest::data[1].報酬金 = 10000;
-			Quest::data[2].報酬金 = 100000;
 		}
 
 		void GUI_Init()
@@ -81,6 +81,7 @@ namespace SDX_BSC
 				依頼.emplace_back();
 				依頼[a].位置 = { LV(0) , LV(1) + (LV(3) + LV(4)) * a , LV(2) , LV(3) };
 				依頼[a].id = a;
+				依頼[a].SetHelp(Quest::data[a].説明);
 			}
 
 			for (int a = 0; a < 依頼.size(); a++)

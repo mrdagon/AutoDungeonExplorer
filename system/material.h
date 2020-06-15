@@ -225,8 +225,6 @@ namespace SDX_BSC
 			スキル[SkillType::STR].Load("File/game_icons/fist.png");
 			スキル[SkillType::DEX].Load("File/game_icons/juggler.png");
 			スキル[SkillType::INT].Load("File/game_icons/white-book.png");
-			スキル[SkillType::VIT].Load("File/game_icons/muscle-fat.png");//HP
-			スキル[SkillType::AGI].Load("File/game_icons/sprint.png");
 			スキル[SkillType::その他].Load("File/game_icons/talk.png");
 
 			装備種[ItemType::剣].Load("File/game_icons/plain-dagger.png");
@@ -255,8 +253,6 @@ namespace SDX_BSC
 			ステータス種[StatusType::Str].Load("File/game_icons/fist.png");
 			ステータス種[StatusType::Dex].Load("File/game_icons/juggler.png");
 			ステータス種[StatusType::Int].Load("File/game_icons/white-book.png");
-			ステータス種[StatusType::Vit].Load("File/game_icons/muscle-fat.png");
-			ステータス種[StatusType::Agi].Load("File/game_icons/sprint.png");
 
 			static Image img_emote;
 			img_emote.Load("File/system/emo.png");

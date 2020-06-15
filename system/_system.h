@@ -10,3 +10,5 @@
 #include "material.h"
 #include "debug.h"
 #include "save_and_load.h"
+#include "text.h"
+#include "sound.h"

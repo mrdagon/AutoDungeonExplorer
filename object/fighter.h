@@ -14,24 +14,25 @@ namespace SDX_BSC
 
 	public:
 		//●固定、基礎ステータス
-		int アクティブスキル[CV::最大Aスキル数];
+		int アクティブスキル[CV::最大Aスキル数] = {0,0,0,0};
 		std::vector<int> 発動パッシブ;//本人のパッシブ、装備、パーティパッシブを格納
 
 		ItemType 武器種;
 		StatusType 通常攻撃ステータス;
 		FormationType 隊列 = FormationType::前列;
 
-		double 最大HP;
-		double 基礎Str, 基礎Dex, 基礎Int, 基礎Vit, 基礎Agi;
-		double 基礎ブロック, 基礎回避;
-		//●再計算ステータス、戦闘中ステータス、パッシブ計算
+		double 基礎HP;
+		double 基礎Str, 基礎Dex, 基礎Int;
+		EnumArray<double,DamageType> 基礎防御;
+		double 基礎命中 = 0;
+		double 基礎回避 = 0;
+		//●計算後ステータス、戦闘中ステータス、パッシブ計算
+		double 最大HP = 100;
 		double 現在HP;
-		double 補正Str, 補正Dex, 補正Int, 補正Vit, 補正Agi;
-		double ブロック;
-		double 回避;
-		double 敵視;
+		double 補正Str, 補正Dex, 補正Int;
+		EnumArray<double,DamageType> 防御;
+		double 回避 = 0;
 		//通常攻撃、スキルチャージ
-		double 行動値;
 		double スキルチャージ[CV::最大Aスキル数];
 		//常時パッシブ補正
 		double チャージ量補正;
@@ -43,6 +44,7 @@ namespace SDX_BSC
 		//バフ、デバフ、効果量、効果時間
 		double ダメージバフ;
 		int ダメージバフ残ターン;
+		int 注目;
 
 		//-スキル効果の一時的変化
 		double ダメージバフ付与率;
@@ -62,15 +64,11 @@ namespace SDX_BSC
 			補正Str = 基礎Str;
 			補正Dex = 補正Dex;
 			補正Int = 補正Int;
-			補正Vit = 補正Vit;
-			補正Agi = 補正Agi;
-
-			//敵視計算
-			if (隊列 == FormationType::前列) { 敵視 = 1.5; }
-			else { 敵視 = 1.0; }
 
 			//ブロック-回避率
-			ブロック = 基礎ブロック;
+			防御[DamageType::物理] = 基礎防御[DamageType::物理];
+			防御[DamageType::魔法] = 基礎防御[DamageType::魔法];
+
 			回避 = 基礎回避;
 
 			//バフ適用
@@ -122,7 +120,7 @@ namespace SDX_BSC
 
 		void 行動値計算()
 		{
-			行動値 += 基礎Agi;
+			;
 
 		}
 
@@ -142,7 +140,6 @@ namespace SDX_BSC
 			}
 
 			通常攻撃(味方, 敵);
-			行動値 = 0;
 			return true;
 		}
 
@@ -178,27 +175,6 @@ namespace SDX_BSC
 		Fighter* 敵選択(std::vector<Fighter*> &敵)
 		{
 			//攻撃対象を選択
-			double 合計敵視 = 0;
-			for (auto& it : 敵)
-			{
-				if (it->現在HP > 0)
-				{
-					合計敵視 += it->敵視;
-				}
-			}
-
-			double rng = Rand::Get(合計敵視);
-			for (Fighter* it : 敵)
-			{
-				if (it->現在HP <= 0) { continue; }
-
-				rng -= it->敵視;
-				if (rng <= 0)
-				{
-					//攻撃
-					return it;
-				}
-			}
 
 			return 敵[0];
 		}
@@ -222,8 +198,6 @@ namespace SDX_BSC
 			case StatusType::Str:スキル威力 += 基礎Str * スキル.ステータス反映率; break;
 			case StatusType::Dex:スキル威力 += 基礎Dex * スキル.ステータス反映率; break;
 			case StatusType::Int:スキル威力 += 基礎Int * スキル.ステータス反映率; break;
-			case StatusType::Vit:スキル威力 += 基礎Vit * スキル.ステータス反映率; break;
-			case StatusType::Agi:スキル威力 += 基礎Agi * スキル.ステータス反映率; break;
 			}
 
 			//対象の計算
@@ -292,7 +266,6 @@ namespace SDX_BSC
 			//共通初期化
 			ステータス再計算(味方,敵);
 
-			行動値 = 0;
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				スキルチャージ[a] = 0;
@@ -306,12 +279,6 @@ namespace SDX_BSC
 		/*攻撃オブジェクトを引数に取る*/
 		void 防御行動(double ダメージ値, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
-			//ブロックによる軽減
-			if (ブロック > 0)
-			{
-				ダメージ値 = ダメージ値 * (1 - ブロック);
-			}
-
 			//回避
 			if (回避 <= 0 || Rand::Coin(回避) == false)
 			{
@@ -402,7 +369,6 @@ namespace SDX_BSC
 				//●アクティブスキル、通常攻撃強化
 			case PSkillEffect::ダメージ増加:
 			case PSkillEffect::行動値増減:
-				行動値 += スキル.効果量;
 				break;
 			case PSkillEffect::スキル効果増加:
 				スキルダメージ補正 += スキル.効果量;
@@ -435,7 +401,6 @@ namespace SDX_BSC
 				}
 				break;
 			case PSkillEffect::ブロック率増加:
-				基礎ブロック += スキル.効果量;
 				break;
 			case PSkillEffect::ブロック軽減率増加:
 				//●耐久上昇
@@ -445,7 +410,6 @@ namespace SDX_BSC
 				break;
 			case PSkillEffect::魔法防御:
 			case PSkillEffect::狙われやすさ増減:
-				敵視 *= スキル.効果量;
 				break;
 			case PSkillEffect::HP1で耐える:
 			case PSkillEffect::デバフ無効:
@@ -481,8 +445,6 @@ namespace SDX_BSC
 				if (スキル.系統 == SkillType::STR) { 基礎Str += スキル.効果量; }
 				if (スキル.系統 == SkillType::DEX) { 基礎Dex += スキル.効果量; }
 				if (スキル.系統 == SkillType::INT) { 基礎Int += スキル.効果量; }
-				if (スキル.系統 == SkillType::VIT) { 基礎Vit += スキル.効果量; }
-				if (スキル.系統 == SkillType::AGI) { 基礎Agi += スキル.効果量; }
 				break;
 			case PSkillEffect::経験値増加:
 			case PSkillEffect::忠誠度補正:

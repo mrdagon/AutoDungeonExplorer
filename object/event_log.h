@@ -19,19 +19,21 @@ namespace SDX_BSC
 	enum class LogDetailType
 	{
 		//重要
-		クエスト受注,
+		クエスト受注,//○
+		クエスト完了,
 		//経営
 		部門Lv上昇,
 		経営戦術使用,
 		//人事
-		雇用,
-		再募集,
+		雇用,//○
+		再募集,//○
 		//探索
 		地図発見,
 		ボス発見,
 		ボス討伐,
 		//製造
-		新装備開発,
+		技術Lv上昇,//○
+		新装備開発,//○
 		レア装備製造,
 		COUNT,
 	};
@@ -45,7 +47,7 @@ namespace SDX_BSC
 
 		static void Add(int ギルド, int 日付, LogDetailType 種類 , int 参照ID = 0)
 		{
-			logs.emplace_back(ギルド, 日付, 種類, 参照ID);
+			logs.emplace_back(ギルド, 日付 , 種類, 参照ID);
 		}
 
 		EventLog(int ギルド, int 日付, LogDetailType 種類, int 参照ID) :

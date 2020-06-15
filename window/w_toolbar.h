@@ -27,8 +27,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::日付].DrawRotate({ px+14,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 ," 日目" }, true);
-				MFont::Arial大.DrawBold({ px + 210,py - 3 }, Color::White, Color::Black, "Sun", true);
+				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 , TX::Tool_日付 }, true);
 			}
 		};
 		class G_時刻 : public GUI_Object
@@ -54,7 +53,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, {Game::人口},true);
+				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { Guild::P->集客力/10 , "." , Guild::P->集客力 % 10 , TX::Tool_人口 },true);
 			}
 		};
 
@@ -123,7 +122,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24)-7,py + LV(25) }, Color::White, Color::Black, "ヘルプ");
+				MFont::Bメイリオ小.DrawBold({ px + LV(24)-7,py + LV(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
 
 			}
 		};
@@ -141,7 +140,7 @@ namespace SDX_BSC
 				}
 
 				MIcon::アイコン[IconType::停止].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "停止");
+				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_停止);
 			}
 
 			void Click(double px, double py)
@@ -159,7 +158,7 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) - 25,py + LV(23) }, 2, 0);
 				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) + 25,py + LV(23) }, 2, 0,true);
 
-				MFont::Bメイリオ小.DrawBold({ px + LV(24)+LV(26),py + LV(25) }, Color::White, Color::Black, "速度");
+				MFont::Bメイリオ小.DrawBold({ px + LV(24)+LV(26),py + LV(25) }, Color::White, Color::Black, TX::Tool_速度);
 				MFont::Arial中.DrawBold({ px + LV(24) + LV(26) + 5,py + LV(25) - 20 }, Color::White, Color::Black, "x", true);
 				MFont::Arial中.DrawBold({ px + LV(24) + LV(26) + 28,py + LV(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
 
@@ -185,7 +184,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::設定].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "設定");
+				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_設定);
 			}
 
 			void Click(double px, double py)
@@ -207,7 +206,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::終了].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, "終了");
+				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_タイトル);
 			}
 
 			void Click(double px, double py)
@@ -237,6 +236,7 @@ namespace SDX_BSC
 			for (int a = 0; a < CV::ウィンドウ数; a++)
 			{
 				ウィンドウ[a].対象ウィンドウ = windows[a];
+				ウィンドウ[a].SetHelp(windows[a]->ヘルプメッセージ);
 			}
 		}
 
@@ -260,7 +260,17 @@ namespace SDX_BSC
 			gui_objects.push_back(&停止);
 			gui_objects.push_back(&速度);
 			gui_objects.push_back(&設定);
-			gui_objects.push_back(&タイトル);			
+			gui_objects.push_back(&タイトル);
+
+			日付.SetHelp(TX::Tool_Help日付);
+			時刻.SetHelp(TX::Tool_Help時刻);
+			人口.SetHelp(TX::Tool_Help人口);
+			資金.SetHelp(TX::Tool_Help資金);
+			ヘルプ.SetHelp(TX::Tool_Helpヘルプ);
+			停止.SetHelp(TX::Tool_Help停止);
+			速度.SetHelp(TX::Tool_Help速度);
+			設定.SetHelp(TX::Tool_Help設定);
+			タイトル.SetHelp(TX::Tool_Helpタイトル);
 		}
 
 		void GUI_init()
@@ -274,7 +284,7 @@ namespace SDX_BSC
 			人口.位置 = { Window::GetWidth() - LV(13),LV(6),LV(14),LV(8) };
 			資金.位置 = { Window::GetWidth() - LV(15),LV(6),LV(16),LV(8) };
 
-			ヘルプ.位置 = { Window::GetWidth() - LV(17),LV(1),LV(2),LV(3)};
+			ヘルプ.位置 = { Window::GetWidth() - LV(17),LV(1),LV(2) ,LV(3) };
 			停止.位置 = { Window::GetWidth() - LV(18),LV(1),LV(2),LV(3) };
 			速度.位置 = { Window::GetWidth() - LV(19),LV(1),LV(21),LV(3) };
 			設定.位置 = { Window::GetWidth() - LV(27),LV(1),LV(2),LV(3) };
@@ -286,7 +296,6 @@ namespace SDX_BSC
 		{
 			GUI_init();
 
-			//MSystem::DrawWindow({0,0}, Window::GetWidth(),40,8);
 			MSystem::DrawWindow({0,0},Window::GetWidth(), WindowBox::ツールバー高さ,7);
 
 			for (auto& it : gui_objects)

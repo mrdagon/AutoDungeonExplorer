@@ -109,7 +109,7 @@ namespace SDX_BSC
 				if (補正座標.Hit(&Rect(LV(31), LV(32), LV(33), LV(34))) == true)
 				{
 					//探索指示や入れ替え等の操作方法
-					SetHelp("探索方針を変更します", 40);
+					SetHelp( TX::Party_探索方針);
 					Info座標補正(座標);
 					MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
 					MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
@@ -440,7 +440,7 @@ namespace SDX_BSC
 			void Info派生(Point 座標) override
 			{
 				//探索先情報
-				SetHelp("ダンジョンドラッグ＆ドロップで探索先変更\nギルメンドラッグ＆ドロップで編成変更\n方針ボタンで探索方針変更", 110);
+				SetHelp("ダンジョンドラッグ＆ドロップで探索先変更\nギルメンドラッグ＆ドロップで編成変更\n方針ボタンで探索方針変更");
 				Info座標補正(座標);
 				MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
 				MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
@@ -459,8 +459,10 @@ namespace SDX_BSC
 		{
 			//名前 = "ギルド員/\\cff00ff仕事\\cffffff割当";
 			種類 = WindowType::Party;
-			名前 = "ギルド員/割当";
-			略記 = "団員";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::編成;
 			横幅 = 550;
 			縦幅 = 125;

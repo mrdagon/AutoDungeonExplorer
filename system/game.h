@@ -12,7 +12,6 @@ namespace SDX_BSC
 	{
 		static int 日付 = 0;//一月28日、一年336日
 		static int 時間 = CV::一時間フレーム数 *6;
-		static int 人口 = 123;
 		static int ゲームスピード = 1;
 		static bool is停止 = false;
 		static int アニメーション時間 = 0;

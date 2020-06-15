@@ -27,17 +27,12 @@ namespace SDX_BSC
 
 				//外枠
 				MSystem::DrawWindow({ px,py }, w, h, 1);
-				//MSystem::DrawBoxBold({ px,py }, w, h, Color::White, 0, Color::Black);
 				//アイコン
 				MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(11),py+LV(12) });
 				//在庫数
-				//MFont::Arial小.DrawBold({ px + LV(19) ,py + LV(20) }, Color::White, Color::Black, { "x" }, true);
 				MFont::BArial中.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { "x" , zaiko }, true);
 				//ランク表示
-				//MIcon::アイコン[IconType::星].DrawRotate({ px + LV(15) ,py + LV(16) }, 1, 0);
-				//MFont::Arial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Lv " }, true);
 				MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク }, true);
-				//MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, {255,64,64}, Color::Black, { Item::data[id].ランク+1 }, true);
 				//new表示
 
 			}
@@ -66,8 +61,10 @@ namespace SDX_BSC
 		void init()
 		{
 			種類 = WindowType::Item;
-			名前 = "装備品";
-			略記 = "装備";
+			名前 = TX::Window_名前[種類];
+			略記 = TX::Window_略記[種類];
+			SetHelp(TX::Window_ヘルプ[種類]);
+
 			アイコン = IconType::装備;
 			横幅 = 330;
 			縦幅 = 125;
@@ -77,27 +74,11 @@ namespace SDX_BSC
 			固定縦 = 43;
 			スクロール位置 = 0;
 
-			タブ.emplace_back(現在タブ, 0, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 1, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 2, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 3, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 4, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 5, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 6, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 7, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 8, IconType::全て, "");
-			タブ.emplace_back(現在タブ, 9, IconType::全て, "");
-
-			タブ[0].SetHelp("1");
-			タブ[1].SetHelp("2");
-			タブ[2].SetHelp("3");
-			タブ[3].SetHelp("4");
-			タブ[4].SetHelp("5");
-			タブ[5].SetHelp("6");
-			タブ[6].SetHelp("7");
-			タブ[7].SetHelp("8");
-			タブ[8].SetHelp("9");
-			タブ[9].SetHelp("A");
+			for (int a = 0; a < 10; a++)
+			{
+				タブ.emplace_back(現在タブ, a, IconType::全て, "");
+				タブ[a].SetHelp(TX::Item_タブヘルプ[a]);
+			}
 
 			タブ[1].スキルアイコン = SkillType::剣;
 			タブ[2].スキルアイコン = SkillType::槌;
@@ -117,9 +98,8 @@ namespace SDX_BSC
 			
 			for (auto&it : アイテム)
 			{
-				gui_objects.push_back(&it);
+				gui_objects.push_back(&it);			
 			}
-
 		}
 
 		void GUI_Init()

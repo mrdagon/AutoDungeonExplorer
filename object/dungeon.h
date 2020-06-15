@@ -96,8 +96,10 @@ namespace SDX_BSC
 		std::vector<Room>部屋;
 		int ランク;//0~4
 		int Lv;//敵の強さ等
-		bool isボス戦中 = false;
+		bool isボス戦中 = false;//同時にボス戦するのを防ぐ
 		bool isボス生存 = true;
+		bool isボス発見 = false;
+
 		int 残り財宝;
 		int 最大財宝;
 		int 残り地図;

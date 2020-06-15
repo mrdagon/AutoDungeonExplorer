@@ -221,8 +221,6 @@ namespace SDX_BSC
 		STR,
 		DEX,
 		INT,
-		VIT,
-		AGI,
 		その他,
 		COUNT
 	};
@@ -263,12 +261,9 @@ namespace SDX_BSC
 		Party,
 		Quest,
 		Recruit,
-		Record,
 		//一時ウィンドウ
-		Treatment,//月末待遇変更
 		Config,//設定
-		Graf,//折れ線GRAF
-
+		COUNT,
 	};
 
 	enum class CraftType
@@ -363,6 +358,14 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	//ダメージ属性
+	enum class DamageType
+	{
+		物理,
+		魔法,
+		COUNT
+	};
+
 	//素材種-6種+宝石×ランク
 	//enum class MaterialType
 	//{
@@ -380,7 +383,7 @@ namespace SDX_BSC
 	enum class FormationType
 	{
 		前列,
-		中列,
+		中列,//未使用
 		後列,
 		全列,
 		COUNT
@@ -391,8 +394,6 @@ namespace SDX_BSC
 		Str,
 		Int,
 		Dex,
-		Vit,
-		Agi,
 		COUNT
 	};
 
