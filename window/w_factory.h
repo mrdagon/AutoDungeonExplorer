@@ -30,14 +30,10 @@ namespace SDX_BSC
 				MSystem::クラフト台[部門].DrawRotate({ px + LV(15) ,py + LV(16) }, 2, 0);
 
 				//技術レベルとEXP
-				double rate = Guild::P->製造経験[部門] / ((Guild::P->製造Lv[部門]*2+1) * 100000);
+				double rate = Guild::P->製造経験[部門] / Guild::P->必要技術経験(部門);
 				MSystem::DrawBar({ px + LV(19),py + LV(20) }, LV(21), LV(22), rate, 1, Color::Blue, Color::White, Color::White, true);
 				MFont::BArial中.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Guild::P->製造Lv[部門] });
 
-				//合計製造力
-				//MSystem::DrawWindow({ px + LV(23) , py + LV(24) }, 70, 18, 11);
-				//MIcon::アイコン[IconType::ハンマー].Draw({ px + LV(25), py + LV(26) });
-			
 				//製造アイコンと製造進行度合い
 				//craft種アイコン
 				int id = Guild::P->完成品[部門];
@@ -128,6 +124,7 @@ namespace SDX_BSC
 				W_Drag_Drop::ギルメン = ギルメン;
 				W_Drag_Drop::ウィンドウ = 親ウィンドウ;
 				W_Drag_Drop::並びID = 並びID;
+				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 			void Drop(double px, double py)

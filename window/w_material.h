@@ -35,8 +35,8 @@ namespace SDX_BSC
 				MIcon::素材[素材種].DrawRotate({ px + LV(6), py + LV(7) }, 1, 0);
 
 				//ランク
-				MIcon::アイコン[IconType::ランク].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
-				MFont::BArial小.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, ランク+1, true);
+				//MIcon::アイコン[IconType::ランク].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
+				MFont::BArial小.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, { "Lv" , ランク + 1 }, true);
 
 				//所持数
 				MFont::BArial小.DrawBold({ px + LV(12) ,py + LV(13) }, Color::White, Color::Black, "x", true);

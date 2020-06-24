@@ -85,6 +85,7 @@ namespace SDX_BSC
 				isPush = true;
 				if (連打防止 > 0) { return; }
 				Guild::P->求人リロール();
+				MSound::効果音[SE::求人リロール].Play();
 			}
 
 			void Over(double px, double py) override
@@ -129,6 +130,7 @@ namespace SDX_BSC
 				W_Drag_Drop::ギルメン = 参照先;
 				W_Drag_Drop::ウィンドウ = 親ウィンドウ;
 				W_Drag_Drop::並びID = 並びID;
+				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 

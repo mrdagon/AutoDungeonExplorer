@@ -20,7 +20,7 @@ namespace SDX_BSC
 		EnumArray<bool[CV::最大素材ランク], CraftType> is素材発見;
 
 		double 資金 = 123456789;
-		Management* 選択戦術 = 0;
+		MSkillType 選択戦術 = MSkillType::COUNT;
 		int 人事ポイント = 10;
 		int 名声 = 100;
 
@@ -32,10 +32,20 @@ namespace SDX_BSC
 		int 最大パーティ数 = 3;
 
 		//パーティーと配属人員
-		EnumArray<int, ManagementType> 部門Lv;
-		EnumArray<double, ManagementType> 部門経験値;
+		EnumArray<int, ManagementType> 投資Lv;
+		EnumArray<double, ManagementType> 投資経験値;
 
-		int 集客力 = 100;
+		int 集客力 = 100;//10で割った数値が一日の来客期待値
+
+		double 集客補正 = 1.0;
+		double 価格補正 = 1.0;
+
+		double 戦闘経験補正 = 1.0;
+		double 技術経験補正 = 1.0;
+		
+		double 素材節約 = 0.0;//確率
+
+		double 未開探索 = 0;//未探索部屋抽選補正
 
 		//製造関連
 		EnumArray<double, CraftType> 必要製造力;
@@ -64,22 +74,21 @@ namespace SDX_BSC
 		//各種記録_Record
 		int 総販売;
 		double 総売上;
-		double 総製造;
-		double 総素材;//探索後増加
-		double 総地図;//発見時増加
-		double 総討伐;//討伐時増加
-		double 総撤退;//全滅時増加
+		int 総製造;
+		int 総素材;//探索後増加
+		int 総地図;//発見時増加
+		int 総討伐;//討伐時増加
+		int 総全滅;//全滅時増加
 
 		//日別記録
 		std::vector<int> R団員;
 		std::vector<double> R資金;
-		std::vector<double> R販売;//
-		std::vector<int> R製造;//
-		//std::vector<int> R開発;
+		std::vector<int> R販売;
+		std::vector<int> R製造;
 		std::vector<int> R素材在庫;
 		std::vector<int> R地図数;
 		std::vector<int> R討伐数;
-		std::vector<int> R撤退数;
+		std::vector<int> R全滅数;
 		std::vector<int> R名声;
 	};
 }

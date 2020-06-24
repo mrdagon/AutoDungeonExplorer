@@ -29,6 +29,7 @@ namespace SDX_BSC
 			{
 				//ダンジョンを掴む
 				W_Drag_Drop::ダンジョン = 参照先;
+				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 			void Info派生(Point 座標) override

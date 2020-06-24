@@ -42,6 +42,7 @@ namespace SDX_BSC
 				if (Guild::P->装備所持数[id] > 0)
 				{
 						W_Drag_Drop::アイテム = id;
+						MSound::効果音[SE::ドラッグ].Play();
 				}
 			}
 

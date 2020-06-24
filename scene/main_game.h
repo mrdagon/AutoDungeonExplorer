@@ -96,7 +96,7 @@ namespace SDX_BSC
 			//仮データ作成
 
 			//とりあえずBGM鳴らす
-			auto test = MMusic::メインBGM.Play(true);
+			auto test = MMusic::BGM[BGMType::準備中].Play(true);
 
 			tm time;//とりあえず乱数初期化
 			Time::GetDate(&time);
@@ -119,15 +119,15 @@ namespace SDX_BSC
 				}
 			}
 
-			Guild::P->部門経験値[ManagementType::経営] = Rand::Get(100);
-			Guild::P->部門経験値[ManagementType::人事] = Rand::Get(100);
-			Guild::P->部門経験値[ManagementType::製造] = Rand::Get(100);
-			Guild::P->部門経験値[ManagementType::探索] = Rand::Get(100);
+			Guild::P->投資経験値[ManagementType::経営] = Rand::Get(100);
+			Guild::P->投資経験値[ManagementType::人事] = Rand::Get(100);
+			Guild::P->投資経験値[ManagementType::製造] = Rand::Get(100);
+			Guild::P->投資経験値[ManagementType::探索] = Rand::Get(100);
 
-			Guild::P->部門Lv[ManagementType::経営] = 1;
-			Guild::P->部門Lv[ManagementType::人事] = 1;
-			Guild::P->部門Lv[ManagementType::製造] = 1;
-			Guild::P->部門Lv[ManagementType::探索] = 1;
+			Guild::P->投資Lv[ManagementType::経営] = 1;
+			Guild::P->投資Lv[ManagementType::人事] = 1;
+			Guild::P->投資Lv[ManagementType::製造] = 1;
+			Guild::P->投資Lv[ManagementType::探索] = 1;
 
 			Guild::P->資金 = 1000000;
 
@@ -178,23 +178,21 @@ namespace SDX_BSC
 				Warker::data[a + 15].製造配置 = CraftType(a % 4);
 			}
 
+			Guild::P->最大パーティ数 = 3;
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
 			{
 				for (int b = 0; b < CV::パーティ人数; b++)
 				{
 					Guild::P->探索パーティ[a].メンバー[b] = &Warker::data[a * CV::パーティ人数 + b];
 				}
+
 			}
 
-			Guild::P->探索パーティ[0].探索先 = &Dungeon::data[0];
-			Guild::P->探索パーティ[1].探索先 = &Dungeon::data[0];
-			Guild::P->探索パーティ[2].探索先 = &Dungeon::data[0];
-
-			Guild::P->探索パーティ[0].スキルステ計算();
-			Guild::P->探索パーティ[1].スキルステ計算();
-			Guild::P->探索パーティ[2].スキルステ計算();
-
-			Guild::P->最大パーティ数 = 3;
+			for (int a = 0; a < CV::最大パーティ数; a++)
+			{
+				Guild::P->探索パーティ[a].探索先 = &Dungeon::data[0];
+				Guild::P->探索パーティ[a].スキルステ計算();
+			}
 
 			Game::is停止 = true;
 
@@ -304,9 +302,6 @@ namespace SDX_BSC
 				no_help.Info();
 			}
 
-			//Win_Title.Draw();
-			//Win_Config.Draw();
-
 			W_Drag_Drop::Draw();
 
 			if (CV::isデバッグ)
@@ -320,20 +315,19 @@ namespace SDX_BSC
 		//各種処理
 		void GameProcess()
 		{
+
+			UseManagement();
+
 			if (Game::is停止) { return; }
 
 			int 加速度;
 
 			加速度 = Game::ゲームスピード;
 
-			if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 加速度 = 64; }
+			if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 加速度 = std::min( CV::最大ゲーム倍速 , Game::ゲームスピード * 8 ); }
 
 			for (int a = 0; a < 加速度; a++)
 			{
-				if (Game::時間 == Game::起床時間)
-				{
-					StartDay();
-				}
 				if (Game::時間 == Game::始業時間)
 				{
 					StartWork();
@@ -342,14 +336,9 @@ namespace SDX_BSC
 				{
 					EndWork();
 				}
-				if (Game::時間 == Game::就寝時間)
-				{
-					EndDay();
-				}
 				if (Game::時間 >= 360 * 24) 
 				{
-					Game::日付++;
-					Game::時間 = 0;
+					EndDay();
 				}
 
 				//探索＆製造中
@@ -363,19 +352,16 @@ namespace SDX_BSC
 				}
 
 
+
 				Game::時間++;
 			}
-		}
-
-		//一日開始の処理
-		void StartDay()
-		{
-			Game::is仕事中 = false;
 		}
 
 		//業務開始の処理
 		void StartWork()
 		{
+			MMusic::BGM[BGMType::探検中].Play();
+
 			Game::is仕事中 = true;
 			Guild::P->製造力計算();
 			Guild::P->探索開始();
@@ -385,19 +371,25 @@ namespace SDX_BSC
 		//業務終了の処理
 		void EndWork()
 		{
+			MMusic::BGM[BGMType::準備中].Play();
 			Game::is仕事中 = false;
 		}
 		//一日終了の処理
 		void EndDay()
 		{
-			Game::is仕事中 = false;
+			Game::日付++;
+			Game::時間 = 0;
 
-			//求人追加、仮処理
-			if (Warker::data.size() < 45)
-			{
-				Warker::data.emplace_back();
-				Warker::data.back().Make((int)Warker::data.size() - 1, Rand::Get(4), 1, "ナナシ");
-			}
+			//記録追加
+			Guild::P->R団員.push_back( int(Guild::P->ギルメン.size() + Guild::P->製造メンバー.size()) );
+			Guild::P->R資金.push_back(Guild::P->資金);
+			Guild::P->R販売.push_back(Guild::P->総販売);
+			Guild::P->R製造.push_back(Guild::P->総製造);
+			Guild::P->R素材在庫.push_back(Guild::P->総素材);
+			Guild::P->R地図数.push_back(Guild::P->総地図);
+			Guild::P->R討伐数.push_back(Guild::P->総討伐);
+			Guild::P->R全滅数.push_back(Guild::P->総全滅);
+			Guild::P->R名声.push_back(Guild::P->名声);
 
 			Guild::P->装備自動更新();
 		}
@@ -407,11 +399,6 @@ namespace SDX_BSC
 		{
 
 		}
-		//月末の処理
-		//void EndMonth()
-		//{
-		//
-		//}
 
 		//製造処理
 		void MakeItem()
@@ -429,6 +416,20 @@ namespace SDX_BSC
 		void ExploreDungeon()
 		{
 			Guild::P->探索処理();
+		}
+
+		//投資処理
+		void UseManagement()
+		{
+			if (Guild::P->選択戦術 == MSkillType::COUNT) { return; }
+
+			//お金足りてたら戦術実行
+
+			if (Guild::P->資金 >= Management::data[(int)Guild::P->選択戦術].消費資金)
+			{
+				Management::data[(int)Guild::P->選択戦術].Active(Guild::P);
+				Guild::P->選択戦術 = MSkillType::COUNT;
+			}
 		}
 
 

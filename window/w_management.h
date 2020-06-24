@@ -22,11 +22,11 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				double rate = (double)Guild::P->部門経験値[部門]/CV::部門レベルアップ経験値[Guild::P->部門Lv[部門]];
+				double rate = (double)Guild::P->投資経験値[部門] / Management::必要経験値[Guild::P->投資Lv[部門]];
 
 				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::Arial小.DrawBold({ px + LV(30) ,py + LV(31) }, Color::White, Color::Black, { "Lv",Guild::P->部門Lv[部門] });
+				MFont::Arial小.DrawBold({ px + LV(30) ,py + LV(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv[部門] });
 
 			}
 		};
@@ -50,11 +50,11 @@ namespace SDX_BSC
 					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, { "- " ,GUI_Help::戦術->消費資金 , " G" }, true);
 					GUI_Help::戦術 = nullptr;
 				}
-				else if (Guild::P->選択戦術 != nullptr)
+				else if (Guild::P->選択戦術 != MSkillType::COUNT )
 				{
 					Color fc = {255,64,64};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, {"- " ,Guild::P->選択戦術->消費資金 , " G"}, true);
+					MFont::BArial中.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, {"- " , Management::data[(int)Guild::P->選択戦術].消費資金 , " G"}, true);
 				}
 
 			}
@@ -68,13 +68,6 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
-				/*
-				for (int a = 0; a < ランク; a++)
-				{
-					MIcon::アイコン[IconType::ランク].Draw({ px + LV(39) + a * 15 , py + LV(40) });
-				}
-				*/
-
 				MFont::BArial中.DrawBold({ px + LV(41),py + LV(42) }, Color::White, Color::Black, { "Lv " , ランク });
 
 			}
@@ -87,21 +80,67 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				Color bc = Color::Black;
-				if (Guild::P->選択戦術 == 参照戦術) { bc = Color::Red; }
+				bool can使用 = 参照戦術->can使用 && (参照戦術->消費資金 <= Guild::P->資金);
+				bool isLv = (参照戦術->Lv <= Guild::P->投資Lv[参照戦術->系統]);
+				bool is選択中 = (Guild::P->選択戦術 == 参照戦術->MID);
 
-				MSystem::DrawBoxBold({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::White, 1 ,bc);
-				MIcon::アイコン[参照戦術->アイコン].DrawRotate({px + (int)位置.GetW()/2,py + (int)位置.GetH()/2 },2,0);
+				int 枠No = 1;
+				int 凹凸 = 0;
+				if (参照戦術->is永続 && 参照戦術->使用回数 > 0)
+				{
+					//使用済み、永続
+					枠No = 5;
+				}
+				else if (!isLv)
+				{
+					//Lv不足は灰色
+					枠No = 15;
+				}
+				else if (is選択中)
+				{
+					//選択中は凹み
+					枠No = 4;
+					凹凸 = -2;
+				}
+				else if (can使用)
+				{
+					//使用可能で盛り上がり
+					枠No = 1;
+					凹凸 = 2;
+				}
+				else
+				{
+					//資金不足
+					枠No = 3;
+				}
+
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(),枠No,凹凸);
+				MIcon::アイコン[参照戦術->アイコン].DrawRotate({px + (int)位置.GetW()/2 - 凹凸,py + (int)位置.GetH()/2 - 凹凸 },2,0);
 
 			}
 			void Click(double px, double py)
 			{
 				//お金足りてたら使用、不足してたら予約状態にする
-
-				if (Guild::P->選択戦術 != 参照戦術)
+				if (!参照戦術->can使用)
 				{
-					Guild::P->選択戦術 = 参照戦術;
+
+					return;
+				}
+
+
+				if (Guild::P->選択戦術 != 参照戦術->MID)
+				{
+					Guild::P->選択戦術 = 参照戦術->MID;
+					if (Guild::P->資金 >= 参照戦術->消費資金)
+					{
+						MSound::効果音[SE::投資実行].Play();
+					} else {
+						MSound::効果音[SE::投資予約].Play();
+					}
+					
 				} else {
-					Guild::P->選択戦術 = nullptr;
+					Guild::P->選択戦術 = MSkillType::COUNT;
+					MSound::効果音[SE::投資解除].Play();
 				}
 
 			}

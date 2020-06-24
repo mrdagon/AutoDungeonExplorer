@@ -48,7 +48,7 @@ namespace SDX_BSC
 					case 7:num = Guild::P->総素材; break;//素材 個
 					case 8:num = Guild::P->総地図; break;//地図 枚
 					case 9:num = Guild::P->総討伐; break;//討伐 体
-					case 10:num = Guild::P->総撤退; break;//撤退 回
+					case 10:num = Guild::P->総全滅; break;//撤退 回
 				}
 
 				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);

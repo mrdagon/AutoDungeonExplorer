@@ -26,7 +26,7 @@ namespace SDX_BSC
 			void Draw派生(double px,double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::日付].DrawRotate({ px+14,py + 14 }, 2, 0);
+				MIcon::アイコン[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
 				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 , TX::Tool_日付 }, true);
 			}
 		};
@@ -44,6 +44,13 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
 				MFont::Arial大.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
+
+				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
+				{
+					MFont::Arial大.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
+				} else {
+					MFont::Arial大.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
+				}
 			}
 		};
 		class G_人口 : public GUI_Object
@@ -53,7 +60,9 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { Guild::P->集客力/10 , "." , Guild::P->集客力 % 10 , TX::Tool_人口 },true);
+
+				int 集客 = int(Guild::P->集客力 * Guild::P->集客補正);
+				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { 集客/10 , "." , 集客 % 10 , TX::Tool_人口 },true);
 			}
 		};
 
@@ -112,6 +121,14 @@ namespace SDX_BSC
 			{
 				対象ウィンドウ->is表示 = !対象ウィンドウ->is表示;
 				対象ウィンドウ->is最前面 = 対象ウィンドウ->is表示;
+
+				if (対象ウィンドウ->is表示)
+				{
+					MSound::効果音[SE::ウィンドウ開く].Play();
+				} else {
+					MSound::効果音[SE::ウィンドウ閉じ].Play();
+				}
+
 			}
 
 		};
@@ -146,6 +163,7 @@ namespace SDX_BSC
 			void Click(double px, double py)
 			{
 				Game::is停止 = !Game::is停止;
+				MSound::効果音[SE::ボタンクリック].Play();
 			}
 		};
 		class G_速度 : public GUI_Object
@@ -172,6 +190,7 @@ namespace SDX_BSC
 				}else {
 					Game::ゲームスピード = std::min(64, Game::ゲームスピード * 2);
 				}
+				MSound::効果音[SE::ボタンクリック].Play();
 			}
 
 		};
@@ -190,6 +209,7 @@ namespace SDX_BSC
 			void Click(double px, double py)
 			{
 				//設定ウィンドウ開く
+				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
 				対象ウィンドウ->is最前面 = true;
 				対象ウィンドウ->サブ呼び出し();
@@ -212,9 +232,18 @@ namespace SDX_BSC
 			void Click(double px, double py)
 			{
 				//確認ウィンドウを出す
+				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
 				対象ウィンドウ->is最前面 = true;
-				対象ウィンドウ->サブ呼び出し();
+				int id = 対象ウィンドウ->サブ呼び出し();
+
+				if (id == 0)
+				{
+					//アンケートURL
+					HINSTANCE ret = ShellExecute(nullptr, L"open", TX::アンケURL, NULL, NULL, SW_SHOW);
+
+				}
+
 			}
 		};
 	public:

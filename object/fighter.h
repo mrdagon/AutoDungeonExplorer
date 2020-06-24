@@ -21,16 +21,24 @@ namespace SDX_BSC
 		StatusType 通常攻撃ステータス;
 		FormationType 隊列 = FormationType::前列;
 
+		//●基礎ステータス
 		double 基礎HP;
 		double 基礎Str, 基礎Dex, 基礎Int;
 		EnumArray<double,DamageType> 基礎防御;
 		double 基礎命中 = 0;
 		double 基礎回避 = 0;
+		//●装備とパッシブ補正後
+		double 補正HP = 100;
+		double 補正Str, 補正Dex, 補正Int;
+		EnumArray<double, DamageType> 補正防御;
+		double 補正命中 = 0;
+		double 補正回避 = 0;
 		//●計算後ステータス、戦闘中ステータス、パッシブ計算
 		double 最大HP = 100;
 		double 現在HP;
-		double 補正Str, 補正Dex, 補正Int;
+		double Str, Dex, Int;
 		EnumArray<double,DamageType> 防御;
+		double 命中 = 0;
 		double 回避 = 0;
 		//通常攻撃、スキルチャージ
 		double スキルチャージ[CV::最大Aスキル数];
@@ -227,7 +235,7 @@ namespace SDX_BSC
 				break;
 			case ASkillTarget::行動対象:
 				break;
-			case ASkillTarget::敵単体:
+			case ASkillTarget::敵ランダム:
 				for (int a = 0; a < スキル.効果回数; a++)
 				{
 					対象.push_back(敵選択(敵));
@@ -368,15 +376,14 @@ namespace SDX_BSC
 			{
 				//●アクティブスキル、通常攻撃強化
 			case PSkillEffect::ダメージ増加:
-			case PSkillEffect::行動値増減:
 				break;
-			case PSkillEffect::スキル効果増加:
+			//case PSkillEffect::スキル効果増加:
 				スキルダメージ補正 += スキル.効果量;
 				break;
-			case PSkillEffect::スキルチャージ増減:
+			//case PSkillEffect::スキルチャージ増減:
 				チャージ量補正 += スキル.効果量;
 				break;
-			case PSkillEffect::スキル効果時間増減:
+			//case PSkillEffect::スキル効果時間増減:
 			case PSkillEffect::アクティブスキルが追加発動:
 			case PSkillEffect::対象変更:
 			case PSkillEffect::対象を追加:
@@ -389,7 +396,7 @@ namespace SDX_BSC
 				break;
 			case PSkillEffect::後列ペナルティ無し:
 				//●バフ、特殊ステータス増加
-			case PSkillEffect::与ダメージ増加:
+			//case PSkillEffect::与ダメージ増加:
 				if (スキル.対象 == PSkillTarget::自分)
 				{
 					ダメージバフ = std::max(ダメージバフ, スキル.効果量);
@@ -400,22 +407,11 @@ namespace SDX_BSC
 					ダメージバフ付与率 = スキル.効果量;
 				}
 				break;
-			case PSkillEffect::ブロック率増加:
-				break;
-			case PSkillEffect::ブロック軽減率増加:
 				//●耐久上昇
-			case PSkillEffect::ダメージ軽減:
-			case PSkillEffect::回避:
-				基礎回避 += スキル.効果量;
-				break;
-			case PSkillEffect::魔法防御:
-			case PSkillEffect::狙われやすさ増減:
 				break;
 			case PSkillEffect::HP1で耐える:
 			case PSkillEffect::デバフ無効:
 				//●リアクション系
-			case PSkillEffect::身代わり生成:
-			case PSkillEffect::攻撃チャージ獲得:
 			case PSkillEffect::スキルチャージ獲得:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
@@ -432,22 +428,15 @@ namespace SDX_BSC
 			case PSkillEffect::素材使用減少:
 			case PSkillEffect::複数製造:
 				//●探索
-			case PSkillEffect::ボス回避:
-			case PSkillEffect::未探索発見率増加:
-			case PSkillEffect::罠回避:
-			case PSkillEffect::解錠:
-			case PSkillEffect::高速探索:
 			case PSkillEffect::素材獲得量増加://ここ６種類にする
 			case PSkillEffect::素材ランク増加:
 				break;
 				//●その他
-			case PSkillEffect::基礎ステ上昇:
 				if (スキル.系統 == SkillType::STR) { 基礎Str += スキル.効果量; }
 				if (スキル.系統 == SkillType::DEX) { 基礎Dex += スキル.効果量; }
 				if (スキル.系統 == SkillType::INT) { 基礎Int += スキル.効果量; }
 				break;
 			case PSkillEffect::経験値増加:
-			case PSkillEffect::忠誠度補正:
 			case PSkillEffect::全滅ペナルティ軽減:
 				break;
 			}

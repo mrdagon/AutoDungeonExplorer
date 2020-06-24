@@ -278,175 +278,6 @@ namespace SDX_BSC
 		}
 	}
 
-	//UI等のシステム画像
-	namespace MSystem
-	{
-		ImagePack ウィンドウ枠;
-		Image 背景;
-		Image ダンジョン背景[5];
-		EnumArray<Image, CraftType> クラフト台;
-
-		static void Load()
-		{
-			ウィンドウ枠.Load("File/system/window_skin.png", 60, 10, 6);
-			背景.Load("File/system/town02.png");
-			ダンジョン背景[0].Load("File/system/dunback00.png");
-			ダンジョン背景[1].Load("File/system/dunback01.png");
-			ダンジョン背景[2].Load("File/system/facback.png");
-
-			クラフト台[CraftType::鍛造].Load("File/system/craft00.png");
-			クラフト台[CraftType::裁縫].Load("File/system/craft01.png");
-			クラフト台[CraftType::木工].Load("File/system/craft02.png");
-			クラフト台[CraftType::魔術].Load("File/system/craft03.png");
-		}
-
-		/*立体が＋なら飛び出す、マイナスならへこむ*/
-		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0)
-		{
-			if (立体 != 0)
-			{
-				Drawing::Rect({ 座標.x,座標.y,横幅 ,縦幅 }, Color::Black);
-				if (立体 < 0)
-				{
-					
-					座標.x -= 立体;
-					座標.y -= 立体;
-					横幅 += 立体;
-					縦幅 += 立体;
-
-				} else {
-					横幅 -= 立体;
-					縦幅 -= 立体;
-					//Drawing::Rect({ 座標.x+立体,座標.y + 立体,横幅,縦幅 }, Color::Black);
-				}
-			}
-
-			ウィンドウ枠[枠No]->DrawPart(座標, { 0,0,10,10 });//左上
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y }, { 20, 0,10,10 });//右上
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x , 座標.y + 縦幅 - 10 }, {  0,20,10,10 });//左下
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y + 縦幅 - 10 }, { 20,20,10,10 });//右下
-
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y             , 横幅-20 , 10}, { 10,0,10,10 });//上
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 縦幅 - 10 , 横幅-20 , 10}, { 10,20,10,10 });//下
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x      , 座標.y + 10        , 10 , 縦幅 - 20}, { 0,10,10,10 });//左
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 横幅 - 10 , 座標.y + 10 , 10 , 縦幅 - 20}, { 20,10,10,10 });//右
-
-			//内部
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 10 , 横幅 - 20 , 縦幅 - 20 }, { 10,10,10,10 });//右
-
-		}
-
-		static void DrawBox(const Point &座標, const int 横幅, const int 縦幅,const Color &色)
-		{
-			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 色);
-			Drawing::Rect(Rect(座標.x , 座標.y+1, 横幅 , 縦幅-2), 色);
-		}
-
-		static void DrawBoxBold(const Point &座標, const int 横幅, const int 縦幅, const Color &色,int 枠太さ , const Color&枠色)
-		{
-			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 枠色);
-			Drawing::Rect(Rect(座標.x, 座標.y + 1, 横幅, 縦幅 - 2), 枠色);
-			Drawing::Rect(Rect(座標.x + 1 +枠太さ, 座標.y + 枠太さ, 横幅 - 2 - 枠太さ*2, 縦幅 - 枠太さ * 2), 色);
-			Drawing::Rect(Rect(座標.x + 枠太さ, 座標.y + 1 + 枠太さ, 横幅 - 枠太さ * 2, 縦幅 - 2 - 枠太さ * 2), 色);
-		}
-	
-		static void DrawBar(const Point &座標, const int 横幅, const int 縦幅, double 割合, int 枠太さ, const Color &色, const Color&枠色, const Color&中色 , bool is左側)
-		{
-			割合 = std::max(0.0, 割合);
-			割合 = std::min(1.0, 割合);
-
-			DrawBoxBold(座標, 横幅, 縦幅, 中色, 枠太さ, 枠色);
-			int ww = int((横幅 - 枠太さ * 2) * 割合);
-			int hh = 縦幅 - 枠太さ * 2;
-
-			if (割合 <= 0.0 || ww < 1)
-			{
-				return;
-			}
-
-			if (is左側)
-			{
-				DrawBox({座標.x+枠太さ,座標.y+枠太さ},ww,hh,色);
-			} else {
-				DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 色);
-			}
-		}
-	
-		static void DrawSkill(SkillType スキル種, const Point &座標, Color 色)
-		{
-			Drawing::Rect({ 座標.x ,座標.y ,29,29 }, 色, true);
-			Drawing::Rect({ 座標.x + 1,座標.y +1,27,27 }, Color::White, true);
-			Drawing::Rect({ 座標.x + 2,座標.y + 2 ,25,25 }, 色, true);
-
-			MIcon::スキル[スキル種].Draw({ 座標.x + 2,座標.y+2 });
-		}
-
-		static void DrawCircleBar(Rect 座標, double ゲージ率, Color 表色, Color 裏色, double 太さ, double 裏太さ)
-		{
-			Point p1, p2, p3, p4, p5;
-			p1.SetPos(座標.x, 座標.y);
-			p2.SetPos(座標.x + 座標.GetW(), 座標.y);
-			p3.SetPos(座標.x + 座標.GetW(), 座標.y + 座標.GetH());
-			p4.SetPos(座標.x, 座標.y + 座標.GetH());
-			p5 = p1;
-
-			//裏色
-			Drawing::Line(p1, p2, 裏色, (int)裏太さ);
-			Drawing::Line(p2, p3, 裏色, (int)裏太さ);
-			Drawing::Line(p3, p4, 裏色, (int)裏太さ);
-			Drawing::Line(p4, p1, 裏色, (int)裏太さ);
-
-			Drawing::Circle({ p1.x, p1.y, 裏太さ/2 }, 裏色);
-			Drawing::Circle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
-
-			//表
-			if (ゲージ率 == 0) { return; }
-
-			if (ゲージ率 < 0.25)
-			{
-				p2.x = 座標.x + 座標.GetW() * ゲージ率 * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-			}
-			else if (ゲージ率 < 0.5)
-			{
-				p3.y = 座標.y + 座標.GetH() * (ゲージ率 - 0.25) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-			}
-			else if (ゲージ率 < 0.75)
-			{
-				p4.x = 座標.x + 座標.GetW() - 座標.GetW() * ( ゲージ率 - 0.5 ) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Line(p3, p4, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
-			}
-			else
-			{
-				p5.y = 座標.y + 座標.GetH() - 座標.GetH() * (ゲージ率 - 0.75) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Line(p3, p4, 表色, (int)太さ);
-				Drawing::Line(p4, p5, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
-			}
-		}
-
-	}
 
 	//文字データ
 	namespace MFont
@@ -517,23 +348,24 @@ namespace SDX_BSC
 	//BGM
 	namespace MMusic
 	{
-		Music 戦闘中;
-		Music 敗北;
-		Music 戦闘開始;
-		Music 内政中;
-		Music 勝利;
-		Music メインBGM;
+		EnumArray<Music, BGMType> BGM;
+
 
 		static void Load()
 		{
-			戦闘中.Load("File/music/c18.mp3");
-			敗北.Load("File/music/c18.mp3");
-			戦闘開始.Load("File/music/c18.mp3");
-			内政中.Load("File/music/c18.mp3");
-			勝利.Load("File/music/c18.mp3");
-			//メインBGM.Load("File/music/nemuikana.mp3");
-			メインBGM.Load("File/music/outletpark.mp3");
-			メインBGM.SetVolume(0.5);
+			BGM[BGMType::準備中].Load("File/music/furattoguild.mp3");
+			BGM[BGMType::探検中].Load("File/music/komichiwokakenukete.mp3");
+			BGM[BGMType::通常ボス].Load("File/music/kinokomonchaku.mp3");
+			BGM[BGMType::エリアボス].Load("File/music/wazawainobisyu.mp3");
+			BGM[BGMType::タイトル].Load("File/music/furattoguild.mp3");
+
+
+			for (auto& it : BGM)
+			{
+				it.SetFadeInTime(500);
+				it.SetFadeOutTime(500);
+			}
+
 		}
 	}
 
@@ -547,6 +379,180 @@ namespace SDX_BSC
 			効果音[SEType::決定].Load("File/sound/coin04.wav");
 		}
 	}
+
+	//UI等のシステム画像
+	namespace MSystem
+	{
+		ImagePack ウィンドウ枠;
+		Image 背景;
+		Image ダンジョン背景[5];
+		EnumArray<Image, CraftType> クラフト台;
+
+		static void Load()
+		{
+			ウィンドウ枠.Load("File/system/window_skin.png", 60, 10, 6);
+			背景.Load("File/system/town02.png");
+			ダンジョン背景[0].Load("File/system/dunback00.png");
+			ダンジョン背景[1].Load("File/system/dunback01.png");
+			ダンジョン背景[2].Load("File/system/facback.png");
+
+			クラフト台[CraftType::鍛造].Load("File/system/craft00.png");
+			クラフト台[CraftType::裁縫].Load("File/system/craft01.png");
+			クラフト台[CraftType::木工].Load("File/system/craft02.png");
+			クラフト台[CraftType::魔術].Load("File/system/craft03.png");
+		}
+
+		/*立体が＋なら飛び出す、マイナスならへこむ*/
+		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0)
+		{
+			if (立体 != 0)
+			{
+				Drawing::Rect({ 座標.x,座標.y,横幅 ,縦幅 }, Color::Black);
+				if (立体 < 0)
+				{
+
+					座標.x -= 立体;
+					座標.y -= 立体;
+					横幅 += 立体;
+					縦幅 += 立体;
+
+				}
+				else {
+					横幅 -= 立体;
+					縦幅 -= 立体;
+					//Drawing::Rect({ 座標.x+立体,座標.y + 立体,横幅,縦幅 }, Color::Black);
+				}
+			}
+
+			ウィンドウ枠[枠No]->DrawPart(座標, { 0,0,10,10 });//左上
+			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y }, { 20, 0,10,10 });//右上
+			ウィンドウ枠[枠No]->DrawPart({ 座標.x , 座標.y + 縦幅 - 10 }, { 0,20,10,10 });//左下
+			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y + 縦幅 - 10 }, { 20,20,10,10 });//右下
+
+			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y             , 横幅 - 20 , 10 }, { 10,0,10,10 });//上
+			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 縦幅 - 10 , 横幅 - 20 , 10 }, { 10,20,10,10 });//下
+			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x      , 座標.y + 10        , 10 , 縦幅 - 20 }, { 0,10,10,10 });//左
+			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 横幅 - 10 , 座標.y + 10 , 10 , 縦幅 - 20 }, { 20,10,10,10 });//右
+
+			//内部
+			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 10 , 横幅 - 20 , 縦幅 - 20 }, { 10,10,10,10 });//右
+
+		}
+
+		static void DrawBox(const Point& 座標, const int 横幅, const int 縦幅, const Color& 色)
+		{
+			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 色);
+			Drawing::Rect(Rect(座標.x, 座標.y + 1, 横幅, 縦幅 - 2), 色);
+		}
+
+		static void DrawBoxBold(const Point& 座標, const int 横幅, const int 縦幅, const Color& 色, int 枠太さ, const Color& 枠色)
+		{
+			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 枠色);
+			Drawing::Rect(Rect(座標.x, 座標.y + 1, 横幅, 縦幅 - 2), 枠色);
+			Drawing::Rect(Rect(座標.x + 1 + 枠太さ, 座標.y + 枠太さ, 横幅 - 2 - 枠太さ * 2, 縦幅 - 枠太さ * 2), 色);
+			Drawing::Rect(Rect(座標.x + 枠太さ, 座標.y + 1 + 枠太さ, 横幅 - 枠太さ * 2, 縦幅 - 2 - 枠太さ * 2), 色);
+		}
+
+		static void DrawBar(const Point& 座標, const int 横幅, const int 縦幅, double 割合, int 枠太さ, const Color& 色, const Color& 枠色, const Color& 中色, bool is左側)
+		{
+			割合 = std::max(0.0, 割合);
+			割合 = std::min(1.0, 割合);
+
+			DrawBoxBold(座標, 横幅, 縦幅, 中色, 枠太さ, 枠色);
+			int ww = int((横幅 - 枠太さ * 2) * 割合);
+			int hh = 縦幅 - 枠太さ * 2;
+
+			if (割合 <= 0.0 || ww < 1)
+			{
+				return;
+			}
+
+			if (is左側)
+			{
+				DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 色);
+			}
+			else {
+				DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 色);
+			}
+		}
+
+		static void DrawSkill(SkillType スキル種, const Point& 座標, Color 色, std::string messe = "")
+		{
+			Drawing::Rect({ 座標.x ,座標.y ,29,29 }, 色, true);
+			Drawing::Rect({ 座標.x + 1,座標.y + 1,27,27 }, Color::White, true);
+			Drawing::Rect({ 座標.x + 2,座標.y + 2 ,25,25 }, 色, true);
+
+			MIcon::スキル[スキル種].Draw({ 座標.x + 2,座標.y + 2 });
+			MFont::Bメイリオ小.DrawBold({ 座標.x + 2 , 座標.y + 12 }, Color::White, Color::Black, messe);
+		}
+
+		static void DrawCircleBar(Rect 座標, double ゲージ率, Color 表色, Color 裏色, double 太さ, double 裏太さ)
+		{
+			Point p1, p2, p3, p4, p5;
+			p1.SetPos(座標.x, 座標.y);
+			p2.SetPos(座標.x + 座標.GetW(), 座標.y);
+			p3.SetPos(座標.x + 座標.GetW(), 座標.y + 座標.GetH());
+			p4.SetPos(座標.x, 座標.y + 座標.GetH());
+			p5 = p1;
+
+			//裏色
+			Drawing::Line(p1, p2, 裏色, (int)裏太さ);
+			Drawing::Line(p2, p3, 裏色, (int)裏太さ);
+			Drawing::Line(p3, p4, 裏色, (int)裏太さ);
+			Drawing::Line(p4, p1, 裏色, (int)裏太さ);
+
+			Drawing::Circle({ p1.x, p1.y, 裏太さ / 2 }, 裏色);
+			Drawing::Circle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
+			Drawing::Circle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
+			Drawing::Circle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
+
+			//表
+			if (ゲージ率 == 0) { return; }
+
+			if (ゲージ率 < 0.25)
+			{
+				p2.x = 座標.x + 座標.GetW() * ゲージ率 * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+			}
+			else if (ゲージ率 < 0.5)
+			{
+				p3.y = 座標.y + 座標.GetH() * (ゲージ率 - 0.25) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+			}
+			else if (ゲージ率 < 0.75)
+			{
+				p4.x = 座標.x + 座標.GetW() - 座標.GetW() * (ゲージ率 - 0.5) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Line(p3, p4, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
+			}
+			else
+			{
+				p5.y = 座標.y + 座標.GetH() - 座標.GetH() * (ゲージ率 - 0.75) * 4;
+				Drawing::Line(p1, p2, 表色, (int)太さ);
+				Drawing::Line(p2, p3, 表色, (int)太さ);
+				Drawing::Line(p3, p4, 表色, (int)太さ);
+				Drawing::Line(p4, p5, 表色, (int)太さ);
+				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
+				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
+			}
+		}
+
+	}
+
 
 	//全読み込み
 	static void LoadMaterial()

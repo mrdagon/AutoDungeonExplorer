@@ -32,17 +32,13 @@ namespace SDX_BSC
 
 			所属 = -1;
 
-
-			忠誠度 = 50;
-			勤続日数 = 0;
-
 			this->名前 = 名前;
 
 			int job = (int)ジョブ;
-			見た目 = WarkerClass::data[job].見た目;
+			見た目 = Job::data[job].見た目;
 
-			装備[0] = WarkerClass::data[job].初期装備[0];
-			装備[1] = WarkerClass::data[job].初期装備[1];
+			装備[0] = Job::data[job].初期装備[0];
+			装備[1] = Job::data[job].初期装備[1];
 
 			スキルポイント = Lv + 10;
 			経験値 = 0;
@@ -52,29 +48,30 @@ namespace SDX_BSC
 
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
-			アクティブスキル[2] = 0;
+			アクティブスキル[2] = Job::data[job].Aスキル[0];
+			アクティブスキル[3] = Job::data[job].Aスキル[1];
 
-			for (int a = 0; a<6 ;a++)
+			for (int a = 0; a< CV::最大Pスキル数 ;a++)
 			{
 				パッシブスキル[a] = 0;
 				isパッシブスキル習得[a] = false;
 			}
 
 			//スキルの抽選
-			double total_rate = 0;
-			double skill_rate[31];
+			int long total_rate = 0;
+			int skill_rate[CV::Pスキル種];
 
-			for (int a = 0; a < 31; a++)
+			for (int a = 0; a < CV::Pスキル種; a++)
 			{
-				total_rate += WarkerClass::data[job].PSkillRate[a];
-				skill_rate[a] = WarkerClass::data[job].PSkillRate[a];
+				total_rate += Job::data[job].PSkillRate[a];
+				skill_rate[a] = Job::data[job].PSkillRate[a];
 			}
 
-			for (int a = 0; a < 6; a++)
+			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-				double r = Rand::Get(total_rate);
+				int r = Rand::Get(total_rate);
 
-				for (int b = 0; b < 31; b++)
+				for (int b = 1; b < CV::Pスキル種; b++)
 				{
 					if (skill_rate[b] <= 0) { continue; }
 
@@ -92,7 +89,7 @@ namespace SDX_BSC
 
 			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-				if (PassiveSkill::data[パッシブスキル[a]].必要SP <= スキルポイント)
+				if ( a < 2 || PassiveSkill::data[パッシブスキル[a]].必要SP <= スキルポイント)
 				{
 					isパッシブスキル習得[a] = true;
 					スキルポイント -= PassiveSkill::data[パッシブスキル[a]].必要SP;
@@ -108,21 +105,17 @@ namespace SDX_BSC
 		{
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
-			アクティブスキル[2] = 0;
 		}
 
 		bool is特殊人材;//(解雇不可)
 
 		//●人事関連
 		//所属あり、就活中、ニートの３パターン
-		int ID;
+		int ID;//data配列内のID
 
 		int 所属;//-1なら無所属
-		CraftType 製造配置;//
-		bool is装備更新;
-
-		double 忠誠度;//0.0～100.0
-		double 勤続日数;
+		CraftType 製造配置;
+		bool is装備更新 = true;
 
 		//●固定ステータス
 		std::string 名前;
@@ -144,10 +137,6 @@ namespace SDX_BSC
 		double 製造力 = 10;
 
 		//●再計算ステータス、戦闘以外
-		//経験値増加
-		//探索速度補正
-		//素材収集補正
-		//二重製造
 
 		/*パーティ非所属キャラ用ステータス計算*/
 		void 表示ステ計算()
@@ -190,18 +179,22 @@ namespace SDX_BSC
 
 		void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
-			基礎Str = WarkerClass::data[(int)ジョブ].Str * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
-			基礎Dex = WarkerClass::data[(int)ジョブ].Dex * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
-			基礎Int = WarkerClass::data[(int)ジョブ].Int * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
+			基礎HP = Job::data[(int)ジョブ].Hp * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Hp + Item::data[装備[1]].追加Hp;
+			基礎Str = Job::data[(int)ジョブ].Str * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
+			基礎Dex = Job::data[(int)ジョブ].Dex * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
+			基礎Int = Job::data[(int)ジョブ].Int * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
 
 			//アクティブスキル更新
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
-			アクティブスキル[2] = 0;
 
-			基礎回避 = 0;
+			基礎防御[DamageType::物理] = Job::data[(int)ジョブ].防御[DamageType::物理];
+			基礎防御[DamageType::魔法] = Job::data[(int)ジョブ].防御[DamageType::魔法];
 
-			Pスキル条件チェック(PSkillTime::基礎計算時, 味方, 敵);
+			基礎命中 = Job::data[(int)ジョブ].命中;
+			基礎回避 = Job::data[(int)ジョブ].回避;
+
+			Pスキル条件チェック(PSkillTime::基礎, 味方, 敵);
 
 			最大HP = 基礎HP;
 			現在HP = 最大HP;
@@ -221,8 +214,6 @@ namespace SDX_BSC
 					ps.push_back(パッシブスキル[a]);
 				}
 			}
-			//装備パッシブ-未実装
-
 
 			//パッシブを追加
 			for (auto& no : ps)

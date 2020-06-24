@@ -64,8 +64,8 @@ namespace SDX_BSC
 				std::string siji;
 				switch (Guild::P->探索パーティ[パーティID].探索指示)
 				{
-				case Order::探索: siji = "通常\n探索"; break;
-				case Order::ボス: siji = "ボス\n討伐"; break;
+				case Order::探索: siji = TX::Party_ボス回避; break;
+				case Order::ボス: siji = TX::Party_ボス討伐; break;
 				}
 
 				MFont::Bメイリオ小.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, siji, true);

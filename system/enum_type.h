@@ -235,6 +235,11 @@ namespace SDX_BSC
 	//BGM
 	enum class BGMType
 	{
+		準備中,
+		探検中,
+		通常ボス,
+		エリアボス,
+		タイトル,
 		COUNT
 	};
 
@@ -330,13 +335,28 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	enum class MSkillType
+	{
+		ビラ配り,
+		薄利多売,
+		新人発掘,
+		OJT,
+		技術研究,
+		低コスト化,
+		探索術,
+		探索許可証,
+		COUNT,
+	};
+
 	//依頼系統
 	enum class QuestType
 	{
+		装備販売,
 		装備製造,
 		雑魚討伐,
-		ダンジョン発見,
-		ボス討伐,
+		ダンジョン発見,//なんでもいいから発見
+		ボス討伐,//なんでもいいから討伐
+		固定ボス討伐,//特定ダンジョンのボス討伐
 		COUNT
 	};
 

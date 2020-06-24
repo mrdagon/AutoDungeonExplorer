@@ -13,10 +13,13 @@ namespace SDX_BSC
 	private:
 	public:
 		static std::vector<Management> data;
+		static const int 必要経験値[CV::最大投資Lv];
 
 		Management(int ID,int Lv,ManagementType 系統, int 資金 , bool is永続):
 			ID(ID),Lv(Lv),系統(系統),消費資金(資金),is永続(is永続)
-		{}
+		{
+			MID = MSkillType(ID);
+		}
 
 
 		int ID;
@@ -24,16 +27,80 @@ namespace SDX_BSC
 		std::string 名前;
 		std::string 説明文;
 		ManagementType 系統;
+		MSkillType MID;
+
 		int 消費資金;
-		int 増加資金;
-		int 使用回数;
+		int 増加資金 = 0;
+		int 使用回数 = 0;
 		IconType アイコン = IconType::資金;
 		bool is永続;//単発効果 or 永続効果
+		bool can使用 = true;
 
 		/*戦術実行効果*/
-		void Active()
+		void Active(Guild* guild)
 		{
+			//資金消費
+			guild->資金 -= 消費資金;
+			guild->投資経験値[系統] += 消費資金;
+			消費資金 += 増加資金;
+			使用回数++;
 
+			if (is永続) { can使用 = false; }
+
+			//部門Lv上昇判定
+			Lv上昇判定();
+
+			MSound::効果音[SE::投資実行].Play();
+
+			switch( MSkillType(ID) )
+			{
+				case MSkillType::ビラ配り:
+					guild->集客力 += 5;
+					break;
+				case MSkillType::薄利多売:
+					guild->価格補正 -= 0.1;
+					guild->集客補正 += 0.2;
+					break;
+				case MSkillType::新人発掘:
+					guild->人事ポイント++;
+					break;
+				case MSkillType::OJT:
+					guild->戦闘経験補正 += 0.1;
+					break;
+				case MSkillType::技術研究:
+					guild->技術経験補正 += 0.1;
+					break;
+				case MSkillType::低コスト化:
+					guild->素材節約 += 0.1;
+					break;
+				case MSkillType::探索術:
+					guild->未開探索 += 0.05;
+					break;
+				case MSkillType::探索許可証:
+					if (guild->最大パーティ数 < CV::最大パーティ数)
+					{
+						guild->最大パーティ数++;
+					}
+					break;
+			}
+
+
+		}
+
+		bool Lv上昇判定()
+		{
+			if (Guild::P->投資Lv[系統] < CV::最大投資Lv &&
+				Guild::P->投資経験値[系統] > 必要経験値[Guild::P->投資Lv[系統]])
+			{
+				Guild::P->投資経験値[系統] -= 必要経験値[Guild::P->投資Lv[系統]];
+				Guild::P->投資Lv[系統]++;
+
+				MSound::効果音[SE::部門Lv上昇].Play();
+				return true;
+			}
+
+			MSound::効果音[SE::投資実行].Play();
+			return false;
 		}
 
 		static void Load()
@@ -64,15 +131,15 @@ namespace SDX_BSC
 			data[4].名前 = "技術研究";
 			data[5].名前 = "低コスト化";
 			data[6].名前 = "探索術";
-			data[7].名前 = "探索許可＋";
+			data[7].名前 = "探索許可証";
 
 			data[0].説明文 = "集客力が0.5人/day増加";
 			data[1].説明文 = "販売価格を一割引にする、来客が二割増";
 			data[2].説明文 = "雇用ポイント+1";
 			data[3].説明文 = "戦闘経験+10%";
-			data[4].説明文 = "ランダムで技術経験値+20%";
-			data[5].説明文 = "10%の確率で素材消費半分";
-			data[6].説明文 = "未発見部屋を探索する確率が+5%";
+			data[4].説明文 = "技術経験+10%";
+			data[5].説明文 = "10%の確率で素材消費無し";
+			data[6].説明文 = "探索進行確率が+5%";
 			data[7].説明文 = "最大パーティ編成数+1";
 
 
@@ -84,5 +151,17 @@ namespace SDX_BSC
 	};
 
 	std::vector<Management> Management::data;
+	const int Management::必要経験値[CV::最大投資Lv] = {
+			10000,
+			50000,
+			250000,
+			1000000,
+			2000000,
+			3000000,
+			4000000,
+			5000000,
+			6000000,
+			7000000,
+	};;
 
 }

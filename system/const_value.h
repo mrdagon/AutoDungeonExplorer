@@ -14,14 +14,21 @@ namespace SDX_BSC
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 5;
 		constexpr int 最大素材ランク = 20;
-		constexpr int 装備種 = 45;
+
+
+		constexpr int 装備種 = 240;
+		constexpr int Pスキル種 = 64;
+		constexpr int Aスキル種 = 32;
 
 		constexpr int 最大装備ランク = 10;
 
-		//constexpr int 月日数 = 20;
+		constexpr int 最大投資Lv = 10;
+		constexpr int 最大技術Lv = 10;
 
-		constexpr int 最大Aスキル数 = 4;
-		constexpr int 最大Pスキル数 = 10;
+		constexpr int 最大ゲーム倍速 = 64;
+
+		constexpr int 最大Aスキル数 = 4;//一人が覚えるスキル数
+		constexpr int 最大Pスキル数 = 7;
 		
 		constexpr bool isデバッグ = true;
 
@@ -32,16 +39,6 @@ namespace SDX_BSC
 		constexpr int 一時間フレーム数 = 360;
 
 		constexpr int 戦闘基本ウェイト = 20;
-		//システム
-
-		constexpr int 部門レベルアップ経験値[5] =
-		{
-			100,
-			200,
-			300,
-			400,
-			500
-		};		
 	}
 	//各種変数
 	namespace SV

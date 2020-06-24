@@ -29,17 +29,26 @@ namespace SDX_BSC
 			
 			//ステータス、パッシブ、アクティブの計算
 			//とりあえずアクティブスキルは固定
-			this->アクティブスキル[0] = type->ASkill[0];
-			this->アクティブスキル[1] = type->ASkill[1];
-			this->アクティブスキル[2] = type->ASkill[2];
+			for (int a = 0; a < CV::最大Aスキル数 ; a++)
+			{
+				this->アクティブスキル[a] = type->ASkill[a];
+			}
 			//とりあえずパッシブスキル無し
 
 			//基礎ステータス
+			this->基礎HP = type->Hp * (9.0 + Lv * 1.2) / 10;
 			this->基礎Str = type->Str * (9.0 + Lv * 1.2) / 10;
 			this->基礎Int = type->Int * (9.0 + Lv * 1.2) / 10;
 			this->基礎Dex = type->Dex * (9.0 + Lv * 1.2) / 10;
+
+			this->基礎防御[DamageType::物理] = type->防御[DamageType::物理];
+			this->基礎防御[DamageType::魔法] = type->防御[DamageType::魔法];
+
+			this->基礎命中 = type->命中;
+			this->基礎回避 = type->回避;
+
 			this->最大HP = 基礎HP;
-			
+
 			if (isボス)
 			{
 				this->最大HP *= 20;
@@ -47,9 +56,6 @@ namespace SDX_BSC
 			}
 
 			this->現在HP = 最大HP;
-
-			基礎回避 = 0;
-
 		}
 
 		void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)

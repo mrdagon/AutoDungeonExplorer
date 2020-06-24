@@ -75,10 +75,12 @@ namespace SDX_BSC
 				if (px > LV(24) && px < LV(24) + LV(27) && py > LV(26) && py < LV(26) + LV(28))
 				{
 					n = -1;
+					MSound::効果音[SE::ボタンクリック].Play();
 				}
 				if (px > LV(25) && px < LV(25) + LV(27) && py > LV(26) && py < LV(26) + LV(28))
 				{
 					n = +1;
+					MSound::効果音[SE::ボタンクリック].Play();
 				}
 
 				switch (id)
@@ -144,6 +146,8 @@ namespace SDX_BSC
 				Sound::SetMainVolume(Game::SE音量);
 				Music::SetMainVolume(Game::BGM音量);
 
+				MSound::効果音[SE::決定].Play();
+
 			}
 
 		};
@@ -169,6 +173,9 @@ namespace SDX_BSC
 				base->BGM設定仮 = Game::BGM設定;
 				base->SE設定仮 = Game::SE設定;
 				base->解像度仮 = Game::解像度設定;
+
+
+				MSound::効果音[SE::キャンセル].Play();
 			}
 		};
 

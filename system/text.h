@@ -27,7 +27,8 @@ namespace SDX_BSC
 		EnumArray<std::string, WindowType> Window_略記;
 		EnumArray<std::string, WindowType> Window_ヘルプ;
 
-		std::string タイトル = "おーとだんじょんえくすぷろーら ～サブタイトル考え中～ 0.2b";
+		std::string タイトル = "おーと だんじょん えくすぷろーら ～サブタイトル考え中～0.1 beta";
+		const wchar_t* アンケURL = L"http://www.gesource.jp/programming/bcb/";
 
 		////Config Window
 		std::string Config_決定 = "決定";
@@ -65,19 +66,22 @@ namespace SDX_BSC
 
 		//Guild Window
 		std::string Guild_ギルマス[2] = { "ギルド名","ギルマス名" };
-		std::string Guild_項目[10] = { "団員","名声","資金","販売" ,"売上" ,"製造" ,"素材" ,"地図" ,"討伐" ,"撤退" };
+		std::string Guild_項目[10] = { "団員","名声","資金","販売" ,"売上" ,"製造" ,"素材" ,"地図" ,"討伐" ,"全滅" };
 		std::string Guild_単位[10] = { "人" ,"点" ,"Ｇ" ,"個" ,"Ｇ" ,"個" ,"個" ,"枚" ,"体" ,"回" };
 
 		//Item Window
 		std::string Item_タブヘルプ[10] = {"全装備","剣","槌","槍" , "弓" , "魔杖" , "神杖" , "重鎧" , "軽鎧" , "外套"};
 
 		//Management Window
-		std::string Manage_タブヘルプ[4] = { "" , "" , "" , ""};
+		std::string Manage_タブヘルプ[4] = { "経営部門の投資Lv" , "人事部門の投資Lv" , "製造部門の投資Lv" , "探索部門の投資Lv"};
 		std::string Manage_お金 = "現在の資金と消費資金";
 
 		//Party Window		
 		//後で調整
 		std::string Party_探索方針 = "クリックでボスと戦うか切り替え";
+
+		std::string Party_ボス回避 = "ボス\n回避";
+		std::string Party_ボス討伐 = "ボス\n討伐";
 
 		//Recruit Window
 		std::string Recruit_リロールヘルプ = "クリックで雇用Pを1消費、志願者をリロール";
@@ -90,7 +94,10 @@ namespace SDX_BSC
 		std::string Tool_速度 = "速度";
 		std::string Tool_設定 = "設定";
 
-		std::string Tool_タイトル = "終了";
+		std::string Tool_タイトル = "アンケ";
+
+		std::string Tool_待機中 = "準備中…";
+		std::string TooL_活動中 = "活動中！";
 
 		std::string Tool_Help日付 = "クエスト開始からの日数";
 		std::string Tool_Help時刻 = "現在の時刻";
@@ -101,8 +108,6 @@ namespace SDX_BSC
 		std::string Tool_Help速度 = "クリックでゲーム速度を変更";
 		std::string Tool_Help設定 = "クリックで設定ウィンドウを開く";
 		std::string Tool_Helpタイトル = "クリックでゲームを終了する";
-
-
 
 		//Help Window
 		std::string Help_ステータス[8] = {"HP","STR","DEX","INT","物防","魔防","命中","回避"};

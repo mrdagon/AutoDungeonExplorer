@@ -92,7 +92,14 @@ namespace SDX_BSC
 			相対座標.x = 座標.x;
 			相対座標.y = 座標.y - スクロール位置 + タイトル枠高さ + 固定縦;
 
-			is操作 = is操作 || 派生操作();
+			if (Input::mouse.x >= 座標.x &&
+				Input::mouse.x <= 座標.x + 横幅 &&
+				Input::mouse.y >= 座標.y &&
+				Input::mouse.y <= 座標.y + 縦幅 + タイトル枠高さ)
+			{
+				is操作 = is操作 || 派生操作();
+
+			}
 
 			return is最前面 || is操作 || Rect(座標.x,座標.y, 横幅 , タイトル枠高さ + 縦幅).Hit(&Input::mouse.GetPoint());		
 		}
@@ -301,6 +308,7 @@ namespace SDX_BSC
 				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ/2)) < タイトル枠高さ/2-1)
 			{
 				is表示 = false;
+				MSound::効果音[SE::ウィンドウ閉じ].Play();
 				return true;
 			}
 
@@ -400,6 +408,7 @@ namespace SDX_BSC
 			}
 		}
 
+		/*最前面にこのウィンドウだけ表示*/
 		int サブ呼び出し()
 		{
 			//裏をやや暗くする

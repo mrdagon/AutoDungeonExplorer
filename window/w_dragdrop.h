@@ -75,6 +75,7 @@ namespace SDX_BSC
 				移動先メンバー->製造配置 = 部署A;
 			}
 
+			MSound::効果音[SE::配置換え].Play();
 			移動先->GUI_Init();
 		}
 
@@ -85,6 +86,8 @@ namespace SDX_BSC
 			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
 			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
 			Guild::P->探索パーティ[並びID / 5].スキルステ計算();
+
+			MSound::効果音[SE::配置換え].Play();
 
 			移動先->GUI_Init();
 		}
@@ -106,6 +109,7 @@ namespace SDX_BSC
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
 			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
 
+			MSound::効果音[SE::配置換え].Play();
 			移動先->GUI_Init();
 			ウィンドウ->GUI_Init();
 
@@ -128,6 +132,7 @@ namespace SDX_BSC
 			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
 			Guild::P->探索パーティ[並びID / 5].スキルステ計算();
 
+			MSound::効果音[SE::配置換え].Play();
 			移動先->GUI_Init();
 			ウィンドウ->GUI_Init();
 		}
@@ -147,6 +152,7 @@ namespace SDX_BSC
 			移動先->GUI_Init();
 			ウィンドウ->GUI_Init();
 
+			MSound::効果音[SE::雇用].Play();
 			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
 		}
 
@@ -167,6 +173,7 @@ namespace SDX_BSC
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
 			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
 
+			MSound::効果音[SE::雇用].Play();
 			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
 		}
 

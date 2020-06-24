@@ -18,6 +18,9 @@ void LoadAndInitData()
 {
 	TX::Load();
 
+	auto time_t = time(nullptr);
+	Rand::Reset((int)time_t);
+
 	ConfigSaveAndLoad(FileMode::Read);
 
 	Game::解像度W = Game::解像度設定 * 160;

@@ -8,7 +8,7 @@ namespace SDX_BSC
 	using namespace SDX;
 #define LV(a) DV::I[20][a]
 
-	/*ギルドの情報*/
+	/*ポップアップウィンドウ用*/
 	class W_Popup : public WindowBox
 	{
 	private:
@@ -74,7 +74,7 @@ namespace SDX_BSC
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 
-			文章.文章 = "タイトルに戻りますか？";
+			文章.文章 = "アンケートに答えますか？\n(ブラウザを開きます)";
 			確定.文字 = "はい";
 			キャンセル.文字 = "いいえ";
 

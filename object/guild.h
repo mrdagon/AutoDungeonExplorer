@@ -93,6 +93,13 @@ namespace SDX_BSC
 			}
 		}
 
+		int 必要技術経験(CraftType 種類)
+		{
+			if (製造Lv[種類] >= CV::最大技術Lv) { return 1; }
+
+			return (製造Lv[種類] * 2 + 1) * 100000;
+		}
+
 		bool 製造開始(CraftType 種類)
 		{
 			//素材所持チェックと消費		
@@ -107,8 +114,12 @@ namespace SDX_BSC
 				{
 					必要製造力[種類] = 10000 + 素材ランク * 2000;
 					素材ランク = a + 1;
-					素材数[種類][a]-= 要求数;
-					総素材 -= 要求数;
+
+					if (Rand::Get(1.0) >= Guild::P->素材節約)
+					{
+						素材数[種類][a] -= 要求数;
+						総素材 -= 要求数;
+					}
 					break;
 				}
 			}
@@ -140,25 +151,32 @@ namespace SDX_BSC
 		void 装備完成処理(CraftType 種類)
 		{
 			int itemID = 完成品[種類];
+			bool 効果音優先 = false;
 
 			//所持数だけ追加して販売可能数は+しない
 			装備所持数[itemID]++;
-			if ( is装備開発[itemID] == false )
-			{
-				is装備開発[itemID] = true;
-				EventLog::Add(0, Game::日付, LogDetailType::新装備開発, itemID);
-			}
 			総製造++;
-
-			製造経験[種類] += 必要製造力[種類];
-
+			製造経験[種類] += 必要製造力[種類] * Guild::P->技術経験補正;
 
 			//LvUP判定
-			if (製造経験[種類] >= (製造Lv[種類]*2 + 1) * 100000)
+			if (製造Lv[種類] < CV::最大技術Lv && 製造経験[種類] >= 必要技術経験(種類) )
 			{
 				製造経験[種類] -= (製造Lv[種類]*2 + 1) * 100000;
 				製造Lv[種類] ++;
+				MSound::効果音[SE::技術Lv上昇].Play();
 				EventLog::Add(0, Game::日付, LogDetailType::技術Lv上昇, (int)種類);
+				効果音優先 = true;
+			}
+
+
+			if ( is装備開発[itemID] == false )
+			{
+				is装備開発[itemID] = true;
+				if (効果音優先 == false) { MSound::効果音[SE::新装備作成].Play(); }
+				EventLog::Add(0, Game::日付, LogDetailType::新装備開発, itemID);
+			}
+			else {
+				if (効果音優先 == false) { MSound::効果音[SE::装備作成].Play(); }
 			}
 
 			//非製造状態にする
@@ -236,7 +254,7 @@ namespace SDX_BSC
 		void アイテム販売()
 		{
 			//客が来る判定-一日に集客力/10人が期待値
-			if (集客力 < Rand::Get( (Game::終業時間 - Game::始業時間)*10 )) { return; }
+			if (集客力 * Guild::P->集客補正 < Rand::Get( (Game::終業時間 - Game::始業時間)*10 )) { return; }
 
 
 			//在庫から売るアイテムを抽選
@@ -270,7 +288,6 @@ namespace SDX_BSC
 			}
 
 		}
-
 	};
 
 

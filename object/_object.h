@@ -5,13 +5,13 @@
 #include <SDXFramework.h>
 
 #include "monster_class.h"
-#include "warker_class.h"
+
+#include "job.h"
 
 #include "active_skill.h"
 #include "passive_skill.h"
 
 #include "item.h"
-#include "management.h"
 
 #include "fighter.h"
 
@@ -20,11 +20,13 @@
 #include "event_log.h"
 #include "guild_master.h"
 
-#include "quest.h"
-#include "customer.h"
 
 #include "warker.h"
 
 #include "i_guild.h"
 #include "party.h"
 #include "guild.h"
+
+#include "quest.h"
+
+#include "management.h"

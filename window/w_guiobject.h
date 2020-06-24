@@ -105,9 +105,7 @@ namespace SDX_BSC
 
 			if (スキルアイコン != SkillType::COUNT)
 			{
-				//Screen::SetBright(Color::Black);
 				MIcon::スキル[スキルアイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 1, 0);
-				//Screen::SetBright();
 			} else {
 				MIcon::アイコン[アイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 2, 0);
 			}
@@ -119,6 +117,8 @@ namespace SDX_BSC
 		void Click(double px, double py)
 		{
 			タブ操作 = 番号;
+
+			MSound::効果音[SE::タブ切り替え].Play();
 		}
 	};
 }

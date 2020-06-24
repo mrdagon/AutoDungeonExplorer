@@ -13,12 +13,18 @@ namespace SDX_BSC
 		static int 日付 = 0;//一月28日、一年336日
 		static int 時間 = CV::一時間フレーム数 *6;
 		static int ゲームスピード = 1;
+		static int 最大ゲームスピード = 8;
+
 		static bool is停止 = false;
 		static int アニメーション時間 = 0;
 		static bool isヘルプ = true;
 
 		static bool is翌日スキップ = false;
 		
+
+		//
+		static bool isメインクエスト = false;//メインクエスト終了フラグ
+	
 		//コンフィグ項目
 		static double BGM音量;//
 		static double SE音量;//
@@ -33,7 +39,7 @@ namespace SDX_BSC
 		//60F = 10分、360= 1時間
 		static int 起床時間 = CV::一時間フレーム数 * 6;//6時
 		static int 始業時間 = CV::一時間フレーム数 * 8;//8時
-		static int 終業時間 = CV::一時間フレーム数 * 18;//18時
+		static int 終業時間 = CV::一時間フレーム数 * 20;//18時
 		static int 就寝時間 = CV::一時間フレーム数 * 22;//22時
 
 		static bool is仕事中;

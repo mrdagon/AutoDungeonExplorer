@@ -22,13 +22,18 @@ namespace SDX_BSC
 			this->見た目 = 見た目;
 		}
 
-		void Set(int Str, int Dex, int Int, int Vit, int Agi)
+		void Set(int Hp , int Str, int Dex, int Int, int 物防, int 魔防 , int 回避 , int 命中)
 		{
+			this->Hp = Hp;
 			this->Str = Str;
 			this->Int = Int;
 			this->Dex = Dex;
-			this->Vit = Vit;
-			this->Agi = Agi;
+
+			this->防御[DamageType::物理] = 物防;
+			this->防御[DamageType::魔法] = 魔防;
+
+			this->回避 = 回避;
+			this->命中 = 命中;
 		}
 
 		void SetSkill(int askill1, int askill2, int askill3)
@@ -36,6 +41,7 @@ namespace SDX_BSC
 			this->ASkill[0] = askill1;
 			this->ASkill[1] = askill2;
 			this->ASkill[2] = askill3;
+			this->ASkill[3] = 0;
 		}
 
 		int id;
@@ -46,7 +52,9 @@ namespace SDX_BSC
 		UnitImageType 見た目;
 
 		//基礎ステータスーLvでスケーリングする
-		int Hp,Str,Int,Dex,Vit,Agi;
+		int Hp,Str,Int,Dex,回避,命中;
+		EnumArray<int, DamageType> 防御;
+		
 		
 		//他ステータス
 		bool isボス;
@@ -61,19 +69,19 @@ namespace SDX_BSC
 	void LoadMonsterClass()
 	{
 		MonsterClass::data.emplace_back(0,"スライム","高耐久",UnitImageType::スライム);
-		MonsterClass::data.emplace_back(1, "ケルベロス", "高火力",UnitImageType::三頭犬);
+		MonsterClass::data.emplace_back(1, "バット", "後列",UnitImageType::三頭犬);
 		MonsterClass::data.emplace_back(2, "スケルトン", "バランス",UnitImageType::スケルトン);
 		MonsterClass::data.emplace_back(3, "ドラゴン", "ボス",UnitImageType::ドラゴン);
 
-		MonsterClass::data[0].Set(5, 5, 5, 10, 5);
-		MonsterClass::data[1].Set(10, 5, 5, 5, 7);
-		MonsterClass::data[2].Set(7, 7, 7, 7, 7);
-		MonsterClass::data[3].Set(15, 15, 15, 15, 15);
+		MonsterClass::data[0].Set(12, 5, 5, 5, 10,10, 0, 0);
+		MonsterClass::data[1].Set(5,  7, 7, 7,  0, 0,10,10);
+		MonsterClass::data[2].Set(10, 6, 6, 6,  5, 5, 5, 5);
+		MonsterClass::data[3].Set(15,15, 15,15,15,15, 0, 0);
 
-		MonsterClass::data[0].SetSkill( 6,0,0 );
-		MonsterClass::data[1].SetSkill( 7,0,0 );
-		MonsterClass::data[2].SetSkill( 8,0,0 );
-		MonsterClass::data[3].SetSkill( 9,0,0 );
+		MonsterClass::data[0].SetSkill( 13,14,0 );
+		MonsterClass::data[1].SetSkill( 15,16,0 );
+		MonsterClass::data[2].SetSkill( 17,18,0 );
+		MonsterClass::data[3].SetSkill( 19,20,21);
 
 	}
 

@@ -145,7 +145,7 @@ namespace SDX_BSC
 			//Aスキル-アイコン、名前、説明
 			座標.x += LV(32);
 			座標.y += LV(33);
-			for (int a = 0; a < 4; a++)
+			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80});
 			}
@@ -155,23 +155,30 @@ namespace SDX_BSC
 			座標.y += LV(35);
 			MSystem::DrawWindow({ 座標.x + LV(45),座標.y + LV(46) }, LV(47), LV(48), 内スキン);
 			int sp = it->スキルポイント;
-			for (int a = 0; a < 6; a++)
+			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-
-				if (it->パッシブスキル[a] < 0 || it->パッシブスキル[a] > 30) continue;
-
 				auto pskill = &PassiveSkill::data[it->パッシブスキル[a]];
 				
+				std::string s = "";
+
 				if (it->isパッシブスキル習得[a] == true)
 				{
 					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color(0, 141, 255));
 				} else {
-					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color::Gray);
-
 					int slv = pskill->必要SP - sp + it->Lv;
 					sp -= pskill->必要SP;
 
-					MFont::Bメイリオ小.DrawBold({ 座標.x + LV(38) , 座標.y + LV(39) }, Color::White, Color::Black, { "Lv" , slv },true);//習得状態と必要レベル
+					if (slv < 10)
+					{
+						s = "Lv ";
+						s += std::to_string(slv);
+					} else {
+						s = "Lv";
+						s += std::to_string(slv);
+					}
+
+					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color::Gray , s);
+					//MFont::Bメイリオ小.DrawBold({ 座標.x + LV(38) , 座標.y + LV(39) }, Color::White, Color::Black, { "Lv" , slv },true);//習得状態と必要レベル
 				}
 
 				MFont::Bメイリオ中.DrawBold({ 座標.x + LV(40) , 座標.y + LV(41) }, Color::White, Color::Black, pskill->名前);//スキル名
@@ -281,10 +288,6 @@ namespace SDX_BSC
 
 			//アイコン
 			MIcon::ダンジョン[it->種類].Draw({ 座標.x + LV(2),座標.y + LV(3) });
-			//ランク表示無し
-			//MIcon::アイコン[IconType::ランク].Draw({ 座標.x + LV(8),座標.y + LV(9) });
-			//MFont::BArial中.DrawBold({ 座標.x + LV(10),座標.y + LV(11) }, Color::White, Color::Black, { it->ランク+1 });
-
 			//エリアレベル
 			MFont::BArial小.DrawBold({ 座標.x + LV(6),座標.y + LV(7) }, Color::White, Color::Black, {"Lv" ,it->Lv});
 
@@ -295,7 +298,6 @@ namespace SDX_BSC
 			//探索率、財宝次ダンジョン等イベント発見状態、特産品
 			MSystem::DrawBar({ 座標.x + LV(8),座標.y + LV(9) }, LV(10), LV(11), it->探索率[Guild::P->id], 1, Color::Blue, Color::White, Color::White, true);
 			MFont::Bメイリオ中.DrawBold({ 座標.x + LV(14),座標.y + LV(15) }, Color::White, Color::Black, { it->探索率[Guild::P->id]*100, "%" },true);
-			//MFont::Bメイリオ小.DrawBold({ 座標.x + LV(35),座標.y + LV(34) }, Color::White, Color::Black, { "探索率"});
 
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(34),座標.y + LV(36) }, Color::White, Color::Black, { it->残り地図 , " / " , it->最大地図 });
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(34),座標.y + LV(37) }, Color::White, Color::Black, { it->残り財宝 , " / " , it->最大財宝 });
@@ -352,7 +354,7 @@ namespace SDX_BSC
 			MFont::メイリオ中.DrawBold({ 座標.x + LV(8),座標.y + LV(9) }, Color::White, Color::Black, { "Lv", it->Lv } , true);
 
 			MIcon::アイコン[IconType::資金].Draw({ 座標.x + LV(10) , 座標.y + LV(11) });
-			MFont::BArial中.DrawBold({ 座標.x + LV(12) ,座標.y + LV(13) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
+			MFont::BArial中.DrawBold({ 座標.x + LV(12) ,座標.y + LV(13) }, Color::White, Color::Black, { (long long)it->消費資金 , " G" }, true);
 
 			#undef LV
 		}
@@ -363,13 +365,17 @@ namespace SDX_BSC
 
 			MSystem::DrawWindow({ 座標.x + LV(2),座標.y + LV(23)}, LV(0) - 10, LV(24), 内スキン);
 
-			MIcon::スキル[ActiveSkill::data[skillID].系統].Draw({ 座標.x + LV(25),座標.y + LV(26)});
+			std::string s = "";
+			if (ActiveSkill::data[skillID].隊列 == FormationType::前列) { s = "前列";  }
+			else if (ActiveSkill::data[skillID].隊列 == FormationType::後列) { s = "後列"; }
+
+			MSystem::DrawSkill(ActiveSkill::data[skillID].系統, { 座標.x + LV(25),座標.y + LV(26) },Color(200,64,64 ), s);
 
 			MIcon::アイコン[IconType::時間].Draw({ 座標.x + LV(27),座標.y + LV(28)});//クールダウンor必殺
 
 			MFont::Bメイリオ中.DrawBold({ 座標.x + LV(29),座標.y + LV(30) }, Color::White, Color::Black, ActiveSkill::data[skillID].名前);
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(31),座標.y + LV(32) }, Color::White, Color::Black, { ActiveSkill::data[skillID].必要チャージ });
-			if (ActiveSkill::data[skillID].命中 < 2.0) { MFont::Bメイリオ小.DrawBold({ 座標.x + LV(36),座標.y + LV(37) }, Color::White, Color::Black, { "命中 " , (int)ActiveSkill::data[skillID].命中*100 , "%" }); }
+			if (ActiveSkill::data[skillID].命中 < 2.0) { MFont::Bメイリオ小.DrawBold({ 座標.x + LV(36),座標.y + LV(37) }, Color::White, Color::Black, { "命中 " , (int)(ActiveSkill::data[skillID].命中*100) , "%" }); }
 			MFont::Bメイリオ小.DrawBold({ 座標.x + LV(33),座標.y + LV(34) }, Color::White, Color::Black, ActiveSkill::data[skillID].説明);
 			
 #undef LV
