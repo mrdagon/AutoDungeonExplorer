@@ -19,20 +19,26 @@ namespace SDX_BSC
 		static std::vector<Dungeon> data;
 
 		/*暫定自動生成*/
-		static void Add(int no,std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv)
+		static void Add(int no,std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数 , bool isエリアボス)
 		{
 			data.emplace_back();
 
-			data[no].Init(no, 名前, 種類, 部屋数, ランク, Lv);		
+			data[no].Init(no, 名前, 種類, 部屋数, ランク, Lv, 地図数, isエリアボス);
 		}
 
-		void Init(int no, std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv)
+		/*暫定処理*/
+		void Init(int no, std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数, bool isエリアボス)
 		{
 			this->名前 = 名前;
 			this->部屋数 = 部屋数;
 			this->種類 = 種類;
 			this->ランク = ランク;
 			this->Lv = Lv;
+
+			発見財宝 = 0;
+			発見地図 = 0;
+			最大財宝 = 3;
+			最大地図 = 地図数;
 
 			雑魚モンスター[0] = 0;
 			雑魚モンスター[1] = 1;
@@ -42,51 +48,64 @@ namespace SDX_BSC
 
 			//位置-保留
 
-			for (int a = 0; a < CV::最大ギルド数; a++)
-			{
-				is発見[a] = false;
-			}
+			is発見 = false;
 
+
+			int buf地図 = 発見地図;
+			int buf財宝 = 発見財宝;
 
 			for (int a = 0; a < 部屋数; a++)
 			{
 				部屋.emplace_back();
-				部屋[a].is探索[0] = false;
+				部屋[a].is探索 = false;
 				部屋[a].地図 = -1;
 
-				if (a == 部屋数 - 1)
+				if (a == 0)
 				{
 					部屋[a].種類 = RoomType::ボス;
-					部屋[a].地図 = std::min(99,no + 10);
+					if (isエリアボス)
+					{
+						部屋[a].地図 = std::min(99, no + 1);
+						buf地図--;
+					} else {
+						buf財宝--;
+					}
 				}
-				else if (a == 部屋数 - 2)
+				else if ( buf地図 > 0)
 				{
-					部屋[a].地図 = std::min(99, no + 1);
 					部屋[a].種類 = RoomType::地図;
+					部屋[a].地図 = std::min(99, no + 1);
+					buf地図--;
+				}
+				else if ( buf財宝 > 0)
+				{
+					部屋[a].種類 = RoomType::財宝;
 				}
 				else if (a % 2 == 0)
 				{
-					部屋[a].種類 = RoomType::魔物;
+					部屋[a].種類 = RoomType::ザコ;
+				} else {
+					部屋[a].種類 = RoomType::素材;
 				}
 			}
 		}
 
-		void 探索率計算(int ギルドID)
+		void 探索率計算()
 		{
 			double n = 0;
 
 			if (部屋.size() <= 0)
 			{
-				探索率[ギルドID] = 0;
+				探索率 = 0;
 				return;
 			}
 
 			for (int a = 0; a < 部屋.size(); a++)
 			{
-				if (部屋[a].is探索[ギルドID] == true) { n++; }
+				if (部屋[a].is探索 == true) { n++; }
 			}
 
-			探索率[ギルドID] = n / 部屋.size();
+			探索率 = n / 部屋.size();
 		}
 
 		int ID;
@@ -100,17 +119,17 @@ namespace SDX_BSC
 		bool isボス生存 = true;
 		bool isボス発見 = false;
 
-		int 残り財宝;
+		int 発見財宝;
 		int 最大財宝;
-		int 残り地図;
+		int 発見地図;
 		int 最大地図;
 
 		MonsterNo ボスモンスター;
 		MonsterNo 雑魚モンスター[3];//地形種で固定？
 
-		double 探索率[CV::最大ギルド数];
-		bool is発見[CV::最大ギルド数];//ダンジョン発見済みフラグ
-		bool is新発見[CV::最大ギルド数];//UI用
+		double 探索率;
+		bool is発見;//ダンジョン発見済みフラグ
+		bool is新発見;//UI用
 	};
 
 	std::vector<Dungeon> Dungeon::data;

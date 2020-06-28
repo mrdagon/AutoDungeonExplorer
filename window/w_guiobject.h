@@ -110,8 +110,8 @@ namespace SDX_BSC
 				MIcon::アイコン[アイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 2, 0);
 			}
 
-			px -= MFont::メイリオ中.GetDrawStringWidth(文字)/2;
-			MFont::Bメイリオ中.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
+			px -= MFont::MSize.GetDrawStringWidth(文字)/2;
+			MFont::BMSize.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
 		}
 
 		void Click(double px, double py)

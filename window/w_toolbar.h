@@ -27,7 +27,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
-				MFont::Arial大.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 , TX::Tool_日付 }, true);
+				MFont::LSize.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 , TX::Tool_日付 }, true);
 			}
 		};
 		class G_時刻 : public GUI_Object
@@ -43,13 +43,13 @@ namespace SDX_BSC
 
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
-				MFont::Arial大.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
+				MFont::LSize.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
 
 				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
 				{
-					MFont::Arial大.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
+					MFont::LSize.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
 				} else {
-					MFont::Arial大.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
+					MFont::LSize.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
 				}
 			}
 		};
@@ -62,7 +62,7 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
 
 				int 集客 = int(Guild::P->集客力 * Guild::P->集客補正);
-				MFont::Arial大.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { 集客/10 , "." , 集客 % 10 , TX::Tool_人口 },true);
+				MFont::LSize.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { 集客/10 , "." , 集客 % 10 , TX::Tool_人口 },true);
 			}
 		};
 
@@ -94,7 +94,7 @@ namespace SDX_BSC
 					str = "," + str;
 				}
 
-				MFont::Arial大.DrawBold({ px+位置.GetW()-5,py-3 }, Color::White, Color::Black, str,true);
+				MFont::LSize.DrawBold({ px+位置.GetW()-5,py-3 }, Color::White, Color::Black, str,true);
 
 			}
 		};
@@ -114,7 +114,7 @@ namespace SDX_BSC
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
 				MIcon::アイコン[対象ウィンドウ->アイコン].DrawRotate({px+LV(22),py+ LV(23)}, 2, 0);
-				MFont::Bメイリオ小.DrawBold({px + LV(24),py + LV(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
+				MFont::BSSize.DrawBold({px + LV(24),py + LV(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
 			}
 
 			void Click(double px, double py)
@@ -139,7 +139,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24)-7,py + LV(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
+				MFont::BSSize.DrawBold({ px + LV(24)-7,py + LV(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
 
 			}
 		};
@@ -157,7 +157,7 @@ namespace SDX_BSC
 				}
 
 				MIcon::アイコン[IconType::停止].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_停止);
+				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_停止);
 			}
 
 			void Click(double px, double py)
@@ -176,9 +176,9 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) - 25,py + LV(23) }, 2, 0);
 				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) + 25,py + LV(23) }, 2, 0,true);
 
-				MFont::Bメイリオ小.DrawBold({ px + LV(24)+LV(26),py + LV(25) }, Color::White, Color::Black, TX::Tool_速度);
-				MFont::Arial中.DrawBold({ px + LV(24) + LV(26) + 5,py + LV(25) - 20 }, Color::White, Color::Black, "x", true);
-				MFont::Arial中.DrawBold({ px + LV(24) + LV(26) + 28,py + LV(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
+				MFont::BSSize.DrawBold({ px + LV(24)+LV(26),py + LV(25) }, Color::White, Color::Black, TX::Tool_速度);
+				MFont::MSize.DrawBold({ px + LV(24) + LV(26) + 5,py + LV(25) - 20 }, Color::White, Color::Black, "x", true);
+				MFont::MSize.DrawBold({ px + LV(24) + LV(26) + 28,py + LV(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
 
 			}
 
@@ -203,7 +203,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::設定].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_設定);
+				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_設定);
 			}
 
 			void Click(double px, double py)
@@ -226,7 +226,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::アイコン[IconType::終了].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_タイトル);
+				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_タイトル);
 			}
 
 			void Click(double px, double py)

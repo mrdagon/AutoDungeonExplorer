@@ -38,9 +38,9 @@ namespace SDX_BSC
 
 		void SetSkill(int askill1, int askill2, int askill3)
 		{
-			this->ASkill[0] = askill1;
-			this->ASkill[1] = askill2;
-			this->ASkill[2] = askill3;
+			this->ASkill[0] = &ActiveSkill::data[askill1];
+			this->ASkill[1] = &ActiveSkill::data[askill2];
+			this->ASkill[2] = &ActiveSkill::data[askill3];
 			this->ASkill[3] = 0;
 		}
 
@@ -59,8 +59,8 @@ namespace SDX_BSC
 		//他ステータス
 		bool isボス;
 
-		int ASkill[CV::最大Aスキル数] = { 0 };//最大４個とか
-		int ASkillLv[CV::最大Aスキル数] = { 0 };
+		ActiveSkill* ASkill[CV::最大Aスキル数] = { 0 };//最大４個とか
+		int ASkillLv[CV::最大Aスキル数] = { 0 };//習得レベル[未実装]
 
 		int PSkillID[10] = { 0 };//覚えるPスキル
 		int PSkillLv[10] = { 0 };//Pスキルの習得レベル

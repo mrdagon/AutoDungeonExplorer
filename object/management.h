@@ -48,9 +48,7 @@ namespace SDX_BSC
 			if (is永続) { can使用 = false; }
 
 			//部門Lv上昇判定
-			Lv上昇判定();
-
-			MSound::効果音[SE::投資実行].Play();
+			if (!Lv上昇判定()){ MSound::効果音[SE::投資実行].Play(); }
 
 			switch( MSkillType(ID) )
 			{
@@ -77,10 +75,7 @@ namespace SDX_BSC
 					guild->未開探索 += 0.05;
 					break;
 				case MSkillType::探索許可証:
-					if (guild->最大パーティ数 < CV::最大パーティ数)
-					{
-						guild->最大パーティ数++;
-					}
+					if (guild->最大パーティ数 < CV::最大パーティ数){guild->最大パーティ数++;}
 					break;
 			}
 

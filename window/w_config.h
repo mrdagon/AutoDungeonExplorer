@@ -46,7 +46,7 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(14),py + LV(15) },2,0,true);
 
 
-				MFont::BArial中.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, 名前, false);
+				MFont::BMSize.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, 名前, false);
 
 				switch (id)
 				{
@@ -65,7 +65,7 @@ namespace SDX_BSC
 					break;
 				}
 
-				MFont::BArial中.DrawBold({ px + LV(18) + MFont::BArial中.GetDrawStringWidth(設定値)/2 ,py + LV(19) }, Color::White, Color::Black, { 設定値 }, true);
+				MFont::BMSize.DrawBold({ px + LV(18) + MFont::BMSize.GetDrawStringWidth(設定値)/2 ,py + LV(19) }, Color::White, Color::Black, { 設定値 }, true);
 			}
 
 			void Click(double px, double py)
@@ -113,10 +113,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BArial中.GetDrawStringWidth( TX::Config_決定 ) / 2;
+				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_決定 ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23),1);
-				MFont::BArial中.DrawBold({ px + LV(20) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_決定 , false);
+				MFont::BMSize.DrawBold({ px + LV(20) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_決定 , false);
 			}
 
 			void Click(double px, double py)
@@ -159,10 +159,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BArial中.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
+				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23), 1);
-				MFont::BArial中.DrawBold({ px + LV(21) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
+				MFont::BMSize.DrawBold({ px + LV(21) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
 			}
 
 			void Click(double px, double py)

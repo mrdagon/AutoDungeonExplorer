@@ -116,10 +116,10 @@ namespace SDX_BSC
 	{
 		//std::string str =  + System::textComposition;
 
-		MFont::メイリオ大.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText);
-		MFont::メイリオ中.DrawBold({ 10,100 }, Color::White, Color::Black, DV::page_name[DV::page]);
+		MFont::LSize.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText);
+		MFont::MSize.DrawBold({ 10,100 }, Color::White, Color::Black, DV::page_name[DV::page]);
 
-		MFont::メイリオ中.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
+		MFont::MSize.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
 
 		int p_no = DV::line/30;//30ライン以上ある場合ずらす
 
@@ -127,12 +127,12 @@ namespace SDX_BSC
 		{
 			if (DV::line == a+ p_no *30)
 			{
-				MFont::メイリオ中.DrawBold({ 10 , a * 20 + 120 }, Color::Red, Color::Black, { a+ p_no * 30 , ":" });
+				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::Red, Color::Black, { a+ p_no * 30 , ":" });
 			} else {
-				MFont::メイリオ中.DrawBold({ 10 , a * 20 + 120 }, Color::White, Color::Black, { a+ p_no *30, ":" });
+				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::White, Color::Black, { a+ p_no *30, ":" });
 			}
 
-			MFont::メイリオ中.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, DV::I[DV::page][a+p_no*30], true);
+			MFont::MSize.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, DV::I[DV::page][a+p_no*30], true);
 		}
 
 		return;

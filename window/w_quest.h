@@ -29,23 +29,23 @@ namespace SDX_BSC
 
 				if (Quest::data[id].isメイン)
 				{
-					MFont::BArial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Main Quest" });
+					MFont::BSSize.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Main Quest" });
 				} else {
-					MFont::BArial小.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Sub Quest" });
+					MFont::BSSize.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Sub Quest" });
 				}
 
 				//クエスト名
-				MFont::BArial大.DrawBold({ px + LV(5) ,py + LV(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
+				MFont::BLSize.DrawBold({ px + LV(5) ,py + LV(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
 
 				//達成条件と達成率＿complete表示
-				MFont::BArial中.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
+				MFont::BMSize.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
 
 				//報酬、名誉
 				MIcon::アイコン[IconType::名声].Draw({ px + LV(9), py + LV(10) });
-				MFont::BArial中.DrawBold({ px + LV(11) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
+				MFont::BMSize.DrawBold({ px + LV(11) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
 				//報酬、資金
 				MIcon::アイコン[IconType::資金].Draw({ px + LV(13), py + LV(10) });
-				MFont::BArial中.DrawBold({ px + LV(14) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
+				MFont::BMSize.DrawBold({ px + LV(14) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
 
 			}
 		};

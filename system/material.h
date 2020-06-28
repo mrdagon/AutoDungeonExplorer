@@ -180,6 +180,7 @@ namespace SDX_BSC
 			アイテム[ItemImageType::鉄の鎧].Load("File/armor/armor006.png");
 			アイテム[ItemImageType::鎖帷子].Load("File/armor/armor016.png");
 			アイテム[ItemImageType::皮のローブ].Load("File/armor/armor066.png");
+			アイテム[ItemImageType::アクセサリ].Load("File/accessory/boots_007.png");
 			//素材
 			素材[CraftType::鍛造].Load("File/system/mat_001.png");
 			素材[CraftType::木工].Load("File/system/mat_002.png");
@@ -282,65 +283,40 @@ namespace SDX_BSC
 	//文字データ
 	namespace MFont
 	{
-		//SystemFont::UI_Gothic
-		Font Arial小;
-		Font Arial中;
-		Font Arial大;
+		Font SSize;
+		Font MSize;
+		Font LSize;
 
-		Font BArial小;
-		Font BArial中;
-		Font BArial大;
+		Font BSSize;
+		Font BMSize;
+		Font BLSize;
 
-		//meiryo.ttc
-		Font メイリオ小;
-		Font メイリオ中;
-		Font メイリオ大;
-		Font Bメイリオ小;
-		Font Bメイリオ中;
-		Font Bメイリオ大;
-
-		ImagePack 白数字;
-		ImagePack 黒数字;
-		ImagePack 英数字;
 
 		static void Load()
 		{
-			std::string f1 = "File/font/NotoSans-Regular.ttf";
-			std::string f1b = "File/font/NotoSans-Bold.ttf";
-			std::string f2 = "File/font/mplus-1m-Regular.ttf";
-			std::string f2b = "File/font/mplus-1m-Bold.ttf";
-			f1 = "File/font/mplus-1m-Regular.ttf";
-			f1b = "File/font/mplus-1m-Bold.ttf";
+			//std::string f1 = "File/font/NotoSans-Regular.ttf";
+			//std::string f1b = "File/font/NotoSans-Bold.ttf";
+			std::string f1 = "File/font/mplus-1m-Regular.ttf";
+			std::string f1b = "File/font/mplus-1m-Bold.ttf";
+			//f1 = "File/font/mplus-1m-Regular.ttf";
+			//f1b = "File/font/mplus-1m-Bold.ttf";
 			bool iszeroswap = true;
 
-			Arial小.Load(f1.c_str(), 12);
-			Arial中.Load(f1.c_str(), 18);
-			Arial大.Load(f1.c_str(), 24);
-			BArial小.Load(f1b.c_str(), 12);
-			BArial中.Load(f1b.c_str(), 18);
-			BArial大.Load(f1b.c_str(), 24);
-			メイリオ小.Load(f2.c_str(), 12);
-			メイリオ中.Load(f2.c_str(), 18);
-			メイリオ大.Load(f2.c_str(), 24);
-			Bメイリオ小.Load(f2b.c_str(), 12);
-			Bメイリオ中.Load(f2b.c_str(), 18);
-			Bメイリオ大.Load(f2b.c_str(), 24);
+			SSize.Load(f1.c_str(), 12);
+			MSize.Load(f1.c_str(), 18);
+			LSize.Load(f1.c_str(), 24);
+			BSSize.Load(f1b.c_str(), 12);
+			BMSize.Load(f1b.c_str(), 18);
+			BLSize.Load(f1b.c_str(), 24);
 
 			if (iszeroswap)
 			{
-				Arial小.SetImage("0", Arial小.GetImage("O"));
-				Arial中.SetImage("0", Arial中.GetImage("O"));
-				Arial大.SetImage("0", Arial大.GetImage("O"));
-				BArial小.SetImage("0", BArial小.GetImage("O"));
-				BArial中.SetImage("0", BArial中.GetImage("O"));
-				BArial大.SetImage("0", BArial大.GetImage("O"));
-
-				メイリオ小.SetImage("0", メイリオ小.GetImage("O"));
-				メイリオ中.SetImage("0", メイリオ中.GetImage("O"));
-				メイリオ大.SetImage("0", メイリオ大.GetImage("O"));
-				Bメイリオ小.SetImage("0", Bメイリオ小.GetImage("O"));
-				Bメイリオ中.SetImage("0", Bメイリオ中.GetImage("O"));
-				Bメイリオ大.SetImage("0", Bメイリオ大.GetImage("O"));
+				SSize.SetImage("0", SSize.GetImage("O"));
+				MSize.SetImage("0", MSize.GetImage("O"));
+				LSize.SetImage("0", LSize.GetImage("O"));
+				BSSize.SetImage("0", BSSize.GetImage("O"));
+				BMSize.SetImage("0", BMSize.GetImage("O"));
+				BLSize.SetImage("0", BLSize.GetImage("O"));
 			}
 		}
 	}
@@ -376,7 +352,36 @@ namespace SDX_BSC
 
 		static void Load()
 		{
-			効果音[SEType::決定].Load("File/sound/coin04.wav");
+			効果音[SEType::決定].Load("File/sound/cursor05.wav");
+			効果音[SEType::キャンセル].Load("File/sound/cursor01.wav");
+			効果音[SEType::ボタン押].Load("File/sound/kachi05.wav");
+			効果音[SEType::タブ押].Load("File/sound/paper00.wav");
+			効果音[SEType::掴む].Load("File/sound/kachi11.wav");
+			効果音[SEType::装着].Load("File/sound/weapon00.wav");
+			効果音[SEType::投資].Load("File/sound/coin05.wav");
+			//内政効果音
+			効果音[SEType::クエスト完了].Load("File/sound/metal35.wav");
+			効果音[SEType::製造].Load("File/sound/metal14.wav");
+			効果音[SEType::新製造].Load("File/sound/metal28.wav");
+			効果音[SEType::内政Lv].Load("File/sound/power22.wav");
+			効果音[SEType::販売].Load("File/sound/coin01.wav");
+
+			//戦闘探索効果音
+			効果音[SEType::地図発見].Load("File/sound/bell03.wav");
+			効果音[SEType::ボス発見].Load("File/sound/unari00.wav");
+			効果音[SEType::探索開始].Load("File/sound/step00.wav");
+			効果音[SEType::探索終了].Load("File/sound/step04.wav");
+
+			//伐採 wood05
+			//採掘 metal18
+
+			効果音[SEType::攻撃].Load("File/sound/hit17.wav");
+			効果音[SEType::回復].Load("File/sound/pyoro42.wav");
+			効果音[SEType::補助].Load("File/sound/power05.wav");
+
+			効果音[SEType::味方気絶].Load("File/sound/voice004.wav");
+			効果音[SEType::敵気絶].Load("File/sound/voice005.wav");
+			効果音[SEType::全滅].Load("File/sound/voice017.wav");
 		}
 	}
 
@@ -483,7 +488,7 @@ namespace SDX_BSC
 			Drawing::Rect({ 座標.x + 2,座標.y + 2 ,25,25 }, 色, true);
 
 			MIcon::スキル[スキル種].Draw({ 座標.x + 2,座標.y + 2 });
-			MFont::Bメイリオ小.DrawBold({ 座標.x + 2 , 座標.y + 12 }, Color::White, Color::Black, messe);
+			MFont::BSSize.DrawBold({ 座標.x + 2 , 座標.y + 12 }, Color::White, Color::Black, messe);
 		}
 
 		static void DrawCircleBar(Rect 座標, double ゲージ率, Color 表色, Color 裏色, double 太さ, double 裏太さ)

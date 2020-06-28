@@ -22,7 +22,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12, 0);
 
-				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(10) }, Color::White, Color::Black, { 文章 }, true);
+				MFont::BMSize.DrawBold({ px + LV(9) ,py + LV(10) }, Color::White, Color::Black, { 文章 }, true);
 			}
 		};
 
@@ -35,10 +35,10 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BArial中.GetDrawStringWidth(文字) / 2;
+				int dif_x = MFont::BMSize.GetDrawStringWidth(文字) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(13),1);
-				MFont::BArial中.DrawBold({ px + LV(11) - dif_x ,py + LV(12) }, Color::White, Color::Black, 文字, false);
+				MFont::BMSize.DrawBold({ px + LV(11) - dif_x ,py + LV(12) }, Color::White, Color::Black, 文字, false);
 			}
 
 			void Click(double px, double py)

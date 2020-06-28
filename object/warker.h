@@ -39,12 +39,10 @@ namespace SDX_BSC
 
 			装備[0] = Job::data[job].初期装備[0];
 			装備[1] = Job::data[job].初期装備[1];
+			装備[2] = 0;
 
 			スキルポイント = Lv + 10;
 			経験値 = 0;
-
-			隊列 = FormationType::前列;
-			通常攻撃ステータス = Item::data[装備[0]].依存ステータス;
 
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
@@ -107,7 +105,7 @@ namespace SDX_BSC
 			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
 		}
 
-		bool is特殊人材;//(解雇不可)
+		bool is特殊人材;//(解雇不可、イベントに絡む等)
 
 		//●人事関連
 		//所属あり、就活中、ニートの３パターン
@@ -132,13 +130,19 @@ namespace SDX_BSC
 		int 製造Lv;
 		int 製造経験値;
 
-		int 装備[2];//0が武器、1が防具
+		int 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
 		double 製造力 = 10;
 
 		//●再計算ステータス、戦闘以外
 
 		/*パーティ非所属キャラ用ステータス計算*/
+		double Get経験値獲得率()
+		{
+			int 要求exp = (2 + this->Lv * this->Lv) * CV::要求経験値;
+			return this->経験値 / (要求exp);
+		}
+
 		void 表示ステ計算()
 		{
 			std::vector<Fighter*> 味方;
@@ -221,50 +225,22 @@ namespace SDX_BSC
 				switch (PassiveSkill::data[no].対象)
 				{
 				case PSkillTarget::自分:
-				case PSkillTarget::行動対象:
 				case PSkillTarget::敵単体:
 				case PSkillTarget::敵全体:
-					発動パッシブ.push_back(no);
-					break;
-				case PSkillTarget::同じ列:
-					for (auto&it : 味方)
-					{
-						if (it->隊列 == this->隊列)
-						{
-							it->発動パッシブ.push_back(no);
-						}
-					}
+					発動パッシブ.push_back( &PassiveSkill::data[no] );
 					break;
 				case PSkillTarget::味方全員:
 					for (auto&it : 味方)
 					{
-						it->発動パッシブ.push_back(no);
+						it->発動パッシブ.push_back(&PassiveSkill::data[no]);
 					}
 					break;
-				case PSkillTarget::味方前列:
-					for (auto&it : 味方)
-					{
-						if (it->隊列 == FormationType::前列)
-						{
-							it->発動パッシブ.push_back(no);
-						}
-					}
-					break;
-				case PSkillTarget::味方後列:
-					for (auto&it : 味方)
-					{
-						if (it->隊列 == FormationType::後列)
-						{
-							it->発動パッシブ.push_back(no);
-						}
-					}
-					break;
-				case PSkillTarget::味方自分以外:
+				case PSkillTarget::自分以外:
 					for (auto&it : 味方)
 					{
 						if (it != this)
 						{
-							it->発動パッシブ.push_back(no);
+							it->発動パッシブ.push_back(&PassiveSkill::data[no]);
 						}
 					}
 					break;
@@ -291,7 +267,7 @@ namespace SDX_BSC
 
 		void 探索終了()
 		{
-			//経験値の処理
+			//経験値の獲得、素材の獲得等の処理
 
 		}
 	};

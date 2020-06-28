@@ -7,29 +7,18 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	enum class ASkillMode
-	{
-		通常,
-		スキル,
-		必殺
-	};
-
 	enum class ASkillTarget
 	{
 		自分,
-		同じ列,
 		味方弱者,
-		味方一列,
 		味方全員,
-		行動対象,
 		敵ランダム,
-		敵先頭,
-		敵前単,
-		敵後単,
-		敵前全,
-		敵後全,
+		敵前ランダム,
+		敵後ランダム,
+		敵前,
+		敵後,
+		敵全,
 		敵弱者,
-		敵全体,
 		その他
 	};
 
@@ -59,7 +48,6 @@ namespace SDX_BSC
 		なし,
 		防御無視,
 		回避無視,
-		クリティカル,
 		デバフ解除,
 		デバフ無効,
 		攻撃チャージ増加,
@@ -118,11 +106,11 @@ namespace SDX_BSC
 		std::string 名前;
 		std::string 説明;
 		FormationType 隊列;
-		ASkillMode 区分;
 
 		SkillType 系統;//アイコン
 
 		ASkillTarget 対象;
+		int 範囲 = 1;
 		StatusType 依存ステータス;
 		ASkillType 効果;
 		ASkillSubeffect 追加効果;
@@ -171,28 +159,32 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(20, "尾撃"    , "前列にSTRx0.6物理ダメージ", SkillType::剣);
 		ActiveSkill::data.emplace_back(21, "炎ブレス", "全体にINTx2.0魔法ダメージ", SkillType::剣);
 
-		ActiveSkill::data[1].Set(ASkillTarget::敵先頭 , StatusType::Str, DamageType::物理 ,ASkillType::ダメージ		, ASkillSubeffect::なし);
-		ActiveSkill::data[2].Set(ASkillTarget::敵先頭 , StatusType::Str, DamageType::物理 , ASkillType::ダメージ	, ASkillSubeffect::なし);
-		ActiveSkill::data[3].Set(ASkillTarget::敵先頭 , StatusType::Str, DamageType::物理 ,ASkillType::ダメージ		, ASkillSubeffect::なし);
-		ActiveSkill::data[4].Set(ASkillTarget::敵先頭 , StatusType::Str, DamageType::物理 , ASkillType::ダメージ	, ASkillSubeffect::なし);
+		ActiveSkill::data[1].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 ,ASkillType::ダメージ		, ASkillSubeffect::なし);
+		ActiveSkill::data[2].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 , ASkillType::ダメージ	, ASkillSubeffect::なし);
+		ActiveSkill::data[3].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 ,ASkillType::ダメージ		, ASkillSubeffect::なし);
+		ActiveSkill::data[4].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 , ASkillType::ダメージ	, ASkillSubeffect::なし);
 		ActiveSkill::data[5].Set(ASkillTarget::敵ランダム, StatusType::Dex, DamageType::物理 , ASkillType::ダメージ , ASkillSubeffect::なし);
 		ActiveSkill::data[6].Set(ASkillTarget::敵弱者 , StatusType::Dex, DamageType::物理, ASkillType::ダメージ		, ASkillSubeffect::なし);
-		ActiveSkill::data[7].Set(ASkillTarget::敵先頭 , StatusType::Str, DamageType::物理, ASkillType::ダメージ		, ASkillSubeffect::なし);
+		ActiveSkill::data[7].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理, ASkillType::ダメージ		, ASkillSubeffect::なし);
 		ActiveSkill::data[8].Set(ASkillTarget::自分   , StatusType::Str, DamageType::物理 , ASkillType::物魔防増減		, ASkillSubeffect::挑発);
 		ActiveSkill::data[9].Set(ASkillTarget::敵ランダム, StatusType::Int, DamageType::魔法, ASkillType::ダメージ	, ASkillSubeffect::なし);
-		ActiveSkill::data[10].Set(ASkillTarget::敵全体, StatusType::Int, DamageType::魔法, ASkillType::ダメージ     , ASkillSubeffect::なし);
-		ActiveSkill::data[11].Set(ASkillTarget::敵先頭, StatusType::Str, DamageType::物理, ASkillType::ダメージ     , ASkillSubeffect::なし);
+		ActiveSkill::data[10].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法, ASkillType::ダメージ     , ASkillSubeffect::なし);
+		ActiveSkill::data[11].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ     , ASkillSubeffect::なし);
 		ActiveSkill::data[12].Set(ASkillTarget::味方弱者, StatusType::Int, DamageType::魔法, ASkillType::回復       , ASkillSubeffect::なし);
 		
-		ActiveSkill::data[13].Set(ASkillTarget::敵先頭, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[14].Set(ASkillTarget::敵前単, StatusType::Int, DamageType::魔法, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[15].Set(ASkillTarget::敵前単, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[13].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[14].Set(ASkillTarget::敵前ランダム, StatusType::Int, DamageType::魔法, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[14].範囲 = 3;
+		ActiveSkill::data[15].Set(ASkillTarget::敵前ランダム, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[15].範囲 = 3;
 		ActiveSkill::data[16].Set(ASkillTarget::敵ランダム, StatusType::Int, DamageType::魔法, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[17].Set(ASkillTarget::敵先頭, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[18].Set(ASkillTarget::敵後単, StatusType::Dex, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[19].Set(ASkillTarget::敵先頭, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[20].Set(ASkillTarget::敵前全, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
-		ActiveSkill::data[21].Set(ASkillTarget::敵全体, StatusType::Int, DamageType::魔法, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[17].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[18].Set(ASkillTarget::敵後ランダム, StatusType::Dex, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[18].範囲 = 3;
+		ActiveSkill::data[19].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[20].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[18].範囲 = 3;
+		ActiveSkill::data[21].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法, ASkillType::ダメージ, ASkillSubeffect::なし);
 
 		//////////////////////////効果回数
 		ActiveSkill::data[1].SetP( 1, 0,1.0, 0.9, 0,  100);
@@ -220,12 +212,14 @@ namespace SDX_BSC
 
 		//各ジョブのスキル
 		//ファイター
-		ActiveSkill::data.emplace_back(22, "切り込み", "敵前列一体に STRx250% 物理ダメージ", SkillType::剣);
-		ActiveSkill::data[22].Set(ASkillTarget::敵前単 , StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data.emplace_back(22, "切り込み", "前列一体に STRx250% 物理ダメージ", SkillType::剣);
+		ActiveSkill::data[22].Set(ASkillTarget::敵前ランダム , StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
 		ActiveSkill::data[22].SetP(1, 0, 2.5, 1.0, 0, 400);
-		ActiveSkill::data.emplace_back(23, "回転斬り", "敵前列に STRx400% 物理ダメージ", SkillType::剣);
-		ActiveSkill::data[23].Set(ASkillTarget::敵前全, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[22].範囲 = 3;
+		ActiveSkill::data.emplace_back(23, "回転斬り", "前列3体に STRx400% 物理ダメージ", SkillType::剣);
+		ActiveSkill::data[23].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::ダメージ, ASkillSubeffect::なし);
 		ActiveSkill::data[23].SetP(1, 0, 4.0, 1.1, 0, 1000,true);
+		ActiveSkill::data[22].範囲 = 3;
 
 		//ナイト
 		ActiveSkill::data.emplace_back(24, "守護", "200Tの間 狙われやすくなり、物魔防御+30",SkillType::盾);
@@ -248,7 +242,7 @@ namespace SDX_BSC
 		ActiveSkill::data[28].Set(ASkillTarget::自分, StatusType::Int, DamageType::魔法, ASkillType::Int増減, ASkillSubeffect::なし);
 		ActiveSkill::data[28].SetP(1, 0, 0.3, 0.8, 300, 400);
 		ActiveSkill::data.emplace_back(29, "紅蓮地獄", "敵前列に INTx400% 魔法ダメージ", SkillType::魔杖);
-		ActiveSkill::data[29].Set(ASkillTarget::敵全体, StatusType::Int, DamageType::魔法 , ASkillType::ダメージ, ASkillSubeffect::なし);
+		ActiveSkill::data[29].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法 , ASkillType::ダメージ, ASkillSubeffect::なし);
 		ActiveSkill::data[29].SetP(1, 0, 4.0, 1.2, 0, 1000, true);
 
 		//クレリック

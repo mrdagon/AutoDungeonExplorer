@@ -30,9 +30,9 @@ namespace SDX_BSC
 				//アイコン
 				MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(11),py+LV(12) });
 				//在庫数
-				MFont::BArial中.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { "x" , zaiko }, true);
+				MFont::BMSize.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { "x" , zaiko }, true);
 				//ランク表示
-				MFont::BArial小.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク }, true);
+				MFont::BSSize.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク }, true);
 				//new表示
 
 			}

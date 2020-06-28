@@ -21,8 +21,8 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 				MIcon::ダンジョン[参照先->種類].DrawRotate({ px + LV(14),py + LV(15) },1,0);
-				MFont::BArial小.DrawBold({ px + LV(16), py + LV(17) }, Color::White, Color::Black, { (int)(参照先->探索率[Guild::P->id]*100) , "%"}, true);
-				MFont::BArial小.DrawBold({ px + LV(18), py + LV(19) }, Color::White, Color::Black, { "Lv",参照先->Lv }, false);
+				MFont::BSSize.DrawBold({ px + LV(16), py + LV(17) }, Color::White, Color::Black, { (int)(参照先->探索率*100) , "%"}, true);
+				MFont::BSSize.DrawBold({ px + LV(18), py + LV(19) }, Color::White, Color::Black, { "Lv",参照先->Lv }, false);
 			}
 
 			void Click(double px, double py)
@@ -106,7 +106,7 @@ namespace SDX_BSC
 
 			for (auto& it : Dungeon::data)
 			{
-				if (it.is発見[0] && it.ランク == 現在タブ)
+				if (it.is発見 && it.ランク == 現在タブ)
 				{
 					ダンジョン[n].参照先 = &it;
 					ダンジョン[n].isヘルプ表示 = true;

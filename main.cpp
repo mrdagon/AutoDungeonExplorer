@@ -45,9 +45,9 @@ void LoadAndInitData()
 
 	LoadMaterial();
 
-	LoadWarkerClass();
 	LoadPassiveSkill();
 	LoadActiveSkill();
+	LoadWarkerClass();
 	LoadMonsterClass();
 	LoadItem();
 

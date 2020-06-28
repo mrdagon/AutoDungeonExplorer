@@ -27,7 +27,7 @@ namespace SDX_BSC
 		EnumArray<std::string, WindowType> Window_略記;
 		EnumArray<std::string, WindowType> Window_ヘルプ;
 
-		std::string タイトル = "おーと だんじょん えくすぷろーら ～サブタイトル考え中～0.1 beta";
+		std::string タイトル = "Auto だんじょん えくすぷろーら ＜さくさく進む放置RPG＞ 0.1 beta";
 		const wchar_t* アンケURL = L"http://www.gesource.jp/programming/bcb/";
 
 		////Config Window
@@ -40,7 +40,9 @@ namespace SDX_BSC
 		////Dungeon Window
 		std::string Dungeon_タブ名[5] = { "一層","二層","三層","四層","五層" };
 		std::string Dungeon_タブヘルプ[5];
-
+		std::string Dungeon_捜索 = "捜索中";
+		std::string Dungeon_発見 = " 発見";
+		std::string Dungeon_討伐 = " 討伐";
 
 		////Log Window
 		std::string Log_タブ名[6] = { "全て" , "重要" , "経営" , "人事" , "探索" , "製造"};

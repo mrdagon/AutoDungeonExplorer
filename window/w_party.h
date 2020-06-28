@@ -17,7 +17,7 @@ namespace SDX_BSC
 		{
 		public:
 			int パーティID;
-			Party* 参照先;
+			Guild::Party* 参照先;
 			W_Party* 親ウィンドウ;
 
 			GUI_探索先(int パーティID, W_Party* 親ウィンドウ)
@@ -29,25 +29,40 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 11);
 
 				auto dun = Guild::P->探索パーティ[パーティID].探索先;
 
 				//探索先アイコン、レベル
 				MIcon::ダンジョン[dun->種類].Draw({ px + LV(12),py + LV(13) });
-				MFont::BArial小.DrawBold({ px + LV(14) ,py + LV(15) }, Color::White, Color::Black, { "Lv ", dun->Lv });
+				MFont::BSSize.DrawBold({ px + LV(14) ,py + LV(15) }, Color::White, Color::Black, { "Lv ", dun->Lv });
 				//探索度ゲージと探索率
-				MSystem::DrawBar({ px + LV(18) , py + LV(19) }, LV(20), LV(21), dun->探索率[Guild::P->id], 1 , Color::Blue, Color::White, Color::White, true);				
-				MFont::BArial小.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, { (int)(dun->探索率[Guild::P->id] * 100) , "%" }, true);				
+				MSystem::DrawBar({ px + LV(18) , py + LV(19) }, LV(20), LV(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
+				MFont::BSSize.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
 				//ボス状態
 				MIcon::アイコン[IconType::ボス].DrawRotate({ px + LV(22),py + LV(23) }, 1, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(23) - 9 }, Color::White, Color::Black, "？？？", true);
+
+				std::string sボス状態;
+				if (dun->isボス生存 == false)
+				{
+					sボス状態 = TX::Dungeon_討伐;
+				}
+				else if(dun->isボス発見 == true)
+				{
+					sボス状態 = TX::Dungeon_発見;
+				}
+				else
+				{
+					sボス状態 = TX::Dungeon_捜索;
+				}
+
+				MFont::BSSize.DrawBold({ px + LV(22) + 50 ,py + LV(23) - 9 }, Color::White, Color::Black, sボス状態, true);
 				//地図状態
 				MIcon::アイコン[IconType::地図].DrawRotate({ px + LV(22),py + LV(24) }, 1, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(24) - 9 }, Color::White, Color::Black, "0 /  2", true);
+				MFont::BSSize.DrawBold({ px + LV(22) + 50 ,py + LV(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
 				//財宝状態
 				MIcon::アイコン[IconType::宝箱].DrawRotate({ px + LV(22),py + LV(25) }, 1, 0);
-				MFont::Bメイリオ小.DrawBold({ px + LV(22) + 50 ,py + LV(25) - 9 }, Color::White, Color::Black, "0 / ??", true);
+				MFont::BSSize.DrawBold({ px + LV(22) + 50 ,py + LV(25) - 9 }, Color::White, Color::Black, { dun->発見財宝 , " / " , dun->最大財宝 }, true);
 
 
 				//探索指示-冒険中は三角を非表示
@@ -64,11 +79,11 @@ namespace SDX_BSC
 				std::string siji;
 				switch (Guild::P->探索パーティ[パーティID].探索指示)
 				{
-				case Order::探索: siji = TX::Party_ボス回避; break;
-				case Order::ボス: siji = TX::Party_ボス討伐; break;
+				case OrderType::探索: siji = TX::Party_ボス回避; break;
+				case OrderType::ボス: siji = TX::Party_ボス討伐; break;
 				}
 
-				MFont::Bメイリオ小.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, siji, true);
+				MFont::BSSize.DrawBold({ px + LV(29) ,py + LV(30) }, Color::White, Color::Black, siji, true);
 			}
 
 			void Click(double px, double py)
@@ -83,10 +98,11 @@ namespace SDX_BSC
 					else { n++; }
 
 
-					if (n == (int)Order::COUNT) { n = 0; }
-					if (n <  0) { n = (int)Order::COUNT - 1; }
+					if (n == (int)OrderType::COUNT) { n = 0; }
+					if (n <  0) { n = (int)OrderType::COUNT - 1; }
 
-					Guild::P->探索パーティ[パーティID].探索指示 = Order(n);
+					Guild::P->探索パーティ[パーティID].探索指示 = OrderType(n);
+					MSound::効果音[SE::ボタンクリック].Play();
 				}
 			}
 
@@ -97,6 +113,7 @@ namespace SDX_BSC
 
 				//探索先変更
 				Guild::P->探索パーティ[パーティID].探索先 = W_Drag_Drop::ダンジョン;
+				MSound::効果音[SE::配置換え].Play();
 			}
 
 			void Info派生(Point 座標) override
@@ -112,7 +129,7 @@ namespace SDX_BSC
 					SetHelp( TX::Party_探索方針);
 					Info座標補正(座標);
 					MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
-					MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+					MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 				}
 				else 
 				{
@@ -127,9 +144,11 @@ namespace SDX_BSC
 		{
 		public:
 			Warker* ギルメン;
-			Party* 所属;
+			Guild::Party* 所属;
 			W_Party* 親ウィンドウ;
 			int 並びID;
+
+			int 装備クリック[2] = {0,0};
 
 			GUI_パーティメンバー(Warker* ギルメン)
 			{
@@ -149,18 +168,22 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
 				//アイコン、Lv、Expゲージ
-				MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + LV(35) ,py + LV(36) }, 2, 0);
-				MFont::BArial小.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, "Lv 10");
-				MSystem::DrawBar({ px + LV(39),py + LV(40) }, LV(41), LV(42), 0.5, 1, Color::Blue, Color::White, Color::White, true);
+				MUnit::ユニット[ギルメン->見た目][10]->DrawRotate({ px + LV(35) ,py + LV(36) }, 2, 0);
+				MFont::BSSize.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv} , true);
 
-				//装備品 x 2or3と更新ボタン、自動更新設定、装備ランク
-				MSystem::DrawWindow({ px + LV(43) ,py + LV(44) }, LV(45), LV(46), 0);
-				MSystem::DrawWindow({ px + LV(43) + LV(47) ,py + LV(44) }, LV(45), LV(46), 0);
-				MIcon::アイテム[Item::data[ギルメン->装備[0]].見た目].Draw({ px + LV(48) , py + LV(50) });
-				MIcon::アイテム[Item::data[ギルメン->装備[1]].見た目].Draw({ px + LV(49) , py + LV(50) });
+				MSystem::DrawBar({ px + LV(39),py + LV(40) }, LV(41), LV(42), ギルメン->Get経験値獲得率(), 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::BArial小.DrawBold({ px + LV(48) + 2, py + LV(50) + 11 }, Color::White, Color::Black, { "Lv " , Item::data[ギルメン->装備[0]].ランク });
-				MFont::BArial小.DrawBold({ px + LV(49) + 2, py + LV(50) + 11 }, Color::White, Color::Black, { "Lv " ,Item::data[ギルメン->装備[1]].ランク });
+				//装備品 x 3と更新ボタン、自動更新設定、装備ランク
+				MSystem::DrawWindow({ px + LV(43) ,py + LV(46) }, LV(48), LV(49), 0);
+				MSystem::DrawWindow({ px + LV(44) ,py + LV(46) }, LV(48), LV(49), 0);
+				MSystem::DrawWindow({ px + LV(45) ,py + LV(47) }, LV(48), LV(49), 0);
+				MIcon::アイテム[Item::data[ギルメン->装備[0]].見た目].Draw({ px + LV(43) + LV(50) , py + LV(46) + LV(51) });
+				MIcon::アイテム[Item::data[ギルメン->装備[1]].見た目].Draw({ px + LV(44) + LV(50)  , py + LV(46) + LV(51) });
+				MIcon::アイテム[Item::data[ギルメン->装備[2]].見た目].Draw({ px + LV(45) + LV(50) , py + LV(47) + LV(51) });
+
+				MFont::BSSize.DrawBold({ px + LV(52) , py + LV(54) }, Color::White, Color::Black, { "Lv " , Item::data[ギルメン->装備[0]].ランク });
+				MFont::BSSize.DrawBold({ px + LV(53) , py + LV(54) }, Color::White, Color::Black, { "Lv " ,Item::data[ギルメン->装備[1]].ランク });
+				//MFont::BSSize.DrawBold({ px + LV(53) , py + LV(50) + 11 }, Color::White, Color::Black, { "アクセ" });
 
 				//装備更新ボタン
 				if (ギルメン->is装備更新)
@@ -170,25 +193,9 @@ namespace SDX_BSC
 					MSystem::DrawWindow({ px + LV(55) ,py + LV(56) }, LV(57), LV(58), 0, 1);
 				}
 
-				MFont::BArial小.DrawBold({ px + LV(59) ,py + LV(60) }, Color::White, Color::Black, "装備更新");
+				MFont::BSSize.DrawBold({ px + LV(59) ,py + LV(60) }, Color::White, Color::Black, "装備更新");
 				MIcon::アイコン[IconType::更新].Draw({ px + LV(61),py + LV(62) });
 
-				//スキル x 4
-				//スキルに適正ポジションF_M_B
-				for (int a = 0; a < 4; a++)
-				{
-					//ポジション適正なら明るくする
-					//R 前、緑 中、青 後
-					Color 色;
-					std::string 文字;
-					if (a == 0) { 色.SetColor(255, 128, 128); 文字 = "F"; }
-					if (a == 1) { 色.SetColor(128, 64, 64); 文字 = "B"; }
-					if (a == 2) { 色.SetColor(128, 128, 255); 文字 = "M"; }
-					if (a == 3) { 色.SetColor(128, 128, 128); 文字 = "F"; }
-
-					MSystem::DrawSkill(ActiveSkill::data[ギルメン->アクティブスキル[0]].系統, { px + LV(51 + a % 2) , py + LV(53 + a / 2) }, 色);
-					MFont::BArial中.DrawBold({ px + LV(51 + a % 2) + LV(63) , py + LV(53 + a / 2) + LV(64) }, Color::White, Color::Black, 文字);
-				}
 			}
 
 			void Click(double px, double py)
@@ -197,24 +204,29 @@ namespace SDX_BSC
 				if (ギルメン == nullptr) { return; }
 
 				//装備クリックで更新
-				if (Point(px, py).Hit(&Rect(LV(43), LV(44), LV(45), LV(46))) == true)
+				//武器クリック
+				/*
+				if (Point(px, py).Hit(&Rect(LV(43), LV(46), LV(48), LV(49))) == true)
 				{
-					//武器クリック
 					Guild::P->個別装備更新(ギルメン, 0);
 					return;
 				}
 
-				if (Point(px, py).Hit(&Rect(LV(43)+LV(47), LV(44), LV(45), LV(46))) == true)
+				if (Point(px, py).Hit(&Rect(LV(44),LV(46), LV(48), LV(49))) == true)
 				{
 					//防具クリック
 					Guild::P->個別装備更新(ギルメン, 0);
 					return;
 				}
+				*/
+				//アクセサリークリック
+
 
 				//自動更新切り替え
 				if (Point(px, py).Hit(&Rect(LV(55), LV(56), LV(57), LV(58))) == true)
 				{
 					ギルメン->is装備更新 = !ギルメン->is装備更新;
+					MSound::効果音[SE::ボタンクリック].Play();
 					return;
 				}
 
@@ -222,20 +234,14 @@ namespace SDX_BSC
 				W_Drag_Drop::ギルメン = ギルメン;
 				W_Drag_Drop::ウィンドウ = 親ウィンドウ;
 				W_Drag_Drop::並びID = 並びID;
+				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 			void Drop(double px, double py)
 			{
 				if (Game::is仕事中 == true || 所属->is探索中) { return; }
 
-				if (W_Drag_Drop::ギルメン == ギルメン && ギルメン != nullptr )
-				{
-					//前後列入れ替え
-					if (ギルメン->隊列 == FormationType::前列) { ギルメン->隊列 = FormationType::後列; }
-					else { ギルメン->隊列 = FormationType::前列; }
-
-				}
-				else if (W_Drag_Drop::ギルメン != nullptr)
+				if (W_Drag_Drop::ギルメン != nullptr)
 				{
 					//ギルメン入れ替え
 					W_Drag_Drop::メンバー移動( 親ウィンドウ , ギルメン , 並びID);
@@ -244,7 +250,10 @@ namespace SDX_BSC
 				{
 					//装備変更
 					int 部位 = 0;
-					if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::隠鎧 ||
+					if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::アクセサリー)
+					{
+						部位 = 2;
+					}else if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::隠鎧 ||
 						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::軽鎧 ||
 						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::重鎧 ||
 						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::力鎧 ||
@@ -252,7 +261,7 @@ namespace SDX_BSC
 						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::知鎧 )
 					{
 						部位 = 1;
-					}
+					}					
 
 					Guild::P->装備所持数[ギルメン->装備[部位]]++;
 					Guild::P->装備所持数[W_Drag_Drop::アイテム]--;
@@ -260,6 +269,7 @@ namespace SDX_BSC
 					ギルメン->装備アップデート();
 
 					所属->スキルステ計算();
+					MSound::効果音[SE::装備変更].Play();
 				}
 			}
 
@@ -271,26 +281,27 @@ namespace SDX_BSC
 				補正座標.x = 座標.x - 親ウィンドウ->相対座標.x - 位置.x;
 				補正座標.y = 座標.y - 親ウィンドウ->相対座標.y - 位置.y;
 
-				if (補正座標.Hit(&Rect(LV(43), LV(44), LV(45), LV(46))) )
+				if (補正座標.Hit(&Rect(LV(43), LV(46), LV(48), LV(49))) )
 				{
 					//武器
 					InfoItem(ギルメン->装備[0], 座標);
 				}
-				else if (補正座標.Hit(&Rect(LV(43)+LV(47), LV(44), LV(45), LV(46))))
+				else if (補正座標.Hit(&Rect(LV(44), LV(46), LV(48), LV(49))))
 				{
 					//防具
 					InfoItem(ギルメン->装備[1], 座標);
+				}
+				else if (補正座標.Hit(&Rect(LV(45), LV(47), LV(48), LV(49))))
+				{
+					//アクセ
+					SetHelp("アクセサリー(未実装)");
+					InfoMessage(座標);
+					//InfoItem(ギルメン->装備[2], 座標);
 				}
 				else if (補正座標.Hit(&Rect(LV(55), LV(56), LV(57), LV(58))))
 				{
 					//Auto
 					SetHelp("装備自動更新のON/OFF");
-					InfoMessage(座標);
-				}
-				else if (補正座標.y > LV(53) && 座標.y < LV(54) + 32 )
-				{
-					//スキル
-					SetHelp("スキル説明");
 					InfoMessage(座標);
 				}
 				else
@@ -307,7 +318,7 @@ namespace SDX_BSC
 		{
 		public:
 			int パーティID;
-			Party* 参照先;
+			Guild::Party* 参照先;
 			W_Party* 親ウィンドウ;
 
 			GUI_パーティ(int パーティID, W_Party* 親ウィンドウ)
@@ -316,7 +327,6 @@ namespace SDX_BSC
 				参照先 = &Guild::P->探索パーティ[パーティID];
 				this->親ウィンドウ = 親ウィンドウ;
 			}
-
 
 			void Draw派生(double px, double py)
 			{
@@ -392,8 +402,6 @@ namespace SDX_BSC
 				switch (参照先->探索先->部屋[参照先->部屋ID].種類)
 				{
 				case RoomType::ボス:
-				case RoomType::魔物:
-				case RoomType::財宝:
 					break;
 				}
 			}
@@ -401,7 +409,7 @@ namespace SDX_BSC
 			void Drawギルメン(Warker* it,double px, double py,int 隊列)
 			{
 				//→向き
-				MUnit::ユニット[it->見た目][10]->DrawRotate({ px + (int)it->E前進,py }, 2, 0);
+				MUnit::ユニット[it->見た目][10]->DrawRotate({ px + (int)it->座標,py }, 2, 0);
 
 				//ライフバー
 				MSystem::DrawBar({ px + LV(80),py + LV(81) }, LV(82), LV(83), 0.5, 1, Color::Blue, Color::White, Color::White, true);
@@ -413,7 +421,7 @@ namespace SDX_BSC
 				MonsterClass& 種 = MonsterClass::data[it.種族];
 
 				//←向き
-				MUnit::ユニット[種.見た目][7]->DrawRotate({ px - (int)it.E前進,py}, 2, 0);
+				MUnit::ユニット[種.見た目][7]->DrawRotate({ px - (int)it.座標,py}, 2, 0);
 
 				//ライフバー
 				double rate = it.現在HP / it.最大HP;
@@ -443,7 +451,7 @@ namespace SDX_BSC
 				SetHelp("ダンジョンドラッグ＆ドロップで探索先変更\nギルメンドラッグ＆ドロップで編成変更\n方針ボタンで探索方針変更");
 				Info座標補正(座標);
 				MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
-				MFont::メイリオ中.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+				MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 			}
 
 		};
@@ -516,7 +524,7 @@ namespace SDX_BSC
 
 				for (int b = 0; b < CV::パーティ人数; b++)
 				{
-					パーティメンバー[a * 5 + b].位置 = { LV(5) + (LV(7)+LV(9)) * b , LV(6) + (LV(3)+LV(4)) * a , LV(7) , LV(8) };
+					パーティメンバー[a * 5 + b].位置 = { LV(5) - (LV(7)+LV(9)) * b , LV(6) + (LV(3)+LV(4)) * a , LV(7) , LV(8) };
 				}
 			}
 

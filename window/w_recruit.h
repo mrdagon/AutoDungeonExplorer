@@ -38,7 +38,7 @@ namespace SDX_BSC
 
 				MIcon::アイコン[IconType::求人].DrawRotate({ px + LV(22),py + LV(23) },2,0);
 
-				MFont::BArial中.DrawBold({ px + LV(24) ,py + LV(25) }, Color::White, Color::Black, { Guild::P->人事ポイント }, true);
+				MFont::BMSize.DrawBold({ px + LV(24) ,py + LV(25) }, Color::White, Color::Black, { Guild::P->人事ポイント }, true);
 
 
 				if (W_Drag_Drop::ギルメン != nullptr && W_Drag_Drop::ギルメン->所属 == -1)
@@ -48,8 +48,8 @@ namespace SDX_BSC
 
 				if (親->要求点 > 0)
 				{
-					MFont::BArial中.DrawBold({ px + LV(26) ,py + LV(25) }, { 255,128,128 }, Color::Black, { "→" }, true);
-					MFont::BArial中.DrawBold({ px + LV(27) ,py + LV(25) }, { 255,128,128 }, Color::Black, { Guild::P->人事ポイント - 親->要求点 }, true);
+					MFont::BMSize.DrawBold({ px + LV(26) ,py + LV(25) }, { 255,128,128 }, Color::Black, { "→" }, true);
+					MFont::BMSize.DrawBold({ px + LV(27) ,py + LV(25) }, { 255,128,128 }, Color::Black, { Guild::P->人事ポイント - 親->要求点 }, true);
 					親->要求点 = 0;
 				}
 
@@ -75,7 +75,7 @@ namespace SDX_BSC
 				}
 
 				MIcon::アイコン[IconType::再募集].DrawRotate({ px + LV(28),py + LV(23) }, 1, 0, true);
-				MFont::BArial中.DrawBold({ px + LV(29) ,py + LV(25) }, Color::White , Color::Black, { "Reroll" }, true);
+				MFont::BMSize.DrawBold({ px + LV(29) ,py + LV(25) }, Color::White , Color::Black, { "Reroll" }, true);
 				連打防止--;
 			}
 
@@ -119,9 +119,9 @@ namespace SDX_BSC
 				}
 
 				MUnit::ユニット[参照先->見た目][1]->DrawRotate({ px + LV(9) ,py + LV(9) }, 2, 0);
-				MFont::BArial小.DrawBold({ px + LV(6) ,py + LV(8) }, Color::White, Color::Black, 参照先->Lv, true);
+				MFont::BSSize.DrawBold({ px + LV(6) ,py + LV(8) }, Color::White, Color::Black, 参照先->Lv, true);
 
-				MFont::BArial小.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, "Lv", true);
+				MFont::BSSize.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, "Lv", true);
 
 			}
 

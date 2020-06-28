@@ -36,11 +36,11 @@ namespace SDX_BSC
 
 				//ランク
 				//MIcon::アイコン[IconType::ランク].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
-				MFont::BArial小.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, { "Lv" , ランク + 1 }, true);
+				MFont::BSSize.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, { "Lv" , ランク + 1 }, true);
 
 				//所持数
-				MFont::BArial小.DrawBold({ px + LV(12) ,py + LV(13) }, Color::White, Color::Black, "x", true);
-				MFont::BArial中.DrawBold({ px + LV(14)  ,py + LV(15) }, Color::White, Color::Black, Guild::P->素材数[素材種][ランク],true);
+				MFont::BSSize.DrawBold({ px + LV(12) ,py + LV(13) }, Color::White, Color::Black, "x", true);
+				MFont::BMSize.DrawBold({ px + LV(14)  ,py + LV(15) }, Color::White, Color::Black, Guild::P->素材数[素材種][ランク],true);
 			}
 		};
 

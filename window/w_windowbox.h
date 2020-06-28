@@ -156,7 +156,7 @@ namespace SDX_BSC
 			//タイトル部分
 			MSystem::DrawWindow(座標, 横幅, タイトル枠高さ, タイトル枠No);
 			MSystem::DrawWindow({ 座標.x + 6,座標.y + 6 }, タイトル枠高さ - 12, タイトル枠高さ - 12, 11);
-			MFont::Bメイリオ中.DrawBold({ 座標.x + 34,座標.y + 3 }, Color::White,Color::Black,{ 名前 });
+			MFont::BMSize.DrawBold({ 座標.x + 34,座標.y + 3 }, Color::White,Color::Black,{ 名前 });
 			MIcon::アイコン[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン

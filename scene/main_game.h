@@ -36,7 +36,7 @@ namespace SDX_BSC
 		void Init()
 		{
 			//ギルド初期化
-			Guild::P = &Guild::data[0];
+			Guild::P = &Guild::data;
 			Guild::P->id = 0;
 
 			BetaInit();
@@ -102,7 +102,7 @@ namespace SDX_BSC
 			Time::GetDate(&time);
 			Rand::Reset(time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec);
 
-			for (int a = 0; a < 9; a++)
+			for (int a = 1; a < 10; a++)
 			{
 				Guild::P->is装備開発[a] = true;
 				Guild::P->is新規[a] = false;
@@ -160,10 +160,10 @@ namespace SDX_BSC
 			//仮ダンジョン
 			for (int a = 0; a < 100; a++)
 			{
-				Dungeon::Add(a, "名も無き迷宮", DungeonType(Rand::Get((int)DungeonType::COUNT - 1)), 100, a / 20, a+1);
-				Dungeon::data[a].探索率計算(Guild::P->id);
+				Dungeon::Add(a, "名も無き迷宮", DungeonType(Rand::Get((int)DungeonType::COUNT - 1)), 100, std::min(a / 10,4), a+1 , 1 , (a % 10 == 9));
+				Dungeon::data[a].探索率計算();
 			}
-			Dungeon::data[0].is発見[0] = true;
+			Dungeon::data[0].is発見 = true;
 
 			//ギルメン初期-仮配置
 			for (int a = 0; a < 15; a++)
@@ -361,6 +361,7 @@ namespace SDX_BSC
 		void StartWork()
 		{
 			MMusic::BGM[BGMType::探検中].Play();
+			MSound::効果音[SEType::探索開始].Play();
 
 			Game::is仕事中 = true;
 			Guild::P->製造力計算();
@@ -372,6 +373,7 @@ namespace SDX_BSC
 		void EndWork()
 		{
 			MMusic::BGM[BGMType::準備中].Play();
+			MSound::効果音[SEType::探索終了].Play();
 			Game::is仕事中 = false;
 		}
 		//一日終了の処理

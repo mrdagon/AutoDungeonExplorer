@@ -10,7 +10,7 @@ namespace SDX_BSC
 	{
 		constexpr double バージョン = 0.001;
 
-		constexpr int 最大ギルド数 = 1;
+		//constexpr int 最大ギルド数 = 1;
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 5;
 		constexpr int 最大素材ランク = 20;
@@ -30,6 +30,11 @@ namespace SDX_BSC
 		constexpr int 最大Aスキル数 = 4;//一人が覚えるスキル数
 		constexpr int 最大Pスキル数 = 7;
 		
+		constexpr int ジョブAスキル数 = 2;
+		constexpr int 最大装備Aスキル数 = 2;
+		constexpr int 最大装備Pスキル数 = 2;
+		constexpr int 装備部位数 = 3;
+
 		constexpr bool isデバッグ = true;
 
 		constexpr int ウィンドウ数 = 10;

@@ -51,8 +51,9 @@ namespace SDX_BSC
 		{
 			初期装備[0] = 武器;
 			初期装備[1] = 防具;
-			Aスキル[0] = スキルA;
-			Aスキル[1] = スキルB;
+			初期装備[2] = -1;
+			Aスキル[0] = &ActiveSkill::data[スキルA];
+			Aスキル[1] = &ActiveSkill::data[スキルB];
 		}
 
 		JobNo 職種;
@@ -60,8 +61,8 @@ namespace SDX_BSC
 		std::string 名前;
 		std::string 説明;
 		UnitImageType 見た目;
-		int 初期装備[2];
-		int Aスキル[2];
+		int 初期装備[CV::装備部位数];
+		ActiveSkill* Aスキル[CV::ジョブAスキル数];
 
 		//基礎ステータスーLvでスケーリングする
 		int Hp,Str, Int, Dex;
@@ -71,7 +72,6 @@ namespace SDX_BSC
 		//他ステータス
 		int PSkillRate[CV::Pスキル種];//各スキルの習得確率
 	};
-
 
 	void LoadWarkerClass()
 	{
@@ -87,11 +87,11 @@ namespace SDX_BSC
 		Job::data[3].Set( 80,  5,  9,15, 0, 5,  0, 5);
 		Job::data[4].Set(120, 10,  7,12, 6, 8,  0, 0);
 
-		Job::data[0].SetItemASkill(1, 6, 22 , 23);
-		Job::data[1].SetItemASkill(3, 6, 24, 25);
-		Job::data[2].SetItemASkill(2, 7, 26, 27);
-		Job::data[3].SetItemASkill(5, 8, 28, 29);
-		Job::data[4].SetItemASkill(4, 8, 30, 31);
+		Job::data[0].SetItemASkill(2, 7, 22 , 23);
+		Job::data[1].SetItemASkill(4, 7, 24, 25);
+		Job::data[2].SetItemASkill(3, 8, 26, 27);
+		Job::data[3].SetItemASkill(6, 9, 28, 29);
+		Job::data[4].SetItemASkill(5, 9, 30, 31);
 
 		///1全然出ない、5そこそこ出る、10出やすい
 

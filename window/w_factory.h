@@ -32,7 +32,7 @@ namespace SDX_BSC
 				//技術レベルとEXP
 				double rate = Guild::P->製造経験[部門] / Guild::P->必要技術経験(部門);
 				MSystem::DrawBar({ px + LV(19),py + LV(20) }, LV(21), LV(22), rate, 1, Color::Blue, Color::White, Color::White, true);
-				MFont::BArial中.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Guild::P->製造Lv[部門] });
+				MFont::BMSize.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Guild::P->製造Lv[部門] });
 
 				//製造アイコンと製造進行度合い
 				//craft種アイコン
@@ -41,7 +41,7 @@ namespace SDX_BSC
 				if (id >= 0)
 				{
 					MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(27) , py + LV(28) });
-					MFont::BArial中.DrawBold({ px + LV(42) , py + LV(43) }, Color::Yellow, Color::Black, {Item::data[id].ランク},true);
+					MFont::BMSize.DrawBold({ px + LV(42) , py + LV(43) }, Color::Yellow, Color::Black, {Item::data[id].ランク},true);
 				}
 				
 				//製造進捗ゲージ
@@ -113,7 +113,7 @@ namespace SDX_BSC
 					MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + LV(35) , py + LV(36) }, 2, 0);
 				}
 
-				MFont::BArial小.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, ギルメン->製造力 , true);
+				MFont::BSSize.DrawBold({ px + LV(37) ,py + LV(38) }, Color::White, Color::Black, ギルメン->製造力 , true);
 				MIcon::アイコン[IconType::製造力].Draw({ px + LV(39) , py + LV(40) });
 			}
 

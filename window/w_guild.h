@@ -51,8 +51,8 @@ namespace SDX_BSC
 					case 10:num = Guild::P->総全滅; break;//撤退 回
 				}
 
-				MFont::BArial中.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);
-				MFont::BArial中.DrawBold({ px + LV(10) ,py + LV(8) }, Color::White, Color::Black, { (long int)num , " " , 単位 }, true);
+				MFont::BMSize.DrawBold({ px + LV(9) ,py + LV(8) }, Color::White, Color::Black, 名前, false);
+				MFont::BMSize.DrawBold({ px + LV(10) ,py + LV(8) }, Color::White, Color::Black, { (long int)num , " " , 単位 }, true);
 			}
 		};
 
@@ -66,8 +66,8 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::資金].Draw({ px + LV(12),py + LV(13) });
 				MUnit::ユニット[UnitImageType::おじいさん][1]->DrawRotate({ px + LV(14) , py + LV(15) }, 2, 0);
 
-				MFont::BArial中.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, TX::Guild_ギルマス[0], false);
-				MFont::BArial中.DrawBold({ px + LV(18) ,py + LV(19) }, Color::White, Color::Black, TX::Guild_ギルマス[1], false);
+				MFont::BMSize.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, TX::Guild_ギルマス[0], false);
+				MFont::BMSize.DrawBold({ px + LV(18) ,py + LV(19) }, Color::White, Color::Black, TX::Guild_ギルマス[1], false);
 			}
 		};
 

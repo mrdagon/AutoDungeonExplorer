@@ -95,7 +95,7 @@ namespace SDX_BSC
 					//日付
 					MSystem::DrawWindow({ LV(10),LV(11) + yy }, LV(12), LV(13), LV(26));
 					//MSystem::DrawBox({ LV(10),LV(11) + yy }, LV(12), LV(13), { LV(26),LV(27),LV(28) });
-					MFont::Bメイリオ小.DrawBold({ LV(14),LV(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1, TX::Log_日付 },true);
+					MFont::BSSize.DrawBold({ LV(14),LV(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1, TX::Log_日付 },true);
 					yy += LV(16);					
 				}
 				day = EventLog::logs[a].日付;
@@ -168,7 +168,7 @@ namespace SDX_BSC
 					break;
 				}
 
-				MFont::Bメイリオ中.DrawBold({ LV(23) + LV(32) ,LV(24) + yy }, Color::White, Color::Black, str);
+				MFont::BMSize.DrawBold({ LV(23) + LV(32) ,LV(24) + yy }, Color::White, Color::Black, str);
 				yy += LV(25);
 			}
 			scr_max = yy;
