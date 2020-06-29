@@ -84,8 +84,8 @@ namespace SDX_BSC
 		{
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
 			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
-			Guild::P->探索パーティ[並びID / 5].スキルステ計算();
+			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();
+			Guild::P->探索パーティ[並びID / 5].基礎ステ再計算();
 
 			MSound::効果音[SE::配置換え].Play();
 
@@ -107,7 +107,7 @@ namespace SDX_BSC
 			}
 
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
+			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();
 
 			MSound::効果音[SE::配置換え].Play();
 			移動先->GUI_Init();
@@ -130,7 +130,7 @@ namespace SDX_BSC
 
 			//移動先メンバーがnullなら空きに居るなら代入処理になる
 			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			Guild::P->探索パーティ[並びID / 5].スキルステ計算();
+			Guild::P->探索パーティ[並びID / 5].基礎ステ再計算();
 
 			MSound::効果音[SE::配置換え].Play();
 			移動先->GUI_Init();
@@ -171,7 +171,7 @@ namespace SDX_BSC
 			Guild::P->人事ポイント -= 2;
 			ギルメン->所属 = Guild::P->id;
 			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-			Guild::P->探索パーティ[移動先ID / 5].スキルステ計算();
+			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();
 
 			MSound::効果音[SE::雇用].Play();
 			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);

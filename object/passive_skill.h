@@ -11,40 +11,33 @@ namespace SDX_BSC
 	//タイミング
 	enum class PSkillTime
 	{
-		基礎,//探索開始時や編成変更時のみ処理
-		常時,
+		常時,//探索開始時や編成変更時のみ処理
 		戦闘開始時,
 		ボス戦開始時,
-		戦闘勝利時,
 		全滅時,
-		素材収集時,
-		自分が攻撃を受けた時,
+		//スキル使用時
 		スキル使用時,
-		スキル使用前,
-		敵スキル使用前,
+		攻撃スキル使用時,
+		回復スキル使用時,
+		補助スキル使用時,
+		//スキル受け時
+		攻撃スキル受ける前,
+		回復スキル受ける前,
+		補助スキル受ける前,
+		//トリガー系パッシブ
+		攻撃を受けた時,
 		回復した時,
-		回復する時,
-		HPが変化した時,
-		自分が敵を倒した時,
-		味方が敵を倒した時,//自分も含む
-		回避時,
-		製造時,
-		探索時,
+		回避した時,
 		自分が気絶した時,
 		味方が気絶した時,
+		自分が撃破した時,
+		味方が撃破した時,//自分も含む
 	};
 
 	//条件
 	enum class PSkillIf
 	{
 		条件無し,
-		//スキル属性条件
-		装備種一致,
-		物理属性,
-		魔法属性,
-		回復属性,
-		補助属性,
-		奥義属性,
 		//状況条件
 		HP一定以上,
 		HP一定以下,
@@ -53,8 +46,6 @@ namespace SDX_BSC
 		戦闘時間が一定以下,//未実装
 		戦闘時間が一定以上//未実装
 		//敵や自分の状態異常
-
-
 	};
 
 	enum class PSkillTarget
@@ -84,7 +75,6 @@ namespace SDX_BSC
 		回避無視,
 		HP上限超え回復,
 		デバフ解除,
-		後列ペナルティ無し,
 		//●バフ、特殊ステータス増加
 		与ダメージバフ,
 		受ダメージバフ,
@@ -101,8 +91,11 @@ namespace SDX_BSC
 		複数製造,
 		//●探索
 		未探索発見率増加,
-		素材獲得量増加,
-		素材ランク増加,
+		戦闘後回復,
+		収集量増加,
+		収集ランク増加,
+		剥取量増加,
+		剥取ランク増加,
 		//●その他
 		HP増加,
 		STR増加,
@@ -167,8 +160,9 @@ namespace SDX_BSC
 		double 効果量;
 
 		//-条件
-		ItemType 装備種;
 		ASkillType Aスキル種;//アクティブスキルタイプ
+		ItemType 装備種;
+		bool is奥義 = false;
 
 		PSkillTime タイミング;
 		double 発動率;
@@ -189,30 +183,30 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(1, "体力", "HPが20上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(2, "体力+", "HPが30上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(3, "体力++", "HPが40上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[1].Set(3, 20,1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
-		PassiveSkill::data[2].Set(5, 30, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
-		PassiveSkill::data[3].Set(8, 40, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
+		PassiveSkill::data[1].Set(3, 20,1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
+		PassiveSkill::data[2].Set(5, 30, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
+		PassiveSkill::data[3].Set(8, 40, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP増加);
 
 		PassiveSkill::data.emplace_back(4, "腕力", "STRが6上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(5, "腕力+", "STRが9上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(6, "腕力++", "STRが12上昇する", SkillType::STR, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[4].Set(3, 6, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
-		PassiveSkill::data[5].Set(5, 9, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
-		PassiveSkill::data[6].Set(8, 12, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
+		PassiveSkill::data[4].Set(3, 6, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
+		PassiveSkill::data[5].Set(5, 9, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
+		PassiveSkill::data[6].Set(8, 12, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::STR増加);
 
 		PassiveSkill::data.emplace_back(7, "機敏", "DEXが6上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(8, "機敏+", "DEXが7上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(9, "機敏++", "DEXが10上昇する", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[7].Set(3, 5, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
-		PassiveSkill::data[8].Set(5, 7, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
-		PassiveSkill::data[9].Set(8, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
+		PassiveSkill::data[7].Set(3, 5, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
+		PassiveSkill::data[8].Set(5, 7, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
+		PassiveSkill::data[9].Set(8, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::DEX増加);
 
 		PassiveSkill::data.emplace_back(10, "知力", "INTが5上昇する", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(11, "知力+", "INTが7上昇する", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(12, "知力++", "INTが10上昇する", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[10].Set(3, 5, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
-		PassiveSkill::data[11].Set(5, 7, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
-		PassiveSkill::data[12].Set(8, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
+		PassiveSkill::data[10].Set(3, 5, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
+		PassiveSkill::data[11].Set(5, 7, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
+		PassiveSkill::data[12].Set(8, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::INT増加);
 
 		PassiveSkill::data.emplace_back(13, "剣技", "剣スキル 威力+15%", SkillType::剣, ItemType::剣, ASkillType::指定なし );
 		PassiveSkill::data.emplace_back(14, "剣術", "剣スキル CT-10%"  , SkillType::剣, ItemType::剣, ASkillType::指定なし	);
@@ -222,25 +216,25 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(18, "弓術", "弓スキル CT-10%", SkillType::弓, ItemType::弓, ASkillType::指定なし	);
 		PassiveSkill::data.emplace_back(19, "魔技", "魔杖スキル 威力+15%", SkillType::魔杖, ItemType::魔杖, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(20, "魔術", "魔杖スキル CT-10%", SkillType::魔杖, ItemType::魔杖, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(21, "神技", "神杖スキル 効果+15%", SkillType::神杖, ItemType::神杖, ASkillType::指定なし);
+		PassiveSkill::data.emplace_back(21, "神技", "神杖スキル 威力+15%", SkillType::神杖, ItemType::神杖, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(22, "神術", "神杖スキル CT+10%", SkillType::神杖, ItemType::神杖, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(23, "盾技", "盾スキル 効果+15%", SkillType::盾, ItemType::盾, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(24, "盾術", "盾スキル CT-10%", SkillType::盾, ItemType::盾, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(25, "盾術", "盾スキル 持続+15%", SkillType::盾, ItemType::盾, ASkillType::指定なし);
 
-		PassiveSkill::data[13].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[14].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[15].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[16].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[17].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[18].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[19].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[20].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[21].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[22].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[23].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[24].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[25].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::装備種一致, PSkillTarget::自分, PSkillEffect::スキル持続増減);
+		PassiveSkill::data[13].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[14].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[15].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[16].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[17].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[18].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[19].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[20].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[21].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[22].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[23].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル効果増減);
+		PassiveSkill::data[24].Set(5,-10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[25].Set(5, 15, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル持続増減);
 
 		PassiveSkill::data.emplace_back(26, "ガード", "物防+10", SkillType::防御, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(27, "ガード+", "物防+15", SkillType::防御, ItemType::すべて, ASkillType::指定なし);
@@ -250,84 +244,86 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(31, "ステップ+", "回避+15", SkillType::回避, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(32, "正確性", "命中+10", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(33, "正確性+", "命中+15", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[26].Set(4, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::物防増加);
-		PassiveSkill::data[27].Set(7, 15, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::物防増加);
-		PassiveSkill::data[28].Set(4, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::魔防増加);
-		PassiveSkill::data[29].Set(7, 15, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::魔防増加);
-		PassiveSkill::data[30].Set(4, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::回避増加);
-		PassiveSkill::data[31].Set(7, 15, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::回避増加);
-		PassiveSkill::data[32].Set(4, 10, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::命中増加);
-		PassiveSkill::data[33].Set(7, 15, 1.0, PSkillTime::基礎, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::命中増加);
+		PassiveSkill::data[26].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::物防増加);
+		PassiveSkill::data[27].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::物防増加);
+		PassiveSkill::data[28].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::魔防増加);
+		PassiveSkill::data[29].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::魔防増加);
+		PassiveSkill::data[30].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::回避増加);
+		PassiveSkill::data[31].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::回避増加);
+		PassiveSkill::data[32].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::命中増加);
+		PassiveSkill::data[33].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::命中増加);
 
 		//攻撃スキル強化、威力、CT
-		PassiveSkill::data.emplace_back(34, "会心", "物理スキル 威力+10%", SkillType::攻撃, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(35, "会心+", "物理スキル 威力+15%", SkillType::攻撃, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(36, "敏捷性", "物理スキル CT-7%", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(37, "敏捷性+", "物理スキル CT-10%", SkillType::DEX, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[34].Set(5, 10, 1.0, PSkillTime::常時, PSkillIf::物理属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[35].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::物理属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[36].Set(5, -7, 1.0, PSkillTime::常時, PSkillIf::物理属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[37].Set(5, -10, 1.0, PSkillTime::常時, PSkillIf::物理属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data.emplace_back(34, "会心", "物理スキル 威力+10%", SkillType::攻撃, ItemType::すべて, ASkillType::物理);
+		PassiveSkill::data.emplace_back(35, "会心+", "物理スキル 威力+15%", SkillType::攻撃, ItemType::すべて, ASkillType::物理);
+		PassiveSkill::data.emplace_back(36, "敏捷性", "物理スキル CT-7%", SkillType::DEX, ItemType::すべて, ASkillType::物理);
+		PassiveSkill::data.emplace_back(37, "敏捷性+", "物理スキル CT-10%", SkillType::DEX, ItemType::すべて, ASkillType::物理);
+		PassiveSkill::data[34].Set(5, 10, 1.0, PSkillTime::スキル使用時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[35].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[36].Set(5, -7, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[37].Set(5, -10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
 		//魔法スキル強化、威力、CT
-		PassiveSkill::data.emplace_back(38, "魔導", "魔法スキル 威力+10%", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(39, "魔導+", "魔法スキル 威力+15%", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(40, "詠唱", "魔法スキル CT-7%", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(41, "詠唱+", "魔法スキル CT-10%", SkillType::INT, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[38].Set(5, 10, 1.0, PSkillTime::常時, PSkillIf::魔法属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[39].Set(8, 15, 1.0, PSkillTime::常時, PSkillIf::魔法属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[40].Set(5, -7, 1.0, PSkillTime::常時, PSkillIf::魔法属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[41].Set(8, -10, 1.0, PSkillTime::常時, PSkillIf::魔法属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data.emplace_back(38, "魔導", "魔法スキル 威力+10%", SkillType::INT, ItemType::すべて, ASkillType::魔法);
+		PassiveSkill::data.emplace_back(39, "魔導+", "魔法スキル 威力+15%", SkillType::INT, ItemType::すべて, ASkillType::魔法);
+		PassiveSkill::data.emplace_back(40, "詠唱", "魔法スキル CT-7%", SkillType::INT, ItemType::すべて, ASkillType::魔法);
+		PassiveSkill::data.emplace_back(41, "詠唱+", "魔法スキル CT-10%", SkillType::INT, ItemType::すべて, ASkillType::魔法);
+		PassiveSkill::data[38].Set(5, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[39].Set(8, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[40].Set(5, -7, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[41].Set(8, -10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
 
 		//回復スキル強化、威力、CT
-		PassiveSkill::data.emplace_back(42, "治癒", "回復スキル 威力+10%", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(43, "治癒+", "回復スキル 威力+15%", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(44, "祈り", "回復スキル CT-7%", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data.emplace_back(45, "祈り+", "回復スキル CT-10%", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[42].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::回復属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[43].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::回復属性, PSkillTarget::自分, PSkillEffect::スキル威力増減);
-		PassiveSkill::data[44].Set(4, -7, 1.0, PSkillTime::常時, PSkillIf::回復属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[45].Set(7, -10, 1.0, PSkillTime::常時, PSkillIf::回復属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data.emplace_back(42, "治癒", "回復スキル 威力+10%", SkillType::回復, ItemType::すべて, ASkillType::回復);
+		PassiveSkill::data.emplace_back(43, "治癒+", "回復スキル 威力+15%", SkillType::回復, ItemType::すべて, ASkillType::回復);
+		PassiveSkill::data.emplace_back(44, "祈り", "回復スキル CT-7%", SkillType::回復, ItemType::すべて, ASkillType::回復);
+		PassiveSkill::data.emplace_back(45, "祈り+", "回復スキル CT-10%", SkillType::回復, ItemType::すべて, ASkillType::回復);
+		PassiveSkill::data[42].Set(4, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[43].Set(7, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキル威力増減);
+		PassiveSkill::data[44].Set(4, -7, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[45].Set(7, -10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
 
 		//必殺スキルの溜まりやすさ+10%
 		PassiveSkill::data.emplace_back(46, "必殺", "奥義スキル CT-10%", SkillType::バフ, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(47, "必殺+", "奥義スキル CT-15%", SkillType::バフ, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[46].Set(4, -10, 1.0, PSkillTime::常時, PSkillIf::奥義属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[47].Set(7, -15, 1.0, PSkillTime::常時, PSkillIf::奥義属性, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[46].Set(4, -10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[47].Set(7, -15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
+		PassiveSkill::data[46].is奥義 = true;
+		PassiveSkill::data[47].is奥義 = true;
 
 		//戦闘後味方全員のHP回復
 		PassiveSkill::data.emplace_back(48, "手当", "戦闘終了時、味方全員のHP10%回復", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(49, "手当", "戦闘終了時、味方全員のHP15%回復", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[48].Set(4, 0.1, 1.0, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::味方全員, PSkillEffect::HP回復);
-		PassiveSkill::data[49].Set(7, 0.15, 1.0, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::味方全員, PSkillEffect::HP回復);
+		PassiveSkill::data[48].Set(4, 0.1, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::味方全員, PSkillEffect::戦闘後回復);
+		PassiveSkill::data[49].Set(7, 0.15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::味方全員, PSkillEffect::戦闘後回復);
 
 
 		//戦闘後自身のHP回復
 		PassiveSkill::data.emplace_back(50, "タフガイ", "戦闘終了時、自身のHP25%回復", SkillType::回復, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[50].Set(4, 0.25, 1.0, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::HP回復);
+		PassiveSkill::data[50].Set(4, 0.25, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::戦闘後回復);
 
 		//素材量+
 		PassiveSkill::data.emplace_back(51, "保存術", "剥取素材数+10%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(52, "保存術+", "剥取素材数+15%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[51].Set(3, 10, 1.0, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
-		PassiveSkill::data[52].Set(5, 15, 1.0, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
+		PassiveSkill::data[51].Set(3, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::剥取量増加);
+		PassiveSkill::data[52].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::剥取量増加);
 
 		//素材ランク+
 		PassiveSkill::data.emplace_back(53, "解剖学", "2%の確率で、剥取素材ランク+1", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(54, "解剖学+", "3%の確率で、剥取素材ランク+1", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[53].Set(3, 1, 0.02, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材ランク増加);
-		PassiveSkill::data[54].Set(5, 1, 0.03, PSkillTime::戦闘勝利時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材ランク増加);
+		PassiveSkill::data[53].Set(3, 1, 0.02, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::剥取ランク増加);
+		PassiveSkill::data[54].Set(5, 1, 0.03, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::剥取ランク増加);
 
 		//収穫量+
 		PassiveSkill::data.emplace_back(55, "採取術", "収集素材数+10%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(56, "採取術+", "収集素材数+15%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[55].Set(3, 10, 1.0, PSkillTime::素材収集時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
-		PassiveSkill::data[56].Set(5, 15, 1.0, PSkillTime::素材収集時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
+		PassiveSkill::data[55].Set(3, 10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::収集量増加);
+		PassiveSkill::data[56].Set(5, 15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::収集量増加);
 
 		//収穫ランク+
 		PassiveSkill::data.emplace_back(57, "自然学", "2%の確率で、収集素材ランク+1", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data.emplace_back(58, "自然学+", "3%の確率で、収集素材ランク+1", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
-		PassiveSkill::data[57].Set(3, 1, 0.02, PSkillTime::素材収集時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
-		PassiveSkill::data[58].Set(5, 1, 0.03, PSkillTime::素材収集時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::素材獲得量増加);
+		PassiveSkill::data[57].Set(3, 1, 0.02, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::収集ランク増加);
+		PassiveSkill::data[58].Set(5, 1, 0.03, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::収集ランク増加);
 
 		//特殊効果系
 		PassiveSkill::data.emplace_back(59, "咆哮", "開戦後300T、与ダメージ+20%", SkillType::バフ, ItemType::すべて, ASkillType::指定なし);

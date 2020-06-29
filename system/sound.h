@@ -8,6 +8,7 @@ namespace SDX_BSC
 	namespace SE
 	{
 		//const SETType a = SETType::決定
+		//MSound::効果音[SE::].Play();
 
 		//操作時効果音
 		constexpr SEType 決定 = SEType::決定;

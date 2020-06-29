@@ -191,7 +191,7 @@ namespace SDX_BSC
 			for (int a = 0; a < CV::最大パーティ数; a++)
 			{
 				Guild::P->探索パーティ[a].探索先 = &Dungeon::data[0];
-				Guild::P->探索パーティ[a].スキルステ計算();
+				Guild::P->探索パーティ[a].基礎ステ再計算();
 			}
 
 			Game::is停止 = true;

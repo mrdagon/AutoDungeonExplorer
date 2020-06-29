@@ -25,9 +25,9 @@ namespace SDX_BSC
 		void Set(int Hp , int Str, int Dex, int Int, int 物防, int 魔防 , int 回避 , int 命中)
 		{
 			this->Hp = Hp;
-			this->Str = Str;
-			this->Int = Int;
-			this->Dex = Dex;
+			this->ステ[StatusType::Str] = Str;
+			this->ステ[StatusType::Int] = Int;
+			this->ステ[StatusType::Dex] = Dex;
 
 			this->防御[DamageType::物理] = 物防;
 			this->防御[DamageType::魔法] = 魔防;
@@ -52,10 +52,10 @@ namespace SDX_BSC
 		UnitImageType 見た目;
 
 		//基礎ステータスーLvでスケーリングする
-		int Hp,Str,Int,Dex,回避,命中;
+		int Hp,命中,回避;
+		EnumArray<int, StatusType> ステ;
 		EnumArray<int, DamageType> 防御;
-		
-		
+				
 		//他ステータス
 		bool isボス;
 

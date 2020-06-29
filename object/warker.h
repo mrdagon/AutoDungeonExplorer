@@ -184,9 +184,9 @@ namespace SDX_BSC
 		void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			基礎HP = Job::data[(int)ジョブ].Hp * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Hp + Item::data[装備[1]].追加Hp;
-			基礎Str = Job::data[(int)ジョブ].Str * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
-			基礎Dex = Job::data[(int)ジョブ].Dex * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
-			基礎Int = Job::data[(int)ジョブ].Int * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
+			基礎ステ[StatusType::Str] = Job::data[(int)ジョブ].ステ[StatusType::Str] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
+			基礎ステ[StatusType::Dex] = Job::data[(int)ジョブ].ステ[StatusType::Dex] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
+			基礎ステ[StatusType::Int] = Job::data[(int)ジョブ].ステ[StatusType::Int] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
 
 			//アクティブスキル更新
 			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
@@ -198,7 +198,7 @@ namespace SDX_BSC
 			基礎命中 = Job::data[(int)ジョブ].命中;
 			基礎回避 = Job::data[(int)ジョブ].回避;
 
-			Pスキル条件チェック(PSkillTime::基礎, 味方, 敵);
+			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
 
 			最大HP = 基礎HP;
 			現在HP = 最大HP;
@@ -257,7 +257,7 @@ namespace SDX_BSC
 
 		void 戦闘後処理(std::vector<Warker*> &メンバー, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
-			Pスキル条件チェック(PSkillTime::戦闘勝利時, 味方, 敵);
+
 		}
 
 		void 素材収集処理(std::vector<Warker*> &メンバー)

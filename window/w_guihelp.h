@@ -133,9 +133,9 @@ namespace SDX_BSC
 			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 7 }, Color::White, Color::Black, TX::Help_ステータス[7]);
 
 			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 0 }, Color::White, Color::Black, (int)it->最大HP , true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 1 }, Color::White, Color::Black, (int)it->基礎Str, true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 2 }, Color::White, Color::Black, (int)it->基礎Dex, true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 3 }, Color::White, Color::Black, (int)it->基礎Int, true);
+			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 1 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Str], true);
+			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 2 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Dex], true);
+			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 3 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Int], true);
 			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 4 }, Color::White, Color::Black, (int)it->基礎防御[DamageType::物理], true);
 			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 5 }, Color::White, Color::Black, (int)it->基礎防御[DamageType::魔法], true);
 			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 6 }, Color::White, Color::Black, (int)it->基礎命中, true);

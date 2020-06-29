@@ -66,7 +66,7 @@ namespace SDX_BSC
 
 
 				//探索指示-冒険中は三角を非表示
-				if (参照先->is探索中)
+				if (参照先->探索状態 == ExplorerType::編成中)
 				{
 					MSystem::DrawWindow({ px + LV(31) ,py + LV(32) }, LV(33), LV(34), 1, 0);
 				} else {
@@ -88,7 +88,7 @@ namespace SDX_BSC
 
 			void Click(double px, double py)
 			{
-				if (参照先->is探索中 == true) { return; }
+				if (参照先->探索状態 == ExplorerType::編成中) { return; }
 
 				if (Point(px, py).Hit(&Rect(LV(31), LV(32), LV(33), LV(34))) == true)
 				{
@@ -108,7 +108,7 @@ namespace SDX_BSC
 
 			void Drop(double px, double py)
 			{
-				if (参照先->is探索中 == true) { return; }
+				if (参照先->探索状態 == ExplorerType::編成中) { return; }
 				if (W_Drag_Drop::ダンジョン == nullptr) { return; }
 
 				//探索先変更
@@ -239,7 +239,7 @@ namespace SDX_BSC
 
 			void Drop(double px, double py)
 			{
-				if (Game::is仕事中 == true || 所属->is探索中) { return; }
+				if (所属->探索状態 == ExplorerType::編成中) { return; }
 
 				if (W_Drag_Drop::ギルメン != nullptr)
 				{
@@ -268,7 +268,7 @@ namespace SDX_BSC
 					ギルメン->装備[部位] = W_Drag_Drop::アイテム;
 					ギルメン->装備アップデート();
 
-					所属->スキルステ計算();
+					所属->基礎ステ再計算();
 					MSound::効果音[SE::装備変更].Play();
 				}
 			}
@@ -334,7 +334,7 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 				
 
-				if (参照先->is探索中 == false)
+				if (参照先->探索状態 != ExplorerType::編成中 == false)
 				{
 					//非探索時は背景のみ
 					return;
@@ -409,7 +409,7 @@ namespace SDX_BSC
 			void Drawギルメン(Warker* it,double px, double py,int 隊列)
 			{
 				//→向き
-				MUnit::ユニット[it->見た目][10]->DrawRotate({ px + (int)it->座標,py }, 2, 0);
+				MUnit::ユニット[it->見た目][10]->DrawRotate({ px + (int)it->E座標,py }, 2, 0);
 
 				//ライフバー
 				MSystem::DrawBar({ px + LV(80),py + LV(81) }, LV(82), LV(83), 0.5, 1, Color::Blue, Color::White, Color::White, true);
@@ -421,7 +421,7 @@ namespace SDX_BSC
 				MonsterClass& 種 = MonsterClass::data[it.種族];
 
 				//←向き
-				MUnit::ユニット[種.見た目][7]->DrawRotate({ px - (int)it.座標,py}, 2, 0);
+				MUnit::ユニット[種.見た目][7]->DrawRotate({ px - (int)it.E座標,py}, 2, 0);
 
 				//ライフバー
 				double rate = it.現在HP / it.最大HP;
@@ -505,7 +505,7 @@ namespace SDX_BSC
 			for (auto& it : パーティメンバー)
 			{
 				//探索中は表示しない
-				if (it.所属->is探索中 == false){ gui_objects.push_back(&it); }
+				gui_objects.push_back(&it);
 			}
 
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
@@ -545,7 +545,7 @@ namespace SDX_BSC
 
 			for (auto& it : パーティメンバー)
 			{
-				if (it.所属->is探索中 == false) { it.Draw(); }
+				if (it.所属->探索状態 == ExplorerType::編成中) { it.Draw(); }
 			}
 		}
 

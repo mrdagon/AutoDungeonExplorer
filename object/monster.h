@@ -37,9 +37,10 @@ namespace SDX_BSC
 
 			//基礎ステータス
 			this->基礎HP = type->Hp * (9.0 + Lv * 1.2) / 10;
-			this->基礎Str = type->Str * (9.0 + Lv * 1.2) / 10;
-			this->基礎Int = type->Int * (9.0 + Lv * 1.2) / 10;
-			this->基礎Dex = type->Dex * (9.0 + Lv * 1.2) / 10;
+
+			this->基礎ステ[StatusType::Str] = type->ステ[StatusType::Str] * (9.0 + Lv * 1.2) / 10;
+			this->基礎ステ[StatusType::Int] = type->ステ[StatusType::Int] * (9.0 + Lv * 1.2) / 10;
+			this->基礎ステ[StatusType::Dex] = type->ステ[StatusType::Dex] * (9.0 + Lv * 1.2) / 10;
 
 			this->基礎防御[DamageType::物理] = type->防御[DamageType::物理];
 			this->基礎防御[DamageType::魔法] = type->防御[DamageType::魔法];

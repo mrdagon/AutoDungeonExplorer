@@ -407,6 +407,20 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	enum class ExplorerType
+	{
+		編成中,
+		戦闘中,
+		移動中,
+		収集中,
+		撤退中,
+		全滅中,
+		リザルト中,
+
+		//宝箱開封、地図発見、戦闘後ドロップ、ボス演出などは未実装
+
+	};
+
 	//探索指示
 	enum class OrderType
 	{
@@ -435,7 +449,6 @@ namespace SDX_BSC
 	//	遺物,
 	//	COUNT
 	//};
-
 
 	enum class FormationType
 	{
