@@ -49,6 +49,8 @@ namespace SDX_BSC
 
 		void init()
 		{
+			GUI_素材数.reserve(100);
+
 			種類 = WindowType::Material;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];

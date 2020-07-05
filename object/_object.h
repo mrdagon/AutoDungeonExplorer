@@ -24,8 +24,9 @@
 #include "warker.h"
 
 //#include "party.h"
+#include "quest.h"
+
 #include "guild.h"
 
-#include "quest.h"
 
 #include "management.h"

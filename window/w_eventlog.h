@@ -110,15 +110,17 @@ namespace SDX_BSC
 				switch (EventLog::logs[a].種類)
 				{
 				case LogDetailType::クエスト受注:
+					MIcon::アイコン[IconType::依頼].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
 					str = Quest::data[id].名前;
 					str += TX::Log_受注;
 					break;
 				case LogDetailType::クエスト完了:
+					MIcon::アイコン[IconType::依頼].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
 					str = Quest::data[id].名前;
 					str += TX::Log_完了;
 					break;
 				case LogDetailType::部門Lv上昇:
-					MIcon::アイコン[IconType::依頼].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
+					MIcon::アイコン[IconType::戦略].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
 					str = TX::Log_部門Lv;
 					break;
 				case LogDetailType::経営戦術使用:
@@ -166,6 +168,9 @@ namespace SDX_BSC
 					str = Item::data[id].名前;
 					str += TX::Log_レア製造;
 					break;
+				case LogDetailType::技術Lv上昇:
+					MIcon::アイコン[IconType::製造].DrawRotate({ LV(30),LV(31) + yy }, 2, 0);
+					str += TX::Log_技術Lv;
 				}
 
 				MFont::BMSize.DrawBold({ LV(23) + LV(32) ,LV(24) + yy }, Color::White, Color::Black, str);

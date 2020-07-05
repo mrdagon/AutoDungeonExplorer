@@ -70,14 +70,16 @@ namespace SDX_BSC
 				XXX += 50;
 			}
 
-			ToolBar.SetWindow(windows);
-
 			Win_Item.is表示 = true;
 			Win_Factory.is表示 = true;
 			Win_Dungeon.is表示 = true;
 			Win_Party.is表示 = true;
-			Win_Recruit.is表示 = true;
-			Win_Material.is表示 = true;
+			Win_Recruit.is表示 = true;			
+
+			WinPosSaveAndLoad(FileMode::Read);
+
+			ToolBar.SetWindow(windows);
+
 
 			Win_Config.is表示 = true;
 			Win_Title.is表示 = false;
@@ -86,8 +88,6 @@ namespace SDX_BSC
 			{
 				Guild::P->探索パーティ[a].ギルドID = Guild::P->id;
 			}
-
-
 		}
 
 		//デモ版用初期化処理
@@ -113,23 +113,23 @@ namespace SDX_BSC
 			{
 				for (int a = 0; a < 1; a++)
 				{
-					Guild::P->総素材 += 1000;
-					Guild::P->素材数[CraftType(b)][a] = 1000;
+					Guild::P->総素材 += 30;
+					Guild::P->素材数[CraftType(b)][a] = 30;
 					Guild::P->is素材発見[CraftType(b)][a] = true;
 				}
 			}
 
-			Guild::P->投資経験値[ManagementType::経営] = Rand::Get(100);
-			Guild::P->投資経験値[ManagementType::人事] = Rand::Get(100);
-			Guild::P->投資経験値[ManagementType::製造] = Rand::Get(100);
-			Guild::P->投資経験値[ManagementType::探索] = Rand::Get(100);
+			Guild::P->投資経験値[ManagementType::経営] = 0;
+			Guild::P->投資経験値[ManagementType::人事] = 0;
+			Guild::P->投資経験値[ManagementType::製造] = 0;
+			Guild::P->投資経験値[ManagementType::探索] = 0;
 
 			Guild::P->投資Lv[ManagementType::経営] = 1;
 			Guild::P->投資Lv[ManagementType::人事] = 1;
 			Guild::P->投資Lv[ManagementType::製造] = 1;
 			Guild::P->投資Lv[ManagementType::探索] = 1;
 
-			Guild::P->資金 = 1000000;
+			Guild::P->資金 = 100000;
 
 			for (int a = 0; a < (int)CraftType::COUNT; a++)
 			{
@@ -141,6 +141,7 @@ namespace SDX_BSC
 			Management::Load();
 
 			//求人＆初期人材ダミー
+			Warker::data.clear();
 			Warker::data.reserve(2048);
 			for (int a = 0; a < 25; a++)
 			{
@@ -158,6 +159,8 @@ namespace SDX_BSC
 			}
 
 			//仮ダンジョン
+			Dungeon::data.clear();
+			Dungeon::data.reserve(100);
 			for (int a = 0; a < 100; a++)
 			{
 				Dungeon::Add(a, "名も無き迷宮", DungeonType(Rand::Get((int)DungeonType::COUNT - 1)), 100, std::min(a / 10,4), a+1 , 1 , (a % 10 == 9));
@@ -166,26 +169,24 @@ namespace SDX_BSC
 			Dungeon::data[0].is発見 = true;
 
 			//ギルメン初期-仮配置
-			for (int a = 0; a < 15; a++)
+			for (int a = 0; a < 5; a++)
 			{
 				Guild::P->ギルメン.push_back(&Warker::data[a]);
 			}
 
-			for (int a = 0; a < 10; a++)
+			for (int a = 0; a < 4; a++)
 			{
-
 				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Warker::data[a+15]);
 				Warker::data[a + 15].製造配置 = CraftType(a % 4);
 			}
 
-			Guild::P->最大パーティ数 = 3;
-			for (int a = 0; a < Guild::P->最大パーティ数; a++)
+			Guild::P->最大パーティ数 = 2;
+			for (int a = 0; a < 1; a++)
 			{
 				for (int b = 0; b < CV::パーティ人数; b++)
 				{
 					Guild::P->探索パーティ[a].メンバー[b] = &Warker::data[a * CV::パーティ人数 + b];
 				}
-
 			}
 
 			for (int a = 0; a < CV::最大パーティ数; a++)
@@ -228,6 +229,7 @@ namespace SDX_BSC
 				DebugEnd("file/layout/backup.txt");
 			}
 
+			WinPosSaveAndLoad(FileMode::Write);
 		}
 
 		//操作処理
@@ -324,7 +326,7 @@ namespace SDX_BSC
 
 			加速度 = Game::ゲームスピード;
 
-			if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 加速度 = std::min( CV::最大ゲーム倍速 , Game::ゲームスピード * 8 ); }
+			if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 加速度 = Game::ゲームスピード * 8; }
 
 			for (int a = 0; a < 加速度; a++)
 			{
@@ -348,7 +350,6 @@ namespace SDX_BSC
 				{
 					SellItem();
 					MakeItem();
-					ExploreDungeon();
 				}
 
 
@@ -438,5 +439,42 @@ namespace SDX_BSC
 		//●探索処理
 
 		//●戦闘処理
+
+		//●ウィンドウ位置保存
+		bool WinPosSaveAndLoad(FileMode 保存or読み込み)
+		{
+			//バイナリ形式で保存
+			File file("file/save/window_pos.dat", 保存or読み込み, false);
+
+			//ファイルが無いのに読み込もうとしたら初期データにする
+			if (file.GetFileMode() == FileMode::None)
+			{
+				return false;
+			}
+
+			std::vector<WindowBox*> wins;
+
+			wins.push_back(&Win_Item);
+			wins.push_back(&Win_Factory);
+			wins.push_back(&Win_Dungeon);
+			wins.push_back(&Win_Party);
+			wins.push_back(&Win_Recruit);
+			wins.push_back(&Win_Management);
+			wins.push_back(&Win_Material);
+			wins.push_back(&Win_Quest);
+			wins.push_back(&Win_Guild);
+			wins.push_back(&Win_EventLog);
+
+			for (auto& it : wins)
+			{
+				file.ReadWrite(it->座標.x);
+				file.ReadWrite(it->座標.y);
+				file.ReadWrite(it->横幅);
+				file.ReadWrite(it->縦幅);
+				file.ReadWrite(it->is表示);
+			}
+
+			return true;
+		}
 	};
 }

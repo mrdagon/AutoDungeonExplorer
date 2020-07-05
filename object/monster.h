@@ -13,10 +13,10 @@ namespace SDX_BSC
 	private:
 	public:
 		//固定ステータス
-		MonsterNo 種族;
-		int Lv;
-		bool isボス;
-		double 経験値;
+		MonsterNo 種族 = 0;
+		int Lv = 0;
+		bool isボス = false;
+		double 経験値 = 0;
 
 		Monster(MonsterNo 種族, int Lv, bool isボス)
 		{
@@ -25,22 +25,19 @@ namespace SDX_BSC
 			this->isボス = isボス;
 			経験値 = std::pow((double)Lv,1.5) * 10;
 
-			MonsterClass* type = &MonsterClass::data[種族];
-			
-			//ステータス、パッシブ、アクティブの計算
-			//とりあえずアクティブスキルは固定
-			for (int a = 0; a < CV::最大Aスキル数 ; a++)
-			{
-				this->アクティブスキル[a] = type->ASkill[a];
-			}
-			//とりあえずパッシブスキル無し
-
 			//基礎ステータス
-			this->基礎HP = type->Hp * (9.0 + Lv * 1.2) / 10;
+			基礎ステータス計算();
+		}
 
-			this->基礎ステ[StatusType::Str] = type->ステ[StatusType::Str] * (9.0 + Lv * 1.2) / 10;
-			this->基礎ステ[StatusType::Int] = type->ステ[StatusType::Int] * (9.0 + Lv * 1.2) / 10;
-			this->基礎ステ[StatusType::Dex] = type->ステ[StatusType::Dex] * (9.0 + Lv * 1.2) / 10;
+		void 基礎ステータス計算()
+		{
+			MonsterClass* type = &MonsterClass::data[種族];
+
+			this->基礎HP = (int)(type->Hp * (10.0 + Lv * 1.2) / 10);
+
+			this->基礎ステ[StatusType::Str] = (int)(type->ステ[StatusType::Str] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::Int] = (int)(type->ステ[StatusType::Int] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::Dex] = (int)(type->ステ[StatusType::Dex] * (10.0 + Lv * 1.2) / 10);
 
 			this->基礎防御[DamageType::物理] = type->防御[DamageType::物理];
 			this->基礎防御[DamageType::魔法] = type->防御[DamageType::魔法];
@@ -48,7 +45,7 @@ namespace SDX_BSC
 			this->基礎命中 = type->命中;
 			this->基礎回避 = type->回避;
 
-			this->最大HP = 基礎HP;
+			Reset補正ステータス();
 
 			if (isボス)
 			{
@@ -57,16 +54,28 @@ namespace SDX_BSC
 			}
 
 			this->現在HP = 最大HP;
+
+			//とりあえずアクティブスキルは固定
+			for (int a = 0; a < CV::最大Aスキル数; a++)
+			{
+				this->AスキルS[a] = type->ASkill[a];
+				if (this->AスキルS[a] != nullptr && this->AスキルS[a]->id > 0)
+				{
+					クールダウン速度[a] = 1;
+				} else {
+					クールダウン速度[a] = 0;
+				}
+				合計クールダウン[a] = 0;
+
+			}
+			//とりあえずパッシブスキル無し
+
+			PスキルS.clear();
 		}
 
-		void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void 気絶()
 		{
-			//とりあえずなし
-		}
-
-		void 所持スキル計算(std::vector<Fighter*> &味方)
-		{
-			//とりあえずスキルなし
+			MSound::効果音[SE::敵気絶].Play();
 		}
 	};
 }

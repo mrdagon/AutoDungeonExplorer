@@ -10,7 +10,8 @@ namespace SDX_BSC
 	/*依頼*/
 	class Quest
 	{
-	private:
+
+
 	public:
 		static std::vector<Quest> data;
 
@@ -39,16 +40,18 @@ namespace SDX_BSC
 
 		static void BetaQuest()
 		{
-			Quest::Add("洞窟の主を倒せ", QuestType::ボス討伐, 3, 1, true);
+			Quest::Add("竜を倒せ", QuestType::ボス討伐, 3, 10, true);
 			Quest::Add("町の安全確保", QuestType::雑魚討伐, 3, 1000, true);
 			Quest::Add("武器を供給せよ", QuestType::装備販売, 3, 100, true);
 
-			Quest::data[0].報酬金 = 1000;
-			Quest::data[1].報酬金 = 10000;
+			Quest::data[0].報酬金 = 1000000;
+			Quest::data[1].報酬金 = 100000;
 			Quest::data[2].報酬金 = 100000;
 
+			Quest::data[0].報酬名誉 = 50;
+			Quest::data[1].報酬名誉 = 10;
+			Quest::data[2].報酬名誉 = 10;
 		}
-
 
 		static void Add(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注)
 		{
@@ -57,16 +60,7 @@ namespace SDX_BSC
 		}
 
 		/*idはボスIDやら倒した敵数やら*/
-		static void 進行処理(QuestType クエスト種,int id )
-		{
-			for (auto& it : Quest::data)
-			{
-				if( it.種類 == クエスト種 && !it.is完了 && it.is受注 ) { it.達成度計算(id); }
-			}
-		}
-
-
-		void 達成度計算(int id)
+		bool 達成度計算(int id)
 		{
 			switch (種類)
 			{
@@ -86,7 +80,7 @@ namespace SDX_BSC
 				達成度++;
 				break;
 			case QuestType::固定ボス討伐://特定ダンジョンのボス討伐
-				if (id == 条件数値)
+				if (id == 条件番号)
 				{
 					達成度++;
 				}
@@ -95,36 +89,12 @@ namespace SDX_BSC
 
 			if (達成度 >= 条件数値)
 			{
-				達成処理();
+				EventLog::Add(0, Game::日付, LogDetailType::クエスト完了, id);
+				return true;
 			}
 
-			return ;
+			return false;
 		}
-
-		void 達成処理()
-		{
-			MSound::効果音[SE::クエスト完了].Play();
-
-			達成度 = 条件数値;
-			is完了 = true;
-			Guild::P->名声 += 報酬名誉;
-			Guild::P->資金 += 報酬金;
-
-			for (auto& it : 次依頼)
-			{
-				if (it >= 0)
-				{
-					data[it].is受注 = true;
-				}
-			}
-			
-			if (isメイン)
-			{
-				Game::isメインクエスト = true;
-			}
-		}
-
-
 	};
 
 	std::vector<Quest> Quest::data;

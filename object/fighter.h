@@ -11,58 +11,67 @@ namespace SDX_BSC
 	class Fighter
 	{
 	private:
-
+		void Get生存リスト(std::vector<Fighter*>& 生存リスト, const std::vector<Fighter*>& 敵)
+		{
+			生存リスト.reserve(6);
+			生存リスト.clear();
+			for (auto& it : 敵)
+			{
+				if (it->現在HP > 0) { 生存リスト.push_back(it); }
+			}
+		}
 	public:
 		//●固定、基礎ステータス
-		ActiveSkill* アクティブスキル[CV::最大Aスキル数] = {nullptr};
-		std::vector<PassiveSkill*> 発動パッシブ;//本人のパッシブ、装備、パーティパッシブを格納
-
-		ItemType 武器種;
+		ActiveSkill* AスキルS[CV::最大Aスキル数] = {nullptr};
+		std::vector<PassiveSkill*> PスキルS;//本人のパッシブ、装備、パーティパッシブを格納
 
 		//●基礎ステータス
-		double 基礎HP;
-		EnumArray<double, StatusType> 基礎ステ;
-		EnumArray<double,DamageType> 基礎防御;
-		double 基礎命中 = 0;
-		double 基礎回避 = 0;
+		int 基礎HP;
+		EnumArray<int, StatusType> 基礎ステ;
+		EnumArray<int,DamageType> 基礎防御;
+		int 基礎命中 = 0;
+		int 基礎回避 = 0;
 		//●装備とパッシブ補正後
-		double 最大HP = 100;
-		EnumArray<double, StatusType> 補正ステ;
-		EnumArray<double, DamageType> 補正防御;
-		double 補正命中 = 0;
-		double 補正回避 = 0;
+		int 最大HP = 100;
+		EnumArray<int, StatusType> 補正ステ;
+		EnumArray<int, DamageType> 補正防御;
+		int 補正命中 = 0;
+		int 補正回避 = 0;
 		//●計算後ステータス、戦闘中ステータス、パッシブ計算
-		double 現在HP;
+		int 現在HP = 0;
 		//スキルクールダウン
 		double 合計クールダウン[CV::最大Aスキル数];
 		double クールダウン速度[CV::最大Aスキル数];
 
 		//一時的なバフ兼デバフ、効果量、効果時間
-		double ダメージバフ効果;
-		int ダメージバフ時間;
-		EnumArray<double, DamageType> 防御バフ効果;
-		EnumArray<int, DamageType> 防御バフ時間;
-		EnumArray<double, StatusType> ステバフ効果;
-		EnumArray<int, StatusType> ステバフ時間;
-		double 命中バフ効果, 回避バフ効果;
-		int 挑発時間, 命中バフ時間,回避バフ時間;
+
+		struct Buff
+		{
+			double 効果 = 0;
+			int 持続 = 0;
+		};
+
+		EnumArray<Buff, BuffType> バフ;
 
 		//状態異常
 		int スキル待機 = 0;
 
 		//エフェクト用数値
 		double E速度 = 0;//前出たり、ノックバック
-		bool E反転 = false;
+		int E反転残り = 0;
+		int E反転時間 = 0;
 		double E座標 = 0;
-		int E光[3] = { 0,0,0 };//ダメージ赤、回復緑、補助青
 
-		int Eダメージ;//+ダメージ、-回復
-		int Eダメージ時間;
+		double E光強さ = 0;
+		Color E光色;//ダメージ赤、回復緑、補助青
+
+		int Eダメージ = 0;//+ダメージ、-回復
+		int Eダメージ時間 = 0;
 
 		//ログ用
-		double 与ダメージログ;
-		double 受ダメージログ;
-		double 回復ログ;
+		int 与ダメージログ = 0;
+		int 受ダメージログ = 0;
+		int 回復ログ = 0;
 
 		//探索スキル効果
 		double 戦闘後回復 = 0.0;
@@ -71,38 +80,117 @@ namespace SDX_BSC
 		double 素材剥取量 = 0.0;
 		double 素材収集量 = 0.0;
 
-		virtual void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵) = 0;
+		//攻撃受け時用の一時変数
+		int Hit数 = 0;
+
+		//ギルメンは基礎ステ+装備
+		virtual void 基礎ステータス計算() = 0;
+
+		virtual void 気絶() = 0;
+
+		void 基礎Pスキル補正(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		{
+			//味方と自分の基礎Pスキルによる補正ステ計算
+			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
+		}
+
+		//補正ステータス=基礎ステータスにしてバフ残り時間もリセット
+		void Reset補正ステータス()
+		{
+			最大HP = 基礎HP;
+			補正ステ[StatusType::Str] = 基礎ステ[StatusType::Str];
+			補正ステ[StatusType::Dex] = 基礎ステ[StatusType::Dex];
+			補正ステ[StatusType::Int] = 基礎ステ[StatusType::Int];
+
+			補正防御[DamageType::物理] = 基礎防御[DamageType::物理];
+			補正防御[DamageType::魔法] = 基礎防御[DamageType::魔法];
+
+			補正命中 = 基礎命中;
+			補正回避 = 基礎回避;
+
+			for (auto& it : バフ)
+			{
+				it.効果 = 0;
+				it.持続 = 0;
+			}
+		}
 
 		//一時バフ補正後ステータス取得
 		double Getステ(StatusType ステータス種)
 		{
-			return (ステバフ時間[ステータス種] > 0) ? 補正ステ[ステータス種] * ステバフ効果[ステータス種] : 補正ステ[ステータス種];
+			auto t = BuffType::Str;
+
+			switch (ステータス種)
+			{
+			case StatusType::Str:
+				t = BuffType::Str;
+				break;
+			case StatusType::Dex:
+				t = BuffType::Dex;
+				break;
+			case StatusType::Int:
+				t = BuffType::Int;				
+				break;
+			}
+
+			return (バフ[t].持続 > 0) ? 補正ステ[ステータス種] * バフ[t].効果 : 補正ステ[ステータス種];
 		}
 
 		double Get防御(DamageType ダメージ種)
 		{
-			return (防御バフ時間[ダメージ種] > 0) ? 補正防御[ダメージ種] * 防御バフ効果[ダメージ種] : 補正防御[ダメージ種];
+			BuffType t = (ダメージ種 == DamageType::物理) ? (BuffType::物防):(BuffType::魔防);
+
+			return 補正防御[ダメージ種] + バフ[t].効果;
 		}
 
 		double Get命中()
 		{
-			return (命中バフ時間 > 0) ? 補正命中 + 命中バフ効果 : 補正命中;
+			return double((バフ[BuffType::命中].持続 > 0) ? 補正命中 + バフ[BuffType::命中].効果 : 補正命中)/100;
 		}
 
 		double Get回避()
 		{
-			return (回避バフ時間 > 0) ? 補正回避 + 回避バフ効果 : 補正回避;
+			return double((バフ[BuffType::回避].持続 > 0) ? 補正回避 + バフ[BuffType::回避].効果 : 補正回避 )/100;
 		}
 
-		double Getダメージ()
+		void バフ使用(ASkillEffectType バフデバフ種 , double 効果量 , int 時間)
 		{
-			return (ダメージバフ時間 > 0) ? ダメージバフ効果 : 1.0;
-		}
+			BuffType t = BuffType(バフデバフ種);
+			//バフ中のバフ デバフ中のデバフ、時間、効果量で大きい方に更新
+			//バフ中にデバフ デバフ中にバフ、時間は大きい方から小さい方を引く、効果は時間が長い方になる
 
-		//探索開始時や装備更新時の処理
-		void ステータス再計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
-		{
-
+			if (効果量 > 0 )
+			{
+				if (バフ[t].効果 > 0)
+				{
+					バフ[t].効果 = std::max(バフ[t].効果,効果量);
+					バフ[t].持続 = std::max(バフ[t].持続, 時間);
+				} else {
+					if (バフ[t].持続 > 時間)
+					{
+						バフ[t].持続 -= 時間;
+					} else {
+						バフ[t].持続 = 時間 - バフ[t].持続;
+						バフ[t].効果 = 効果量;
+					}
+				}
+			}
+			else 			
+			{
+				if (バフ[t].効果 > 0)
+				{
+					if (バフ[t].持続 > 時間)
+					{
+						バフ[t].持続 -= 時間;
+					} else {
+						バフ[t].持続 = 時間 - バフ[t].持続;
+						バフ[t].効果 = 効果量;
+					}
+				} else {
+					バフ[t].効果 = std::min(バフ[t].効果, 効果量);
+					バフ[t].持続 = std::max(バフ[t].持続, 時間);
+				}
+			}
 		}
 
 		void エフェクト更新()
@@ -110,216 +198,559 @@ namespace SDX_BSC
 			if (E速度 != 0)
 			{
 				E座標 += E速度;
-				if (E座標 > 10 || E座標 < 0)
+				E反転残り--;
+				if (E反転残り == 0)
 				{
-					if (E反転)
+					if (E反転時間 > 0)
 					{
 						E速度 *= -1;
-						E反転 = false;
-					} else {
+						E反転残り = E反転時間;
+						E反転時間 = 0;
+					}else{
 						E座標 = 0;
 						E速度 = 0;
+									
 					}
 				}
 			}
 
-			int r = 255;
-			int g = 255;
-			int b = 255;
-
-			for (int a = 0; a < 3; a++)
+			if (E光強さ > 0)
 			{
-				if (E光[a] > 0)
-				{
-					E光[a] -= 5;
-					if (E光[a] < 0) { E光[a] = 0; }
-				}
+				E光強さ -= 0.05;
+				if (E光強さ < 0) { E光強さ = 0; }
 			}
+
+			Eダメージ時間--;
+			if (Eダメージ時間 == 0)
+			{
+				Eダメージ = 0;
+			}
+
+		}
+
+		void エフェクト移動(double 移動速度, int 移動時間)
+		{
+			E速度 = 移動速度;
+			E反転残り = 移動時間;
+			E反転時間 = 移動時間;
+		}
+
+		void エフェクト光(Color 光色)
+		{
+			E光色 = 光色;
+			E光強さ = 1.0;
+		}
+
+		void エフェクトダメージ( int ダメージ)
+		{
+			Eダメージ = ダメージ;
+			Eダメージ時間 = 16;
 		}
 
 		//スキルクールダウン処理と発動処理
-		void 戦闘中処理(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		bool 戦闘中処理(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
 		{
-			if (現在HP <= 0) { return; }
+			if (現在HP <= 0) { return false; }
 
 			//スキル発動チェック
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (アクティブスキル[a] == nullptr) { continue; }
+				if (AスキルS[a] == nullptr) { continue; }
 
 				合計クールダウン[a] += クールダウン速度[a];
-				if (スキル待機 <= 0 && 合計クールダウン[a] > アクティブスキル[a]->必要チャージ)
+				if (スキル待機 <= 0 && 合計クールダウン[a] > AスキルS[a]->必要チャージ)
 				{
-					Aスキル使用(アクティブスキル[a], 味方, 敵);
-					合計クールダウン[a] -= アクティブスキル[a]->必要チャージ;
+					合計クールダウン[a] -= AスキルS[a]->必要チャージ;
+					Aスキル使用(AスキルS[a], 味方, 敵);
+
+					bool is全滅 = true;
+					for (auto& it : 敵)
+					{
+						if (it->現在HP > 0)
+						{
+							is全滅 = false;
+							break;
+						}
+					}
+					//敵が全滅したら残りのスキルの使用をスキップ
+					if (is全滅) { return true; }
+
 				}
 			}
-			//バフ時間減少等
-			ダメージバフ時間--;
-			挑発時間--;
+			//バフ持続などの処理
+			for (auto& it : バフ) {
+				if (it.持続 > 0)
+				{
+					it.持続--;
+					if (it.持続 <= 0) { it.効果 = 0.0; }
+				}
+			}
 			スキル待機--;
-			for (auto& it : ステバフ時間){ it--; }
-			for (auto& it : 防御バフ時間) { it--; }
 
-			//エフェクト更新は戦闘中以外も処理してるのでここではやらない
+			//エフェクト更新は戦闘中以外(探索中等)も処理してるのでここではやらない
+
+			return false;//全滅してない場合
 		}
 
 		/*戦闘開始時の初期化処理、パッシブ*/
 		void 戦闘開始(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//初期化
-			for (int a = 0; a < CV::最大Aスキル数; a++)
+			for (int a = 0; a < CV::最大Aスキル数 - 1; a++)
 			{
-				合計クールダウン[a] = Rand::Get(100);
+				合計クールダウン[a] = Rand::Get(50);
 			}
 
-			//バフ時間減少等
-			ダメージバフ時間 = 0;
-			挑発時間 = 0;
-			スキル待機 = 0;
-			for (auto& it : ステバフ時間) { it = 0; }
-			for (auto& it : 防御バフ時間) { it = 0; }
+			//バフ初期化
+			for (auto& it : バフ) { it.効果 = 0; it.持続 = 0; }
 
 			//パッシブ効果の計算
 			Pスキル条件チェック(PSkillTime::戦闘開始時, nullptr, 味方, 敵);
 		}
 
-		/*戦闘後処理、パッシブ*/
-		void 戦闘終了(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		Fighter* is挑発敵(std::vector<Fighter*>& 敵 , int 範囲 ,bool is前)
 		{
+			if (範囲 > (int)敵.size()) { 範囲 = (int)敵.size(); }
 
+			if (is前)
+			{
+				for (int a = 0; a < 範囲; a++)
+				{
+					if (敵[a]->バフ[BuffType::挑発].効果 > 0) { return 敵[a]; }
+				}
+			} else {
+				for (int a = (int)敵.size() -1 ; a >= (int)敵.size() - 範囲; a--)
+				{
+					if (敵[a]->バフ[BuffType::挑発].効果 > 0) { return 敵[a]; }
+				}
+			}
+
+			return nullptr;
 		}
 
-
-		std::vector<Fighter*> 対象選択(const ASkillEffect Aスキル, std::vector<Fighter*>&味方,std::vector<Fighter*> &敵)
+		void 対象選択(const ASkillEffect &Aスキル, std::vector<Fighter*>& 対象, std::vector<Fighter*>&味方,std::vector<Fighter*> &敵)
 		{
-			std::vector<Fighter*> 対象;
 			//攻撃or回復対象を選択
+			static std::vector<Fighter*> 生存リスト;
+			Fighter* 暫定対象 = nullptr;
+			double 暫定数値;
+			int max = 0;
 
-			return 対象;
+			switch (Aスキル.対象)
+			{
+			case ASkillTarget::自分:
+				Hit数+= Aスキル.効果回数;
+				break;
+			case ASkillTarget::味方弱者:
+				暫定数値 = 100;
+				for (auto& it : 味方)
+				{
+					double HP割合 = (double)it->現在HP / it->最大HP;
+					if (暫定数値 > HP割合)
+					{
+						暫定対象 = it;
+						暫定数値 = HP割合;
+					}
+				}
+				if (暫定対象 != nullptr) { 暫定対象->Hit数 += Aスキル.効果回数; }
+				break;
+			case ASkillTarget::味方全員:
+				for (auto& it : 味方)
+				{
+					it->Hit数 += Aスキル.効果回数;
+				}
+				break;
+			case ASkillTarget::敵ランダム:
+				Get生存リスト(生存リスト, 敵);
+				暫定対象 = is挑発敵(生存リスト,99,true);
+
+				if (暫定対象 != nullptr)
+				{
+					暫定対象->Hit数 += Aスキル.効果回数;
+					break;
+				}
+
+				for (int a = 0; a < Aスキル.効果回数; a++)
+				{
+					生存リスト[Rand::Get((int)生存リスト.size() - 1)]->Hit数++;
+				}
+			case ASkillTarget::敵前ランダム:
+				Get生存リスト(生存リスト, 敵);
+				暫定対象 = is挑発敵(生存リスト, Aスキル.範囲,true);
+
+				if (暫定対象 != nullptr)
+				{
+					暫定対象->Hit数 += Aスキル.効果回数;
+					break;
+				}
+
+				max = std::min(Aスキル.範囲, (int)生存リスト.size()) - 1;
+				for (int a = 0; a < Aスキル.効果回数; a++)
+				{
+					生存リスト[Rand::Get(max)]->Hit数++;
+				}
+				break;
+			case ASkillTarget::敵後ランダム:
+				Get生存リスト(生存リスト, 敵);
+				暫定対象 = is挑発敵(生存リスト,Aスキル.範囲,false);
+
+				if (暫定対象 != nullptr)
+				{
+					暫定対象->Hit数 += Aスキル.効果回数;
+					break;
+				}
+
+				max = std::min(Aスキル.範囲, (int)生存リスト.size()) - 1;
+				for (int a = 0; a < Aスキル.効果回数; a++)
+				{
+					生存リスト[((int)生存リスト.size() - 1) - Rand::Get(max)]->Hit数++;
+				}
+				break;
+			case ASkillTarget::敵前:
+				Get生存リスト(生存リスト, 敵);
+				for (int a = 0 ; a < (int)生存リスト.size() ; a++)
+				{
+					if (a > Aスキル.範囲) { break; }
+					生存リスト[a]->Hit数+= Aスキル.効果回数;
+				}
+				break;
+			case ASkillTarget::敵後:
+				Get生存リスト(生存リスト, 敵);
+				for (int a = (int)敵.size() - 1; a >= 0; a--)
+				{
+					if (a < (int)生存リスト.size() - Aスキル.範囲 ) { break; }
+					生存リスト[a]->Hit数+= Aスキル.効果回数;
+				}
+				break;
+			case ASkillTarget::敵全:
+				for (auto& it : 敵)
+				{
+					it->Hit数+= Aスキル.効果回数;
+				}
+				break;
+			case ASkillTarget::敵弱者:
+				//挑発チェック
+				Get生存リスト(生存リスト, 敵);
+				暫定対象 = is挑発敵(生存リスト,99,true);
+
+				if (暫定対象 == nullptr)
+				{
+					暫定数値 = 100;
+					for (auto& it : 生存リスト)
+					{
+						double HP割合 = it->現在HP / it->最大HP;
+						if (暫定数値 > HP割合)
+						{
+							暫定対象 = it;
+							暫定数値 = HP割合;
+						}
+					}
+				}
+
+				暫定対象->Hit数+= Aスキル.効果回数;
+
+				break;
+			}
+	
+			for (auto& it : 敵)
+			{
+				if (it->Hit数 > 0) {
+					対象.push_back(it); 
+				}
+			}
+			for (auto& it : 味方)
+			{
+				if (it->Hit数 > 0) { 
+					対象.push_back(it); 
+				}
+			}
 		}
 
 		void Aスキル使用(const ActiveSkill* スキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//攻撃エフェクト
-			E速度 = 10;
-			E座標 = 0;
-			E反転 = false;
+			エフェクト移動(10, 2);
 
 			//スキル処理
 			ASkillEffect ase(スキル);
 			//パッシブ補正、威力命中補正、追加効果追加等
 			Pスキル条件チェック(PSkillTime::スキル使用時, &ase, 味方, 敵);
+			if (ase.種類 == ASkillType::回復)
+			{
+				//MSound::効果音[SE::回復].Play();
+				Pスキル条件チェック(PSkillTime::回復スキル使用時, &ase, 味方, 敵);
+			}
+			else if (ase.種類 == ASkillType::物理 || ase.種類 == ASkillType::魔法)
+			{
+				//MSound::効果音[SE::攻撃].Play();
+				Pスキル条件チェック(PSkillTime::攻撃スキル使用時, &ase, 味方, 敵);
+			}
+			else if (ase.種類 == ASkillType::バフ || ase.種類 == ASkillType::デバフ)
+			{
+				//MSound::効果音[SE::補助].Play();
+				Pスキル条件チェック(PSkillTime::補助スキル使用時, &ase, 味方, 敵);
+			}
 
 			//対象選択
-			std::vector<Fighter*> 対象 = 対象選択(ase, 味方, 敵);
+			std::vector<Fighter*> 対象;
+			対象.reserve(6);
+			対象.clear();
+
+			対象選択(ase,対象, 味方, 敵);
 
 			//効果発動
 			for (auto& it : 対象)
 			{
-				it->スキル受け(ase, this , 味方 , 敵);
+				it->スキル受け(ase, this, 味方, 敵);
 			}
 
 			スキル待機 = 10;
 		}
 
-
 		/*攻撃オブジェクトを引数に取る、攻撃や回復を受けた側の処理*/
 		void スキル受け(ASkillEffect& Aスキル,Fighter* スキル使用者,std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
 		{
-			//威力マイナスなら回復、+なら攻撃スキル
+			int 合計ダメージ = 0;
+			bool is回避 = true;
+			bool isバフ = false;
+			bool isデバフ = false;
 
-			//Pスキル処理
-			Pスキル条件チェック(PSkillTime::回復した時, &Aスキル, 味方, 敵);
-			Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
-			Pスキル条件チェック(PSkillTime::回避した時, &Aスキル, 味方, 敵);
+			//Hit数だけ命中判定
+			for (int a = 0; a < Hit数; a++)
+			{
+				//命中判定
+				if ( !Rand::Coin(Aスキル.命中 - Get回避())) { continue; }
+				is回避 = false;
 
-			//上限下限、超過HPチェック
+				合計ダメージ += (int)(Aスキル.威力 + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.依存ステータス));
 
-			//気絶チェック
+				//バフ,デバフ処理
 
-			//ダメージ or 回復 or 回避エフェクト
+				//continue;
 
+				for (int b = 0; b < (int)BuffType::COUNT; b++)
+				{
+					auto t = ASkillEffectType(b);
+
+					if (Aスキル.追加確率[t] <= 0 || !Rand::Coin(Aスキル.追加確率[t])) { continue; }
+
+					バフ使用(t, Aスキル.追加効果量[t] * Aスキル.追加効果補正, int(Aスキル.追加持続[t] * Aスキル.追加持続補正));
+					isバフ = (Aスキル.追加効果量[t] > 0);
+					isデバフ = (Aスキル.追加効果量[t] < 0);
+
+					if (isバフ)
+					{
+						E光色 = Color(0, 0, 255);
+						E光強さ = 1.0;
+					}
+					if(isデバフ){
+						E光色 = Color(128, 0, 128);
+						E光強さ = 1.0;
+					}
+				}
+			}
+
+			//ダメージ、回復処理
+			if (合計ダメージ > 0)
+			{
+				switch (Aスキル.種類)
+				{
+				case ASkillType::物理:
+					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::物理) + 50.0) * (1.0 - バフ[BuffType::受ダメ軽減].効果));
+					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
+					現在HP -= 合計ダメージ;
+					受ダメージログ += 合計ダメージ;
+					スキル使用者->与ダメージログ += 合計ダメージ;
+					Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
+					//エフェクト
+					エフェクト光( Color(255, 0, 0) );
+					エフェクト移動(-5, 2);
+					エフェクトダメージ(合計ダメージ);
+					break;
+				case ASkillType::魔法:
+					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::魔法) + 50.0) * (1.0 - バフ[BuffType::受ダメ軽減].効果));
+					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
+					現在HP -= 合計ダメージ;
+					受ダメージログ += 合計ダメージ;
+					スキル使用者->与ダメージログ += 合計ダメージ;
+					Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
+					//エフェクト
+					エフェクト光(Color(255, 0, 0));
+					エフェクト移動(-5, 2);
+					エフェクトダメージ(合計ダメージ);
+					break;
+				case ASkillType::回復:
+					if (合計ダメージ + 現在HP > 最大HP) { 合計ダメージ = 最大HP - 現在HP; }
+					現在HP += 合計ダメージ;
+					スキル使用者->回復ログ += 合計ダメージ;
+					Pスキル条件チェック(PSkillTime::回復を受けた時, &Aスキル, 味方, 敵);
+					//エフェクト
+					エフェクト光(Color(0, 255, 0));
+					エフェクトダメージ(-合計ダメージ);
+					break;
+				}
+			}
+			else if (is回避)
+			{
+				エフェクトダメージ(0);
+				Pスキル条件チェック(PSkillTime::回避した時, &Aスキル, 味方, 敵);
+			}
+
+			if (現在HP <= 0)
+			{
+				気絶();
+			}
+
+			Hit数 = 0;
 		}
 
-		/*パッシブ処理*/
-		virtual void 所持スキル計算(std::vector<Fighter*> &味方) = 0;
-
+		//条件をチェックして、条件にあってるならPスキル処理
 		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
-			for (auto &it : 発動パッシブ)
+			for (auto &it : PスキルS)
 			{
-				if (it->タイミング != タイミング) { return; }
+				if (it->タイミング != タイミング) { continue; }
 				if (Aスキル != nullptr)
 				{
-					if( it->Aスキル種 != Aスキル->種類) { return; }
-					if ( it->装備種 != ItemType::すべて && it->装備種 != Aスキル->装備種) { return; }
-					if (it->is奥義 == true && Aスキル->is奥義 == false) { return; }
-					if (it->系統 != Aスキル->系統) { return; }
-					if (it->発動率 <= 0.0 || !Rand::Coin(it->発動率)) { return; }
+					if( it->Aスキル種 != Aスキル->種類) { continue; }
+					if ( it->装備種 != ItemType::すべて && it->装備種 != Aスキル->装備種) { continue; }
+					if (it->is奥義 == true && Aスキル->is奥義 == false) { continue; }
+					if (it->発動率 <= 0.0 || !Rand::Coin(it->発動率)) { continue; }
 				}
-
 				int num = (int)敵.size();
 
 				switch (it->条件)
 				{
 				case PSkillIf::HP一定以上:
-					if (現在HP / 最大HP < it->条件値) { return; }
+					if (現在HP / 最大HP < it->条件値) { continue; }
 					break;
 				case PSkillIf::HP一定以下:
-					if (現在HP / 最大HP > it->条件値) { return; }
+					if (現在HP / 最大HP > it->条件値) { continue; }
 					break;
 				case PSkillIf::敵の数が一定以下:
-					for (int a = 0; a < 敵.size(); a++)
+					for (int a = 0; a < (int)敵.size(); a++)
 					{
 						if (敵[a]->現在HP <= 0) { num--; }
 					}
-					if (num > it->条件値) { return; }
+					if (num > it->条件値) { continue; }
 					break;
 				case PSkillIf::敵の数が一定以上:
-					for (int a = 0; a < 敵.size(); a++)
+					for (int a = 0; a < (int)敵.size(); a++)
 					{
 						if (敵[a]->現在HP <= 0) { num--; }
 					}
-					if (num < it->条件値) { return; }
+					if (num < it->条件値) { continue; }
 					break;
 				}
 	
-				Pスキル処理(it, Aスキル, 味方, 敵);
+				if (タイミング == PSkillTime::常時 && it->対象 == PSkillTarget::味方全員 && 味方.size() >0)
+				{
+					for (auto& itB : 味方)
+					{
+						itB->Pスキル処理(it, Aスキル, 味方, 敵);
+					}
+				} else {
+					Pスキル処理(it, Aスキル, 味方, 敵);
+				}
+
 			}
 		}
 
-		void Pスキル処理(PassiveSkill* スキル,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void Pスキル処理(PassiveSkill* Pスキル,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//とりあえずβのだけ実装
-			switch (スキル->効果)
+			switch (Pスキル->効果)
 			{
+			//基礎限定効果
 			case PSkillEffect::HP増加:
+				最大HP += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::STR増加:
+				補正ステ[StatusType::Str] += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::INT増加:
+				補正ステ[StatusType::Int] += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::DEX増加:
+				補正ステ[StatusType::Dex] += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::物防増加:
+				補正防御[DamageType::物理] += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::魔防増加:
+				補正防御[DamageType::魔法] += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::命中増加:
+				補正命中 += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::回避増加:
-
-			case PSkillEffect::収集量増加:
-			case PSkillEffect::収集ランク増加:
-			case PSkillEffect::剥取量増加:
-			case PSkillEffect::剥取ランク増加:
-
-			case PSkillEffect::スキル威力増減:
-			case PSkillEffect::スキル効果増減:
+				補正回避 += (int)Pスキル->効果量;
+				break;
 			case PSkillEffect::スキルCT増減:
-			case PSkillEffect::スキル持続増減:
+				for (int a = 0; a < CV::最大Aスキル数; a++)
+				{
+					if (Pスキル->Aスキル種 != AスキルS[a]->種類) { continue; }
+					if (Pスキル->装備種 != ItemType::すべて && Pスキル->装備種 != AスキルS[a]->装備種) { continue; }
+					if (Pスキル->is奥義 == true && AスキルS[a]->is奥義 == false) { continue; }
+					クールダウン速度[a] *= 1.0 + Pスキル->効果量;
+				}
+				break;
+			//基礎非戦闘
+			case PSkillEffect::収集量増加:
+				素材収集量 += Pスキル->効果量;
+				break;
+			case PSkillEffect::収集ランク増加:
+				素材収集ランク += Pスキル->効果量;
+				break;
+			case PSkillEffect::剥取量増加:
+				素材剥取量 += Pスキル->効果量;
+				break;
+			case PSkillEffect::剥取ランク増加:
+				素材剥取ランク += Pスキル->効果量;
+				break;
 			case PSkillEffect::戦闘後回復:
-
+				戦闘後回復 += Pスキル->効果量;
+				break;
+			//スキル使用時限定
+			case PSkillEffect::スキル威力増減:
+				Aスキル->反映率 *= 1.0 + Pスキル->効果量;
+				break;
+			case PSkillEffect::スキル効果増減:
+				Aスキル->追加効果補正 += Pスキル->効果量;
+				break;
+			case PSkillEffect::スキル持続増減:
+				Aスキル->追加持続補正 += Pスキル->効果量;
+				break;
+			//色んなタイミングで発動可能
 			case PSkillEffect::与ダメージバフ:
+				if (Pスキル->対象 == PSkillTarget::スキル対象)
+				{
+					Aスキル->追加確率[ASkillEffectType::与ダメ増加] = 1.0;
+					Aスキル->追加持続[ASkillEffectType::与ダメ増加] = Pスキル->持続時間;
+					Aスキル->追加効果量[ASkillEffectType::与ダメ増加] = Pスキル->効果量;
+				} else {
+					//自己バフ
+					バフ使用(ASkillEffectType::与ダメ増加, Pスキル->効果量, Pスキル->持続時間);
+				}
+				break;
 			case PSkillEffect::受ダメージバフ:
+				if (Pスキル->対象 == PSkillTarget::スキル対象)
+				{
+					Aスキル->追加確率[ASkillEffectType::受ダメ軽減] = 1.0;
+					Aスキル->追加持続[ASkillEffectType::受ダメ軽減] = Pスキル->持続時間;
+					Aスキル->追加効果量[ASkillEffectType::受ダメ軽減] = Pスキル->効果量;
+				} else {
+					//自己
+					バフ使用(ASkillEffectType::受ダメ軽減, Pスキル->効果量, Pスキル->持続時間);
+				}
+				break;
 			case PSkillEffect::スキルチャージ獲得:
+				for (int a = 0; a < CV::最大Aスキル数; a++)
+				{
+					合計クールダウン[a] += Pスキル->効果量;
+				}
 				break;
 			}
 		}
-
 	};
 }

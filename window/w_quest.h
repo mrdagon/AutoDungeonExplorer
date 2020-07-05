@@ -76,7 +76,7 @@ namespace SDX_BSC
 			gui_objects.clear();
 			依頼.clear();
 
-			for (int a= 0 ; a < Quest::data.size() ; a++ )
+			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
 			{
 				依頼.emplace_back();
 				依頼[a].位置 = { LV(0) , LV(1) + (LV(3) + LV(4)) * a , LV(2) , LV(3) };
@@ -84,7 +84,7 @@ namespace SDX_BSC
 				依頼[a].SetHelp(Quest::data[a].説明);
 			}
 
-			for (int a = 0; a < 依頼.size(); a++)
+			for (int a = 0; a < (int)依頼.size(); a++)
 			{
 				gui_objects.push_back(&依頼[a]);
 			}

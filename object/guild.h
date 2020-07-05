@@ -18,20 +18,25 @@ namespace SDX_BSC
 		private:
 
 		public:
-			Party()
+			Party():
+				isボス戦(false)
 			{
 				メンバー.resize(CV::パーティ人数);
 
-				for (int a = 0; a < CV::パーティ人数; a++)
+				味方.reserve(6);
+				敵.reserve(6);
+				魔物.reserve(6);
+
+				for (auto& it : メンバー)
 				{
-					メンバー[a] = nullptr;
+					it = nullptr;
 				}
 			}
 
 			int ギルドID;
 
-			Dungeon* 探索先;
-			OrderType 探索指示;
+			Dungeon* 探索先 = nullptr;
+			OrderType 探索指示 = OrderType::探索;
 
 			std::vector<Monster> 魔物;
 			std::vector<Warker*> メンバー;
@@ -41,13 +46,22 @@ namespace SDX_BSC
 
 			EnumArray<int[CV::最大素材ランク], CraftType> 獲得素材;
 			double 獲得経験値;
+			int 獲得財宝数;
+			int 獲得地図数;
+			int 撃破ボス数;
 
 			ExplorerType 探索状態 = ExplorerType::編成中;
-			int 待ち時間;//移動、戦闘後、素材回収中などの待ち時間
+			int 待ち時間 = 0;//移動、戦闘後、素材回収中などの待ち時間
 
-			bool isボス戦;
+			bool isボス戦 = false;
 
-			int 部屋ID;
+			int 部屋ID = 0;
+
+			//演出用
+			int 移動量 = 0;
+			int 暗転 = 0;
+			Image* 発見物 = nullptr;//地図、宝箱、鉱脈、木
+			int 発見物X座標 = 0;
 
 			void 基礎ステ再計算()
 			{
@@ -57,74 +71,66 @@ namespace SDX_BSC
 					if (メンバー[a] == nullptr) { continue; }
 
 					味方.push_back(メンバー[a]);
-					メンバー[a]->発動パッシブ.clear();
+					メンバー[a]->PスキルS.clear();
 				}
 
 				//パーティスキルや装備品スキル等の計算
-				for (int a = 0; a < 味方.size(); a++)
+				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->所持スキル計算(味方);
+					味方[a]->基礎ステータス計算();
 				}
-
-				for (int a = 0; a < 味方.size(); a++)
+				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->基礎ステータス計算(味方, 敵);
+					味方[a]->基礎Pスキル補正(味方, 敵);
 				}
 			}
 
 			void 探索開始()
 			{
+				暗転 = 255;
+				移動量 = 0;
+				発見物X座標 = 0;
+				発見物 = nullptr;
+
 				探索状態 = ExplorerType::移動中;
 				待ち時間 = 60;
 
 				//獲得素材数リセット
-				for (auto& itA : 獲得素材)
-				{
-					for (auto& itB : itA)
-					{
-						itB = 0;
-					}
-				}
+				獲得経験値 = 0;
+				for (auto& itA : 獲得素材){	for (auto& itB : itA){itB = 0;}}
+				獲得財宝数 = 0;
+				獲得地図数 = 0;
+				撃破ボス数 = 0;
 
 				//パーティメンバーの体力回復、ステータス計算
 				基礎ステ再計算();
 
-				
-
-				//探索開始時のスキルチェック
+				//０人パーティは全滅扱いにする
 				if (味方.size() == 0) { 探索状態 = ExplorerType::全滅中; }
 			}
 
-			void 探索終了(Guild* 親)
+			void 探索終了()
 			{
 				//素材獲得
 				for( int b = 0; b < (int)CraftType::COUNT; b++)
 				{
 					for (int a = 0; a < CV::最大素材ランク; a++)
 					{
-						親->素材数[CraftType(b)][a] += 獲得素材[CraftType(b)][a];
-						獲得素材[CraftType(b)][a] = 0;
+						Guild::P->素材数[CraftType(b)][a] += 獲得素材[CraftType(b)][a];
 					}
 				}
-				//経験値獲得とレベルアップ判定
-
-				//レベルアップ
+				//経験値獲得とレベルアップ
 				for (int a = 0; a < CV::パーティ人数; a++)
 				{
 					if (メンバー[a] == nullptr) { continue; }
 
-					while (メンバー[a]->レベルアップ()) {}
+					メンバー[a]->経験値 += 獲得経験値 * Guild::P->戦闘経験補正;
+					メンバー[a]->レベルアップ判定();
 				}
 			}
 
-			void 探索処理(Guild* 親)
+			void 探索処理()
 			{
-				//探索終了判定
-				if ( Game::時間 == Game::終業時間 )
-				{
-					探索終了(親);
-				}
-
 				//エフェクト更新
 				for (auto& it : 味方)
 				{
@@ -135,6 +141,16 @@ namespace SDX_BSC
 					it->エフェクト更新();
 				}
 
+				//探索終了判定
+				if (Game::時間 == Game::終業時間)
+				{
+					撤退開始();
+				}
+				if (Game::時間 == Game::起床時間)
+				{
+					探索状態 = ExplorerType::編成中;
+				}
+
 				//待機中(収集中、戦闘後待機、宝部屋etc)				
 				switch (探索状態)
 				{
@@ -143,6 +159,7 @@ namespace SDX_BSC
 					break;
 					case ExplorerType::移動中:
 						待ち時間--;
+						移動量 += 2;
 						if (待ち時間 == 0){ 部屋選び(); }
 					break;
 					case ExplorerType::収集中:
@@ -152,8 +169,10 @@ namespace SDX_BSC
 						撤退処理();
 					break;
 					case ExplorerType::全滅中:
-						//特に処理しない
-						break;
+						if (暗転 > 128)
+						{
+							暗転--;
+						}
 					case ExplorerType::リザルト中:
 						//特に処理しない
 						break;
@@ -164,10 +183,11 @@ namespace SDX_BSC
 			void 部屋選び()
 			{
 				std::vector<int> room_deck;
+				room_deck.clear();
 
 				switch (探索指示)
 				{
-				case OrderType::探索://50%で未探索から探索	
+				case OrderType::探索:
 					Set部屋抽選リスト(room_deck,false);
 					break;
 				case OrderType::ボス://発見済みならボス戦へ
@@ -182,12 +202,33 @@ namespace SDX_BSC
 
 			void Set部屋抽選リスト(std::vector<int>& room_deck , bool isボス戦)
 			{
-				for (int a = 0; a < 探索先->部屋数; a++)
+				if ( 探索先->isボス発見 && 探索先->部屋[0].種類 == RoomType::ボス && isボス戦 && !探索先->部屋[0].is入場 )
 				{
-					if (探索先->部屋[a].種類 != RoomType::ボス)
+					room_deck.push_back(0);
+					return;
+				}
+
+				//未探索部屋から抽選
+				if ( Rand::Coin(Guild::P->未開探索) )
+				{
+					for (int a = 1; a < 探索先->部屋数; a++)
 					{
+						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索 ){ continue; }
 						room_deck.push_back(a);
 					}
+				}
+
+				if (room_deck.size() > 0) { return; }
+
+
+				for (int a = 1; a < 探索先->部屋数; a++)
+				{
+					if ( 探索先->部屋[a].is入場 )
+					{
+						continue;
+					}
+
+					room_deck.push_back(a);
 				}
 			}
 
@@ -205,11 +246,12 @@ namespace SDX_BSC
 					break;
 				case RoomType::素材:
 					探索状態 = ExplorerType::収集中;
+					収集開始();
 					break;
 				case RoomType::財宝:
 					探索状態 = ExplorerType::戦闘中;
 					isボス戦 = false;
-					戦闘開始(5);
+					戦闘開始(6);
 					break;
 				case RoomType::地図:
 					探索状態 = ExplorerType::戦闘中;
@@ -219,47 +261,90 @@ namespace SDX_BSC
 				case RoomType::ボス:
 					探索状態 = ExplorerType::戦闘中;
 					isボス戦 = true;
-					戦闘開始(6);
+					戦闘開始(1);
 					break;
 				}
 
 			}
 
-			//探索状態別処理
-			void 戦闘処理()
+			//素材収集関係
+			void 収集開始()
 			{
-				//全員の全スキルのCT計算
+				//素材獲得処理
+				int 素材数 = 1;
+				int ランク = 探索先->ID / 4 + 探索先->ランク;
+
+				double 高ランク率 = 0;
+				double 素材数増加率 = 0;
 
 				for (auto& it : 味方)
 				{
-					it->戦闘中処理(味方,敵);
+					高ランク率 += it->素材収集ランク;
+					素材数増加率 += it->素材収集量;
 				}
 
-				for (auto& it : 敵)
+				if (Rand::Coin(素材数増加率))
 				{
-					it->戦闘中処理(敵,味方);
+					素材数++;
 				}
 
-				戦闘終了判定();
+				if (Rand::Coin(0.5))
+				{
+					素材獲得(CraftType::木工, 素材数, ランク, 高ランク率);
+				} else {
+					素材獲得(CraftType::鍛造, 素材数, ランク, 高ランク率);
+				}
+
+				部屋探索完了();
+				探索状態 = ExplorerType::収集中;
+				待ち時間 = 120;
+
+				発見物X座標 = 120;
 			}
 
 			void 収集処理()
 			{
-				//素材獲得処理
-				獲得素材[CraftType::木工][探索先->ランク]++;
-				獲得素材[CraftType::鍛造][探索先->ランク]++;
+				if (発見物X座標 > 0)
+				{
+					移動量 += 2;
+					発見物X座標-= 2;
+				}
 
-				獲得素材[CraftType::鍛造][探索先->ランク]++;
-				獲得素材[CraftType::木工][探索先->ランク]++;
-
-				探索先->部屋[部屋ID].is探索 = true;
-				探索先->部屋[部屋ID].is入場 = false;
-				探索先->探索率計算();
-				探索状態 = ExplorerType::移動中;
-				待ち時間 = 60;
+				待ち時間--;
+				if (待ち時間 == 0)
+				{
+					発見物 = nullptr;
+					探索状態 = ExplorerType::移動中;
+					待ち時間 = 60;
+				}
 			}
-			//戦闘関係
 
+			void 素材獲得(CraftType 素材種,int 素材数,int ランク,double ランク上昇率)
+			{
+				int 基礎ランク = ランク;
+
+				for (int a = 0; a < 素材数; a++)
+				{
+					if (Rand::Coin(double(探索先->ID % 4) / 4.0))
+					{
+						ランク++;
+					}
+					if (Rand::Coin(ランク上昇率))
+					{
+						ランク++;
+					}
+					ランク = std::min(ランク, CV::最大素材ランク - 1);
+
+					獲得素材[素材種][ランク]++;
+					Guild::P->is素材発見[素材種][ランク] = true;
+
+					ランク = 基礎ランク;
+				}
+
+				if (発見物 == nullptr) { 発見物 = &MIcon::素材[素材種]; }
+			}
+
+			//戦闘関係
 			void 戦闘開始(int 敵数)
 			{
 				敵.clear();
@@ -269,20 +354,18 @@ namespace SDX_BSC
 				if (isボス戦 == true)
 				{
 					敵数 = 1;
-					敵.resize(敵数);
 					魔物.emplace_back(探索先->ボスモンスター, 探索先->Lv, true);
 				}
 				else
 				{
-					敵.resize(敵数);
-
 					for (int a = 0; a < 敵数; a++)
 					{
 						int mn = Rand::Get(2);
 						魔物.emplace_back(探索先->雑魚モンスター[mn], 探索先->Lv, false);
-
 					}
 				}
+
+				敵.resize(敵数);
 
 				for (int a = 0; a < 敵数; a++)
 				{
@@ -301,13 +384,37 @@ namespace SDX_BSC
 				}
 			}
 
+			void 戦闘処理()
+			{
+				//全員の全スキルのCT計算
+
+				for (auto& it : 味方)
+				{
+					if (it->戦闘中処理(味方, 敵) == true)
+					{
+						戦闘終了判定();
+						return;
+					}
+				}
+
+				for (auto& it : 敵)
+				{
+					if (it->戦闘中処理(敵, 味方) == true)
+					{
+						戦闘終了判定();
+						return;
+					}
+				}
+
+			}
+
 			bool 戦闘終了判定()
 			{
 				//味方全滅or逃走
 				int is生存 = false;
 				for (auto& it : 味方)
 				{
-					if (it->現在HP <= 0)
+					if (it->現在HP > 0)
 					{
 						is生存 = true;
 					}
@@ -316,13 +423,14 @@ namespace SDX_BSC
 				if ( !is生存 )
 				{
 					戦闘敗北();
+					探索先->部屋[部屋ID].is入場 = false;
 					return true;
 				}
 				//敵全滅
 				is生存 = false;
 				for (auto& it : 敵)
 				{
-					if (it->現在HP <= 0)
+					if (it->現在HP > 0)
 					{
 						is生存 = true;
 					}
@@ -331,22 +439,33 @@ namespace SDX_BSC
 				if ( !is生存 )
 				{
 					戦闘勝利();
+					探索先->部屋[部屋ID].is入場 = false;
 					return true;
 				}
-
-				探索先->部屋[部屋ID].is入場 = false;
 
 				return false;
 			}
 
 			void 戦闘勝利()
 			{
+				//クエスト処理
+				Guild::P->クエスト進行(QuestType::雑魚討伐, (int)敵.size());
+
+				//特殊部屋攻略
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ボス:
 					探索先->isボス生存 = false;
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
-					財宝獲得();
+					撃破ボス数++;
+					Guild::P->総討伐++;
+					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
+					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
+					EventLog::Add(0, Game::日付, LogDetailType::ボス討伐, 探索先->ID);
+					if (探索先->部屋[部屋ID].地図 < 0)
+					{
+						財宝獲得();
+					}
 					break;
 				case RoomType::地図:
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
@@ -358,14 +477,7 @@ namespace SDX_BSC
 				}
 
 				地図発見();
-				探索先->部屋[部屋ID].is探索 = true;
-				探索先->探索率計算();
-
-				//戦闘後のパッシブ処理
-				for (int a = 0; a < 味方.size(); a++)
-				{
-					味方[a]->戦闘終了(味方, 敵);
-				}
+				部屋探索完了();
 
 				//経験値獲得
 				for (auto& it : 魔物)
@@ -374,50 +486,141 @@ namespace SDX_BSC
 				}
 
 				//体力回復
-				for (int a = 0; a < 味方.size(); a++)
+				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->現在HP += 1;
+					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
+					味方[a]->現在HP = std::min(味方[a]->現在HP , 味方[a]->最大HP);
+					味方[a]->Eダメージ = -(int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
+					味方[a]->Eダメージ時間 = 16;
 				}
 
 				//素材獲得処理
-				獲得素材[CraftType::裁縫][探索先->ランク]++;
-				獲得素材[CraftType::魔術][探索先->ランク]++;
-				探索先->部屋[部屋ID].is入場 = false;
-				探索状態 = ExplorerType::移動中;
+				int 素材数 = 1;
+				int ランク = 探索先->ID / 4 + 探索先->ランク;//Lvx 10%でランク+1
+
+				double 高ランク率 = 0;
+				double 素材数増加率 = 0;
+
+				for (auto& it : 味方)
+				{
+					高ランク率 += it->素材剥取ランク;
+					素材数増加率 += it->素材剥取量;
+				}
+
+				if (Rand::Coin(素材数増加率))
+				{
+					素材数++;
+				}
+
+				if (Rand::Coin(0.5))
+				{
+					素材獲得(CraftType::裁縫, 素材数, ランク, 高ランク率);
+				} else {			
+					素材獲得(CraftType::魔術, 素材数, ランク, 高ランク率);
+				}
+
+				敵.clear();
+				魔物.clear();
+				探索状態 = ExplorerType::収集中;
 				待ち時間 = 60;
 			}
 
 			void 戦闘敗北()
 			{
+				int ザコ討伐数 = 0;
+				for (auto& it : 敵)
+				{
+					ザコ討伐数++;
+				}
+				Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
+
 
 				探索先->部屋[部屋ID].is入場 = false;
 				探索状態 = ExplorerType::全滅中;
+				MSound::効果音[SE::全滅].Play();
+				Guild::P->総全滅++;
 			}
 
 			void 地図発見()
 			{
 				if (探索先->部屋[部屋ID].地図 <= 0) { return; }
 
-				Dungeon::data[探索先->部屋[部屋ID].地図].is発見 = true;
-				MSound::効果音[SE::地図発見].Play();
+				探索先->発見地図++;
+				発見物 = &MIcon::アイコン[IconType::地図];
+				獲得地図数++;
+				if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
+				{
+					Dungeon::data[探索先->部屋[部屋ID].地図].is発見 = true;
+					MSound::効果音[SE::地図発見].Play();
+					Guild::P->総地図++;
+					Guild::P->クエスト進行(QuestType::ダンジョン発見, 探索先->ID);
+					EventLog::Add(0, Game::日付, LogDetailType::地図発見, 探索先->ID);
+				}
+
+				探索先->部屋[部屋ID].地図 = -1;
 			}
 
 			void 財宝獲得()
 			{
-
+				探索先->発見財宝++;
+				獲得財宝数++;
+				発見物 = &MIcon::アイコン[IconType::宝箱];
 			}
 
-			//
 			void 撤退開始()
 			{
+				if (探索状態 == ExplorerType::戦闘中)
+				{
+					int ザコ討伐数 = 0;
+					for (auto& it : 敵)
+					{
+						if (it->現在HP <= 0)
+						{
+							ザコ討伐数++;
+						}
+					}
+
+					Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
+
+					//倒した敵の分だけ素材獲得
+				} else {
+					魔物.clear();
+					敵.clear();
+				}
+
+				for (auto& it : 味方)
+				{
+					if (it->現在HP <= 0) { continue; }
+					it->エフェクト移動(-3, 10000);
+				}
+
 				探索状態 = ExplorerType::撤退中;
 				探索先->部屋[部屋ID].is入場 = false;
-				撤退開始();
+				待ち時間 = 120;
 			}
 
 			void 撤退処理()
 			{
+				待ち時間--;
+				if (待ち時間 == 0)
+				{
+					探索終了();
+					探索状態 = ExplorerType::リザルト中;
+				}
+			}
 
+			void 部屋探索完了()
+			{
+				探索先->部屋[部屋ID].is探索 = true;
+				探索先->部屋[部屋ID].is入場 = false;
+				探索先->探索率計算();
+
+				if (探索先->探索率 > Game::ボス発見探索率 && !探索先->isボス発見)
+				{
+					MSound::効果音[SE::ボス発見].Play();
+					探索先->isボス発見 = true;
+					EventLog::Add(0, Game::日付, LogDetailType::ボス発見, 探索先->ID);
+				}
 			}
 		};
 
@@ -444,15 +647,16 @@ namespace SDX_BSC
 
 		int 集客力 = 100;//10で割った数値が一日の来客期待値
 
+		//経営戦術効果
 		double 集客補正 = 1.0;
 		double 価格補正 = 1.0;
 
 		double 戦闘経験補正 = 1.0;
 		double 技術経験補正 = 1.0;
 
-		double 素材節約 = 0.0;//確率
+		double 素材節約 = 0.0;//確率で素材消費0
 
-		double 未開探索 = 0;//未探索部屋抽選補正
+		double 未開探索 = 0.5;//未探索部屋抽選補正
 
 		//製造関連
 		EnumArray<double, CraftType> 必要製造力;
@@ -552,7 +756,7 @@ namespace SDX_BSC
 			{
 				for (auto& it : 製造メンバー[CraftType(a)])
 				{
-					it->表示ステ計算();
+					it->基礎ステータス計算();
 					合計製造力[CraftType(a)] += it->製造力;
 				}
 			}
@@ -594,14 +798,14 @@ namespace SDX_BSC
 
 			//技術力以下で一番ランクが高い素材を選択
 
-			for (int a = 製造Lv[種類]; a >= 0; a--)
+			for (int a = 製造Lv[種類]-1; a >= 0; a--)
 			{
 				if (素材数[種類][a] >= 要求数)
 				{
 					必要製造力[種類] = 10000 + 素材ランク * 2000;
 					素材ランク = a + 1;
 
-					if (Rand::Get(1.0) >= Guild::P->素材節約)
+					if ( !Rand::Coin( 素材節約 ) )
 					{
 						素材数[種類][a] -= 要求数;
 						総素材 -= 要求数;
@@ -668,6 +872,8 @@ namespace SDX_BSC
 			完成品[種類] = -1;
 			製造進行度[種類] = 0;
 			製造ゲージ色[種類] = !製造ゲージ色[種類];
+
+			クエスト進行(QuestType::装備製造, 1);
 		}
 
 		void 探索開始()
@@ -683,7 +889,7 @@ namespace SDX_BSC
 		{
 			for (int a = 0; a < 最大パーティ数; a++)
 			{
-				探索パーティ[a].探索処理(this);
+				探索パーティ[a].探索処理();
 			}
 		}
 
@@ -731,6 +937,7 @@ namespace SDX_BSC
 					装備所持数[ギルメン->装備[no]]++;
 					装備所持数[b]--;
 					ギルメン->装備[no] = b;
+					ギルメン->装備スキル更新();
 					break;
 				}
 			}
@@ -764,15 +971,52 @@ namespace SDX_BSC
 					{
 						販売可能数[a]--;
 						装備所持数[a]--;
-						資金 += Item::data[a].値段;
+						資金 += Item::data[a].値段 * 価格補正;
 						総売上 += Item::data[a].値段;
 						総販売++;
+						クエスト進行(QuestType::装備販売, 1);
 						break;
 					}
 				}
 			}
 
 		}
+
+		//クエスト関係
+		void クエスト進行(QuestType クエスト種, int id)
+		{
+			for (auto& it : Quest::data)
+			{
+				if (it.種類 == クエスト種 && !it.is完了 && it.is受注) 
+				{
+					if (it.達成度計算(id)) { クエスト完了(it); }
+				}
+			}
+		}
+
+		void クエスト完了(Quest &クエスト)
+		{
+			MSound::効果音[SE::クエスト完了].Play();
+
+			クエスト.達成度 = クエスト.条件数値;
+			クエスト.is完了 = true;
+			Guild::P->名声 += クエスト.報酬名誉;
+			Guild::P->資金 += クエスト.報酬金;
+
+			for (auto& it : クエスト.次依頼)
+			{
+				if (it >= 0)
+				{
+					Quest::data[it].is受注 = true;
+				}
+			}
+
+			if (クエスト.isメイン)
+			{
+				Game::isメインクエスト = true;
+			}
+		}
+
 	};
 
 	Guild* Guild::P;

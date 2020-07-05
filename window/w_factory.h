@@ -197,7 +197,7 @@ namespace SDX_BSC
 			{
 				CraftType t = (CraftType)b;
 
-				for (int a = 0; a < Guild::P->製造メンバー[t].size(); a++)
+				for (int a = 0; a < (int)Guild::P->製造メンバー[t].size(); a++)
 				{
 					if (Guild::P->製造メンバー[t][a] == nullptr) { break; }
 
@@ -224,7 +224,7 @@ namespace SDX_BSC
 				//人数に応じてメンバーゾーンのサイズは変動
 				メンバーゾーン[t].位置 = { LV(1) , LV(2)+y , LV(0) - LV(3) , LV(4) + 段数 * LV(5) };
 				
-				for (int a = 0; a < 製造メンバー[t].size(); a++)
+				for (int a = 0; a < (int)製造メンバー[t].size(); a++)
 				{
 					製造メンバー[t][a].位置 = { LV(1) + LV(8) + LV(9) * (a % 列数) , LV(2) + LV(10) + LV(11) * (a / 列数) + y ,LV(12),LV(13) };
 				}
@@ -236,7 +236,7 @@ namespace SDX_BSC
 			{
 				CraftType t = (CraftType)b;
 
-				for (int a = 0; a < 製造メンバー[t].size(); a++)
+				for (int a = 0; a < (int)製造メンバー[t].size(); a++)
 				{
 					gui_objects.push_back(&製造メンバー[t][a]);
 				}
@@ -265,7 +265,7 @@ namespace SDX_BSC
 
 			for (auto& it : 製造メンバー)
 			{
-				for(int a = 0; a < it.size(); a++)
+				for(int a = 0; a < (int)it.size(); a++)
 				{
 					it[a].Draw();
 				}	

@@ -44,15 +44,15 @@ namespace SDX_BSC
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
-			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
-			アクティブスキル[2] = Job::data[job].Aスキル[0];
-			アクティブスキル[3] = Job::data[job].Aスキル[1];
+			AスキルS[0] = Item::data[装備[0]].Aスキル[0];
+			AスキルS[1] = Item::data[装備[0]].Aスキル[1];
+			AスキルS[2] = Job::data[job].Aスキル[0];
+			AスキルS[3] = Job::data[job].Aスキル[1];
 
 			for (int a = 0; a< CV::最大Pスキル数 ;a++)
 			{
-				パッシブスキル[a] = 0;
-				isパッシブスキル習得[a] = false;
+				PスキルID[a] = 0;
+				isPスキル習得[a] = false;
 			}
 
 			//スキルの抽選
@@ -77,7 +77,7 @@ namespace SDX_BSC
 
 					if (r <= 0)
 					{
-						パッシブスキル[a] = b;
+						PスキルID[a] = b;
 						total_rate -= skill_rate[b];
 						skill_rate[b] = 0;
 						break;
@@ -87,22 +87,25 @@ namespace SDX_BSC
 
 			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-				if ( a < 2 || PassiveSkill::data[パッシブスキル[a]].必要SP <= スキルポイント)
+				if ( a < 2 || PassiveSkill::data[PスキルID[a]].必要SP <= スキルポイント)
 				{
-					isパッシブスキル習得[a] = true;
-					スキルポイント -= PassiveSkill::data[パッシブスキル[a]].必要SP;
+					isPスキル習得[a] = true;
+					スキルポイント -= PassiveSkill::data[PスキルID[a]].必要SP;
 				} else {
 					break;
 				}
 			}
 
-			表示ステ計算();
+			static std::vector<Fighter*> 仮メンバー;
+
+			基礎ステータス計算();
+			基礎Pスキル補正(仮メンバー,仮メンバー);
 		}
 
-		void 装備アップデート()
+		void 装備スキル更新()
 		{
-			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
-			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
+			AスキルS[0] = Item::data[装備[0]].Aスキル[0];
+			AスキルS[1] = Item::data[装備[0]].Aスキル[1];
 		}
 
 		bool is特殊人材;//(解雇不可、イベントに絡む等)
@@ -119,12 +122,12 @@ namespace SDX_BSC
 		std::string 名前;
 		UnitImageType 見た目;
 		JobNo ジョブ;
-		int パッシブスキル[CV::最大Pスキル数];
-		bool isパッシブスキル習得[CV::最大Pスキル数];
+		int PスキルID[CV::最大Pスキル数];
+		bool isPスキル習得[CV::最大Pスキル数];
 
 		//●Lvアップ時等更新ステータス
 		int Lv;
-		double 経験値;
+		double 経験値 = 0;
 		int スキルポイント;
 
 		int 製造Lv;
@@ -134,63 +137,59 @@ namespace SDX_BSC
 
 		double 製造力 = 10;
 
+
+		//UI表示用
+		int 探検前Lv;
+		int 探検前経験値;
+		bool isレベルアップ演出;
+		bool isスキル習得演出;
+
 		//●再計算ステータス、戦闘以外
 
 		/*パーティ非所属キャラ用ステータス計算*/
-		double Get経験値獲得率()
+		int Get要求経験値()
 		{
-			int 要求exp = (2 + this->Lv * this->Lv) * CV::要求経験値;
-			return this->経験値 / (要求exp);
+			return (2 + Lv * Lv) * CV::要求経験値;
 		}
 
-		void 表示ステ計算()
+		void レベルアップ判定()
 		{
-			std::vector<Fighter*> 味方;
-			std::vector<Fighter*> 敵;
+			int 要求exp = Get要求経験値();
 
-			味方.push_back(this);
-
-			所持スキル計算(味方);		
-			基礎ステータス計算(味方, 敵);
-		}
-
-		bool レベルアップ()
-		{
-			int 要求exp = (2 + (Lv * Lv) )* CV::要求経験値;
-
-			if (経験値 < 要求exp){ 
-				return false;
+			if ( 要求exp >= 経験値){
+				return;
 			}
+
 			経験値 -= 要求exp;
 			Lv += 1;
 			スキルポイント += 1;
+			isレベルアップ演出 = true;
+
 			//スキル習得チェック
 			for (int a = 0; a < CV::最大Pスキル数 ; a++)
 			{
-				if (isパッシブスキル習得[a] == true){ continue; }
+				if (isPスキル習得[a] == true){ continue; }
 
-				if (PassiveSkill::data[パッシブスキル[a]].必要SP <= スキルポイント)
+				if (PassiveSkill::data[PスキルID[a]].必要SP <= スキルポイント)
 				{
-					isパッシブスキル習得[a] = true;
-					スキルポイント -= PassiveSkill::data[パッシブスキル[a]].必要SP;
+					isスキル習得演出 = true;
+					isPスキル習得[a] = true;
+					スキルポイント -= PassiveSkill::data[PスキルID[a]].必要SP;
 				} else {
 					break;
 				}
 			}
 
-			return true;
+			レベルアップ判定();
 		}
 
-		void 基礎ステータス計算(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		//パッシブ無しの基礎ステータス計算
+		void 基礎ステータス計算()
 		{
-			基礎HP = Job::data[(int)ジョブ].Hp * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Hp + Item::data[装備[1]].追加Hp;
-			基礎ステ[StatusType::Str] = Job::data[(int)ジョブ].ステ[StatusType::Str] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Str + Item::data[装備[1]].追加Str;
-			基礎ステ[StatusType::Dex] = Job::data[(int)ジョブ].ステ[StatusType::Dex] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Dex + Item::data[装備[1]].追加Dex;
-			基礎ステ[StatusType::Int] = Job::data[(int)ジョブ].ステ[StatusType::Int] * (10 + Lv) / 10.0 + Item::data[装備[0]].追加Int + Item::data[装備[1]].追加Int;
-
-			//アクティブスキル更新
-			アクティブスキル[0] = Item::data[装備[0]].Aスキル[0];
-			アクティブスキル[1] = Item::data[装備[0]].Aスキル[1];
+			基礎HP = (int)(Job::data[(int)ジョブ].Hp * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::Str] = Job::data[(int)ジョブ].ステ[StatusType::Str] * (10 + Lv) / 10;
+			基礎ステ[StatusType::Dex] = Job::data[(int)ジョブ].ステ[StatusType::Dex] * (10 + Lv) / 10;
+			基礎ステ[StatusType::Int] = Job::data[(int)ジョブ].ステ[StatusType::Int] * (10 + Lv) / 10;
 
 			基礎防御[DamageType::物理] = Job::data[(int)ジョブ].防御[DamageType::物理];
 			基礎防御[DamageType::魔法] = Job::data[(int)ジョブ].防御[DamageType::魔法];
@@ -198,77 +197,91 @@ namespace SDX_BSC
 			基礎命中 = Job::data[(int)ジョブ].命中;
 			基礎回避 = Job::data[(int)ジョブ].回避;
 
-			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
+			Reset補正ステータス();
 
-			最大HP = 基礎HP;
-			現在HP = 最大HP;
+			for (int a = 0; a < CV::装備部位数; a++)
+			{
+				最大HP += Item::data[装備[a]].追加Hp;
+				補正ステ[StatusType::Str] += Item::data[装備[a]].追加Str;
+				補正ステ[StatusType::Dex] += Item::data[装備[a]].追加Dex;
+				補正ステ[StatusType::Int] += Item::data[装備[a]].追加Int;
 
-			//製造能力(仮)
-			製造力 = 10 + Lv;
-		}
+				補正防御[DamageType::物理] += Item::data[装備[a]].防御[DamageType::物理];
+				補正防御[DamageType::魔法] += Item::data[装備[a]].防御[DamageType::魔法];
 
-		void 所持スキル計算(std::vector<Fighter*> &味方)
-		{
-			std::vector<int> ps;
-			//習得スキル
+				補正命中 += Item::data[装備[a]].命中;
+				補正回避 += Item::data[装備[a]].回避;
+			}
+
+			for (int a = 0; a < CV::最大Aスキル数; a++)
+			{
+				クールダウン速度[a] = 1;
+				合計クールダウン[a] = 0;
+			}
+
+			//PスキルSの更新
+			PスキルS.clear();
+			//習得済みパッシブ
 			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-				if (isパッシブスキル習得[a] == true && パッシブスキル[a] > 0)
+				if ( isPスキル習得[a] == true )
 				{
-					ps.push_back(パッシブスキル[a]);
+					PスキルS.push_back( &PassiveSkill::data[PスキルID[a]] );
 				}
 			}
 
-			//パッシブを追加
-			for (auto& no : ps)
+			//装備品パッシブ
+			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				switch (PassiveSkill::data[no].対象)
+				for ( auto& it : Item::data[装備[a]].Pスキル )
 				{
-				case PSkillTarget::自分:
-				case PSkillTarget::敵単体:
-				case PSkillTarget::敵全体:
-					発動パッシブ.push_back( &PassiveSkill::data[no] );
-					break;
-				case PSkillTarget::味方全員:
-					for (auto&it : 味方)
+					if (it != nullptr && it->id != 0)
 					{
-						it->発動パッシブ.push_back(&PassiveSkill::data[no]);
+						PスキルS.push_back(it);
 					}
-					break;
-				case PSkillTarget::自分以外:
-					for (auto&it : 味方)
-					{
-						if (it != this)
-						{
-							it->発動パッシブ.push_back(&PassiveSkill::data[no]);
-						}
-					}
-					break;
 				}
 			}
+			
+			//製造能力(仮)
+			製造力 = 10 + Lv;
 
-		}
+			現在HP = 最大HP;
 
-		void 探索開始()
-		{
-			//探索系パッシブ効果の処理
+			戦闘後回復 = Game::自動回復;
+			素材剥取ランク = 0.0;
+			素材収集ランク = 0.0;
+			素材剥取量 = 0.0;
+			素材収集量 = 0.0;
 
-		}
+			//エフェクトとログのリセット
+			E速度 = 0;//前出たり、ノックバック
+			E反転残り = 0;
+			E反転時間 = 0;
+			E座標 = 0;
+			E光強さ = 0;
+			Eダメージ時間 = 0;
 
-		void 戦闘後処理(std::vector<Warker*> &メンバー, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
-		{
+			//ログ用
+			与ダメージログ = 0;
+			受ダメージログ = 0;
+			回復ログ = 0;
 
-		}
-
-		void 素材収集処理(std::vector<Warker*> &メンバー)
-		{
-
+			//
+			探検前Lv = Lv;
+			探検前経験値 = (int)経験値;
+			isレベルアップ演出 = false;
+			isスキル習得演出 = false;
 		}
 
 		void 探索終了()
 		{
 			//経験値の獲得、素材の獲得等の処理
 
+		}
+
+		void 気絶()
+		{
+			MSound::効果音[SE::味方気絶].Play();
 		}
 	};
 

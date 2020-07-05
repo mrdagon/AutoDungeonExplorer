@@ -41,11 +41,10 @@ namespace SDX_BSC
 			this->ASkill[0] = &ActiveSkill::data[askill1];
 			this->ASkill[1] = &ActiveSkill::data[askill2];
 			this->ASkill[2] = &ActiveSkill::data[askill3];
-			this->ASkill[3] = 0;
+			this->ASkill[3] = nullptr;
 		}
 
 		int id;
-		MonsterNo 種類;
 
 		std::string 名前;
 		std::string 説明;
@@ -55,9 +54,6 @@ namespace SDX_BSC
 		int Hp,命中,回避;
 		EnumArray<int, StatusType> ステ;
 		EnumArray<int, DamageType> 防御;
-				
-		//他ステータス
-		bool isボス;
 
 		ActiveSkill* ASkill[CV::最大Aスキル数] = { 0 };//最大４個とか
 		int ASkillLv[CV::最大Aスキル数] = { 0 };//習得レベル[未実装]
@@ -68,21 +64,22 @@ namespace SDX_BSC
 
 	void LoadMonsterClass()
 	{
+		MonsterClass::data.reserve(10);
+
 		MonsterClass::data.emplace_back(0,"スライム","高耐久",UnitImageType::スライム);
 		MonsterClass::data.emplace_back(1, "バット", "後列",UnitImageType::三頭犬);
 		MonsterClass::data.emplace_back(2, "スケルトン", "バランス",UnitImageType::スケルトン);
 		MonsterClass::data.emplace_back(3, "ドラゴン", "ボス",UnitImageType::ドラゴン);
 
-		MonsterClass::data[0].Set(12, 5, 5, 5, 10,10, 0, 0);
-		MonsterClass::data[1].Set(5,  7, 7, 7,  0, 0,10,10);
-		MonsterClass::data[2].Set(10, 6, 6, 6,  5, 5, 5, 5);
-		MonsterClass::data[3].Set(15,15, 15,15,15,15, 0, 0);
+		MonsterClass::data[0].Set(75, 5, 5, 5, 10,10, 0, 0);
+		MonsterClass::data[1].Set(30, 10, 10, 10,  0, 0,10,10);
+		MonsterClass::data[2].Set(60, 7, 7, 7,  5, 5, 5, 5);
+		MonsterClass::data[3].Set(100,40, 40,40,15,15,10,10);
 
 		MonsterClass::data[0].SetSkill( 13,14,0 );
 		MonsterClass::data[1].SetSkill( 15,16,0 );
 		MonsterClass::data[2].SetSkill( 17,18,0 );
 		MonsterClass::data[3].SetSkill( 19,20,21);
-
 	}
 
 	std::vector<MonsterClass> MonsterClass::data;

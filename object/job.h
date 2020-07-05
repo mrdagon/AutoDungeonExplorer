@@ -82,11 +82,11 @@ namespace SDX_BSC
 		Job::data.emplace_back(3, "ウィザード", "INT魔法",UnitImageType::魔女);//59
 		Job::data.emplace_back(4, "クレリック", "INT回復",UnitImageType::司祭);//99
 
-		Job::data[0].Set(120, 13, 12, 5, 5 , 5 , 5 , 5);
-		Job::data[1].Set(150, 11, 10, 7, 15, 10, 0, 0);
-		Job::data[2].Set( 90,  8, 14,10, 3, 3, 10, 10);
-		Job::data[3].Set( 80,  5,  9,15, 0, 5,  0, 5);
-		Job::data[4].Set(120, 10,  7,12, 6, 8,  0, 0);
+		Job::data[0].Set( 90, 13, 11, 5, 5 , 5 , 5 , 5);
+		Job::data[1].Set(100, 11, 10, 7, 15, 10, 0, 0);
+		Job::data[2].Set( 65,  8, 16,10, 3, 3, 10, 10);
+		Job::data[3].Set( 60,  5,  9,17, 0, 5,  0, 5);
+		Job::data[4].Set( 90, 10,  7,12, 6, 8,  0, 0);
 
 		Job::data[0].SetItemASkill(2, 7, 22 , 23);
 		Job::data[1].SetItemASkill(4, 7, 24, 25);

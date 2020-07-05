@@ -8,8 +8,10 @@
 #include "object/_object.h"
 #include "window/_window.h"
 #include "scene/_scene.h"
+#include "save.h"
 
 #include <windows.h>
+
 
 using namespace SDX;
 using namespace SDX_BSC;
@@ -60,6 +62,7 @@ int main(int argc, char* argv[])
 	//アンケートURL
 	//HINSTANCE ret = ShellExecute(nullptr, L"open", L"http://www.gesource.jp/programming/bcb/", NULL, NULL, SW_SHOW);
 
+	DebugInit();
 	LoadAndInitData();
 
 	/*未返還テキスト位置*/
@@ -70,7 +73,6 @@ int main(int argc, char* argv[])
 	srcrect.h = 300;
 	SDL_SetTextInputRect(&srcrect);
 
-	DebugInit();
 	
 	Camera camera({0,0},1);
 	SDX::Camera::Set(&camera);

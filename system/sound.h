@@ -42,16 +42,16 @@ namespace SDX_BSC
 		//戦闘/探索効果音
 		constexpr SEType 探索開始 = SEType::探索開始;
 		constexpr SEType 探索終了 = SEType::探索終了;
-		constexpr SEType 地図発見 = SEType::地図発見;//まだ
-		constexpr SEType ボス発見 = SEType::ボス発見;//まだ
+		constexpr SEType 地図発見 = SEType::地図発見;
+		constexpr SEType ボス発見 = SEType::ボス発見;
 
 		constexpr SEType 攻撃 = SEType::攻撃;//まだ
 		constexpr SEType 回復 = SEType::回復;//まだ
 		constexpr SEType 補助 = SEType::補助;//まだ
 
-		constexpr SEType 味方気絶 = SEType::味方気絶;//まだ
-		constexpr SEType 敵気絶 = SEType::敵気絶;//まだ
-		constexpr SEType 全滅 = SEType::全滅;//まだ
+		constexpr SEType 味方気絶 = SEType::味方気絶;
+		constexpr SEType 敵気絶 = SEType::敵気絶;
+		constexpr SEType 全滅 = SEType::全滅;
 
 	}
 }

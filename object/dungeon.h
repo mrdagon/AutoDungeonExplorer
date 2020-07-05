@@ -22,13 +22,13 @@ namespace SDX_BSC
 		static void Add(int no,std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数 , bool isエリアボス)
 		{
 			data.emplace_back();
-
 			data[no].Init(no, 名前, 種類, 部屋数, ランク, Lv, 地図数, isエリアボス);
 		}
 
 		/*暫定処理*/
 		void Init(int no, std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数, bool isエリアボス)
 		{
+			ID = no;
 			this->名前 = 名前;
 			this->部屋数 = 部屋数;
 			this->種類 = 種類;
@@ -44,15 +44,12 @@ namespace SDX_BSC
 			雑魚モンスター[1] = 1;
 			雑魚モンスター[2] = 2;
 			ボスモンスター = 3;
-			//部屋
 
 			//位置-保留
-
 			is発見 = false;
 
-
-			int buf地図 = 発見地図;
-			int buf財宝 = 発見財宝;
+			int buf地図 = 最大地図;
+			int buf財宝 = 最大財宝;
 
 			for (int a = 0; a < 部屋数; a++)
 			{
@@ -80,6 +77,7 @@ namespace SDX_BSC
 				else if ( buf財宝 > 0)
 				{
 					部屋[a].種類 = RoomType::財宝;
+					buf財宝--;
 				}
 				else if (a % 2 == 0)
 				{
@@ -100,7 +98,7 @@ namespace SDX_BSC
 				return;
 			}
 
-			for (int a = 0; a < 部屋.size(); a++)
+			for (int a = 0; a < (int)部屋.size(); a++)
 			{
 				if (部屋[a].is探索 == true) { n++; }
 			}

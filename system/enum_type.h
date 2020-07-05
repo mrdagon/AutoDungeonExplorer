@@ -380,6 +380,7 @@ namespace SDX_BSC
 		低コスト化,
 		探索術,
 		探索許可証,
+		探索許可証2,
 		COUNT,
 	};
 

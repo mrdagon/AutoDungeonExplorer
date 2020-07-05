@@ -188,7 +188,7 @@ namespace SDX_BSC
 				{
 					Game::ゲームスピード = std::max(1, Game::ゲームスピード / 2);
 				}else {
-					Game::ゲームスピード = std::min(64, Game::ゲームスピード * 2);
+					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * 2);
 				}
 				MSound::効果音[SE::ボタンクリック].Play();
 			}
@@ -241,7 +241,6 @@ namespace SDX_BSC
 				{
 					//アンケートURL
 					HINSTANCE ret = ShellExecute(nullptr, L"open", TX::アンケURL, NULL, NULL, SW_SHOW);
-
 				}
 
 			}

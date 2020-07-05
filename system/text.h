@@ -27,8 +27,8 @@ namespace SDX_BSC
 		EnumArray<std::string, WindowType> Window_略記;
 		EnumArray<std::string, WindowType> Window_ヘルプ;
 
-		std::string タイトル = "Auto だんじょん えくすぷろーら ＜さくさく進む放置RPG＞ 0.1 beta";
-		const wchar_t* アンケURL = L"http://www.gesource.jp/programming/bcb/";
+		std::string タイトル = "おーと だんじょん えくすぷろーら ＜～サブタイトル募集中＞ 0.1 β";
+		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
 
 		////Config Window
 		std::string Config_決定 = "決定";
@@ -109,7 +109,7 @@ namespace SDX_BSC
 		std::string Tool_Help停止 = "クリックで一時停止/再開";
 		std::string Tool_Help速度 = "クリックでゲーム速度を変更";
 		std::string Tool_Help設定 = "クリックで設定ウィンドウを開く";
-		std::string Tool_Helpタイトル = "クリックでゲームを終了する";
+		std::string Tool_Helpタイトル = "アンケートページを開く";
 
 		//Help Window
 		std::string Help_ステータス[8] = {"HP","STR","DEX","INT","物防","魔防","命中","回避"};
@@ -130,7 +130,7 @@ namespace SDX_BSC
 
 			Window_名前[WindowType::Factory] = "装備製造";
 			Window_略記[WindowType::Factory] = "製造";
-			Window_ヘルプ[WindowType::Factory] = "各部門に職人を割り当てて素材から装備品を作る";
+			Window_ヘルプ[WindowType::Factory] = "各部門にギルメンをドロップ配置\n素材から装備品を作る";
 
 			Window_名前[WindowType::Guild] = "ギルド情報";
 			Window_略記[WindowType::Guild] = "情報";

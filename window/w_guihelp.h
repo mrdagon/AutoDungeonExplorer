@@ -105,9 +105,7 @@ namespace SDX_BSC
 			MFont::BSSize.DrawBold({ 座標.x + LV(9) , 座標.y + LV(10) }, Color::White, Color::Black, { "Lv " , it->Lv });
 			MFont::BMSize.DrawBold({ 座標.x + LV(11) , 座標.y + LV(12) }, Color::White, Color::Black, it->名前);
 
-			double exprate = it->Get経験値獲得率();
-
-			MSystem::DrawBar({ 座標.x + LV(13) , 座標.y + LV(14) }, LV(15), LV(16), exprate, 1, Color::Blue, Color::White, Color::White, true);//経験値
+			MSystem::DrawBar({ 座標.x + LV(13) , 座標.y + LV(14) }, LV(15), LV(16), it->経験値 / it->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);//経験値
 
 			//装備品、Aスキル
 			//最大HP、基礎ステ、製造力
@@ -123,30 +121,37 @@ namespace SDX_BSC
 			MFont::BMSize.DrawBold({ 座標.x + LV(24) , 座標.y + LV(25) + LV(21) }, Color::White, Color::Black, Item::data[it->装備[1]].名前);
 
 			//各種ステータス
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 0 }, Color::White, Color::Black, TX::Help_ステータス[0] );
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 1 }, Color::White, Color::Black, TX::Help_ステータス[1]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 2 }, Color::White, Color::Black, TX::Help_ステータス[2]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 3 }, Color::White, Color::Black, TX::Help_ステータス[3]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 4 }, Color::White, Color::Black, TX::Help_ステータス[4]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 5 }, Color::White, Color::Black, TX::Help_ステータス[5]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 6 }, Color::White, Color::Black, TX::Help_ステータス[6]);
-			MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * 7 }, Color::White, Color::Black, TX::Help_ステータス[7]);
+			for (int a = 0; a < 8; a++)
+			{
+				//ステータス名
+				MFont::BMSize.DrawBold({ 座標.x + LV(26) , 座標.y + LV(27) + LV(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
 
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 0 }, Color::White, Color::Black, (int)it->最大HP , true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 1 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Str], true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 2 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Dex], true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 3 }, Color::White, Color::Black, (int)it->基礎ステ[StatusType::Int], true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 4 }, Color::White, Color::Black, (int)it->基礎防御[DamageType::物理], true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 5 }, Color::White, Color::Black, (int)it->基礎防御[DamageType::魔法], true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 6 }, Color::White, Color::Black, (int)it->基礎命中, true);
-			MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * 7 }, Color::White, Color::Black, (int)it->基礎回避, true);
+				//基礎ステータス
+				int na, nb;
+				switch (a)
+				{
+					case 0: na = it->基礎HP; nb = it->最大HP; break;
+					case 1: na = it->基礎ステ[StatusType::Str]; nb = it->補正ステ[StatusType::Str]; break;
+					case 2: na = it->基礎ステ[StatusType::Dex]; nb = it->補正ステ[StatusType::Dex]; break;
+					case 3: na = it->基礎ステ[StatusType::Int]; nb = it->補正ステ[StatusType::Int]; break;
+					case 4: na = it->基礎防御[DamageType::物理]; nb = it->補正防御[DamageType::物理]; break;
+					case 5: na = it->基礎防御[DamageType::魔法]; nb = it->補正防御[DamageType::魔法]; break;
+					case 6: na = it->基礎命中; nb = it->補正命中; break;
+					case 7: na = it->基礎回避; nb = it->補正回避; break;
+				}
+
+				MFont::BMSize.DrawBold({ 座標.x + LV(29) , 座標.y + LV(30) + LV(31) * a }, Color::White, Color::Black, na , true);
+
+				//装備＆パッシブ補正値
+				if (nb - na > 0) { MFont::BMSize.DrawBold({ 座標.x + LV(49) , 座標.y + LV(30) + LV(31) * a }, Color(128,255,128), Color::Black, { "+",nb - na }, true); }
+			}
 
 			//Aスキル-アイコン、名前、説明
 			座標.x += LV(32);
 			座標.y += LV(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80});
+				InfoASkillSub(it->AスキルS[a], { 座標.x , 座標.y + a * 80});
 			}
 
 			//Pスキル-アイコン、名前、説明
@@ -156,11 +161,11 @@ namespace SDX_BSC
 			int sp = it->スキルポイント;
 			for (int a = 0; a < CV::最大Pスキル数; a++)
 			{
-				auto pskill = &PassiveSkill::data[it->パッシブスキル[a]];
+				auto pskill = &PassiveSkill::data[it->PスキルID[a]];
 				
 				std::string s = "";
 
-				if (it->isパッシブスキル習得[a] == true)
+				if (it->isPスキル習得[a] == true)
 				{
 					MSystem::DrawSkill(pskill->系統, { 座標.x + LV(36), 座標.y + LV(37) }, Color(0, 141, 255));
 				} else {
@@ -364,7 +369,7 @@ namespace SDX_BSC
 
 			std::string s = "";
 
-			MSystem::DrawSkill(スキル->系統, { 座標.x + LV(25),座標.y + LV(26) },Color(200,64,64 ), s);
+			MSystem::DrawSkill(スキル->アイコン, { 座標.x + LV(25),座標.y + LV(26) },Color(200,64,64 ), s);
 
 			MIcon::アイコン[IconType::時間].Draw({ 座標.x + LV(27),座標.y + LV(28)});//クールダウンor必殺
 
@@ -375,6 +380,34 @@ namespace SDX_BSC
 			
 #undef LV
 		}
+
+		void InfoResult(Guild::Party* パーティ,Point&座標)
+		{
+#define LV(a) DV::I[17][a]
+			ヘルプ横幅 = LV(0);
+			ヘルプ縦幅 = LV(1);
+
+			Info座標補正(座標);
+
+			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン);
+			MFont::BSSize.DrawBold({ 座標.x + LV(2) , 座標.y + LV(3) }, Color::White, Color::Black, "与えたダメージ");
+			MFont::BSSize.DrawBold({ 座標.x + LV(2) , 座標.y + LV(3) + LV(4) }, Color::White, Color::Black, "受けたダメージ");
+			MFont::BSSize.DrawBold({ 座標.x + LV(2) , 座標.y + LV(3) + LV(4)*2 }, Color::White, Color::Black, "味方を回復");
+			//項目名
+
+			//パーティメンバー
+			for (int a = 0; a < CV::パーティ人数; a++)
+			{
+				const auto it = パーティ->メンバー[a];
+				if ( it == nullptr) { continue; }
+				MUnit::ユニット[ it->見た目][1]->DrawRotate({ 座標.x + LV(5) + LV(6)*a , 座標.y + LV(7) }, 2, 0);
+				MFont::BSSize.DrawBold({ 座標.x + LV(8) + LV(6) * a , 座標.y + LV(3) + LV(4) * 0 }, Color::White, Color::Black, it->与ダメージログ,true);
+				MFont::BSSize.DrawBold({ 座標.x + LV(8) + LV(6) * a , 座標.y + LV(3) + LV(4) * 1 }, Color(255,80,80), Color::Black, it->受ダメージログ, true);
+				MFont::BSSize.DrawBold({ 座標.x + LV(8) + LV(6) * a , 座標.y + LV(3) + LV(4) * 2 }, Color(128,255,128), Color::Black, it->回復ログ, true);
+			}
+#undef LV
+		}
+
 	};
 
 	Management* GUI_Help::戦術 = nullptr;

@@ -22,6 +22,9 @@ namespace SDX_BSC
 		static bool is翌日スキップ = false;
 		
 
+		static double 自動回復 = 0.1;
+		static double ボス発見探索率 = 0.7;
+
 		//
 		static bool isメインクエスト = false;//メインクエスト終了フラグ
 	

@@ -33,9 +33,39 @@ namespace SDX_BSC
 		指定なし
 	};
 
+	//Fighter::バフ更新処理のためにBuffTypeとASkillEffectTypeの並びを揃える
+	enum class BuffType
+	{
+		与ダメ増加,//割合増加
+		受ダメ軽減,//割合軽減
+		物防,//+数値
+		魔防,//+数値
+		Str,//1.0+数値x
+		Dex,//1.0+数値x
+		Int,//1.0+数値x
+		命中,//+数値
+		回避,//+数値
+		挑発,//+なら有効
+		COUNT
+	};
+
 	enum class ASkillEffectType
 	{
-		なし,
+		//バフ/デバフ系
+		与ダメ増加,
+		受ダメ軽減,
+		物防バフ,
+		魔防バフ,
+		Strバフ,
+		Dexバフ,
+		Intバフ,
+		命中バフ,
+		回避バフ,
+		挑発バフ,
+
+
+		//追加効果
+
 		防御無視,
 		回避無視,
 		デバフ解除,
@@ -43,13 +73,8 @@ namespace SDX_BSC
 		攻撃チャージ増加,
 		スキルチャージ増加,
 		//バフ効果
-		物防バフ,
-		魔防バフ,
-		Strバフ,
-		Intバフ,
 
 		//デバフ効果
-		挑発,
 		隠密,
 		即死,
 		COUNT
@@ -71,7 +96,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->系統 = 系統;
+			this->アイコン = 系統;
 		}
 
 		void Set(ASkillTarget 対象,StatusType 依存ステータス,DamageType 属性,ASkillType スキル種)
@@ -86,14 +111,14 @@ namespace SDX_BSC
 		{
 			追加効果量[効果種] = 効果量;
 			追加確率[効果種] = 効果発動率;
-			追加時間[効果種] = 効果時間;
+			追加持続[効果種] = 効果時間;
 		}
 
 		void SetP(int 効果回数, double 効果量, double ステータス反映率,double 命中, double 効果時間, double 必要チャージ, bool is奥義 = false)
 		{
 			this->効果回数 = 効果回数;//ランダムだったり単体に多段攻撃
-			this->効果量 = 効果量;
-			this->ステータス反映率 = ステータス反映率;
+			this->威力 = 効果量;
+			this->反映率 = ステータス反映率;
 			this->効果時間 = 効果時間;
 
 			this->命中 = 命中;
@@ -106,7 +131,7 @@ namespace SDX_BSC
 		std::string 名前;
 		std::string 説明;
 
-		SkillType 系統;//アイコン
+		SkillType アイコン;
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
@@ -117,14 +142,14 @@ namespace SDX_BSC
 
 		EnumArray<double, ASkillEffectType> 追加効果量;
 		EnumArray<double, ASkillEffectType> 追加確率;
-		EnumArray<int, ASkillEffectType> 追加時間;
+		EnumArray<int, ASkillEffectType> 追加持続;
 
-		bool is奥義;
+		bool is奥義 = false;
 
-		int 効果回数;//多段攻撃系
+		int 効果回数 = 1;//多段攻撃系
 		double 命中 = 1.0;
-		double 効果量;//基礎効果量
-		double ステータス反映率;
+		double 威力;//基礎値
+		double 反映率;
 		double 効果時間;
 		double 追加効果率 = 1.0;
 
@@ -134,12 +159,12 @@ namespace SDX_BSC
 	class ASkillEffect
 	{
 	public:
-
-		SkillType 系統;
 		StatusType 依存ステータス;
 		ItemType 装備種;
 		DamageType 属性;//物理,魔法
 		bool is奥義;
+		double 威力;//基礎値
+		double 反映率;
 
 		ASkillTarget 対象;
 		int 範囲;
@@ -147,27 +172,40 @@ namespace SDX_BSC
 		ASkillType 種類;
 		EnumArray<double, ASkillEffectType> 追加効果量;
 		EnumArray<double, ASkillEffectType> 追加確率;
-		EnumArray<int, ASkillEffectType> 追加時間;
+		EnumArray<int, ASkillEffectType> 追加持続;
+
+		double 追加効果補正 = 1.0;
+		double 追加持続補正 = 1.0;
+
 		double 命中;
+		int 効果回数;
 
 		ASkillEffect(const ActiveSkill* スキルベース):
-			系統(スキルベース->系統),
 			依存ステータス(スキルベース->依存ステータス),
+			反映率(スキルベース->反映率),
 			属性(スキルベース->属性),
+			威力(スキルベース->威力),
 			対象(スキルベース->対象),
 			種類(スキルベース->種類),
 			装備種(スキルベース->装備種),
 			範囲(スキルベース->範囲),
 			命中(スキルベース->命中),
-			is奥義(スキルベース->is奥義)
+			is奥義(スキルベース->is奥義),
+			効果回数(スキルベース->効果回数)
 		{
 			for (int a = 0; a < (int)ASkillEffectType::COUNT; a++)
 			{
 				auto s = ASkillEffectType(a);
 
 				追加効果量[s] = スキルベース->追加効果量[s];
-				追加時間[s] = スキルベース->追加時間[s];
+				追加持続[s] = スキルベース->追加持続[s];
 				追加確率[s] = スキルベース->追加確率[s];
+			}
+
+			//回復とバフは必中
+			if (種類 == ASkillType::回復 || 種類 == ASkillType::バフ)
+			{
+				命中 = 10.0;
 			}
 		}
 	};
@@ -177,7 +215,7 @@ namespace SDX_BSC
 		//武器７系統✕２＋ジョブ別スキル１０個
 		ActiveSkill::data.emplace_back( 0, "なし" , "スキルなし",SkillType::その他);
 		ActiveSkill::data[0].Set(ASkillTarget::その他, StatusType::Str, DamageType::物理, ASkillType::指定なし);
-		ActiveSkill::data[0].SetP(0, 0, 0, 0, 0, 0, 0);
+		ActiveSkill::data[0].SetP(1, 0, 0, 0, 0, 999999);
 
 		ActiveSkill::data.emplace_back( 1, "斬撃" , "先頭に STRx100% 物理ダメージ",SkillType::剣);
 		ActiveSkill::data.emplace_back( 2, "スラッシュ", "先頭に STRx300% 物理ダメージ", SkillType::剣);
@@ -185,11 +223,11 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back( 4, "兜割り", "先頭に STRx300% 物理ダメージ、防御無視", SkillType::斧);
 		ActiveSkill::data.emplace_back( 5, "射撃"  , "ランダムに DEXx120% 物理ダメージ",SkillType::弓);
 		ActiveSkill::data.emplace_back( 6, "狙い撃ち", "HPの少ない敵に DEXx300% 物理ダメージ", SkillType::弓);
-		ActiveSkill::data.emplace_back( 7, "打撃"  , "先頭に STRx50% 物理ダメージ", SkillType::盾);
-		ActiveSkill::data.emplace_back( 8, "挑発"  , "100Tの間 狙われやすくなり、物魔防御+20", SkillType::盾);
+		ActiveSkill::data.emplace_back( 7, "打撃"  , "先頭に STRx80% 物理ダメージ", SkillType::盾);
+		ActiveSkill::data.emplace_back( 8, "挑発"  , "150Tの間 狙われやすくなり、物魔防御+20", SkillType::盾);
 		ActiveSkill::data.emplace_back( 9, "魔弾"  , "ランダムに INTx120% 魔法ダメージ",SkillType::魔杖);
 		ActiveSkill::data.emplace_back(10, "大爆発", "全体に INTx200% 魔法ダメージ", SkillType::魔杖);
-		ActiveSkill::data.emplace_back(11, "打撃"  , "先頭に STRx50% 物理ダメージ",SkillType::神杖);
+		ActiveSkill::data.emplace_back(11, "打撃"  , "先頭に STRx80% 物理ダメージ",SkillType::神杖);
 		ActiveSkill::data.emplace_back(12, "ヒール", "弱った味方一人のHPを INTx150% 回復", SkillType::神杖);
 
 		ActiveSkill::data[1].装備種 = ItemType::剣;
@@ -214,7 +252,7 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(18, "骨投げ"  , "後列にSTRx1.5物理ダメージ", SkillType::剣);
 		ActiveSkill::data.emplace_back(19, "叩きつけ", "先頭にSTRx1.0物理ダメージ", SkillType::剣);//ドラゴン
 		ActiveSkill::data.emplace_back(20, "尾撃"    , "前列にSTRx0.6物理ダメージ", SkillType::剣);
-		ActiveSkill::data.emplace_back(21, "炎ブレス", "全体にINTx2.0魔法ダメージ", SkillType::剣);
+		ActiveSkill::data.emplace_back(21, "炎ブレス", "全体にINTx1.8魔法ダメージ", SkillType::剣);
 
 		ActiveSkill::data[1].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 ,ASkillType::物理);
 		ActiveSkill::data[2].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理 , ASkillType::物理);
@@ -224,9 +262,9 @@ namespace SDX_BSC
 		ActiveSkill::data[6].Set(ASkillTarget::敵弱者 , StatusType::Dex, DamageType::物理, ASkillType::物理);
 		ActiveSkill::data[7].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理, ASkillType::物理);
 		ActiveSkill::data[8].Set(ASkillTarget::自分   , StatusType::Str, DamageType::物理 , ASkillType::バフ);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::物防バフ, 20, 100);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::魔防バフ, 20, 100);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::挑発, 20, 100);
+		ActiveSkill::data[8].SetEffect(ASkillEffectType::物防バフ, 20, 150);
+		ActiveSkill::data[8].SetEffect(ASkillEffectType::魔防バフ, 20, 150);
+		ActiveSkill::data[8].SetEffect(ASkillEffectType::挑発バフ, 20, 150);
 
 		ActiveSkill::data[9].Set(ASkillTarget::敵ランダム, StatusType::Int, DamageType::魔法, ASkillType::魔法);
 		ActiveSkill::data[10].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法, ASkillType::魔法);
@@ -241,24 +279,24 @@ namespace SDX_BSC
 		ActiveSkill::data[16].Set(ASkillTarget::敵ランダム, StatusType::Int, DamageType::魔法, ASkillType::魔法 );
 		ActiveSkill::data[17].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::物理 );
 		ActiveSkill::data[18].Set(ASkillTarget::敵後ランダム, StatusType::Dex, DamageType::物理, ASkillType::物理 );
-		ActiveSkill::data[18].範囲 = 3;
+		ActiveSkill::data[18].範囲 = 2;
 		ActiveSkill::data[19].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::物理 );
 		ActiveSkill::data[20].Set(ASkillTarget::敵前, StatusType::Str, DamageType::物理, ASkillType::物理 );
-		ActiveSkill::data[18].範囲 = 3;
+		ActiveSkill::data[20].範囲 = 3;
 		ActiveSkill::data[21].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法, ASkillType::魔法 );
 
-		//////////////////////////効果回数
+		//////////////////////////
 		ActiveSkill::data[1].SetP( 1, 0,1.0, 0.9, 0,  100);
 		ActiveSkill::data[2].SetP( 1, 0,3.0, 1.0, 0,  300);
 		ActiveSkill::data[3].SetP( 1, 0,1.2, 0.8, 0,  100);
-		ActiveSkill::data[4].SetP( 1, 0,3.0, 0.9, 0,  500);
-		ActiveSkill::data[5].SetP( 1, 0,1.2, 0.9, 0,  80);
-		ActiveSkill::data[6].SetP( 1, 0,3.0, 1.5, 0,  500);
-		ActiveSkill::data[7].SetP( 1, 0,0.5, 0.8, 0,  100);
-		ActiveSkill::data[8].SetP( 1,20,0.0, 1.0,100, 300);
+		ActiveSkill::data[4].SetP( 1, 0,3.0, 0.9, 0,  400);
+		ActiveSkill::data[5].SetP( 1, 0,1.2, 0.9, 0,  100);
+		ActiveSkill::data[6].SetP( 1, 0,3.0, 1.5, 0,  400);
+		ActiveSkill::data[7].SetP( 1, 0,0.8, 0.8, 0,  100);
+		ActiveSkill::data[8].SetP( 1, 0,0.0, 1.0,100, 300);
 		ActiveSkill::data[9].SetP( 1, 0,1.2, 0.9, 0,  110);
-		ActiveSkill::data[10].SetP(1, 0,2.0, 0.8, 0,  550);
-		ActiveSkill::data[11].SetP(1, 0,0.5, 0.8, 0,  100);
+		ActiveSkill::data[10].SetP(1, 0,2.0, 0.8, 0,  500);
+		ActiveSkill::data[11].SetP(1, 0,0.8, 0.8, 0,  100);
 		ActiveSkill::data[12].SetP(1, 0,1.5, 1.0, 0,  400);
 
 		ActiveSkill::data[13].SetP(1, 0,1.0, 0.9, 0,  100);
@@ -269,7 +307,7 @@ namespace SDX_BSC
 		ActiveSkill::data[18].SetP(1, 0,1.5, 0.8, 0,  100);
 		ActiveSkill::data[19].SetP(1, 0,1.0, 0.9, 0,  100);
 		ActiveSkill::data[20].SetP(1, 0,0.6, 0.6, 0,  200);
-		ActiveSkill::data[21].SetP(1, 0,2.0, 0.7, 0,  600,true);
+		ActiveSkill::data[21].SetP(1, 0,1.8, 0.7, 0,  700,true);
 
 		//各ジョブのスキル
 		//ファイター
@@ -285,21 +323,21 @@ namespace SDX_BSC
 		//ナイト
 		ActiveSkill::data.emplace_back(24, "守護", "200Tの間 狙われやすくなり、物魔防御+30",SkillType::盾);
 		ActiveSkill::data[24].Set(ASkillTarget::自分, StatusType::Str, DamageType::物理, ASkillType::バフ);
-		ActiveSkill::data[24].SetP(1, 30, 0, 1.0, 200, 100);
+		ActiveSkill::data[24].SetP(1, 0, 0, 1.0, 200, 400);
 		ActiveSkill::data[24].SetEffect(ASkillEffectType::物防バフ, 30, 200);
 		ActiveSkill::data[24].SetEffect(ASkillEffectType::魔防バフ, 30, 200);
-		ActiveSkill::data[24].SetEffect(ASkillEffectType::挑発, 30, 200);
+		ActiveSkill::data[24].SetEffect(ASkillEffectType::挑発バフ, 30, 200);
 
 		ActiveSkill::data.emplace_back(25, "大防御", "600Tの間、味方全員の 物/魔防御 + 30 ", SkillType::盾);
 		ActiveSkill::data[25].Set(ASkillTarget::味方全員, StatusType::Str, DamageType::物理, ASkillType::バフ);
-		ActiveSkill::data[25].SetP(1, 30, 0, 1.0, 600, 1000, true);
+		ActiveSkill::data[25].SetP(1, 0, 0, 1.0, 600, 1000, true);
 		ActiveSkill::data[25].SetEffect(ASkillEffectType::物防バフ, 30, 600);
 		ActiveSkill::data[25].SetEffect(ASkillEffectType::魔防バフ, 30, 600);
 
 		//レンジャー
 		ActiveSkill::data.emplace_back(26, "二段攻撃", "ランダムに2回 DEXx150% 物理ダメージ", SkillType::弓);
 		ActiveSkill::data[26].Set(ASkillTarget::敵ランダム, StatusType::Dex, DamageType::物理, ASkillType::物理);
-		ActiveSkill::data[26].SetP(2, 0, 1.5, 0.7, 0, 100);
+		ActiveSkill::data[26].SetP(2, 0, 1.5, 0.7, 0, 400);
 		ActiveSkill::data.emplace_back(27, "マジカルアロー", "ランダムに6回 DEXx200% 魔法ダメージ", SkillType::弓);
 		ActiveSkill::data[27].Set(ASkillTarget::敵ランダム, StatusType::Dex, DamageType::魔法, ASkillType::物理);
 		ActiveSkill::data[27].SetP(6, 0, 2.0, 0.6, 0, 1000, true);
@@ -308,16 +346,16 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(28, "集中", "400Tの間、自身の INT+30% 上昇", SkillType::INT);
 		ActiveSkill::data[28].Set(ASkillTarget::自分, StatusType::Int, DamageType::魔法, ASkillType::バフ);
 		ActiveSkill::data[28].SetP(1, 0, 0.3, 0.8, 300, 400);
-		ActiveSkill::data[28].SetEffect(ASkillEffectType::Intバフ, 30, 400);
+		ActiveSkill::data[28].SetEffect(ASkillEffectType::Intバフ, 0.3, 400);
 
-		ActiveSkill::data.emplace_back(29, "紅蓮地獄", "敵前列に INTx400% 魔法ダメージ", SkillType::魔杖);
+		ActiveSkill::data.emplace_back(29, "紅蓮地獄", "敵全体に INTx400% 魔法ダメージ", SkillType::魔杖);
 		ActiveSkill::data[29].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法 , ASkillType::魔法);
 		ActiveSkill::data[29].SetP(1, 0, 4.0, 1.2, 0, 1000, true);
 
 		//クレリック
 		ActiveSkill::data.emplace_back(30, "祝福", "弱った味方一人のHPを INTx200% 回復", SkillType::回復);
 		ActiveSkill::data[30].Set(ASkillTarget::味方弱者, StatusType::Int, DamageType::魔法, ASkillType::回復);
-		ActiveSkill::data[30].SetP(1, 0, 2.0, 1.0, 0, 100);
+		ActiveSkill::data[30].SetP(1, 0, 2.0, 1.0, 0, 400);
 		ActiveSkill::data.emplace_back(31, "奇跡", "味方全員のHPを INTx150% 回復", SkillType::回復);
 		ActiveSkill::data[31].Set(ASkillTarget::味方全員, StatusType::Int, DamageType::魔法, ASkillType::回復);
 		ActiveSkill::data[31].SetP(1, 0, 1.5, 1.0, 0, 1000, true);

@@ -44,11 +44,16 @@ namespace SDX_BSC
 			guild->投資経験値[系統] += 消費資金;
 			消費資金 += 増加資金;
 			使用回数++;
+			//ログ
+			EventLog::Add(0, Game::日付, LogDetailType::経営戦術使用, ID);
 
 			if (is永続) { can使用 = false; }
 
 			//部門Lv上昇判定
-			if (!Lv上昇判定()){ MSound::効果音[SE::投資実行].Play(); }
+			if (!Lv上昇判定()){
+
+				MSound::効果音[SE::投資実行].Play();
+			}
 
 			switch( MSkillType(ID) )
 			{
@@ -77,6 +82,9 @@ namespace SDX_BSC
 				case MSkillType::探索許可証:
 					if (guild->最大パーティ数 < CV::最大パーティ数){guild->最大パーティ数++;}
 					break;
+				case MSkillType::探索許可証2:
+					if (guild->最大パーティ数 < CV::最大パーティ数) { guild->最大パーティ数++; }
+					break;
 			}
 
 
@@ -90,6 +98,7 @@ namespace SDX_BSC
 				Guild::P->投資経験値[系統] -= 必要経験値[Guild::P->投資Lv[系統]];
 				Guild::P->投資Lv[系統]++;
 
+				EventLog::Add(0, Game::日付, LogDetailType::部門Lv上昇, (int)系統);
 				MSound::効果音[SE::部門Lv上昇].Play();
 				return true;
 			}
@@ -102,13 +111,14 @@ namespace SDX_BSC
 		{
 			//仮データ作成
 			data.emplace_back(0, 1, ManagementType::経営, 100000, false);
-			data.emplace_back(1, 1, ManagementType::経営, 100000, true);
-			data.emplace_back(2, 1, ManagementType::人事, 100000, false);
-			data.emplace_back(3, 1, ManagementType::人事, 100000, true);
+			data.emplace_back(1, 1, ManagementType::経営, 500000, true);
+			data.emplace_back(2, 1, ManagementType::人事,  30000, false);
+			data.emplace_back(3, 1, ManagementType::人事, 500000, true);
 			data.emplace_back(4, 1, ManagementType::製造, 100000, false);
-			data.emplace_back(5, 1, ManagementType::製造, 100000, true);
+			data.emplace_back(5, 1, ManagementType::製造, 500000, true);
 			data.emplace_back(6, 1, ManagementType::探索, 100000, false);
-			data.emplace_back(7, 1, ManagementType::探索, 100000, true);
+			data.emplace_back(7, 1, ManagementType::探索, 500000, true);
+			data.emplace_back(8, 2, ManagementType::探索,2000000, true);
 
 			data[0].アイコン = IconType::資金;
 			data[1].アイコン = IconType::資金;
@@ -127,6 +137,7 @@ namespace SDX_BSC
 			data[5].名前 = "低コスト化";
 			data[6].名前 = "探索術";
 			data[7].名前 = "探索許可証";
+			data[8].名前 = "探索許可証その２";
 
 			data[0].説明文 = "集客力が0.5人/day増加";
 			data[1].説明文 = "販売価格を一割引にする、来客が二割増";
@@ -136,6 +147,7 @@ namespace SDX_BSC
 			data[5].説明文 = "10%の確率で素材消費無し";
 			data[6].説明文 = "探索進行確率が+5%";
 			data[7].説明文 = "最大パーティ編成数+1";
+			data[8].説明文 = "最大パーティ編成数+1";
 
 
 			//経営、集客力上昇が何回でも使える。販売価格低下、客数増加
@@ -147,16 +159,16 @@ namespace SDX_BSC
 
 	std::vector<Management> Management::data;
 	const int Management::必要経験値[CV::最大投資Lv] = {
-			10000,
-			50000,
-			250000,
+			500000,
 			1000000,
 			2000000,
-			3000000,
 			4000000,
-			5000000,
-			6000000,
-			7000000,
+			8000000,
+		   15000000,
+		   25000000,
+		   35000000,
+		   50000000,
+		   70000000,
 	};;
 
 }

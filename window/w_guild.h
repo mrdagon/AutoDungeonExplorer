@@ -146,7 +146,7 @@ namespace SDX_BSC
 		{
 			ギルマス.位置 = { LV(0),LV(1) ,LV(2),LV(5)-2 };
 
-			for (int a = 1 ; a < gui_objects.size() ; a++)
+			for (int a = 1 ; a < (int)gui_objects.size() ; a++)
 			{
 				gui_objects[a]->位置 = { LV(0),LV(1) + LV(4) * (a-1) + LV(5),LV(2),LV(3) };
 			}
