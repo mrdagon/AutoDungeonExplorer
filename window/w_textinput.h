@@ -8,20 +8,20 @@ namespace SDX_BSC
 	using namespace SDX;
 
 	/*ポップアップウィンドウ用*/
-	class W_Popup : public WindowBox
+	class W_TextInput : public WindowBox
 	{
 	private:
 		class GUI_文字 : public GUI_Object
 		{
 		public:
-			std::string text;
+			std::string 文章;
 
 
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12, 0);
 
-				MFont::BMSize.DrawBold({ px + Lp(9) ,py + Lp(10) }, Color::White, Color::Black, { text }, true);
+				MFont::BMSize.DrawBold({ px + Lp(9) ,py + Lp(10) }, Color::White, Color::Black, { 文章 }, true);
 			}
 		};
 
@@ -36,7 +36,7 @@ namespace SDX_BSC
 			{
 				int dif_x = MFont::BMSize.GetDrawStringWidth(文字) / 2;
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1,1);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Lp(13),1);
 				MFont::BMSize.DrawBold({ px + Lp(11) - dif_x ,py + Lp(12) }, Color::White, Color::Black, 文字, false);
 			}
 
@@ -73,7 +73,7 @@ namespace SDX_BSC
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 
-			文章.text = "ゲームを終了しますか？";
+			文章.文章 = "ゲームを終了しますか？";
 			確定.文字 = "はい";
 			キャンセル.文字 = "いいえ";
 

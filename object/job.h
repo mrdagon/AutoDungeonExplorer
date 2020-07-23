@@ -16,10 +16,15 @@ namespace SDX_BSC
 
 		Job(JobNo 職種,std::string 名前,std::string 説明,UnitImageType 見た目)
 		{
-			this->職種 = 職種;
+			this->ID = 職種;
 			this->名前 = 名前;
 			this->説明 = 説明;
 			this->見た目 = 見た目;
+
+			初期装備[0] = 0;
+
+			ResetP習得スキル();
+			SetA習得スキル();
 		}
 
 		void Set(int Hp,int Str,int Dex,int Int,int 物防,int 魔防 , int 命中 , int 回避)
@@ -45,6 +50,25 @@ namespace SDX_BSC
 			Job::data[2].PSkillRate[ID] = レンジャー;
 			Job::data[3].PSkillRate[ID] = ウィザード;
 			Job::data[4].PSkillRate[ID] = クレリック;
+
+			if (ファイター > 0) { Job::data[0].SetP習得スキル(ID); }
+			if (ナイト> 0) { Job::data[1].SetP習得スキル(ID); }
+			if (レンジャー > 0) { Job::data[2].SetP習得スキル(ID); }
+			if (ウィザード > 0) { Job::data[3].SetP習得スキル(ID); }
+			if (クレリック > 0) { Job::data[4].SetP習得スキル(ID); }
+
+		}
+
+		void SetP習得スキル(int ID)
+		{
+			for (int a = 0; a < CV::最大Pスキル習得リスト; a++)
+			{
+				if (習得Pスキル[a] == nullptr)
+				{
+					習得Pスキル[a] = &PassiveSkill::data[ID];
+					break;
+				}
+			}
 		}
 
 		void SetItemASkill(int 武器, int 防具, int スキルA, int スキルB)
@@ -56,13 +80,38 @@ namespace SDX_BSC
 			Aスキル[1] = &ActiveSkill::data[スキルB];
 		}
 
-		JobNo 職種;
+		void SetA習得スキル()
+		{
+			習得Aスキル[0] = &ActiveSkill::data[22];
+			習得Aスキル[1] = &ActiveSkill::data[23];
+			習得Aスキル[2] = &ActiveSkill::data[24];
+			習得Aスキル[3] = &ActiveSkill::data[25];
+			習得Aスキル[4] = &ActiveSkill::data[26];
+			習得Aスキル[5] = &ActiveSkill::data[27];
+			習得Aスキル[6] = &ActiveSkill::data[28];
+			習得Aスキル[7] = &ActiveSkill::data[29];
+		}
+
+		void ResetP習得スキル()
+		{
+			for (auto& it : 習得Pスキル)
+			{
+				it = nullptr;
+			}
+		}
+
+		JobNo ID;
 
 		std::string 名前;
+		std::string 概説 = "前列:物理アタッカー";
 		std::string 説明;
 		UnitImageType 見た目;
 		int 初期装備[CV::装備部位数];
-		ActiveSkill* Aスキル[CV::ジョブAスキル数];
+		ActiveSkill* Aスキル[CV::ジョブAスキル数];//初期スキル
+		
+		//キャラクリ
+		ActiveSkill* 習得Aスキル[CV::最大Aスキル習得リスト];
+		PassiveSkill* 習得Pスキル[CV::最大Pスキル習得リスト];
 
 		//基礎ステータスーLvでスケーリングする
 		int Hp;
@@ -71,7 +120,7 @@ namespace SDX_BSC
 		int 命中, 回避;
 
 		//他ステータス
-		int PSkillRate[CV::Pスキル種];//各スキルの習得確率
+		int PSkillRate[CV::Pスキル種];//各スキルの習得確率-廃止予定
 	};
 
 	void LoadWarkerClass()
@@ -82,17 +131,26 @@ namespace SDX_BSC
 		Job::data.emplace_back(3, "ウィザード", "INT魔法",UnitImageType::魔女);//59
 		Job::data.emplace_back(4, "クレリック", "INT回復",UnitImageType::司祭);//99
 
+		Job::data.emplace_back(5, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(6, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(7, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(8, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(9, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(10, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(11, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
+
+
 		Job::data[0].Set( 90, 13, 11, 5, 5 , 5 , 5 , 5);
 		Job::data[1].Set(100, 11, 10, 7, 15, 10, 0, 0);
 		Job::data[2].Set( 65,  8, 16,10, 3, 3, 10, 10);
 		Job::data[3].Set( 60,  5,  9,17, 0, 5,  0, 5);
 		Job::data[4].Set( 90, 10,  7,12, 6, 8,  0, 0);
 
-		Job::data[0].SetItemASkill(2, 7, 22 , 23);
-		Job::data[1].SetItemASkill(4, 7, 24, 25);
-		Job::data[2].SetItemASkill(3, 8, 26, 27);
-		Job::data[3].SetItemASkill(6, 9, 28, 29);
-		Job::data[4].SetItemASkill(5, 9, 30, 31);
+		Job::data[0].SetItemASkill(5, 25, 22 , 23);
+		Job::data[1].SetItemASkill(13, 25, 24, 25);
+		Job::data[2].SetItemASkill(9, 29, 26, 27);
+		Job::data[3].SetItemASkill(21, 33, 28, 29);
+		Job::data[4].SetItemASkill(17, 33, 30, 31);
 
 		///1全然出ない、5そこそこ出る、10出やすい
 
@@ -160,11 +218,7 @@ namespace SDX_BSC
 		Job::SetSkill(60, 0,10, 0, 0, 0);
 		Job::SetSkill(61, 0, 0,10, 0, 0);
 		Job::SetSkill(62, 0, 0, 0,10, 0);
-		Job::SetSkill(63, 0, 0, 0, 0,10);
-
-
-
-		
+		Job::SetSkill(63, 0, 0, 0, 0,10);		
 	}
 
 	std::vector<Job> Job::data;

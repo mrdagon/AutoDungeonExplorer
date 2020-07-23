@@ -104,15 +104,11 @@ namespace SDX_BSC
 	namespace MIcon
 	{
 		EnumArray<Image, ItemImageType> アイテム;
-		EnumArray<Image, CraftType> 素材;
 		EnumArray<Image, IconType> アイコン;
 		EnumArray<Image, EmoteType> エモート;
-		EnumArray<Image, DungeonType> ダンジョン;
 		EnumArray<Image, SkillType> スキル;
 		EnumArray<Image, ItemType> 装備種;
 		EnumArray<Image, StatusType> ステータス種;
-
-
 
 		static void LoadIcon()
 		{
@@ -157,6 +153,12 @@ namespace SDX_BSC
 
 			アイコン[IconType::New].Load("File/icon/new.png");
 
+			//素材
+			アイコン[IconType::鉄材].Load("File/system/mat_001.png");
+			アイコン[IconType::木材].Load("File/system/mat_002.png");
+			アイコン[IconType::皮材].Load("File/system/mat_003.png");
+			アイコン[IconType::骨材].Load("File/system/mat_004.png");
+
 			//上部分バー
 			アイコン[IconType::日付].Load("File/icon/hiduke.png");
 			アイコン[IconType::時間].Load("File/icon/jikan.png");
@@ -182,19 +184,15 @@ namespace SDX_BSC
 			アイテム[ItemImageType::皮のローブ].Load("File/armor/armor066.png");
 			アイテム[ItemImageType::アクセサリ].Load("File/accessory/boots_007.png");
 			//素材
-			素材[CraftType::鍛造].Load("File/system/mat_001.png");
-			素材[CraftType::木工].Load("File/system/mat_002.png");
-			素材[CraftType::裁縫].Load("File/system/mat_003.png");
-			素材[CraftType::魔術].Load("File/system/mat_004.png");
 
-			ダンジョン[DungeonType::城].Load("File/system/move_00.png");
-			ダンジョン[DungeonType::森].Load("File/system/move_01.png");
-			ダンジョン[DungeonType::洞窟].Load("File/system/move_02.png");
-			ダンジョン[DungeonType::砂漠].Load("File/system/move_03.png");
-			ダンジョン[DungeonType::山].Load("File/system/move_04.png");
-			ダンジョン[DungeonType::滝].Load("File/system/move_05.png");
-			ダンジョン[DungeonType::塔].Load("File/system/move_06.png");
-			ダンジョン[DungeonType::廃墟].Load("File/system/move_07.png");
+			アイコン[IconType::城].Load("File/system/move_00.png");
+			アイコン[IconType::森].Load("File/system/move_01.png");
+			アイコン[IconType::洞窟].Load("File/system/move_02.png");
+			アイコン[IconType::砂漠].Load("File/system/move_03.png");
+			アイコン[IconType::山].Load("File/system/move_04.png");
+			アイコン[IconType::滝].Load("File/system/move_05.png");
+			アイコン[IconType::塔].Load("File/system/move_06.png");
+			アイコン[IconType::廃墟].Load("File/system/move_07.png");
 
 			スキル[SkillType::剣].Load("File/game_icons/plain-dagger.png");
 			スキル[SkillType::斧].Load("File/game_icons/battle-axe.png");
@@ -291,7 +289,6 @@ namespace SDX_BSC
 		Font BMSize;
 		Font BLSize;
 
-
 		static void Load()
 		{
 			//std::string f1 = "File/font/NotoSans-Regular.ttf";
@@ -302,10 +299,10 @@ namespace SDX_BSC
 			//f1b = "File/font/mplus-1m-Bold.ttf";
 			bool iszeroswap = true;
 
-			SSize.Load(f1.c_str(), 12);
+			SSize.Load(f1.c_str(), 14);
 			MSize.Load(f1.c_str(), 18);
 			LSize.Load(f1.c_str(), 24);
-			BSSize.Load(f1b.c_str(), 12);
+			BSSize.Load(f1b.c_str(), 14);
 			BMSize.Load(f1b.c_str(), 18);
 			BLSize.Load(f1b.c_str(), 24);
 
@@ -408,7 +405,7 @@ namespace SDX_BSC
 		}
 
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
-		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0)
+		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0 , int 透過率 = 255)
 		{
 			if (立体 != 0)
 			{
@@ -429,6 +426,11 @@ namespace SDX_BSC
 				}
 			}
 
+			if (透過率 < 255)
+			{
+				Screen::SetBlendMode(BlendMode::Alpha, 透過率);
+			}
+
 			ウィンドウ枠[枠No]->DrawPart(座標, { 0,0,10,10 });//左上
 			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y }, { 20, 0,10,10 });//右上
 			ウィンドウ枠[枠No]->DrawPart({ 座標.x , 座標.y + 縦幅 - 10 }, { 0,20,10,10 });//左下
@@ -442,6 +444,10 @@ namespace SDX_BSC
 			//内部
 			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 10 , 横幅 - 20 , 縦幅 - 20 }, { 10,10,10,10 });//右
 
+			if (透過率 < 255)
+			{
+				Screen::SetBlendMode(BlendMode::NoBlend);
+			}
 		}
 
 		static void DrawBox(const Point& 座標, const int 横幅, const int 縦幅, const Color& 色)
@@ -560,7 +566,7 @@ namespace SDX_BSC
 
 
 	//全読み込み
-	static void LoadMaterial()
+	static void LoadAsset()
 	{
 		MFont::Load();
 

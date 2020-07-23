@@ -19,20 +19,20 @@ namespace SDX_BSC
 		static std::vector<Dungeon> data;
 
 		/*暫定自動生成*/
-		static void Add(int no,std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数 , bool isエリアボス)
+		static void Add(int no,std::string 名前, IconType 種類, int 部屋数, int ランク, int Lv, int 地図数 , bool isエリアボス)
 		{
 			data.emplace_back();
 			data[no].Init(no, 名前, 種類, 部屋数, ランク, Lv, 地図数, isエリアボス);
 		}
 
 		/*暫定処理*/
-		void Init(int no, std::string 名前, DungeonType 種類, int 部屋数, int ランク, int Lv, int 地図数, bool isエリアボス)
+		void Init(int no, std::string 名前, IconType 種類, int 部屋数, int ランク, int Lv, int 地図数, bool isエリアボス)
 		{
 			ID = no;
 			this->名前 = 名前;
 			this->部屋数 = 部屋数;
-			this->種類 = 種類;
-			this->ランク = ランク;
+			this->アイコン = 種類;
+			this->層 = ランク;
 			this->Lv = Lv;
 
 			発見財宝 = 0;
@@ -40,10 +40,10 @@ namespace SDX_BSC
 			最大財宝 = 3;
 			最大地図 = 地図数;
 
-			雑魚モンスター[0] = 0;
-			雑魚モンスター[1] = 1;
-			雑魚モンスター[2] = 2;
-			ボスモンスター = 3;
+			雑魚モンスター.emplace_back(0, Lv, false);
+			雑魚モンスター.emplace_back(1, Lv, false);
+			雑魚モンスター.emplace_back(2, Lv, false);
+			ボスモンスター.emplace_back(3, Lv, true);
 
 			//位置-保留
 			is発見 = false;
@@ -86,6 +86,14 @@ namespace SDX_BSC
 					部屋[a].種類 = RoomType::素材;
 				}
 			}
+
+
+			for (int a = 0; a < CV::最大収集種; a++)
+			{
+				収集素材[a] = 0 + a%2 * 2;
+				レア収集素材[a] = 4 + a % 2 * 2;
+			}
+
 		}
 
 		void 探索率計算()
@@ -108,11 +116,12 @@ namespace SDX_BSC
 
 		int ID;
 		std::string 名前;
-		DungeonType 種類;
+		IconType アイコン;
 		int 部屋数;
 		std::vector<Room>部屋;
-		int ランク;//0~4
+
 		int Lv;//敵の強さ等
+		int 層;//0~4
 		bool isボス生存 = true;
 		bool isボス発見 = false;
 
@@ -121,12 +130,16 @@ namespace SDX_BSC
 		int 発見地図;
 		int 最大地図;
 
-		MonsterNo ボスモンスター;
-		MonsterNo 雑魚モンスター[3];//地形種で固定？
+		std::vector<Monster> ボスモンスター;
+		std::vector<Monster> 雑魚モンスター;
 
 		double 探索率;
 		bool is発見;//ダンジョン発見済みフラグ
-		bool is新発見;//UI用
+		bool is新規;//UI用
+
+		int 収集素材[CV::最大収集種];
+		int レア収集素材[CV::最大収集種];
+		double レア収集率 = 0.1;
 	};
 
 	std::vector<Dungeon> Dungeon::data;

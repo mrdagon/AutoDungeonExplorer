@@ -6,9 +6,11 @@
 
 #include "w_guihelp.h"
 #include "w_guiobject.h"
-#include "w_windowbox.h"//継承元
 #include "w_dragdrop.h"
+#include "w_windowbox.h"//継承元
+#include "w_popup.h"
 
+#include "w_skilltree.h"
 #include "w_toolbar.h"
 #include "w_dungeon.h"
 #include "w_eventlog.h"
@@ -23,4 +25,3 @@
 #include "w_factory.h"
 
 #include "w_config.h"
-#include "w_popup.h"

@@ -7,7 +7,7 @@
 #include "enum_type.h"
 #include "game.h"
 #include "init_data.h"
-#include "material.h"
+#include "asset.h"
 #include "debug.h"
 #include "save_and_load.h"
 #include "text.h"

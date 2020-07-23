@@ -4,6 +4,7 @@
 #pragma once
 #include <SDXFramework.h>
 
+#include "material.h"
 #include "active_skill.h"
 #include "passive_skill.h"
 
@@ -22,6 +23,7 @@
 
 
 #include "warker.h"
+#include "crafter.h"
 
 //#include "party.h"
 #include "quest.h"

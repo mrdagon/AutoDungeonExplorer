@@ -6,9 +6,6 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[15][a]
-
-
 
 	/*依頼ウィンドウ*/
 	class W_Quest : public WindowBox
@@ -29,23 +26,23 @@ namespace SDX_BSC
 
 				if (Quest::data[id].isメイン)
 				{
-					MFont::BSSize.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Main Quest" });
+					MFont::BSSize.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Main Quest" });
 				} else {
-					MFont::BSSize.DrawBold({ px + LV(15) ,py + LV(16) }, Color::White, Color::Black, { "Sub Quest" });
+					MFont::BSSize.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Sub Quest" });
 				}
 
 				//クエスト名
-				MFont::BLSize.DrawBold({ px + LV(5) ,py + LV(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
+				MFont::BLSize.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
 
 				//達成条件と達成率＿complete表示
-				MFont::BMSize.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
+				MFont::BMSize.DrawBold({ px + Lp(7) ,py + Lp(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
 
 				//報酬、名誉
-				MIcon::アイコン[IconType::名声].Draw({ px + LV(9), py + LV(10) });
-				MFont::BMSize.DrawBold({ px + LV(11) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
+				MIcon::アイコン[IconType::名声].Draw({ px + Lp(9), py + Lp(10) });
+				MFont::BMSize.DrawBold({ px + Lp(11) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
 				//報酬、資金
-				MIcon::アイコン[IconType::資金].Draw({ px + LV(13), py + LV(10) });
-				MFont::BMSize.DrawBold({ px + LV(14) ,py + LV(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
+				MIcon::アイコン[IconType::資金].Draw({ px + Lp(13), py + Lp(10) });
+				MFont::BMSize.DrawBold({ px + Lp(14) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
 
 			}
 		};
@@ -69,17 +66,10 @@ namespace SDX_BSC
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
-		}
 
-		void GUI_Init()
-		{
-			gui_objects.clear();
-			依頼.clear();
-
-			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
+			for (int a = 0; a < (int)Quest::data.size(); a++)
 			{
 				依頼.emplace_back();
-				依頼[a].位置 = { LV(0) , LV(1) + (LV(3) + LV(4)) * a , LV(2) , LV(3) };
 				依頼[a].id = a;
 				依頼[a].SetHelp(Quest::data[a].説明);
 			}
@@ -89,8 +79,18 @@ namespace SDX_BSC
 				gui_objects.push_back(&依頼[a]);
 			}
 
+			SetCSVPage(15);
+		}
 
-			縦内部幅 = double(LV(0)*2 + (LV(3) + LV(4)) * Quest::data.size());
+		void GUI_Init()
+		{
+
+			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
+			{
+				依頼[a].位置 = { Lp(0) , Lp(1) + (Lp(3) + Lp(4)) * a , Lp(2) , Lp(3) };
+			}
+
+			縦内部幅 = double(Lp(0)*2 + (Lp(3) + Lp(4)) * Quest::data.size());
 		}
 
 		void 派生Draw()
@@ -109,7 +109,4 @@ namespace SDX_BSC
 		}
 
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

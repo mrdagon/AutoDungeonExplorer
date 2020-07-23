@@ -102,21 +102,23 @@ namespace SDX_BSC
 			Time::GetDate(&time);
 			Rand::Reset(time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec);
 
-			for (int a = 1; a < 10; a++)
+			for (int a = 0; a < 9; a++)
 			{
-				Guild::P->is装備開発[a] = true;
-				Guild::P->is新規[a] = false;
-				Guild::P->装備所持数[a] = 3;
+				Guild::P->is装備開発[1+a*4] = true;
+				Guild::P->is新規[1 + a * 4] = false;
+				Guild::P->装備所持数[1 + a * 4] = 3;
 			}
 
-			for (int b = 0; b < (int)CraftType::COUNT; b++)
+			for (auto& it : Guild::P->is素材発見)
 			{
-				for (int a = 0; a < 1; a++)
-				{
-					Guild::P->総素材 += 30;
-					Guild::P->素材数[CraftType(b)][a] = 30;
-					Guild::P->is素材発見[CraftType(b)][a] = true;
-				}
+				it = false;
+			}
+
+			for (int a = 0; a < 4; a++)
+			{
+				Guild::P->総素材 += 30;
+				Guild::P->素材数[a] = 30;
+				Guild::P->is素材発見[a] = true;
 			}
 
 			Guild::P->投資経験値[ManagementType::経営] = 0;
@@ -141,21 +143,28 @@ namespace SDX_BSC
 			Management::Load();
 
 			//求人＆初期人材ダミー
-			Warker::data.clear();
-			Warker::data.reserve(2048);
-			for (int a = 0; a < 25; a++)
-			{
-				Warker::data.emplace_back();
-				Warker::data[a].Make(a, a%5 , 1, "ナナシ");
+			Guild::P->製造要員.clear();
+			Guild::P->探索要員.clear();
+			Guild::P->ギルメン控え.clear();
+			Guild::P->製造要員.reserve(128);
+			Guild::P->探索要員.reserve(1024);
+
+			Guild::P->最大パーティ数 = 1;
 				
-				Warker::data[a].所属 = 0;
+			//ギルメン初期
+			for (int a = 0; a < 5; a++)
+			{
+				Guild::P->探索要員.emplace_back();
+				Guild::P->探索要員.back().Make(a, a, 1, "ギルメン");
+				Guild::P->探索パーティ[0].メンバー[a] = &Guild::P->探索要員[a];
 			}
 
-			//初期求人
-			for (int a = 0; a < 10; a++)
+			//製造初期
+			for (int a = 0; a < 4; a++)
 			{
-				Warker::data.emplace_back();
-				Warker::data.back().Make((int)Warker::data.size() - 1, Rand::Get(4), 1, "ナナシ");
+				Guild::P->製造要員.emplace_back();
+				Guild::P->製造要員.back().Make(a, 1, CraftType(a), "クラフト");
+				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Guild::P->製造要員[a]);
 			}
 
 			//仮ダンジョン
@@ -163,31 +172,10 @@ namespace SDX_BSC
 			Dungeon::data.reserve(100);
 			for (int a = 0; a < 100; a++)
 			{
-				Dungeon::Add(a, "名も無き迷宮", DungeonType(Rand::Get((int)DungeonType::COUNT - 1)), 100, std::min(a / 10,4), a+1 , 1 , (a % 10 == 9));
+				Dungeon::Add(a, "名も無き迷宮", IconType::森 , 100, std::min(a / 10,4), a+1 , 1 , (a % 10 == 9));
 				Dungeon::data[a].探索率計算();
 			}
 			Dungeon::data[0].is発見 = true;
-
-			//ギルメン初期-仮配置
-			for (int a = 0; a < 5; a++)
-			{
-				Guild::P->ギルメン.push_back(&Warker::data[a]);
-			}
-
-			for (int a = 0; a < 4; a++)
-			{
-				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Warker::data[a+15]);
-				Warker::data[a + 15].製造配置 = CraftType(a % 4);
-			}
-
-			Guild::P->最大パーティ数 = 2;
-			for (int a = 0; a < 1; a++)
-			{
-				for (int b = 0; b < CV::パーティ人数; b++)
-				{
-					Guild::P->探索パーティ[a].メンバー[b] = &Warker::data[a * CV::パーティ人数 + b];
-				}
-			}
 
 			for (int a = 0; a < CV::最大パーティ数; a++)
 			{
@@ -221,6 +209,9 @@ namespace SDX_BSC
 				{
 					if (Time::GetNowCount() - time > frame * 50 / 3.0) { break; }
 				}
+
+				if (Game::isゲーム終了 == true) { break; }
+
 			}
 
 			if (CV::isデバッグ)
@@ -235,14 +226,16 @@ namespace SDX_BSC
 		//操作処理
 		void Input()
 		{
-			if (Input::key.F1.on && CV::isデバッグ) { SV::gui_check = !SV::gui_check; }
+			if (Input::key.F1.on && CV::isデバッグ) { Game::isデバッグ大きさ表示 = !Game::isデバッグ大きさ表示; }
 
 			if (Input::mouse.Right.on)
 			{
-				Game::isヘルプ = !Game::isヘルプ;
+				Game::is停止 = !Game::is停止;
+				//Game::isヘルプ = !Game::isヘルプ;
 			}
 
 			ToolBar.操作();
+
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{
 				if (windows[a]->操作() == true)
@@ -300,7 +293,7 @@ namespace SDX_BSC
 			if (isH == false && Game::isヘルプ == true)
 			{
 				static GUI_Help no_help;
-				no_help.SetHelp("右クリックでヘルプ表示ON/OFF",40);
+				no_help.SetHelp("",40);
 				no_help.Info();
 			}
 
@@ -352,8 +345,6 @@ namespace SDX_BSC
 					MakeItem();
 				}
 
-
-
 				Game::時間++;
 			}
 		}
@@ -384,7 +375,7 @@ namespace SDX_BSC
 			Game::時間 = 0;
 
 			//記録追加
-			Guild::P->R団員.push_back( int(Guild::P->ギルメン.size() + Guild::P->製造メンバー.size()) );
+			Guild::P->R団員.push_back(Guild::P->総人数);
 			Guild::P->R資金.push_back(Guild::P->資金);
 			Guild::P->R販売.push_back(Guild::P->総販売);
 			Guild::P->R製造.push_back(Guild::P->総製造);
@@ -435,12 +426,8 @@ namespace SDX_BSC
 			}
 		}
 
-
-		//●探索処理
-
-		//●戦闘処理
-
-		//●ウィンドウ位置保存
+		//●セーブ処理
+		//ウィンドウ位置保存
 		bool WinPosSaveAndLoad(FileMode 保存or読み込み)
 		{
 			//バイナリ形式で保存
@@ -469,7 +456,6 @@ namespace SDX_BSC
 			{
 				file.ReadWrite(it->座標.x);
 				file.ReadWrite(it->座標.y);
-				file.ReadWrite(it->横幅);
 				file.ReadWrite(it->縦幅);
 				file.ReadWrite(it->is表示);
 			}

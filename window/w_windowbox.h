@@ -53,6 +53,8 @@ namespace SDX_BSC
 		bool isポップアップ = false;
 		int ポップアップ戻り値 = 0;
 
+		bool isスクロールバー表示 = true;
+
 		/*各種初期化*/
 		virtual void init()
 		{
@@ -126,6 +128,8 @@ namespace SDX_BSC
 			
 			for (auto& it : gui_objects)
 			{
+				if (it->is表示 == false) { continue; }
+
 				if (it->is固定)
 				{
 					マウス座標.y = Input::mouse.y - 座標.y - タイトル枠高さ;// +スクロール位置;
@@ -148,8 +152,28 @@ namespace SDX_BSC
 
 		}
 
-		virtual void 派生Draw() { return; };
-		virtual bool 派生操作() { return false; };
+		virtual void 派生Draw()
+		{ 
+			GUI_Init();
+			//配列の後ろから描画
+			for (int a = (int)gui_objects.size() - 1; a >= 0; a--)
+			{
+				gui_objects[a]->Draw();
+			}
+
+			return;
+		};
+
+		virtual bool 派生操作()
+		{
+			//配列の前からチェック
+			for (auto& it : gui_objects)
+			{
+				//クリックとドロップのチェック
+				if (it->操作チェック(相対座標.x, 相対座標.y)) { return true; };
+			}
+			return false;
+		};
 
 		void 共通Draw()
 		{
@@ -171,7 +195,7 @@ namespace SDX_BSC
 
 			//ウィンドウスクロール用
 			//スクロール最大高さ = 縦幅-8-8
-			if (縦幅 < 縦内部幅)
+			if (縦幅 < 縦内部幅 )
 			{
 				MSystem::DrawWindow({ 座標.x + 横幅 - 26 , 座標.y + タイトル枠高さ + 4 }, 20, 縦幅 - 8, 2 , -1);
 
@@ -394,7 +418,7 @@ namespace SDX_BSC
 		void 描画範囲(bool is全体)
 		{
 			int スクロールバー太さ = 28;
-			if (isポップアップ) { スクロールバー太さ = 0; }
+			if (isポップアップ || isスクロールバー表示 == false) { スクロールバー太さ = 0; }
 
 			if (is全体)
 			{
@@ -409,15 +433,42 @@ namespace SDX_BSC
 		}
 
 		/*最前面にこのウィンドウだけ表示*/
-		int サブ呼び出し()
+		int ポップアップ呼び出し()
 		{
+			is表示 = true;
 			//裏をやや暗くする
+
+
 			Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
+
+			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth(), Window::GetHeight());
 
 			while (System::Update(true,false))
 			{
+				img.Draw({ 0,0 });
+
 				Draw();
+				DebugDraw();
+				CheckInfo();
+				W_Drag_Drop::Draw();
 				派生操作();
+				W_Drag_Drop::操作();
+
+				if (isポップアップ == false &&
+					abs(Input::mouse.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
+					abs(Input::mouse.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1 && 
+					Input::mouse.Left.on )
+				{
+					is表示 = false;
+					ポップアップ戻り値 = 0;
+					MSound::効果音[SE::ウィンドウ閉じ].Play();
+					break;
+				}
+
+				if (CV::isデバッグ)
+				{
+					DebugCheckInput();
+				}
 
 				if (is表示 == false)
 				{
@@ -425,9 +476,27 @@ namespace SDX_BSC
 				}
 			}
 
+			img.Release();
+
 			return ポップアップ戻り値;
 		}
 
+		//CSVでGUIレイアウト設定するやつのあれこれ
+		int csv_page = 0;
+
+		void SetCSVPage(int csv_page)
+		{
+			this->csv_page = csv_page;
+			for (auto& it : gui_objects)
+			{
+				it->csv_page = csv_page;
+			}
+		}
+
+		inline int Lp(int no)
+		{
+			return DV::I[csv_page][no];
+		}
 	};
 
 }

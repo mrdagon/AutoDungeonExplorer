@@ -6,9 +6,6 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[16][a]
-
-
 
 	/*ギルドの情報*/
 	class W_Config : public WindowBox
@@ -36,17 +33,17 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px ,py }, (int)位置.GetW() , (int)位置.GetH(), 12);
-				MIcon::アイコン[アイコン].DrawRotate({px+LV(11),py+LV(12)},2,0);
+				MIcon::アイコン[アイコン].DrawRotate({px+Lp(11),py+Lp(12)},2,0);
 
-				MSystem::DrawWindow({ px + LV(24) ,py + LV(26) }, LV(27), LV(28), LV(23), 1);
-				MSystem::DrawWindow({ px + LV(25) ,py + LV(26) }, LV(27), LV(28), LV(23), 1);
-
-
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(13),py + LV(15) },2,0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(14),py + LV(15) },2,0,true);
+				MSystem::DrawWindow({ px + Lp(24) ,py + Lp(26) }, Lp(27), Lp(28), 1, 1);
+				MSystem::DrawWindow({ px + Lp(25) ,py + Lp(26) }, Lp(27), Lp(28), 1, 1);
 
 
-				MFont::BMSize.DrawBold({ px + LV(16) ,py + LV(17) }, Color::White, Color::Black, 名前, false);
+				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(13),py + Lp(15) },2,0);
+				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(14),py + Lp(15) },2,0,true);
+
+
+				MFont::BMSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, 名前, false);
 
 				switch (id)
 				{
@@ -65,19 +62,19 @@ namespace SDX_BSC
 					break;
 				}
 
-				MFont::BMSize.DrawBold({ px + LV(18) + MFont::BMSize.GetDrawStringWidth(設定値)/2 ,py + LV(19) }, Color::White, Color::Black, { 設定値 }, true);
+				MFont::BMSize.DrawBold({ px + Lp(18) + MFont::BMSize.GetDrawStringWidth(設定値)/2 ,py + Lp(19) }, Color::White, Color::Black, { 設定値 }, true);
 			}
 
 			void Click(double px, double py)
 			{
 				int n = 0;
 
-				if (px > LV(24) && px < LV(24) + LV(27) && py > LV(26) && py < LV(26) + LV(28))
+				if (px > Lp(24) && px < Lp(24) + Lp(27) && py > Lp(26) && py < Lp(26) + Lp(28))
 				{
 					n = -1;
 					MSound::効果音[SE::ボタンクリック].Play();
 				}
-				if (px > LV(25) && px < LV(25) + LV(27) && py > LV(26) && py < LV(26) + LV(28))
+				if (px > Lp(25) && px < Lp(25) + Lp(27) && py > Lp(26) && py < Lp(26) + Lp(28))
 				{
 					n = +1;
 					MSound::効果音[SE::ボタンクリック].Play();
@@ -115,8 +112,8 @@ namespace SDX_BSC
 			{
 				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_決定 ) / 2;
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23),1);
-				MFont::BMSize.DrawBold({ px + LV(20) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_決定 , false);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1,1);
+				MFont::BMSize.DrawBold({ px + Lp(20) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_決定 , false);
 			}
 
 			void Click(double px, double py)
@@ -161,8 +158,8 @@ namespace SDX_BSC
 			{
 				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), LV(23), 1);
-				MFont::BMSize.DrawBold({ px + LV(21) - dif_x ,py + LV(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
+				MFont::BMSize.DrawBold({ px + Lp(21) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
 			}
 
 			void Click(double px, double py)
@@ -228,42 +225,18 @@ namespace SDX_BSC
 
 			確定.base = this;
 			キャンセル.base = this;
+
+			SetCSVPage(16);
 		}
 
 		void GUI_Init()
 		{
 
-			解像度.位置 = { LV(0),LV(1) ,LV(4),LV(5) };
-			BGM音量.位置 = { LV(0),LV(2),LV(4),LV(5) };
-			SE音量.位置 = { LV(0),LV(3),LV(4),LV(5) };
-			確定.位置 = { LV(6),LV(8),LV(9),LV(10) };
-			キャンセル.位置 = { LV(7),LV(8) , LV(9),LV(10) };
+			解像度.位置 = { Lp(0),Lp(1) ,Lp(4),Lp(5) };
+			BGM音量.位置 = { Lp(0),Lp(2),Lp(4),Lp(5) };
+			SE音量.位置 = { Lp(0),Lp(3),Lp(4),Lp(5) };
+			確定.位置 = { Lp(6),Lp(8),Lp(9),Lp(10) };
+			キャンセル.位置 = { Lp(7),Lp(8) , Lp(9),Lp(10) };
 		}
-
-		void 派生Draw()
-		{
-			GUI_Init();
-
-			for (auto& it : gui_objects)
-			{
-				it->Draw();
-			}
-
-		}
-
-		bool 派生操作()
-		{
-
-			for (auto& it : gui_objects)
-			{
-				it->操作チェック(相対座標.x, 相対座標.y);
-			}
-
-			return false;
-		}
-
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

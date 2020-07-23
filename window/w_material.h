@@ -6,8 +6,6 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[3][a]
-
 	/*素材とアイテムウィンドウ*/
 	class W_Material: public WindowBox
 	{
@@ -16,41 +14,45 @@ namespace SDX_BSC
 		class GUI_Mat_num :public GUI_Object
 		{
 		public:
-			int ランク;
-			CraftType 素材種;
+			Material* 素材種 = nullptr;
 
-			void Set(Rect 位置, int ランク, CraftType 素材種)
+			void Set(Rect 位置, int 素材種)
 			{
 				this->位置 = 位置;
-				this->ランク = ランク;
-				this->素材種 = 素材種;
+				this->素材種 = &Material::data[素材種];
 			}
 
 			void Draw派生(double px, double py)
 			{
+				if (素材種 == nullptr) { return; }
+
 				//枠の描画
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 12);
 
 				//素材アイコン
-				MIcon::素材[素材種].DrawRotate({ px + LV(6), py + LV(7) }, 1, 0);
+				MIcon::アイコン[素材種->アイコン].DrawRotate({ px + Lp(6), py + Lp(7) }, 1, 0);
 
-				//ランク
-				//MIcon::アイコン[IconType::ランク].DrawRotate({ px + LV(8), py + LV(9) }, 1, 0);
-				MFont::BSSize.DrawBold({ px + LV(10) ,py + LV(11) }, Color::White, Color::Black, { "Lv" , ランク + 1 }, true);
+				//Lv
+				MFont::BSSize.DrawBold({ px + Lp(10) ,py + Lp(11) }, Color::White, Color::Black, { "Lv" , 素材種->Lv }, true);
 
 				//所持数
-				MFont::BSSize.DrawBold({ px + LV(12) ,py + LV(13) }, Color::White, Color::Black, "x", true);
-				MFont::BMSize.DrawBold({ px + LV(14)  ,py + LV(15) }, Color::White, Color::Black, Guild::P->素材数[素材種][ランク],true);
+				MFont::BSSize.DrawBold({ px + Lp(12) ,py + Lp(13) }, Color::White, Color::Black, "x", true);
+				MFont::BMSize.DrawBold({ px + Lp(14)  ,py + Lp(15) }, Color::White, Color::Black, Guild::P->素材数[素材種->ID],true);
 			}
+
+			void Info派生(Point 座標) override
+			{
+				//素材情報
+				InfoMaterial( 素材種 , 座標 );
+			}
+
 		};
 
 	public:
-		std::vector<GUI_Mat_num> GUI_素材数;
+		GUI_Mat_num GUI_素材数[CV::最大素材種];
 
 		void init()
 		{
-			GUI_素材数.reserve(100);
-
 			種類 = WindowType::Material;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];
@@ -69,55 +71,41 @@ namespace SDX_BSC
 				gui_objects.push_back(&it);
 			}
 
+			SetCSVPage(3);
+
 			GUI_init();
 		}
 
 
 		void GUI_init()
 		{
-			int xx = 0;
-			int n = 0;
-			int yy = 0;
+			int xx = -Lp(1);
+			int yy = -Lp(3);
+			int cnt = 0;
 
-			GUI_素材数.clear();
-			gui_objects.clear();
 			縦内部幅 = 0;
 
-			for (int b = 0; b < (int)CraftType::COUNT; b++)
+			for (int a = 0 ; a < CV::最大素材種; a++)
 			{
-				for (int a = CV::最大素材ランク - 1; a >= 0; a--)
+				xx += Lp(1);
+
+				if (a % 4 == 0)
 				{
-					if (Guild::P->is素材発見[CraftType(b)][a] == false) { continue; }
-					GUI_素材数.emplace_back();
-					GUI_素材数[n].Set({ LV(0) + xx , LV(2) + yy, LV(4), LV(5) }, a, CraftType(b));
-					gui_objects.push_back(&GUI_素材数[n]);
-					n++;
-					yy += LV(3);
+					yy += Lp(3);
+					xx = 0;
 				}
 
-				縦内部幅 = std::max((int)縦内部幅, yy+20);
-				xx += LV(1);
-				yy = 0;
+				if (Guild::P->is素材発見[a] == false) 
+				{ 
+					GUI_素材数[a].is表示 = false;
+					continue; 				
+				}
+				GUI_素材数[a].Set({ Lp(0) + xx , Lp(2) + yy, Lp(4), Lp(5) }, a );
+				GUI_素材数[a].is表示 = true;
 			}
+
+			縦内部幅 = std::max((int)縦内部幅, yy+20);
+			yy = 0;
 		}
-
-		void 派生Draw()			
-		{
-			GUI_init();
-
-			for (auto &it : gui_objects)
-			{
-				it->Draw();
-			}
-		}
-
-		bool 派生操作()
-		{
-			return false;
-		}
-
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

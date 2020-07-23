@@ -8,27 +8,50 @@ namespace SDX_BSC
 	using namespace SDX;
 
 	/*掴み中のものの表示、管理*/
-	namespace W_Drag_Drop//クラスじゃないよ
+	namespace W_Drag_Drop
 	{
 		Dungeon* ダンジョン = nullptr;
+
 		int アイテム = -1;
-		Warker* ギルメン = nullptr;
-		WindowBox* ウィンドウ = nullptr;
-		int 並びID = 0;//配列の位置
+
+		Warker* 探索メン = nullptr;
+		Crafter* 製造メン = nullptr;
+		int 並びID = 0;//パーティと製造部門での位置
+
+		ActiveSkill* Aスキル = nullptr;
+
+		struct equipItem
+		{
+			int 部位 = 0;
+			Warker* メンバー = nullptr;
+		} ギルメン装備;
 
 		void Draw()
 		{
 			if (ダンジョン != nullptr)
 			{
-				MIcon::ダンジョン[ダンジョン->種類].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+				MIcon::アイコン[ダンジョン->アイコン].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
-			if (アイテム != -1)
+			else if (アイテム != -1)
 			{
 				MIcon::アイテム[Item::data[アイテム].見た目].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
-			if (ギルメン != nullptr)
+			else if (探索メン != nullptr)
 			{
-				MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
+				MUnit::ユニット[探索メン->見た目][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
+			}
+			else if (製造メン != nullptr)
+			{
+				MUnit::ユニット[製造メン->見た目][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
+			}
+			else if (ギルメン装備.メンバー != nullptr)
+			{
+				MIcon::アイテム[Item::data[ギルメン装備.メンバー->装備[ギルメン装備.部位]].見た目].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+			}			
+			else if ( Aスキル != nullptr)
+			{
+				MSystem::DrawSkill(Aスキル->アイコン, { Input::mouse.x - 12 ,Input::mouse.y - 12 }, Color(200, 64, 64));
+
 			}
 		}
 
@@ -37,190 +60,104 @@ namespace SDX_BSC
 			if (Input::mouse.Left.off)
 			{
 				ダンジョン = nullptr;
-				ギルメン = nullptr;
+				探索メン = nullptr;
 				アイテム = -1;
+				ギルメン装備.メンバー = nullptr;
+				製造メン = nullptr;
+				Aスキル = nullptr;
 			}
 
 			return false;
 		}
 
-
-		/*製造同士で入れ替え*/
-		void 製造to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID , CraftType 移動部署)
+		void パーティ移動(Warker* 移動先メンバー, int 移動先ID)
 		{
-			CraftType 部署A = ギルメン->製造配置;
+			//控え枠へドロップ
+			if (移動先メンバー == nullptr && 移動先ID == -100)
+			{
+				if (並びID >= 0)
+				{
+					//パーティから控え
+					Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = nullptr;
+					Guild::P->ギルメン控え.push_back(探索メン);
+				} else {
+					//控えから控え最後までバブルソート
+					for (int a = 0; a < Guild::P->ギルメン控え.size() - 1; a++)
+					{
+						if (Guild::P->ギルメン控え[a] == 探索メン)
+						{
+							Guild::P->ギルメン控え[a] = Guild::P->ギルメン控え[a+1];
+							Guild::P->ギルメン控え[a+1] = 探索メン;
+						}
+					}
+				}
+
+
+			}
+			else if (移動先ID >= 0 && 並びID >= 0)
+			{
+				//両方パーティ
+				Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = 探索メン;
+				Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
+			} else if(移動先ID < 0 && 並びID < 0){
+				//両方控え
+				Guild::P->ギルメン控え[(-移動先ID-1)] = 探索メン;
+				Guild::P->ギルメン控え[(-並びID-1)] = 移動先メンバー;
+			}
+			else if (移動先ID < 0) {
+				//移動先が控え
+				Guild::P->ギルメン控え[(-移動先ID-1)] = 探索メン;
+				Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
+			} else {
+				//控えからパーティ
+				Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = 探索メン;
+				Guild::P->ギルメン控え[(-並びID-1)] = 移動先メンバー;
+				Guild::P->ギルメン控え.erase(std::remove(Guild::P->ギルメン控え.begin(), Guild::P->ギルメン控え.end(), nullptr), Guild::P->ギルメン控え.end());
+			}
+
+			//控えメンバーは
+			for (auto& it : Guild::P->ギルメン控え)
+			{
+				it->基礎ステータス計算();
+			}
+
+			//全パーティメンバーの基礎ステ再計算
+			for (auto& it : Guild::P->探索パーティ)
+			{
+				it.基礎ステ再計算();
+			}
+
+			MSound::効果音[SE::配置換え].Play();
+		}
+
+		void 製造移動(Crafter* 移動先製造メンバー, CraftType 移動先部門, int 移動先ID = 0)
+		{
+			CraftType 部署 = 製造メン->配置部門;
 
 			//移動先が空き
-			if (移動先メンバー == nullptr)
+			if (移動先製造メンバー == nullptr)
 			{
-				//最後に移動
-				for (int a = 0; a < (int)Guild::P->製造メンバー[部署A].size(); a++)
+				//現在の部署から削除して、新部署の最後に移動
+				for (int a = 0; a < (int)Guild::P->製造メンバー[部署].size(); a++)
 				{
-					if (ギルメン == Guild::P->製造メンバー[部署A][a])
+					if (製造メン == Guild::P->製造メンバー[部署][a])
 					{
-						Guild::P->製造メンバー[部署A].erase(Guild::P->製造メンバー[部署A].begin() + a);
+						Guild::P->製造メンバー[部署].erase(Guild::P->製造メンバー[部署].begin() + a);
 						break;
 					}
 				}
-				Guild::P->製造メンバー[移動部署].emplace_back(ギルメン);
-				ギルメン->製造配置 = 移動部署;
+				Guild::P->製造メンバー[移動先部門].emplace_back(製造メン);
+				製造メン->配置部門 = 移動先部門;
 			} else {
+				//移動先と入れ替え
+				Guild::P->製造メンバー[移動先部門][移動先ID] = 製造メン;
+				Guild::P->製造メンバー[部署][並びID] = 移動先製造メンバー;
 
-
-				//入れ替え
-				Guild::P->製造メンバー[移動部署][移動先ID] = ギルメン;
-				Guild::P->製造メンバー[部署A][並びID] = 移動先メンバー;
-
-				ギルメン->製造配置 = 移動部署;
-				移動先メンバー->製造配置 = 部署A;
+				製造メン->配置部門 = 移動先部門;
+				移動先製造メンバー->配置部門 = 部署;
 			}
 
 			MSound::効果音[SE::配置換え].Play();
-			移動先->GUI_Init();
-		}
-
-		/*パーティ同士で入れ替え*/
-		void パーティtoパーティ(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
-		{
-			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();
-			Guild::P->探索パーティ[並びID / 5].基礎ステ再計算();
-
-			MSound::効果音[SE::配置換え].Play();
-
-			移動先->GUI_Init();
-		}
-
-		/*移動先=パーティ*/
-		void 製造toパーティ(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
-		{
-			if (移動先メンバー == nullptr)
-			{
-				//移動先が空きなら製造は削除だけ
-				Guild::P->製造メンバー[ギルメン->製造配置].erase(Guild::P->製造メンバー[ギルメン->製造配置].begin() + 並びID);
-			} else {
-				//移動先にいるなら入れ替え
-				Guild::P->製造メンバー[ギルメン->製造配置][並びID] = 移動先メンバー;
-				移動先メンバー->製造配置 = ギルメン->製造配置;
-				移動先メンバー->基礎ステータス計算();
-			}
-
-			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();
-
-			MSound::効果音[SE::配置換え].Play();
-			移動先->GUI_Init();
-			ウィンドウ->GUI_Init();
-
-		}
-
-		void パーティto製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID, CraftType 製造部署)
-		{
-			if (移動先メンバー == nullptr)
-			{
-				//移動先が空きなら最後に追加
-				Guild::P->製造メンバー[製造部署].push_back(ギルメン);	
-			} else {
-				//移動先にいるなら入れ替え
-				Guild::P->製造メンバー[製造部署][移動先ID] = ギルメン;
-				ギルメン->基礎ステータス計算();
-			}
-			ギルメン->製造配置 = 製造部署;
-
-			//移動先メンバーがnullなら空きに居るなら代入処理になる
-			Guild::P->探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			Guild::P->探索パーティ[並びID / 5].基礎ステ再計算();
-
-			MSound::効果音[SE::配置換え].Play();
-			移動先->GUI_Init();
-			ウィンドウ->GUI_Init();
-		}
-
-		void 求人to製造(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID, CraftType 製造部署)
-		{
-			//人事点を消費
-			if (Guild::P->人事ポイント < 2) { return; }
-			Guild::P->人事ポイント -= 2;
-
-			//製造の最後に追加
-			Guild::P->製造メンバー[製造部署].push_back(ギルメン);
-
-			ギルメン->所属 = Guild::P->id;
-			ギルメン->製造配置 = 製造部署;
-
-			移動先->GUI_Init();
-			ウィンドウ->GUI_Init();
-
-			MSound::効果音[SE::雇用].Play();
-			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
-		}
-
-		void 求人toパーティ(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID)
-		{
-			//人事点を消費
-			if (Guild::P->人事ポイント < 2) { return; }
-
-			if (移動先メンバー != nullptr)
-			{
-				//元メンバーがいるなら鍛造に送る
-				Guild::P->製造メンバー[CraftType::鍛造].push_back(移動先メンバー);
-				移動先メンバー->製造配置 = CraftType::鍛造;
-			}
-
-			Guild::P->人事ポイント -= 2;
-			ギルメン->所属 = Guild::P->id;
-			Guild::P->探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = ギルメン;
-			Guild::P->探索パーティ[移動先ID / 5].基礎ステ再計算();			
-
-			MSound::効果音[SE::雇用].Play();
-			EventLog::Add(0, Game::日付, LogDetailType::雇用, ギルメン->ID);
-		}
-
-		/*求人で入れ替え(未実装)*/
-		void 求人to求人()
-		{
-
-		}
-
-		void メンバー移動(WindowBox* 移動先, Warker* 移動先メンバー, int 移動先ID , CraftType 製造部門 = CraftType::鍛造)
-		{
-			switch (移動先->種類)
-			{
-			case WindowType::Party:
-				switch (ウィンドウ->種類)
-				{
-				case WindowType::Party:
-					パーティtoパーティ(移動先, 移動先メンバー, 移動先ID);
-					break;
-				case WindowType::Factory:
-					製造toパーティ(移動先, 移動先メンバー, 移動先ID);
-					break;
-				case WindowType::Recruit:
-					求人toパーティ(移動先, 移動先メンバー, 移動先ID);
-					break;
-				}
-				break;
-			case WindowType::Factory:
-				switch (ウィンドウ->種類)
-				{
-				case WindowType::Party:
-					パーティto製造(移動先, 移動先メンバー, 移動先ID,製造部門);
-					break;
-				case WindowType::Factory:
-					製造to製造(移動先, 移動先メンバー, 移動先ID,製造部門);
-					break;
-				case WindowType::Recruit:
-					求人to製造(移動先, 移動先メンバー, 移動先ID,製造部門);
-					break;
-				}
-				break;
-			case WindowType::Recruit:
-				//とりあえず無し？
-				break;
-			}
-
-			Guild::P->製造力計算();
 		}
 
 

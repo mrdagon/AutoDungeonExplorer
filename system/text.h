@@ -27,7 +27,7 @@ namespace SDX_BSC
 		EnumArray<std::string, WindowType> Window_略記;
 		EnumArray<std::string, WindowType> Window_ヘルプ;
 
-		std::string タイトル = "おーと だんじょん えくすぷろーら ＜～サブタイトル募集中＞ 0.1 β";
+		std::string タイトル = "おーと だんじょん えくすぷろーら ＜仮＞ 0.1 β";
 		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
 
 		////Config Window
@@ -38,7 +38,7 @@ namespace SDX_BSC
 		std::string Config_解像度 = "解像度";
 
 		////Dungeon Window
-		std::string Dungeon_タブ名[5] = { "一層","二層","三層","四層","五層" };
+		std::string Dungeon_タブ名[5] = { "I層","II層","III層","IV層","V層" };
 		std::string Dungeon_タブヘルプ[5];
 		std::string Dungeon_捜索 = "捜索中";
 		std::string Dungeon_発見 = " 発見";
@@ -63,6 +63,7 @@ namespace SDX_BSC
 		std::string Log_レア製造 = "を製造";
 
 		//Factory Window
+		EnumArray<std::string, CraftType> Factory_部門名;
 		EnumArray<std::string, CraftType> Factory_部門説明;
 		std::string Factory_ヘルプ = "製造力と製造人員\nドラッグ＆ドロップで配置転換";
 
@@ -85,8 +86,12 @@ namespace SDX_BSC
 		std::string Party_ボス回避 = "ボス\n回避";
 		std::string Party_ボス討伐 = "ボス\n討伐";
 
+		//スキルツリー
+		
+
 		//Recruit Window
-		std::string Recruit_リロールヘルプ = "クリックで雇用Pを1消費、志願者をリロール";
+		std::string Recruit_採用 = "！採用！";
+		std::string Recruit_抽選 = "ランダム";
 
 		//Tool Bar
 		std::string Tool_日付 = " 日目";
@@ -163,6 +168,15 @@ namespace SDX_BSC
 			Window_名前[WindowType::Config] = "設定変更";
 			Window_略記[WindowType::Config] = "設定";
 			Window_ヘルプ[WindowType::Config] = "各種設定を変更";
+
+			Window_名前[WindowType::Skilltree] = "スキル";
+			Window_略記[WindowType::Skilltree] = "技術";
+			Window_ヘルプ[WindowType::Skilltree] = "スキルの習得と確認";
+
+			Factory_部門名[CraftType::裁縫] = "裁縫";
+			Factory_部門名[CraftType::鍛造] = "鍛造";
+			Factory_部門名[CraftType::魔術] = "魔術";
+			Factory_部門名[CraftType::木工] = "木工";
 
 			Factory_部門説明[CraftType::裁縫] = "皮革を加工\n軽鎧、ローブを製造";
 			Factory_部門説明[CraftType::鍛造] = "金属を加工\n斧、剣、重鎧を製造";

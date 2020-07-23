@@ -20,7 +20,9 @@ namespace SDX_BSC
 				if (it->現在HP > 0) { 生存リスト.push_back(it); }
 			}
 		}
-	public:
+	public:		
+		UnitImageType 見た目;
+
 		//●固定、基礎ステータス
 		ActiveSkill* AスキルS[CV::最大Aスキル数] = {nullptr};
 		std::vector<PassiveSkill*> PスキルS;//本人のパッシブ、装備、パーティパッシブを格納
@@ -53,9 +55,6 @@ namespace SDX_BSC
 
 		EnumArray<Buff, BuffType> バフ;
 
-		//状態異常
-		int スキル待機 = 0;
-
 		//エフェクト用数値
 		double E速度 = 0;//前出たり、ノックバック
 		int E反転残り = 0;
@@ -75,8 +74,8 @@ namespace SDX_BSC
 
 		//探索スキル効果
 		double 戦闘後回復 = 0.0;
-		double 素材剥取ランク = 0.0;
-		double 素材収集ランク = 0.0;
+		double レア素材剥取補正 = 0.0;
+		double レア素材収集補正 = 0.0;
 		double 素材剥取量 = 0.0;
 		double 素材収集量 = 0.0;
 
@@ -153,7 +152,7 @@ namespace SDX_BSC
 			return double((バフ[BuffType::回避].持続 > 0) ? 補正回避 + バフ[BuffType::回避].効果 : 補正回避 )/100;
 		}
 
-		void バフ使用(ASkillEffectType バフデバフ種 , double 効果量 , int 時間)
+		void バフ使用(BuffType バフデバフ種 , double 効果量 , int 時間)
 		{
 			BuffType t = BuffType(バフデバフ種);
 			//バフ中のバフ デバフ中のデバフ、時間、効果量で大きい方に更新
@@ -247,36 +246,16 @@ namespace SDX_BSC
 			Eダメージ時間 = 16;
 		}
 
-		//スキルクールダウン処理と発動処理
-		bool 戦闘中処理(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		void ターン経過()
 		{
-			if (現在HP <= 0) { return false; }
+			if (現在HP <= 0) { return ; }
 
 			//スキル発動チェック
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (AスキルS[a] == nullptr) { continue; }
-
 				合計クールダウン[a] += クールダウン速度[a];
-				if (スキル待機 <= 0 && 合計クールダウン[a] > AスキルS[a]->必要チャージ)
-				{
-					合計クールダウン[a] -= AスキルS[a]->必要チャージ;
-					Aスキル使用(AスキルS[a], 味方, 敵);
-
-					bool is全滅 = true;
-					for (auto& it : 敵)
-					{
-						if (it->現在HP > 0)
-						{
-							is全滅 = false;
-							break;
-						}
-					}
-					//敵が全滅したら残りのスキルの使用をスキップ
-					if (is全滅) { return true; }
-
-				}
 			}
+
 			//バフ持続などの処理
 			for (auto& it : バフ) {
 				if (it.持続 > 0)
@@ -285,11 +264,27 @@ namespace SDX_BSC
 					if (it.持続 <= 0) { it.効果 = 0.0; }
 				}
 			}
-			スキル待機--;
+		}
 
-			//エフェクト更新は戦闘中以外(探索中等)も処理してるのでここではやらない
+		//スキルクールダウン処理と発動処理
+		bool Aスキル使用(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		{
+			if (現在HP <= 0) { return false; }
 
-			return false;//全滅してない場合
+			//スキル発動チェック
+			for (int a = 0; a < CV::最大Aスキル数; a++)
+			{
+				if (AスキルS[a] == nullptr) { continue; }
+
+				if ( 合計クールダウン[a] > AスキルS[a]->必要チャージ)
+				{
+					合計クールダウン[a] -= AスキルS[a]->必要チャージ;
+					Aスキル使用(AスキルS[a], 味方, 敵);
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		/*戦闘開始時の初期化処理、パッシブ*/
@@ -503,8 +498,6 @@ namespace SDX_BSC
 			{
 				it->スキル受け(ase, this, 味方, 敵);
 			}
-
-			スキル待機 = 10;
 		}
 
 		/*攻撃オブジェクトを引数に取る、攻撃や回復を受けた側の処理*/
@@ -530,13 +523,13 @@ namespace SDX_BSC
 
 				for (int b = 0; b < (int)BuffType::COUNT; b++)
 				{
-					auto t = ASkillEffectType(b);
+					auto t = BuffType(b);
 
-					if (Aスキル.追加確率[t] <= 0 || !Rand::Coin(Aスキル.追加確率[t])) { continue; }
+					if (Aスキル.バフ確率[t] <= 0 || !Rand::Coin(Aスキル.バフ確率[t])) { continue; }
 
-					バフ使用(t, Aスキル.追加効果量[t] * Aスキル.追加効果補正, int(Aスキル.追加持続[t] * Aスキル.追加持続補正));
-					isバフ = (Aスキル.追加効果量[t] > 0);
-					isデバフ = (Aスキル.追加効果量[t] < 0);
+					バフ使用(t, Aスキル.バフ効果量[t] * Aスキル.追加効果補正, int(Aスキル.バフ持続[t] * Aスキル.追加持続補正));
+					isバフ = (Aスキル.バフ効果量[t] > 0);
+					isデバフ = (Aスキル.バフ効果量[t] < 0);
 
 					if (isバフ)
 					{
@@ -564,7 +557,7 @@ namespace SDX_BSC
 					Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
 					//エフェクト
 					エフェクト光( Color(255, 0, 0) );
-					エフェクト移動(-5, 2);
+					//エフェクト移動(-5, 2);
 					エフェクトダメージ(合計ダメージ);
 					break;
 				case ASkillType::魔法:
@@ -576,7 +569,7 @@ namespace SDX_BSC
 					Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
 					//エフェクト
 					エフェクト光(Color(255, 0, 0));
-					エフェクト移動(-5, 2);
+					//エフェクト移動(-5, 2);
 					エフェクトダメージ(合計ダメージ);
 					break;
 				case ASkillType::回復:
@@ -700,13 +693,13 @@ namespace SDX_BSC
 				素材収集量 += Pスキル->効果量;
 				break;
 			case PSkillEffect::収集ランク増加:
-				素材収集ランク += Pスキル->効果量;
+				レア素材収集補正 += Pスキル->効果量;
 				break;
 			case PSkillEffect::剥取量増加:
 				素材剥取量 += Pスキル->効果量;
 				break;
 			case PSkillEffect::剥取ランク増加:
-				素材剥取ランク += Pスキル->効果量;
+				レア素材剥取補正 += Pスキル->効果量;
 				break;
 			case PSkillEffect::戦闘後回復:
 				戦闘後回復 += Pスキル->効果量;
@@ -725,23 +718,23 @@ namespace SDX_BSC
 			case PSkillEffect::与ダメージバフ:
 				if (Pスキル->対象 == PSkillTarget::スキル対象)
 				{
-					Aスキル->追加確率[ASkillEffectType::与ダメ増加] = 1.0;
-					Aスキル->追加持続[ASkillEffectType::与ダメ増加] = Pスキル->持続時間;
-					Aスキル->追加効果量[ASkillEffectType::与ダメ増加] = Pスキル->効果量;
+					Aスキル->バフ確率[BuffType::与ダメ増加] = 1.0;
+					Aスキル->バフ持続[BuffType::与ダメ増加] = Pスキル->持続時間;
+					Aスキル->バフ効果量[BuffType::与ダメ増加] = Pスキル->効果量;
 				} else {
 					//自己バフ
-					バフ使用(ASkillEffectType::与ダメ増加, Pスキル->効果量, Pスキル->持続時間);
+					バフ使用(BuffType::与ダメ増加, Pスキル->効果量, Pスキル->持続時間);
 				}
 				break;
 			case PSkillEffect::受ダメージバフ:
 				if (Pスキル->対象 == PSkillTarget::スキル対象)
 				{
-					Aスキル->追加確率[ASkillEffectType::受ダメ軽減] = 1.0;
-					Aスキル->追加持続[ASkillEffectType::受ダメ軽減] = Pスキル->持続時間;
-					Aスキル->追加効果量[ASkillEffectType::受ダメ軽減] = Pスキル->効果量;
+					Aスキル->バフ確率[BuffType::受ダメ軽減] = 1.0;
+					Aスキル->バフ持続[BuffType::受ダメ軽減] = Pスキル->持続時間;
+					Aスキル->バフ効果量[BuffType::受ダメ軽減] = Pスキル->効果量;
 				} else {
 					//自己
-					バフ使用(ASkillEffectType::受ダメ軽減, Pスキル->効果量, Pスキル->持続時間);
+					バフ使用(BuffType::受ダメ軽減, Pスキル->効果量, Pスキル->持続時間);
 				}
 				break;
 			case PSkillEffect::スキルチャージ獲得:

@@ -6,9 +6,6 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[7][a]
-
-
 
 	/*アイテムウィンドウ*/
 	class W_Item: public WindowBox
@@ -28,11 +25,11 @@ namespace SDX_BSC
 				//外枠
 				MSystem::DrawWindow({ px,py }, w, h, 1);
 				//アイコン
-				MIcon::アイテム[Item::data[id].見た目].Draw({ px + LV(11),py+LV(12) });
+				MIcon::アイテム[Item::data[id].見た目].Draw({ px + Lp(11),py+Lp(12) });
 				//在庫数
-				MFont::BMSize.DrawBold({ px + LV(13) ,py+LV(14) }, Color::White, Color::Black, { "x" , zaiko }, true);
+				MFont::BMSize.DrawBold({ px + Lp(13) ,py+Lp(14) }, Color::White, Color::Black, { "" , zaiko }, true);
 				//ランク表示
-				MFont::BSSize.DrawBold({ px + LV(17) ,py + LV(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].ランク }, true);
+				MFont::BSSize.DrawBold({ px + Lp(17) ,py + Lp(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].Lv }, true);
 				//new表示
 
 			}
@@ -41,8 +38,8 @@ namespace SDX_BSC
 				//掴む
 				if (Guild::P->装備所持数[id] > 0)
 				{
-						W_Drag_Drop::アイテム = id;
-						MSound::効果音[SE::ドラッグ].Play();
+					W_Drag_Drop::アイテム = id;
+					MSound::効果音[SE::ドラッグ].Play();
 				}
 			}
 
@@ -55,6 +52,7 @@ namespace SDX_BSC
 	public:
 		std::vector<GUI_Tab> タブ;//レシピ9種 + 全て
 		GUI_Item アイテム[CV::装備種];
+		GUI_Frame 枠;
 
 		int 装備数 = 0;
 		int 現在タブ = 0;
@@ -67,7 +65,7 @@ namespace SDX_BSC
 			SetHelp(TX::Window_ヘルプ[種類]);
 
 			アイコン = IconType::装備;
-			横幅 = 330;
+			横幅 = 371;
 			縦幅 = 125;
 			最小縦 = 125;
 			最大縦 = 600;
@@ -96,30 +94,38 @@ namespace SDX_BSC
 				it.アイコンオフセット = 5;
 				gui_objects.push_back(&it);
 			}
-			
+
 			for (auto&it : アイテム)
 			{
 				gui_objects.push_back(&it);			
 			}
+
+			gui_objects.push_back(&枠);
+
+
+			SetCSVPage(7);
 		}
 
 		void GUI_Init()
 		{
-			for (int a = 0; a < 10; a++)
+			for (int a = 0; a < (int)タブ.size() ; a++)
 			{
 				if (a == 0)
 				{
-					タブ[a].位置 = { LV(0) ,LV(1) ,LV(2) + 3,LV(3) };
+					タブ[a].位置 = { Lp(0) ,Lp(1) ,Lp(2) + 3,Lp(3) };
 				} else {
-					タブ[a].位置 = { LV(0) + LV(4) * a + 3,LV(1) ,LV(2) ,LV(3) };
+					タブ[a].位置 = { Lp(0) + Lp(4) * a + 3,Lp(1) ,Lp(2) ,Lp(3) };
 				}
 			}
 
+			枠.位置 = { Lp(0), Lp(1) + 35, 333, 700 };
+			枠.枠No = 12;
+
 			int cnt = 0;
-			const int per_line = 7;
+			const int per_line = 8;
 			for (auto&it : アイテム)
 			{
-				it.位置 = { LV(5) + LV(9) *(cnt%per_line),LV(6) + LV(10) * (cnt /per_line),LV(7),LV(8) };
+				it.位置 = { Lp(5) + Lp(9) *(cnt%per_line),Lp(6) + Lp(10) * (cnt /per_line),Lp(7),Lp(8) };
 				cnt++;
 			}
 
@@ -159,8 +165,8 @@ namespace SDX_BSC
 				it.Draw();
 			}
 
-			MSystem::DrawWindow({ LV(0),LV(1) + 35 }, 292, 700, 12);
-
+			枠.Draw();
+			
 			//スクロールする
 			描画範囲(true);
 			for (int a=0;a<装備数;a++)
@@ -197,7 +203,4 @@ namespace SDX_BSC
 		}
 
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

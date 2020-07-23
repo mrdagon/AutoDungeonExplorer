@@ -119,7 +119,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->系統 = 系統;
+			this->アイコン = 系統;
 
 			this->装備種 = 装備種;//武器種条件
 			this->Aスキル種 = Aスキル種;//Aスキル条件
@@ -130,7 +130,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->系統 = 系統;
+			this->アイコン = 系統;
 
 			this->装備種 = 装備種;//武器種条件
 			this->Aスキル種 = Aスキル種;//Aスキル条件
@@ -152,12 +152,12 @@ namespace SDX_BSC
 		int id;
 		std::string 名前;
 		std::string 説明;
-		SkillType 系統;//アイコン
+		SkillType アイコン;
 		int 必要SP;
 		double 効果量;
 
 		//-条件
-		ASkillType Aスキル種;//アクティブスキルタイプ
+		ASkillType Aスキル種;
 		ItemType 装備種;
 		bool is奥義 = false;
 

@@ -7,6 +7,7 @@
 #include "system/_system.h"
 #include "object/_object.h"
 #include "window/_window.h"
+
 #include "scene/_scene.h"
 #include "save.h"
 
@@ -15,6 +16,7 @@
 
 using namespace SDX;
 using namespace SDX_BSC;
+
 
 void LoadAndInitData()
 {
@@ -45,12 +47,13 @@ void LoadAndInitData()
 	//各種リソース読み込み
 
 
-	LoadMaterial();
+	LoadAsset();
 
 	LoadPassiveSkill();
 	LoadActiveSkill();
-	LoadWarkerClass();
 	LoadMonsterClass();
+	LoadWarkerClass();
+	LoadMaterialClass();
 	LoadItem();
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
@@ -58,22 +61,18 @@ void LoadAndInitData()
 
 int main(int argc, char* argv[])
 {
-
-	//アンケートURL
-	//HINSTANCE ret = ShellExecute(nullptr, L"open", L"http://www.gesource.jp/programming/bcb/", NULL, NULL, SW_SHOW);
-
 	DebugInit();
 	LoadAndInitData();
 
 	/*未返還テキスト位置*/
+	/*
 	SDL_Rect srcrect;
 	srcrect.x = 0;
 	srcrect.y = 0;
 	srcrect.w = 300;
 	srcrect.h = 300;
 	SDL_SetTextInputRect(&srcrect);
-
-	
+	*/
 	Camera camera({0,0},1);
 	SDX::Camera::Set(&camera);
 

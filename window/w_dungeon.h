@@ -6,7 +6,6 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[1][a]
 
 	/*ダンジョン一覧ウィンドウ*/
 	class W_Dungeon : public WindowBox
@@ -15,26 +14,58 @@ namespace SDX_BSC
 		class GUI_Dun : public GUI_Object
 		{
 		public:
-			Dungeon* 参照先;
+			Dungeon* 参照 = nullptr;
+			W_Dungeon* 親ウィンドウ = nullptr;
 
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				MIcon::ダンジョン[参照先->種類].DrawRotate({ px + LV(14),py + LV(15) },1,0);
-				MFont::BSSize.DrawBold({ px + LV(16), py + LV(17) }, Color::White, Color::Black, { (int)(参照先->探索率*100) , "%"}, true);
-				MFont::BSSize.DrawBold({ px + LV(18), py + LV(19) }, Color::White, Color::Black, { "Lv",参照先->Lv }, false);
+				MIcon::アイコン[参照->アイコン].DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
+				MFont::BSSize.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
+				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->Lv }, false);
+
+				//ボス
+				MUnit::ユニット[参照->ボスモンスター[0].見た目][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
+				MFont::BSSize.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
+
+				//ザコ
+				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
+				{
+					MUnit::ユニット[参照->雑魚モンスター[a].見た目][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
+				}
 			}
 
 			void Click(double px, double py)
 			{
 				//ダンジョンを掴む
-				W_Drag_Drop::ダンジョン = 参照先;
+				W_Drag_Drop::ダンジョン = 参照;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoDungeon(参照先, 座標);
+				double px = 座標.x - 親ウィンドウ->相対座標.x - 位置.x;
+
+				if ( px > Lp(21) - 20 && px < Lp(21) + 20)
+				{
+					//ボスモンスターヘルプ
+					InfoMonster( &参照->ボスモンスター[0], 参照->Lv, true, 座標);
+					return;
+				}
+
+				for (int a = 0; a < (int)参照->雑魚モンスター.size(); a++)
+				{
+					if (px > Lp(25) + Lp(26) * a - 20 && px < Lp(25) + Lp(26) * a + 20)
+					{
+						//ザコモンスターヘルプ
+						InfoMonster( &参照->雑魚モンスター[a],参照->Lv,false,座標);
+						
+						return;
+					}
+				}
+
+				//モンスター以外
+				InfoDungeon(参照, 座標);
 			}
 
 		};
@@ -42,6 +73,7 @@ namespace SDX_BSC
 	public:
 		std::vector<GUI_Tab> タブ;
 		GUI_Dun ダンジョン[50];//とりあえず要素数50
+		GUI_Frame 枠;
 
 		int 現在タブ = 0;
 
@@ -64,14 +96,18 @@ namespace SDX_BSC
 
 			for (int a = 0; a < 5; a++)
 			{
-				タブ.emplace_back(現在タブ, a, IconType::ランク, TX::Dungeon_タブ名[a]);
+				タブ.emplace_back(現在タブ, a, IconType::BGM, TX::Dungeon_タブ名[a]);
 				タブ[a].SetHelp( TX::Dungeon_タブヘルプ[a]);
 			}
-
-
+			タブ[0].アイコン = IconType::森;
+			タブ[1].アイコン = IconType::洞窟;
+			タブ[2].アイコン = IconType::砂漠;
+			タブ[3].アイコン = IconType::滝;
+			タブ[4].アイコン = IconType::城;
 
 			for (int a = 0; a < 50; a++)
 			{
+				ダンジョン[a].親ウィンドウ = this;
 				gui_objects.push_back(&ダンジョン[a]);
 			}
 
@@ -80,25 +116,30 @@ namespace SDX_BSC
 				gui_objects.push_back(&it);
 			}
 
+			gui_objects.push_back(&枠);
+
+			SetCSVPage(1);
 		}
 
 		void GUI_Init()
 		{
-			タブ[0].位置 = { LV(0) ,         LV(1) ,LV(2) ,LV(3) };
-			タブ[1].位置 = { LV(0) + LV(4)  ,LV(1) ,LV(2) ,LV(3) };
-			タブ[2].位置 = { LV(0) + LV(4) * 2,LV(1) ,LV(2) ,LV(3) };
-			タブ[3].位置 = { LV(0) + LV(4) * 3,LV(1) ,LV(2) ,LV(3) };
-			タブ[4].位置 = { LV(0) + LV(4) * 4,LV(1) ,LV(2) ,LV(3) };
+			枠.位置 = { Lp(5) , Lp(6) ,Lp(7) , Lp(8) };
+			枠.枠No = 12;
+
+			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[2].位置 = { Lp(0) + Lp(4) * 2,Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[3].位置 = { Lp(0) + Lp(4) * 3,Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[4].位置 = { Lp(0) + Lp(4) * 4,Lp(1) ,Lp(2) ,Lp(3) };
 
 			for (int a = 0; a < 50; a++)
 			{
-				ダンジョン[a].位置 = { LV(9) + a % 6 * LV(13) ,LV(10) + a / 6 * LV(13) ,LV(11),LV(12) };
+				ダンジョン[a].位置 = { Lp(9) ,Lp(10) + a * Lp(14) ,Lp(11),Lp(12) };
 			}
 
-
 			for (int a = 0; a < 50; a++)
 			{
-				ダンジョン[a].参照先 = nullptr;
+				ダンジョン[a].参照 = nullptr;
 				ダンジョン[a].isヘルプ表示 = false;
 			}
 			
@@ -106,24 +147,18 @@ namespace SDX_BSC
 
 			for (auto& it : Dungeon::data)
 			{
-				if (it.is発見 && it.ランク == 現在タブ)
+				if (it.is発見 && it.層 == 現在タブ)
 				{
-					ダンジョン[n].参照先 = &it;
+					ダンジョン[n].参照 = &it;
 					ダンジョン[n].isヘルプ表示 = true;
 					n++;
+					if (n == 50) { break; }
 				}
 			}
 		}
 
 		void 派生Draw()
 		{
-			int xx = LV(0);
-			int yy = LV(1);
-			int ww = LV(2);
-			int hh = LV(3);
-			int fno = 17;
-
-
 			GUI_Init();
 
 			//タブ部分
@@ -132,13 +167,13 @@ namespace SDX_BSC
 				it.Draw();
 			}
 
-			MSystem::DrawWindow({ LV(5) , LV(6) } ,LV(7) , LV(8), 12);
+			枠.Draw();
 
 			//スクロールする
 			描画範囲(true);
 			for (auto& it : ダンジョン)
 			{
-				if (it.参照先 == nullptr) { break; }
+				if (it.参照 == nullptr) { break; }
 				it.Draw();
 			}
 
@@ -157,7 +192,7 @@ namespace SDX_BSC
 					break;
 				}
 
-				if (it.参照先 == nullptr) { break; }
+				if (it.参照 == nullptr) { break; }
 				it.操作チェック(相対座標.x, 相対座標.y);
 			}
 
@@ -165,7 +200,4 @@ namespace SDX_BSC
 			return false;
 		}
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

@@ -50,6 +50,10 @@ namespace SDX_BSC
 		std::string 説明;
 		UnitImageType 見た目;
 
+		MaterialNo 通常素材 = 0;
+		MaterialNo レア素材 = 0;
+		double レア素材率 = 0.01;
+
 		//基礎ステータスーLvでスケーリングする
 		int Hp,命中,回避;
 		EnumArray<int, StatusType> ステ;
@@ -80,6 +84,18 @@ namespace SDX_BSC
 		MonsterClass::data[1].SetSkill( 15,16,0 );
 		MonsterClass::data[2].SetSkill( 17,18,0 );
 		MonsterClass::data[3].SetSkill( 19,20,21);
+
+		MonsterClass::data[0].通常素材 = 1;
+		MonsterClass::data[0].レア素材 = 7;
+
+		MonsterClass::data[1].通常素材 = 3;
+		MonsterClass::data[1].レア素材 = 7;
+
+		MonsterClass::data[2].通常素材 = 1;
+		MonsterClass::data[2].レア素材 = 5;
+
+		MonsterClass::data[3].通常素材 = 7;
+		MonsterClass::data[3].レア素材 = 7;
 	}
 
 	std::vector<MonsterClass> MonsterClass::data;

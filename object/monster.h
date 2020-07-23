@@ -13,17 +13,30 @@ namespace SDX_BSC
 	private:
 	public:
 		//固定ステータス
-		MonsterNo 種族 = 0;
+		MonsterClass* 種族;
 		int Lv = 0;
 		bool isボス = false;
 		double 経験値 = 0;
 
+		Monster(const Monster& コピー元):
+			種族(コピー元.種族),
+			isボス(コピー元.isボス),
+			Lv(コピー元.Lv),
+			経験値(コピー元.経験値)
+		{
+			見た目 = this->種族->見た目;
+			基礎ステータス計算();
+		}
+
+
 		Monster(MonsterNo 種族, int Lv, bool isボス)
 		{
-			this->種族 = 種族;
+			this->種族 = &MonsterClass::data[種族];
 			this->Lv = Lv;
 			this->isボス = isボス;
 			経験値 = std::pow((double)Lv,1.5) * 10;
+
+			見た目 = this->種族->見た目;
 
 			//基礎ステータス
 			基礎ステータス計算();
@@ -31,7 +44,7 @@ namespace SDX_BSC
 
 		void 基礎ステータス計算()
 		{
-			MonsterClass* type = &MonsterClass::data[種族];
+			MonsterClass* type = 種族;
 
 			this->基礎HP = (int)(type->Hp * (10.0 + Lv * 1.2) / 10);
 

@@ -10,20 +10,23 @@ namespace SDX_BSC
 	/*メインゲームで使う変数*/
 	namespace Game
 	{
-		static int 日付 = 0;//一月28日、一年336日
-		static int 時間 = CV::一時間フレーム数 *6;
+		static int 日付 = 0;
+		static int 時間 = CV::一時間フレーム数 *6;//初回は6時スタート(仮)
 		static int ゲームスピード = 1;
-		static int 最大ゲームスピード = 8;
+		static int ゲーム速度変更倍率 = 4;
 
 		static bool is停止 = false;
 		static int アニメーション時間 = 0;
 		static bool isヘルプ = true;
+		static bool isゲーム終了 = false;
 
 		static bool is翌日スキップ = false;
 		
 
-		static double 自動回復 = 0.1;
+		static double 自動回復 = 0.1;//自動回復基準値(仮)
+		static double 地図発見探索率 = 0.5;
 		static double ボス発見探索率 = 0.7;
+		static double 基礎未探索部屋発見率 = 0.1;
 
 		//
 		static bool isメインクエスト = false;//メインクエスト終了フラグ
@@ -47,9 +50,9 @@ namespace SDX_BSC
 
 		static bool is仕事中;
 
+		bool isデバッグ大きさ表示 = false;
+
 		//UI関連の変数
 		static EnumArray<CraftType, ItemType> 対応レシピ;
-
-		static std::vector<std::string> ローマ数字;
 	};
 }

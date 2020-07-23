@@ -3,152 +3,199 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+#include <locale>
+#include <codecvt>
+
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[6][a]
-
-
 
 	/*求人ウィンドウ*/
 	class W_Recruit: public WindowBox
 	{
-	private:
-
-		class GUI_Reqback :public GUI_Object
-		{
-		public:
-
-			void Draw派生(double px, double py)
-			{
-				//枠の描画
-				MSystem::DrawWindow({ px      , py }, 位置.GetW(), 位置.GetH(), 12);
-			}
-		};
-
-		class GUI_ReqPoint :public GUI_Object
-		{
-		public:
-			W_Recruit *親;
-
-			void Draw派生(double px, double py)
-			{
-				//枠の描画
-				MSystem::DrawWindow({ px      , py }, 位置.GetW(), 位置.GetH(), 11);
-
-				MIcon::アイコン[IconType::求人].DrawRotate({ px + LV(22),py + LV(23) },2,0);
-
-				MFont::BMSize.DrawBold({ px + LV(24) ,py + LV(25) }, Color::White, Color::Black, { Guild::P->人事ポイント }, true);
-
-
-				if (W_Drag_Drop::ギルメン != nullptr && W_Drag_Drop::ギルメン->所属 == -1)
-				{
-					親->要求点 = 2;
-				}
-
-				if (親->要求点 > 0)
-				{
-					MFont::BMSize.DrawBold({ px + LV(26) ,py + LV(25) }, { 255,128,128 }, Color::Black, { "→" }, true);
-					MFont::BMSize.DrawBold({ px + LV(27) ,py + LV(25) }, { 255,128,128 }, Color::Black, { Guild::P->人事ポイント - 親->要求点 }, true);
-					親->要求点 = 0;
-				}
-
-			}
-		};
-
-		class GUI_ReqRoll :public GUI_Object
+	private:	
+		class GUI_名前変更 :public GUI_Object
 		{
 		public:
 			W_Recruit* 親;
-			bool isPush = false;
-			int 連打防止 = 0;
 
 			void Draw派生(double px, double py)
 			{
-				//枠の描画
-				if (Input::mouse.Left.hold && isPush == true)
+				//名前変更ボタンを表示
+				int 枠No = (親->is名前入力中) ? (2) : (0);
+				int 凹み = (親->is名前入力中) ? (-1) : (1);
+
+				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 枠No , 凹み);
+				MSystem::DrawWindow({ px + Lp(30)     , py + Lp(31) }, Lp(32), Lp(33), 12 );
+
+				親->名前更新();
+
+				//現在の名前を表示
+				if(親->is名前入力中 )
 				{
-					MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 3, -1);
-				} else {
-					isPush = false;
-					MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 1, 1);
+					std::string str;
+					std::wstring wstr = 親->入力中文字;
+
+					wstr.insert(親->挿入位置,L"|");
+					wstr.insert(親->挿入位置, 親->conv.from_bytes(System::textComposition));
+
+					str = 親->conv.to_bytes(wstr);
+
+					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { str.c_str() });
+				}else{
+					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { Guild::P->求人名前 });
 				}
 
-				MIcon::アイコン[IconType::再募集].DrawRotate({ px + LV(28),py + LV(23) }, 1, 0, true);
-				MFont::BMSize.DrawBold({ px + LV(29) ,py + LV(25) }, Color::White , Color::Black, { "Reroll" }, true);
-				連打防止--;
+				//変更ボタンのアイコン
+				MIcon::アイコン[IconType::ログ].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
+
+				親->名前入力();
 			}
 
 			void Click(double px, double py)
 			{
-				//志願者のリロール
-				isPush = true;
-				if (連打防止 > 0) { return; }
-				Guild::P->求人リロール();
-				MSound::効果音[SE::求人リロール].Play();
+				//ポップアップウィンドウで名前入力-未実装
+				if (親->is名前入力中)
+				{
+					親->名前確定();
+				} else {
+					親->入力中文字 = 親->conv.from_bytes(Guild::P->求人名前);
+					親->挿入位置 = (int)親->入力中文字.size();
+					親->is名前入力中 = true;
+					DV::isDebugInput = false;
+					MSound::効果音[SE::決定].Play();
+				}
 			}
 
-			void Over(double px, double py) override
-			{
-				親->要求点 = 1;
-			}
+
 		};
 
-		class GUI_Req : public GUI_Object
+		class GUI_職業選択 : public GUI_Object
 		{
 		public:
-			W_Recruit *親ウィンドウ;
-			Warker* 参照先;
-			int 並びID;
+			JobNo 職業;
 
-			GUI_Req(Warker* 参照先) :
-				参照先(参照先)
+			GUI_職業選択(JobNo 職業):
+				職業(職業)
 			{}
-
 
 			void Draw派生(double px, double py)
 			{
-				//現在客数,ピーク客数,合計客数
-				
-				//キャラアイコン,レベル,雇用予定表示
-				if (参照先->所属 >= 0)
-				{
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				} else {
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				}
-
-				MUnit::ユニット[参照先->見た目][1]->DrawRotate({ px + LV(9) ,py + LV(9) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + LV(6) ,py + LV(8) }, Color::White, Color::Black, 参照先->Lv, true);
-
-				MFont::BSSize.DrawBold({ px + LV(7) ,py + LV(8) }, Color::White, Color::Black, "Lv", true);
-
+				auto job = &Job::data[職業];
+				//選択中は枠の色を変える			
+				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), (職業 == Guild::P->求人職業) ? (10) : (11) );
+				//職業見た目
+				MUnit::ユニット[job->見た目][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
+				//職業名表示、職業番号表示、職業説明
+				MFont::BMSize.DrawBold({ px + Lp(40),py + Lp(41) }, Color::White, Color::Black, { job->名前 });
 			}
 
 			void Click(double px, double py)
 			{
-				W_Drag_Drop::ギルメン = 参照先;
-				W_Drag_Drop::ウィンドウ = 親ウィンドウ;
-				W_Drag_Drop::並びID = 並びID;
-				MSound::効果音[SE::ドラッグ].Play();
+				Guild::P->求人職業 = 職業;
+				MSound::効果音[SE::決定].Play();
 			}
-
-
-			void Info派生(Point 座標) override
-			{
-				InfoHunter(参照先,座標);
-			}
-
 		};
 
+		class GUI_職業説明枠 : public GUI_Object
+		{
+		public:
+			void Draw派生(double px, double py)
+			{
+				auto job = &Job::data[Guild::P->求人職業];
+
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
+
+				//ジョブ名
+				MFont::BMSize.DrawBoldRotate({ px + Lp(42) ,py + Lp(43) }, 1, 0, Color::White, Color::Black, job->名前, false);
+				//ジョブ装備種
+				MIcon::アイテム[Item::data[job->初期装備[0]].見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
+
+				//推奨隊列
+				MFont::BMSize.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, job->概説 , false);
+				//区切り線
+				Drawing::Line({ px + Lp(48), py + +Lp(50) }, { px + Lp(49), py + +Lp(50) }, Color::White, 1);
+
+				//ジョブ説明
+				MFont::BMSize.DrawBold({ px + Lp(51),py + Lp(52) }, Color::White, Color::Black, { job->説明 });
+			}
+		};
+
+		class GUI_採用 :public GUI_Object
+		{
+		public:
+			W_Recruit* 親;
+			int 連打 = 0;
+
+			void Draw派生(double px, double py)
+			{
+				連打--;
+				//枠の描画
+				int n = (連打 <= 0) ? (0) : (1);
+
+				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), n, 1 - n*2);
+
+				//採用の文字
+				MFont::BMSize.DrawBoldRotate({ px + Lp(53),py + Lp(54) }, 1, 0, Color::White, Color::Black, { TX::Recruit_採用 });
+			}
+
+			void Click(double px, double py)
+			{
+				//空きがあって編成中のパーティか、控えに追加
+				if (連打 > 0) { return; }
+				連打 = 10;
+				親->名前確定();
+				Guild::P->求人採用();
+				MSound::効果音[SE::決定].Play();
+			}
+		};
+
+		class GUI_ランダム :public GUI_Object
+		{
+		public:
+			W_Recruit* 親;
+			int 連打 = 0;
+
+			void Draw派生(double px, double py)
+			{
+				連打--;
+				int n = (連打 <= 0) ? (0) : (1);
+				//枠の描画
+				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), n, 1 - n * 2);
+				//ランダムのアイコン
+				MIcon::アイコン[IconType::再募集].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
+			}
+
+			void Click(double px, double py)
+			{
+				//求人設定ランダム化
+				if (親->is名前入力中)
+				{
+					連打 = 10;
+				}
+
+				if (連打 > 0) { return; }
+				連打 = 10;
+				親->is名前入力中 = false;
+				DV::isDebugInput = true;
+				Guild::P->求人リロール();
+				MSound::効果音[SE::決定].Play();
+			}
+		};
 
 	public:
-		int 要求点 = 0;
+		GUI_名前変更 名前変更;
+		GUI_ランダム ランダム;//名前ランダムボタン
+		GUI_Frame 職業枠;
+		std::vector<GUI_職業選択> 職業;
+		GUI_採用 採用;
+		GUI_職業説明枠 職業説明枠;
 
-		GUI_ReqRoll リロール;
-		GUI_ReqPoint 人事点;
-		GUI_Reqback 求職枠;
-		std::vector<GUI_Req> 求職者;//求職者
+		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
+		bool is名前入力中 = false;
+		int 挿入位置;
+		std::wstring 入力中文字;
+		bool is変換 = false;
 
 		void init()
 		{
@@ -163,86 +210,111 @@ namespace SDX_BSC
 			最大縦 = 180;
 			縦内部幅 = 180;//120xランク数
 			スクロール位置 = 0;
+			isスクロールバー表示 = false;
 
-			リロール.親 = this;
-			人事点.親 = this;
+			名前変更.親 = this;
+			ランダム.親 = this;
+			採用.親 = this;
+
+			gui_objects.push_back(&名前変更);
+			gui_objects.push_back(&採用);
+			gui_objects.push_back(&ランダム);
+
+			職業.reserve((int)Job::data.size());
+			for (int a = 0; a < (int)Job::data.size(); a++)
+			{
+				職業.emplace_back(a);
+				gui_objects.push_back(&職業[a]);
+			}
+
+			gui_objects.push_back(&職業枠);
+			gui_objects.push_back(&職業説明枠);
+			職業枠.text = "Job";
+
+			SetCSVPage(6);
 		}
 
-		void GUI_init()
+		void GUI_Init()
 		{
-			求職者.clear();
-			gui_objects.clear();
+			横幅 = Lp(0);
+			縦幅 = Lp(1);
+			最小縦 = Lp(1);
+			最大縦 = Lp(1);
+			縦内部幅 = Lp(1);
 
-			for (auto &it : Warker::data)
+			名前変更.位置 = { Lp(2), Lp(3) , Lp(4) , Lp(5) };
+			採用.位置 = { Lp(6), Lp(7) , Lp(8) , Lp(9) };
+			ランダム.位置 = { Lp(10), Lp(11) , Lp(12) , Lp(12) };
+			職業枠.位置 = { Lp(13), Lp(14) , Lp(15) , Lp(16) };
+
+			for (int a = 0; a < (int)職業.size(); a++)
 			{
-				if (it.所属 == -1)
+				職業[a].位置 = { Lp(17), Lp(18) + Lp(19)*a , Lp(20) , Lp(21) };
+			}
+
+			職業説明枠.位置 = { Lp(22), Lp(23) , Lp(24) , Lp(25) };
+
+		}
+
+		void 名前確定()
+		{
+			if (!is名前入力中) { return; }
+
+			Guild::P->求人名前 = conv.to_bytes(入力中文字);
+
+			is名前入力中 = false;
+			DV::isDebugInput = true;
+
+			MSound::効果音[SE::決定].Play();			
+
+		}
+
+		void 名前更新()
+		{
+			if (System::inputText.size() > 0)
+			{
+				入力中文字.insert(挿入位置, conv.from_bytes(System::inputText));
+				挿入位置 += (int)conv.from_bytes(System::inputText).size();
+				System::inputText = "";
+				is変換 = true;
+			}
+		}
+
+		void 名前入力()
+		{
+			if (!is名前入力中) { return; }
+
+			if (Input::key.Back.on && 挿入位置 > 0)
+			{
+				入力中文字.erase(挿入位置 - 1, 1);
+				挿入位置--;
+			}
+			if (Input::key.Delete.on && 挿入位置 < (int)入力中文字.size())
+			{
+				入力中文字.erase(挿入位置, 1);
+			}
+
+			if (Input::key.Return.on)
+			{
+				if (is変換)
 				{
-					求職者.emplace_back(&it);
+					is変換 = false;
+				}
+				else {
+					名前確定();
+					return;
 				}
 			}
 
-			for (auto &it : 求職者)
+			if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount % 5 == 0))
 			{
-				gui_objects.push_back(&it);
-				it.親ウィンドウ = this;
+				挿入位置 = std::max(挿入位置 - 1, 0);
 			}
-
-			if (求職者.size() > 18)
+			if (Input::key.Right.on || (Input::key.Right.holdCount > 30 && Input::key.Right.holdCount % 5 == 0))
 			{
-				最大縦 = int(求職者.size()+5) / 6 * LV(5)+15;
-				縦内部幅 = 最大縦;
+				挿入位置 = std::min(挿入位置 + 1, (int)入力中文字.size());
 			}
-
-			int n = 0;
-			for (auto &it : 求職者)
-			{
-				it.位置 = { LV(0) + n%6 * LV(4) ,LV(1) + n / 6 *LV(5) ,LV(2),LV(3) };
-				it.isヘルプ表示 = true;
-				n++;
-			}
-
-
-			求職枠.位置 = { LV(10) , LV(11) , LV(12) , int(求職者.size() + 5) / 6 * LV(5) + LV(13) };
-			人事点.位置 = { LV(14) , LV(15) , LV(16) , LV(17) };
-			リロール.位置 = { LV(18) , LV(19) , LV(20) , LV(21) };
-
-			リロール.SetHelp( TX::Recruit_リロールヘルプ );
-
-			gui_objects.push_back(&人事点);
-			gui_objects.push_back(&リロール);
-			gui_objects.push_back(&求職枠);
-		}
-
-		void 派生Draw()
-		{
-			GUI_init();
-
-			求職枠.Draw();
-
-			for (auto &it : 求職者)
-			{
-				it.Draw();
-			}
-
-			人事点.Draw();
-			リロール.Draw();
-		}
-
-		bool 派生操作()
-		{
-			for (auto& it : 求職者)
-			{
-				it.操作チェック(相対座標.x, 相対座標.y);
-			}
-
-			人事点.操作チェック(相対座標.x, 相対座標.y);
-			リロール.操作チェック(相対座標.x, 相対座標.y);
-
-			return false;
 		}
 
 	};
-#undef LV
-#undef LV2
-#undef LV4
 }

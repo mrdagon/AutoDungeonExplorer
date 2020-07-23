@@ -121,11 +121,6 @@ namespace SDX_BSC
 
 		再募集,
 
-		//経営部,//情報と同じ
-		//人事部,//求人と同じ
-		//製造部,//製造と同じ
-		//探索部,//迷宮と同じ
-
 		メインクエ,
 		サブクエ,
 		名声,
@@ -139,6 +134,22 @@ namespace SDX_BSC
 		効果音,
 
 		New,
+
+		//素材
+		木材,
+		皮材,
+		鉄材,
+		骨材,
+
+		//ダンジョン
+		城,
+		森,
+		洞窟,
+		砂漠,
+		山,
+		滝,
+		塔,
+		廃墟,
 
 		//上部分バー
 		日付,
@@ -295,9 +306,10 @@ namespace SDX_BSC
 		Material,
 		Party,
 		Quest,
-		Recruit,
+		Recruit,	
 		//一時ウィンドウ
 		Config,//設定
+		Skilltree,
 		COUNT,
 	};
 
@@ -307,26 +319,6 @@ namespace SDX_BSC
 		木工,
 		裁縫,
 		魔術,
-		COUNT
-	};
-
-	//褒章
-	enum class RewardType
-	{
-		COUNT
-	};
-
-	//ダンジョンの見た目
-	enum class DungeonType
-	{
-		城,
-		森,
-		洞窟,
-		砂漠,
-		山,
-		滝,
-		塔,
-		廃墟,
 		COUNT
 	};
 
@@ -438,19 +430,6 @@ namespace SDX_BSC
 		COUNT
 	};
 
-	//素材種-6種+宝石×ランク
-	//enum class MaterialType
-	//{
-	//	金属,
-	//	石材,
-	//	木材,
-	//	皮革,
-	//	羽毛,
-	//	骨牙,
-	//	遺物,
-	//	COUNT
-	//};
-
 	enum class FormationType
 	{
 		前列,
@@ -472,19 +451,7 @@ namespace SDX_BSC
 	typedef unsigned int ItemNo;
 	typedef unsigned int JobNo;
 	typedef unsigned int MonsterNo;
+	typedef unsigned int MaterialNo;
 	typedef unsigned int TacticsNo;
-
-
-	//経営戦術
-	enum class mentS
-	{
-		COUNT
-	};
-
-	//ギルドマスター
-	enum class MasterS
-	{
-		COUNT
-	};
 
 }

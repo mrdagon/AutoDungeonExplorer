@@ -6,9 +6,6 @@
 namespace SDX_BSC
 {
 	//LayoutValue
-	#define LV(a) DV::I[0][a]
-	
-	
 	using namespace SDX;
 
 	/*経営戦略ウィンドウ*/
@@ -26,8 +23,7 @@ namespace SDX_BSC
 
 				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::SSize.DrawBold({ px + LV(30) ,py + LV(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv[部門] });
-
+				MFont::SSize.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv[部門] });
 			}
 		};
 
@@ -40,21 +36,21 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
 				//現在の資金
-				MIcon::アイコン[IconType::資金].Draw({ px + LV(34) , py + LV(35) });
-				MFont::BMSize.DrawBold({ px + LV(32) ,py + LV(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
+				MIcon::アイコン[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
+				MFont::BMSize.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
 				if (GUI_Help::戦術 != nullptr)
 				{
 					Color fc = { 255,64,64 };
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BMSize.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, { "- " ,GUI_Help::戦術->消費資金 , " G" }, true);
+					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,GUI_Help::戦術->消費資金 , " G" }, true);
 					GUI_Help::戦術 = nullptr;
 				}
 				else if (Guild::P->選択戦術 != MSkillType::COUNT )
 				{
 					Color fc = {255,64,64};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BMSize.DrawBold({ px + LV(36) ,py + LV(37) }, fc, Color::Black, {"- " , Management::data[(int)Guild::P->選択戦術].消費資金 , " G"}, true);
+					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[(int)Guild::P->選択戦術].消費資金 , " G"}, true);
 				}
 
 			}
@@ -68,7 +64,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
-				MFont::BMSize.DrawBold({ px + LV(41),py + LV(42) }, Color::White, Color::Black, { "Lv " , ランク });
+				MFont::BMSize.DrawBold({ px + Lp(41),py + Lp(42) }, Color::White, Color::Black, { "Lv " , ランク });
 
 			}
 		};
@@ -157,8 +153,8 @@ namespace SDX_BSC
 	public:
 		std::vector<GUI_Tab> タブ;
 		GUI_Gold gui_gold;//消費資金
-		GUI_MLv gui_mlv[4];//部門LVと経験値バー
-		//GUI_実行 gui_実行;//実行or予約ボタン
+		GUI_MLv gui_mlv[4];//部門Lpと経験値バー
+		GUI_Frame 枠;
 
 		GUI_Rank gui_rank[10];//ランク毎の区切り-10個？
 		GUI_Skill gui_skill[100];//各種戦術アイコン、とりあえず最大100
@@ -204,6 +200,9 @@ namespace SDX_BSC
 			for (int a = 0; a < 4; a++) { gui_objects.push_back(&gui_mlv[a]); }
 			for (int a = 0; a < 10; a++) { gui_objects.push_back(&gui_rank[a]); }
 			for (int a = 0; a < 100; a++) { gui_objects.push_back(&gui_skill[a]); }
+			gui_objects.push_back(&枠);
+
+			SetCSVPage(0);
 
 			gui_gold.SetHelp( TX::Manage_お金 );
 
@@ -215,38 +214,38 @@ namespace SDX_BSC
 			for (int a = 0; a < 4; a++) { タブ[a].is固定 = true; }
 			for (int a = 0; a < 4; a++) { gui_mlv[a].is固定 = true; }
 
-
 			GUI_Init();
 			Tub_Change();
 		}
 
 		void GUI_Init()
 		{
-			タブ[0].位置 = { LV(0) ,         LV(1) ,LV(2) ,LV(3) };
-			タブ[1].位置 = { LV(0) + LV(4)  ,LV(1) ,LV(2) ,LV(3) };
-			タブ[2].位置 = { LV(0) + LV(4) * 2,LV(1) ,LV(2) ,LV(3) };
-			タブ[3].位置 = { LV(0) + LV(4) * 3,LV(1) ,LV(2) ,LV(3) };
+			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[2].位置 = { Lp(0) + Lp(4) * 2,Lp(1) ,Lp(2) ,Lp(3) };
+			タブ[3].位置 = { Lp(0) + Lp(4) * 3,Lp(1) ,Lp(2) ,Lp(3) };
 
-			for (auto&it : タブ)
+			for (auto& it : タブ)
 			{
 				it.文字オフセット = -18;
 			}
 
-			gui_gold.位置 = { LV(5),LV(9),LV(7),LV(10) };
-			gui_mlv[0].位置 = { LV(5),LV(11),LV(12),LV(13) };
-			gui_mlv[1].位置 = { LV(5)+LV(14),LV(11),LV(12),LV(13) };
-			gui_mlv[2].位置 = { LV(5) + LV(14)*2,LV(11),LV(12),LV(13) };
-			gui_mlv[3].位置 = { LV(5) + LV(14)*3,LV(11),LV(12),LV(13) };
+			枠.位置 = { Lp(0),Lp(1) + 45 , 282, 700 };
+			枠.枠No = 12;
 
-			//gui_実行.位置 = { LV(15) , LV(16) , LV(17) , LV(18) };
+			gui_gold.位置 = { Lp(5),Lp(9),Lp(7),Lp(10) };
+			gui_mlv[0].位置 = { Lp(5),Lp(11),Lp(12),Lp(13) };
+			gui_mlv[1].位置 = { Lp(5)+Lp(14),Lp(11),Lp(12),Lp(13) };
+			gui_mlv[2].位置 = { Lp(5) + Lp(14)*2,Lp(11),Lp(12),Lp(13) };
+			gui_mlv[3].位置 = { Lp(5) + Lp(14)*3,Lp(11),Lp(12),Lp(13) };
 		}
 
 		void Tub_Change()
 		{
 			int n = 0;
 			int r = -1;
-			int x = LV(20);
-			int y = LV(21);
+			int x = Lp(20);
+			int y = Lp(21);
 
 			for (int a = 0; a < 10; a++)
 			{
@@ -266,22 +265,22 @@ namespace SDX_BSC
 				{
 					if (it.Lv != r)
 					{
-						if (r != -1) { y += LV(25); }
+						if (r != -1) { y += Lp(25); }
 						r = it.Lv;
-						gui_rank[r-1].位置 = { LV(20) , y , LV(26),LV(27) };
-						y += LV(28);
-						x = LV(20);
+						gui_rank[r-1].位置 = { Lp(20) , y , Lp(26),Lp(27) };
+						y += Lp(28);
+						x = Lp(20);
 					}
 
-					if (x >= LV(20) + LV(24) * 6)
+					if (x >= Lp(20) + Lp(24) * 6)
 					{
-						x = LV(20);
-						y += LV(25);
+						x = Lp(20);
+						y += Lp(25);
 					}
 
 					gui_skill[n].参照戦術 = &it;
-					gui_skill[n].位置 = { x , y , LV(22),LV(23) };
-					x += LV(24);
+					gui_skill[n].位置 = { x , y , Lp(22),Lp(23) };
+					x += Lp(24);
 
 					n++;
 				}
@@ -291,24 +290,24 @@ namespace SDX_BSC
 			縦内部幅 = y + 50 + 固定縦;
 		}
 
-
 		void 派生Draw()
 		{			
 			GUI_Init();
 
+			//固定描画
 			for (auto&it : タブ)
 			{
 				it.Draw();
 			}
-			MSystem::DrawWindow({LV(0),LV(1)+45},282,700, 12, 0);
 
-			//固定描画
+			枠.Draw();
+
+
 			gui_gold.Draw();
 			for (auto &it : gui_mlv)
 			{
 				it.Draw();
 			}
-
 
 			//スクロールする
 			描画範囲(true);
@@ -348,8 +347,4 @@ namespace SDX_BSC
 			return false;
 		}
 	};
-
-	#undef LV
-	#undef LV2
-	#undef LV4
 }

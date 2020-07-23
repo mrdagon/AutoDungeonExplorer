@@ -65,7 +65,6 @@ namespace SDX_BSC
 					guild->集客補正 += 0.2;
 					break;
 				case MSkillType::新人発掘:
-					guild->人事ポイント++;
 					break;
 				case MSkillType::OJT:
 					guild->戦闘経験補正 += 0.1;

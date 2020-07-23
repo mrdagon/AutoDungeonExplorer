@@ -6,14 +6,8 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-#define LV(a) DV::I[2][a]
-
-
-#define LVRect(a) {LV(a),LV(a+1),LV(a+2),LV(a+3)}
-
-
 	/*上部ツールバー*/
-	class W_ToolBar
+	class W_ToolBar : public WindowBox
 	{
 	private:
 		static const int 表示枠 = 11;
@@ -27,7 +21,7 @@ namespace SDX_BSC
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
-				MFont::LSize.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 , TX::Tool_日付 }, true);
+				MFont::LSize.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 + 1 , TX::Tool_日付 }, true);
 			}
 		};
 		class G_時刻 : public GUI_Object
@@ -47,9 +41,9 @@ namespace SDX_BSC
 
 				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
 				{
-					MFont::LSize.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
+					MFont::LSize.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
 				} else {
-					MFont::LSize.DrawBold({ px + LV(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
+					MFont::LSize.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
 				}
 			}
 		};
@@ -113,8 +107,8 @@ namespace SDX_BSC
 				} else {
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
-				MIcon::アイコン[対象ウィンドウ->アイコン].DrawRotate({px+LV(22),py+ LV(23)}, 2, 0);
-				MFont::BSSize.DrawBold({px + LV(24),py + LV(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
+				MIcon::アイコン[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
+				MFont::BSSize.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
 			}
 
 			void Click(double px, double py)
@@ -138,8 +132,8 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + LV(24)-7,py + LV(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
+				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MFont::BSSize.DrawBold({ px + Lp(24)-7,py + Lp(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
 
 			}
 		};
@@ -156,8 +150,8 @@ namespace SDX_BSC
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
 
-				MIcon::アイコン[IconType::停止].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_停止);
+				MIcon::アイコン[IconType::停止].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_停止);
 			}
 
 			void Click(double px, double py)
@@ -172,13 +166,13 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::速度].DrawRotate({ px + LV(22) + LV(26),py + LV(23) }, 2, 0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) - 25,py + LV(23) }, 2, 0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + LV(22) + LV(26) + 25,py + LV(23) }, 2, 0,true);
+				MIcon::アイコン[IconType::速度].DrawRotate({ px + Lp(22) + Lp(26),py + Lp(23) }, 2, 0);
+				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) - 25,py + Lp(23) }, 2, 0);
+				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) + 25,py + Lp(23) }, 2, 0,true);
 
-				MFont::BSSize.DrawBold({ px + LV(24)+LV(26),py + LV(25) }, Color::White, Color::Black, TX::Tool_速度);
-				MFont::MSize.DrawBold({ px + LV(24) + LV(26) + 5,py + LV(25) - 20 }, Color::White, Color::Black, "x", true);
-				MFont::MSize.DrawBold({ px + LV(24) + LV(26) + 28,py + LV(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
+				MFont::BSSize.DrawBold({ px + Lp(24)+Lp(26),py + Lp(25) }, Color::White, Color::Black, TX::Tool_速度);
+				MFont::MSize.DrawBold({ px + Lp(24) + Lp(26) + 5,py + Lp(25) - 20 }, Color::White, Color::Black, "x", true);
+				MFont::MSize.DrawBold({ px + Lp(24) + Lp(26) + 28,py + Lp(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
 
 			}
 
@@ -186,9 +180,9 @@ namespace SDX_BSC
 			{
 				if (px < 位置.GetW() / 2)
 				{
-					Game::ゲームスピード = std::max(1, Game::ゲームスピード / 2);
+					Game::ゲームスピード = std::max(1, Game::ゲームスピード / Game::ゲーム速度変更倍率);
 				}else {
-					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * 2);
+					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * Game::ゲーム速度変更倍率);
 				}
 				MSound::効果音[SE::ボタンクリック].Play();
 			}
@@ -202,8 +196,8 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::設定].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_設定);
+				MIcon::アイコン[IconType::設定].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_設定);
 			}
 
 			void Click(double px, double py)
@@ -212,7 +206,7 @@ namespace SDX_BSC
 				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
 				対象ウィンドウ->is最前面 = true;
-				対象ウィンドウ->サブ呼び出し();
+				対象ウィンドウ->ポップアップ呼び出し();
 			}
 
 		};
@@ -225,8 +219,8 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::終了].DrawRotate({ px + LV(22),py + LV(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + LV(24),py + LV(25) }, Color::White, Color::Black, TX::Tool_タイトル);
+				MIcon::アイコン[IconType::終了].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_タイトル);
 			}
 
 			void Click(double px, double py)
@@ -235,19 +229,19 @@ namespace SDX_BSC
 				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
 				対象ウィンドウ->is最前面 = true;
-				int id = 対象ウィンドウ->サブ呼び出し();
+				int id = 対象ウィンドウ->ポップアップ呼び出し();
 
-				if (id == 0)
+				if (id == 0)//はい
 				{
-					//アンケートURL
-					HINSTANCE ret = ShellExecute(nullptr, L"open", TX::アンケURL, NULL, NULL, SW_SHOW);
+					Game::isゲーム終了 = true;
+
+					//アンケート開く
+					//HINSTANCE ret = ShellExecute(nullptr, L"open", TX::アンケURL, NULL, NULL, SW_SHOW);
 				}
 
 			}
 		};
 	public:
-		std::vector <GUI_Object*> gui_objects;
-
 		G_日付 日付;
 		G_時刻 時刻;
 		G_人口 人口;
@@ -258,6 +252,8 @@ namespace SDX_BSC
 		G_速度 速度;
 		G_設定 設定;
 		G_タイトル タイトル;
+
+		GUI_Frame 枠;
 
 		void SetWindow(std::vector<WindowBox*> &windows)
 		{
@@ -290,6 +286,10 @@ namespace SDX_BSC
 			gui_objects.push_back(&設定);
 			gui_objects.push_back(&タイトル);
 
+			gui_objects.push_back(&枠);
+
+			SetCSVPage(2);
+
 			日付.SetHelp(TX::Tool_Help日付);
 			時刻.SetHelp(TX::Tool_Help時刻);
 			人口.SetHelp(TX::Tool_Help人口);
@@ -299,36 +299,37 @@ namespace SDX_BSC
 			速度.SetHelp(TX::Tool_Help速度);
 			設定.SetHelp(TX::Tool_Help設定);
 			タイトル.SetHelp(TX::Tool_Helpタイトル);
+
+			GUI_Init();
 		}
 
 		void GUI_init()
 		{
 			for (int a = 0; a < CV::ウィンドウ数; a++)
 			{
-				ウィンドウ[a].位置 = {LV(0) +LV(4)*a,LV(1),LV(2),LV(3)};
+				ウィンドウ[a].位置 = {Lp(0) +Lp(4)*a,Lp(1),Lp(2),Lp(3)};
 			}
-			日付.位置 = { LV(5),LV(6),LV(7),LV(8)};
-			時刻.位置 = { LV(9),LV(6),LV(10),LV(8) };
-			人口.位置 = { Window::GetWidth() - LV(13),LV(6),LV(14),LV(8) };
-			資金.位置 = { Window::GetWidth() - LV(15),LV(6),LV(16),LV(8) };
+			日付.位置 = { Lp(5),Lp(6),Lp(7),Lp(8)};
+			時刻.位置 = { Lp(9),Lp(6),Lp(10),Lp(8) };
+			人口.位置 = { Window::GetWidth() - Lp(13),Lp(6),Lp(14),Lp(8) };
+			資金.位置 = { Window::GetWidth() - Lp(15),Lp(6),Lp(16),Lp(8) };
 
-			ヘルプ.位置 = { Window::GetWidth() - LV(17),LV(1),LV(2) ,LV(3) };
-			停止.位置 = { Window::GetWidth() - LV(18),LV(1),LV(2),LV(3) };
-			速度.位置 = { Window::GetWidth() - LV(19),LV(1),LV(21),LV(3) };
-			設定.位置 = { Window::GetWidth() - LV(27),LV(1),LV(2),LV(3) };
-			タイトル.位置 = { Window::GetWidth() - LV(20),LV(1),LV(2),LV(3) };
+			ヘルプ.位置 = { Window::GetWidth() - Lp(17),Lp(1),Lp(2) ,Lp(3) };
+			停止.位置 = { Window::GetWidth() - Lp(18),Lp(1),Lp(2),Lp(3) };
+			速度.位置 = { Window::GetWidth() - Lp(19),Lp(1),Lp(21),Lp(3) };
+			設定.位置 = { Window::GetWidth() - Lp(27),Lp(1),Lp(2),Lp(3) };
+			タイトル.位置 = { Window::GetWidth() - Lp(20),Lp(1),Lp(2),Lp(3) };
 
+			枠.位置 = { 0,0,Window::GetWidth(), WindowBox::ツールバー高さ };
+			枠.枠No = 7;
 		}
 
 		void Draw()
 		{
 			GUI_init();
-
-			MSystem::DrawWindow({0,0},Window::GetWidth(), WindowBox::ツールバー高さ,7);
-
-			for (auto& it : gui_objects)
+			for (int a = (int)gui_objects.size() - 1; a>=0;a--)
 			{
-				it->Draw();
+				gui_objects[a]->Draw();
 			}
 		}
 
@@ -355,9 +356,5 @@ namespace SDX_BSC
 
 			return false;
 		}
-
-#undef LV
-#undef LV2
-#undef LV4
 	};
 }

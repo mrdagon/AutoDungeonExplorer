@@ -14,12 +14,13 @@ namespace SDX_BSC
 	public:
 		static std::vector<Item> data;
 
-		int id = 0;
+		int ID = 0;
 		std::string 名前;
 		std::string 説明;
 
 		bool isレア = false;
-		int ランク;
+		int Lv;
+		int 品質 = 0;
 		ItemType 種類;
 		ItemImageType 見た目;
 		ActiveSkill* Aスキル[2] = { nullptr };
@@ -36,7 +37,7 @@ namespace SDX_BSC
 
 		Item(int id,std::string 名前,std::string 説明,ItemImageType 見た目)
 		{
-			this->id = id;
+			this->ID = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
 			this->見た目 = 見た目;
@@ -44,14 +45,14 @@ namespace SDX_BSC
 
 		Item(int id)
 		{
-			this->id = id;
+			this->ID = id;
 			種類 = (ItemType)Rand::Get((int)ItemType::COUNT - 1);
 			見た目 = (ItemImageType)種類;
 		}
 
-		void Set( int ランク , ItemType 種類 ,int スキルa,int スキルb, int 追加Hp, int 追加Str, int 追加Dex, int 追加Int, int 物防 , int 魔防, int 命中 ,int 回避)
+		void Set( int ランク , ItemType 種類 ,int スキルa,int スキルb, int 追加Hp, int 追加Str, int 追加Dex, int 追加Int, int 物防 , int 魔防, int 命中 ,int 回避, int 品質)
 		{
-			this->ランク = ランク;
+			this->Lv = ランク;
 			this->種類 = 種類;
 			this->Aスキル[0] = &ActiveSkill::data[スキルa];
 			this->Aスキル[1] = &ActiveSkill::data[スキルb];
@@ -67,6 +68,8 @@ namespace SDX_BSC
 			this->回避 = 回避;
 
 			this->値段 = 5000 + (ランク - 1) * 2000;
+
+			this->品質 = 品質;
 		}
 	};
 
@@ -115,35 +118,74 @@ namespace SDX_BSC
 
 		//空き
 		Item::data.emplace_back(0, "---", "空き", ItemImageType::アクセサリ);
-		Item::data[0].Set(0, ItemType::すべて, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		Item::data[0].Set(0, ItemType::すべて, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0);
 
-		for (int a = 0; a < 30; a++)
+		std::string name;
+		std::string num;
+		int n;
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
 		{
-			std::string name;
-			std::string num = (a == 0) ? "" : std::to_string(a + 1);
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "鉄の斧"; Item::data.emplace_back(1 + a, name + num, "STR武器", ItemImageType::鉄の斧);
+			Item::data[1 + a].Set(a + 1, ItemType::斧, 3, 4, 0, n * 2, 0, 0, 0, 0, 0, 0, a);
+		}
 
-			int n = 2 + a;
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "鉄の剣"; Item::data.emplace_back(1 + 4 * 1 + a, name + num, "STR武器", ItemImageType::鉄の剣);
+			Item::data[1 + 4 * 1 + a].Set(a + 1, ItemType::剣, 1, 2, 0, n * 2, n, 0, 0, 0, 0, 0, a);
+		}
 
-			name = "鉄の斧"; Item::data.emplace_back(1 + a * 9, name + num, "STR武器", ItemImageType::鉄の斧);
-			name = "鉄の剣";Item::data.emplace_back(2 + a * 9, name + num, "STR武器", ItemImageType::鉄の剣);
-			name = "木の弓"; Item::data.emplace_back(3 + a * 9, name + num, "DEX武器", ItemImageType::木の弓);
-			name = "鉄の盾"; Item::data.emplace_back(4 + a * 9, name + num, "VIT武器", ItemImageType::鉄の盾);
-			name = "スタッフ"; Item::data.emplace_back(5 + a * 9, name + num, "STR/INT武器", ItemImageType::スタッフ);
-			name = "ワンド"; Item::data.emplace_back(6 + a * 9, name + num, "INT武器", ItemImageType::ワンド);
-			name = "鉄の鎧"; Item::data.emplace_back(7 + a * 9, name + num, "HP系防具", ItemImageType::鉄の鎧);
-			name = "鎖帷子"; Item::data.emplace_back(8 + a * 9, name + num, "回避系防具", ItemImageType::鎖帷子);
-			name = "ローブ"; Item::data.emplace_back(9 + a * 9, name + num, "INT系防具", ItemImageType::皮のローブ);
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "木の弓"; Item::data.emplace_back(1 + 4 * 2 + a, name + num, "DEX武器", ItemImageType::木の弓);
+			Item::data[1 + 4 * 2 + a].Set(a + 1, ItemType::弓, 5, 6, 0, 0, n * 2, 0, 0, 0, 5, 0, a);
+		}
 
-			//                                                   HP,STR,DEX,INT,B防,M防,命中,回避
-			Item::data[1 + a * 9].Set(a+1, ItemType::斧  , 3, 4,  0,n*2,  0,  0,  0,  0,  0,  0);
-			Item::data[2 + a * 9].Set(a+1, ItemType::剣  , 1, 2,  0,n*2,  n,  0,  0,  0,  0,  0);
-			Item::data[3 + a * 9].Set(a+1, ItemType::弓  , 5, 6,  0,  0,n*2,  0,  0,  0,  5,  0);
-			Item::data[4 + a * 9].Set(a+1, ItemType::盾  , 7, 8,n*2,n/2,  0,  0,  5,  5,  0,  0);
-			Item::data[5 + a * 9].Set(a+1, ItemType::神杖,11,12,  0,n/2,  0,n*2,  0,  0,  0,  0);
-			Item::data[6 + a * 9].Set(a+1, ItemType::魔杖, 9,10,  0,  0,  0,n*3,  0,  0,  0,  0);
-			Item::data[7 + a * 9].Set(a+1, ItemType::重鎧, 0, 0,n*5,  0,  0,  0,  5,  5,  0,  0);
-			Item::data[8 + a * 9].Set(a+1, ItemType::軽鎧, 0, 0,n*3,  0,  0,  0,  0,  0,  5,  5);
-			Item::data[9 + a * 9].Set(a+1, ItemType::隠鎧, 0, 0,n*2,  0,  0,  n,  0,  5,  0,  0);
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "鉄の盾"; Item::data.emplace_back(1 + 4 * 3 + a, name + num, "VIT武器", ItemImageType::鉄の盾);
+			Item::data[1 + 4 * 3 + a].Set(a + 1, ItemType::盾, 7, 8, n * 2, n / 2, 0, 0, 5, 5, 0, 0, a);
+		}
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "スタッフ"; Item::data.emplace_back(1 + 4 * 4 + a, name + num, "STR/INT武器", ItemImageType::スタッフ);
+			Item::data[1 + 4 * 4 + a].Set(a + 1, ItemType::神杖, 11, 12, 0, n / 2, 0, n * 2, 0, 0, 0, 0, a);
+		}
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "ワンド"; Item::data.emplace_back(1 + 4 * 5 + a, name + num, "INT武器", ItemImageType::ワンド);
+			Item::data[1 + 4 * 5 + a].Set(a + 1, ItemType::魔杖, 9, 10, 0, 0, 0, n * 3, 0, 0, 0, 0, a);
+		}
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "鉄の鎧"; Item::data.emplace_back(1 + 4 * 6 + a, name + num, "HP系防具", ItemImageType::鉄の鎧);
+			Item::data[1 + 4 * 6 + a].Set(a+1, ItemType::重鎧, 0, 0, n * 5, 0, 0, 0, 5, 5, 0, 0, a);
+		}
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "鎖帷子"; Item::data.emplace_back(1 + 4 * 7 + a, name + num, "回避系防具", ItemImageType::鎖帷子);
+			Item::data[1 + 4 * 7 + a].Set(a + 1, ItemType::軽鎧, 0, 0, n * 3, 0, 0, 0, 0, 0, 5, 5, a);
+		}
+
+
+		for (int a = 0; a < CV::最大装備ランク; a++)
+		{
+			num = (a == 0) ? "" : std::to_string(a + 1); n = 2 + a;
+			name = "ローブ"; Item::data.emplace_back(1 + 4 * 8 + a, name + num, "INT系防具", ItemImageType::皮のローブ);
+			Item::data[1 + 4 * 8 + a].Set(a + 1, ItemType::隠鎧, 0, 0, n * 2, 0, 0, n, 0, 5, 0, 0, a);
 		}
 
 	}

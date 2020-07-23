@@ -22,7 +22,7 @@ namespace SDX_BSC
 		{
 			Draw派生(位置.x, 位置.y);
 			//デバッグ用に位置を表示
-			if(SV::gui_check)Drawing::Rect({ 位置.x, 位置.y ,位置.GetW() , 位置.GetH()},Color::Red,false);
+			if (Game::isデバッグ大きさ表示) { Drawing::Rect({ 位置.x, 位置.y ,位置.GetW() , 位置.GetH() }, Color::Red, false); }
 		}
 
 		virtual void Draw派生(double px,double py)
@@ -31,9 +31,9 @@ namespace SDX_BSC
 		}
 
 		/*クリックチェック*/
-		void 操作チェック(double px , double py)
+		bool 操作チェック(double px, double py)
 		{
-			if (is表示 == false) { return; }
+			if (is表示 == false) { return false; }
 
 			Rect pt = { 位置.x + px, 位置.y +py , 位置.GetW() , 位置.GetH()};
 
@@ -42,16 +42,18 @@ namespace SDX_BSC
 				if (Input::mouse.Left.on == true)
 				{
 					Click(Input::mouse.x-位置.x-px,Input::mouse.y-位置.y-py);
-					return;
+					return true;
 				}
 				else if (Input::mouse.Left.off == true)
 				{
 					Drop(Input::mouse.x - 位置.x-px, Input::mouse.y - 位置.y-py);
-					return;
+					return true;
 				}
 				
 				Over(Input::mouse.x - 位置.x - px, Input::mouse.y - 位置.y - py);
 			}
+
+			return false;
 		}
 
 		/*クリック操作*/
@@ -72,6 +74,12 @@ namespace SDX_BSC
 
 		}
 
+		int csv_page = 0;
+
+		inline int Lp(int no)
+		{
+			return DV::I[csv_page][no];
+		}
 	};
 
 	class GUI_Tab : public GUI_Object
@@ -90,10 +98,6 @@ namespace SDX_BSC
 			番号(番号),タブ操作(タブ操作),アイコン(アイコン),文字(文字)
 		{
 			is固定 = true;
-		}
-
-		void Set(int 番号, int* タブ操作, IconType アイコン, std::string& 文字)
-		{
 		}
 
 		void Draw派生(double px, double py)
@@ -119,6 +123,23 @@ namespace SDX_BSC
 			タブ操作 = 番号;
 
 			MSound::効果音[SE::タブ切り替え].Play();
+		}
+	};
+
+	//単純な枠
+	class GUI_Frame : public GUI_Object
+	{
+	public:
+		int 枠No = 12;
+		std::string text = "";
+
+		void Draw派生(double px, double py)
+		{
+			MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 枠No);
+			if (text != "")
+			{
+				MFont::BSSize.DrawBold({ px + 6 ,py + 0}, Color::White, Color::Black, text , false);
+			}
 		}
 	};
 }

@@ -49,34 +49,13 @@ namespace SDX_BSC
 		COUNT
 	};
 
-	enum class ASkillEffectType
+	enum class ASkillSubType
 	{
-		//バフ/デバフ系
-		与ダメ増加,
-		受ダメ軽減,
-		物防バフ,
-		魔防バフ,
-		Strバフ,
-		Dexバフ,
-		Intバフ,
-		命中バフ,
-		回避バフ,
-		挑発バフ,
-
-
 		//追加効果
-
 		防御無視,
 		回避無視,
 		デバフ解除,
 		デバフ無効,
-		攻撃チャージ増加,
-		スキルチャージ増加,
-		//バフ効果
-
-		//デバフ効果
-		隠密,
-		即死,
 		COUNT
 	};
 
@@ -105,13 +84,31 @@ namespace SDX_BSC
 			this->属性 = 属性;
 			this->依存ステータス = 依存ステータス;
 			this->種類 = スキル種;
+
+			for (auto& it : バフ効果量)
+			{
+				it = 0;
+			}
+			for (auto& it : バフ確率)
+			{
+				it = 0;
+			}
+			for (auto& it : バフ持続)
+			{
+				it = 0;
+			}
+			for (auto& it : is追加効果)
+			{
+				it = false;
+			}
+
 		}
 
-		void SetEffect(ASkillEffectType 効果種, double 効果量, int 効果時間, double 効果発動率 = 1.0)
+		void SetEffect(BuffType 効果種, double 効果量, int 効果時間, double 効果発動率 = 1.0)
 		{
-			追加効果量[効果種] = 効果量;
-			追加確率[効果種] = 効果発動率;
-			追加持続[効果種] = 効果時間;
+			バフ効果量[効果種] = 効果量;
+			バフ確率[効果種] = 効果発動率;
+			バフ持続[効果種] = 効果時間;
 		}
 
 		void SetP(int 効果回数, double 効果量, double ステータス反映率,double 命中, double 効果時間, double 必要チャージ, bool is奥義 = false)
@@ -119,8 +116,7 @@ namespace SDX_BSC
 			this->効果回数 = 効果回数;//ランダムだったり単体に多段攻撃
 			this->威力 = 効果量;
 			this->反映率 = ステータス反映率;
-			this->効果時間 = 効果時間;
-
+			//効果時間は未使用
 			this->命中 = 命中;
 
 			this->必要チャージ = 必要チャージ;
@@ -137,23 +133,26 @@ namespace SDX_BSC
 		int 範囲 = 1;
 		StatusType 依存ステータス;
 		ASkillType 種類;
-		ItemType 装備種 = ItemType::すべて;
 		DamageType 属性;
+		ItemType 装備種 = ItemType::すべて;
 
-		EnumArray<double, ASkillEffectType> 追加効果量;
-		EnumArray<double, ASkillEffectType> 追加確率;
-		EnumArray<int, ASkillEffectType> 追加持続;
+		EnumArray<double, BuffType> バフ効果量;
+		EnumArray<double, BuffType> バフ確率;
+		EnumArray<int, BuffType> バフ持続;
+
+		EnumArray<bool, ASkillSubType> is追加効果;
 
 		bool is奥義 = false;
 
 		int 効果回数 = 1;//多段攻撃系
 		double 命中 = 1.0;
-		double 威力;//基礎値
-		double 反映率;
-		double 効果時間;
+		double 威力 = 0;//基礎値
+		double 反映率 = 0;
 		double 追加効果率 = 1.0;
 
 		double 必要チャージ;
+
+		int 必要SP = 5;
 	};
 
 	class ASkillEffect
@@ -170,39 +169,47 @@ namespace SDX_BSC
 		int 範囲;
 
 		ASkillType 種類;
-		EnumArray<double, ASkillEffectType> 追加効果量;
-		EnumArray<double, ASkillEffectType> 追加確率;
-		EnumArray<int, ASkillEffectType> 追加持続;
-
-		double 追加効果補正 = 1.0;
-		double 追加持続補正 = 1.0;
 
 		double 命中;
 		int 効果回数;
 
+		EnumArray<double, BuffType> バフ効果量;
+		EnumArray<double, BuffType> バフ確率;
+		EnumArray<int, BuffType> バフ持続;
+
+		EnumArray<bool, ASkillSubType> is追加効果;
+
+		double 追加効果補正 = 1.0;
+		double 追加持続補正 = 1.0;
+
 		ASkillEffect(const ActiveSkill* スキルベース):
 			依存ステータス(スキルベース->依存ステータス),
-			反映率(スキルベース->反映率),
-			属性(スキルベース->属性),
-			威力(スキルベース->威力),
-			対象(スキルベース->対象),
-			種類(スキルベース->種類),
 			装備種(スキルベース->装備種),
-			範囲(スキルベース->範囲),
-			命中(スキルベース->命中),
+			属性(スキルベース->属性),
 			is奥義(スキルベース->is奥義),
+			威力(スキルベース->威力),
+			反映率(スキルベース->反映率),
+			対象(スキルベース->対象),
+			範囲(スキルベース->範囲),
+			種類(スキルベース->種類),
+			命中(スキルベース->命中),
 			効果回数(スキルベース->効果回数)
 		{
-			for (int a = 0; a < (int)ASkillEffectType::COUNT; a++)
+			for (int a = 0; a < (int)BuffType::COUNT; a++)
 			{
-				auto s = ASkillEffectType(a);
+				auto s = BuffType(a);
 
-				追加効果量[s] = スキルベース->追加効果量[s];
-				追加持続[s] = スキルベース->追加持続[s];
-				追加確率[s] = スキルベース->追加確率[s];
+				バフ効果量[s] = スキルベース->バフ効果量[s];
+				バフ持続[s] = スキルベース->バフ持続[s];
+				バフ確率[s] = スキルベース->バフ確率[s];
 			}
 
-			//回復とバフは必中
+			for (int a = 0; a < (int)ASkillSubType::COUNT; a++)
+			{
+				is追加効果[ASkillSubType(a)] = スキルベース->is追加効果[ASkillSubType(a)];
+			}
+
+			//回復とバフは必中(仮)
 			if (種類 == ASkillType::回復 || 種類 == ASkillType::バフ)
 			{
 				命中 = 10.0;
@@ -262,9 +269,9 @@ namespace SDX_BSC
 		ActiveSkill::data[6].Set(ASkillTarget::敵弱者 , StatusType::Dex, DamageType::物理, ASkillType::物理);
 		ActiveSkill::data[7].Set(ASkillTarget::敵前 , StatusType::Str, DamageType::物理, ASkillType::物理);
 		ActiveSkill::data[8].Set(ASkillTarget::自分   , StatusType::Str, DamageType::物理 , ASkillType::バフ);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::物防バフ, 20, 150);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::魔防バフ, 20, 150);
-		ActiveSkill::data[8].SetEffect(ASkillEffectType::挑発バフ, 20, 150);
+		ActiveSkill::data[8].SetEffect(BuffType::物防, 20, 150);
+		ActiveSkill::data[8].SetEffect(BuffType::魔防, 20, 150);
+		ActiveSkill::data[8].SetEffect(BuffType::挑発, 20, 150);
 
 		ActiveSkill::data[9].Set(ASkillTarget::敵ランダム, StatusType::Int, DamageType::魔法, ASkillType::魔法);
 		ActiveSkill::data[10].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法, ASkillType::魔法);
@@ -324,15 +331,15 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(24, "守護", "200Tの間 狙われやすくなり、物魔防御+30",SkillType::盾);
 		ActiveSkill::data[24].Set(ASkillTarget::自分, StatusType::Str, DamageType::物理, ASkillType::バフ);
 		ActiveSkill::data[24].SetP(1, 0, 0, 1.0, 200, 400);
-		ActiveSkill::data[24].SetEffect(ASkillEffectType::物防バフ, 30, 200);
-		ActiveSkill::data[24].SetEffect(ASkillEffectType::魔防バフ, 30, 200);
-		ActiveSkill::data[24].SetEffect(ASkillEffectType::挑発バフ, 30, 200);
+		ActiveSkill::data[24].SetEffect(BuffType::物防, 30, 200);
+		ActiveSkill::data[24].SetEffect(BuffType::魔防, 30, 200);
+		ActiveSkill::data[24].SetEffect(BuffType::挑発, 30, 200);
 
 		ActiveSkill::data.emplace_back(25, "大防御", "600Tの間、味方全員の 物/魔防御 + 30 ", SkillType::盾);
 		ActiveSkill::data[25].Set(ASkillTarget::味方全員, StatusType::Str, DamageType::物理, ASkillType::バフ);
 		ActiveSkill::data[25].SetP(1, 0, 0, 1.0, 600, 1000, true);
-		ActiveSkill::data[25].SetEffect(ASkillEffectType::物防バフ, 30, 600);
-		ActiveSkill::data[25].SetEffect(ASkillEffectType::魔防バフ, 30, 600);
+		ActiveSkill::data[25].SetEffect(BuffType::物防, 30, 600);
+		ActiveSkill::data[25].SetEffect(BuffType::魔防, 30, 600);
 
 		//レンジャー
 		ActiveSkill::data.emplace_back(26, "二段攻撃", "ランダムに2回 DEXx150% 物理ダメージ", SkillType::弓);
@@ -346,7 +353,7 @@ namespace SDX_BSC
 		ActiveSkill::data.emplace_back(28, "集中", "400Tの間、自身の INT+30% 上昇", SkillType::INT);
 		ActiveSkill::data[28].Set(ASkillTarget::自分, StatusType::Int, DamageType::魔法, ASkillType::バフ);
 		ActiveSkill::data[28].SetP(1, 0, 0.3, 0.8, 300, 400);
-		ActiveSkill::data[28].SetEffect(ASkillEffectType::Intバフ, 0.3, 400);
+		ActiveSkill::data[28].SetEffect(BuffType::Int, 0.3, 400);
 
 		ActiveSkill::data.emplace_back(29, "紅蓮地獄", "敵全体に INTx400% 魔法ダメージ", SkillType::魔杖);
 		ActiveSkill::data[29].Set(ASkillTarget::敵全, StatusType::Int, DamageType::魔法 , ASkillType::魔法);

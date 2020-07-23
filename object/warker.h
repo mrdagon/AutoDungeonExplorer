@@ -7,28 +7,21 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/*従業員ベースクラス*/
+	/*戦闘員ベースクラス*/
 	class Warker : public Fighter
 	{
 	private:
 
 	public:
 
-		static std::vector<Warker> data;
-
 		Warker()
-		{
-			見た目 = UnitImageType(Rand::Get(int(UnitImageType::COUNT) - 1));
-			Lv = Rand::Get(100);
-			基礎防御[DamageType::物理] = 0;
-			基礎防御[DamageType::魔法] = 0;
-		}
+		{}
 
 		void Make(int id , JobNo ジョブ , int Lv , std::string 名前)
 		{
 			this->ID = id;
 			this->Lv = Lv;
-			this->ジョブ = ジョブ;
+			this->職業 = ジョブ;
 
 			所属 = -1;
 
@@ -49,52 +42,7 @@ namespace SDX_BSC
 			AスキルS[2] = Job::data[job].Aスキル[0];
 			AスキルS[3] = Job::data[job].Aスキル[1];
 
-			for (int a = 0; a< CV::最大Pスキル数 ;a++)
-			{
-				PスキルID[a] = 0;
-				isPスキル習得[a] = false;
-			}
-
-			//スキルの抽選
-			int long total_rate = 0;
-			int skill_rate[CV::Pスキル種];
-
-			for (int a = 0; a < CV::Pスキル種; a++)
-			{
-				total_rate += Job::data[job].PSkillRate[a];
-				skill_rate[a] = Job::data[job].PSkillRate[a];
-			}
-
-			for (int a = 0; a < CV::最大Pスキル数; a++)
-			{
-				int r = Rand::Get(total_rate);
-
-				for (int b = 1; b < CV::Pスキル種; b++)
-				{
-					if (skill_rate[b] <= 0) { continue; }
-
-					r -= skill_rate[b];
-
-					if (r <= 0)
-					{
-						PスキルID[a] = b;
-						total_rate -= skill_rate[b];
-						skill_rate[b] = 0;
-						break;
-					}
-				}
-			}
-
-			for (int a = 0; a < CV::最大Pスキル数; a++)
-			{
-				if ( a < 2 || PassiveSkill::data[PスキルID[a]].必要SP <= スキルポイント)
-				{
-					isPスキル習得[a] = true;
-					スキルポイント -= PassiveSkill::data[PスキルID[a]].必要SP;
-				} else {
-					break;
-				}
-			}
+			スキルリセット(0);
 
 			static std::vector<Fighter*> 仮メンバー;
 
@@ -110,33 +58,46 @@ namespace SDX_BSC
 
 		bool is特殊人材;//(解雇不可、イベントに絡む等)
 
+		void スキルリセット(int 低下レベル)
+		{
+			for (auto& it : isAスキル習得)
+			{
+				it = false;
+			}
+			for (auto& it : isPスキル習得)
+			{
+				it = false;
+			}
+			isAスキル習得[0] = true;
+			isAスキル習得[1] = true;
+
+			経験値 = 0;
+			Lv = std::max(1,Lv - 低下レベル);
+
+			スキルポイント = Lv + 10;
+		}
+
 		//●人事関連
 		//所属あり、就活中、ニートの３パターン
 		int ID;//data配列内のID
 
 		int 所属;//-1なら無所属
-		CraftType 製造配置;
 		bool is装備更新 = true;
 
 		//●固定ステータス
 		std::string 名前;
-		UnitImageType 見た目;
-		JobNo ジョブ;
-		int PスキルID[CV::最大Pスキル数];
-		bool isPスキル習得[CV::最大Pスキル数];
+		JobNo 職業;
+
+		PassiveSkill* 習得Pスキル[CV::最大Pスキル数];
+		std::array<bool, CV::最大Aスキル習得リスト> isAスキル習得;
+		std::array<bool, CV::最大Pスキル習得リスト> isPスキル習得;
 
 		//●Lvアップ時等更新ステータス
 		int Lv;
 		double 経験値 = 0;
 		int スキルポイント;
 
-		int 製造Lv;
-		int 製造経験値;
-
 		int 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
-
-		double 製造力 = 10;
-
 
 		//UI表示用
 		int 探検前Lv;
@@ -165,37 +126,22 @@ namespace SDX_BSC
 			スキルポイント += 1;
 			isレベルアップ演出 = true;
 
-			//スキル習得チェック
-			for (int a = 0; a < CV::最大Pスキル数 ; a++)
-			{
-				if (isPスキル習得[a] == true){ continue; }
-
-				if (PassiveSkill::data[PスキルID[a]].必要SP <= スキルポイント)
-				{
-					isスキル習得演出 = true;
-					isPスキル習得[a] = true;
-					スキルポイント -= PassiveSkill::data[PスキルID[a]].必要SP;
-				} else {
-					break;
-				}
-			}
-
 			レベルアップ判定();
 		}
 
 		//パッシブ無しの基礎ステータス計算
 		void 基礎ステータス計算()
 		{
-			基礎HP = (int)(Job::data[(int)ジョブ].Hp * (10 + Lv) / 10.0);
-			基礎ステ[StatusType::Str] = Job::data[(int)ジョブ].ステ[StatusType::Str] * (10 + Lv) / 10;
-			基礎ステ[StatusType::Dex] = Job::data[(int)ジョブ].ステ[StatusType::Dex] * (10 + Lv) / 10;
-			基礎ステ[StatusType::Int] = Job::data[(int)ジョブ].ステ[StatusType::Int] * (10 + Lv) / 10;
+			基礎HP = (int)(Job::data[(int)職業].Hp * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::Str] = Job::data[(int)職業].ステ[StatusType::Str] * (10 + Lv) / 10;
+			基礎ステ[StatusType::Dex] = Job::data[(int)職業].ステ[StatusType::Dex] * (10 + Lv) / 10;
+			基礎ステ[StatusType::Int] = Job::data[(int)職業].ステ[StatusType::Int] * (10 + Lv) / 10;
 
-			基礎防御[DamageType::物理] = Job::data[(int)ジョブ].防御[DamageType::物理];
-			基礎防御[DamageType::魔法] = Job::data[(int)ジョブ].防御[DamageType::魔法];
+			基礎防御[DamageType::物理] = Job::data[(int)職業].防御[DamageType::物理];
+			基礎防御[DamageType::魔法] = Job::data[(int)職業].防御[DamageType::魔法];
 
-			基礎命中 = Job::data[(int)ジョブ].命中;
-			基礎回避 = Job::data[(int)ジョブ].回避;
+			基礎命中 = Job::data[(int)職業].命中;
+			基礎回避 = Job::data[(int)職業].回避;
 
 			Reset補正ステータス();
 
@@ -222,13 +168,6 @@ namespace SDX_BSC
 			//PスキルSの更新
 			PスキルS.clear();
 			//習得済みパッシブ
-			for (int a = 0; a < CV::最大Pスキル数; a++)
-			{
-				if ( isPスキル習得[a] == true )
-				{
-					PスキルS.push_back( &PassiveSkill::data[PスキルID[a]] );
-				}
-			}
 
 			//装備品パッシブ
 			for (int a = 0; a < CV::装備部位数; a++)
@@ -243,13 +182,11 @@ namespace SDX_BSC
 			}
 			
 			//製造能力(仮)
-			製造力 = 10 + Lv;
-
 			現在HP = 最大HP;
 
 			戦闘後回復 = Game::自動回復;
-			素材剥取ランク = 0.0;
-			素材収集ランク = 0.0;
+			レア素材剥取補正 = 0.0;
+			レア素材収集補正 = 0.0;
 			素材剥取量 = 0.0;
 			素材収集量 = 0.0;
 
@@ -284,6 +221,4 @@ namespace SDX_BSC
 			MSound::効果音[SE::味方気絶].Play();
 		}
 	};
-
-	std::vector<Warker> Warker::data;
 }
