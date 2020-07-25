@@ -8,13 +8,13 @@ namespace SDX_BSC
 	using namespace SDX;
 
 	/*戦闘員ベースクラス*/
-	class Warker : public Fighter
+	class Hunter : public Fighter
 	{
 	private:
 
 	public:
 
-		Warker()
+		Hunter()
 		{}
 
 		void Make(int id , JobNo ジョブ , int Lv , std::string 名前)
@@ -37,10 +37,10 @@ namespace SDX_BSC
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			AスキルS[0] = Item::data[装備[0]].Aスキル[0];
-			AスキルS[1] = Item::data[装備[0]].Aスキル[1];
-			AスキルS[2] = Job::data[job].Aスキル[0];
-			AスキルS[3] = Job::data[job].Aスキル[1];
+			Aスキル[0] = Item::data[装備[0]].Aスキル[0];
+			Aスキル[1] = Item::data[装備[0]].Aスキル[1];
+			Aスキル[2] = Job::data[job].Aスキル[0];
+			Aスキル[3] = Job::data[job].Aスキル[1];
 
 			スキルリセット(0);
 
@@ -52,8 +52,8 @@ namespace SDX_BSC
 
 		void 装備スキル更新()
 		{
-			AスキルS[0] = Item::data[装備[0]].Aスキル[0];
-			AスキルS[1] = Item::data[装備[0]].Aスキル[1];
+			Aスキル[0] = Item::data[装備[0]].Aスキル[0];
+			Aスキル[1] = Item::data[装備[0]].Aスキル[1];
 		}
 
 		bool is特殊人材;//(解雇不可、イベントに絡む等)
@@ -88,9 +88,9 @@ namespace SDX_BSC
 		std::string 名前;
 		JobNo 職業;
 
-		PassiveSkill* 習得Pスキル[CV::最大Pスキル数];
 		std::array<bool, CV::最大Aスキル習得リスト> isAスキル習得;
 		std::array<bool, CV::最大Pスキル習得リスト> isPスキル習得;
+		int Pスキル習得予約ID = -1;//-1なら予約無し
 
 		//●Lvアップ時等更新ステータス
 		int Lv;
@@ -98,6 +98,7 @@ namespace SDX_BSC
 		int スキルポイント;
 
 		int 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
+
 
 		//UI表示用
 		int 探検前Lv;
@@ -166,8 +167,15 @@ namespace SDX_BSC
 			}
 
 			//PスキルSの更新
-			PスキルS.clear();
+			Pスキル.clear();
 			//習得済みパッシブ
+			for (int a = 0; a < CV::最大Pスキル習得リスト; a++)
+			{
+				if (isPスキル習得[a] == true )
+				{					
+					Pスキル.push_back( Job::data[職業].習得Pスキル[a] );
+				}
+			}
 
 			//装備品パッシブ
 			for (int a = 0; a < CV::装備部位数; a++)
@@ -176,7 +184,7 @@ namespace SDX_BSC
 				{
 					if (it != nullptr && it->id != 0)
 					{
-						PスキルS.push_back(it);
+						Pスキル.push_back(it);
 					}
 				}
 			}

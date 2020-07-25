@@ -168,7 +168,7 @@ namespace SDX_BSC
 		{
 		public:
 			W_Skilltree* スキルツリー;
-			Warker* ギルメン;
+			Hunter* ギルメン;
 			Guild::Party* 所属;
 			W_Party* 親ウィンドウ;
 			int 並びID;//1パーティ目 0~4、22パーティ目5～9 ...
@@ -248,6 +248,8 @@ namespace SDX_BSC
 					スキルツリー->配置id = 並びID;
 					スキルツリー->init();
 					スキルツリー->ポップアップ呼び出し();
+					所属->基礎ステ再計算();
+
 					return;
 				}
 
@@ -452,7 +454,7 @@ namespace SDX_BSC
 				}
 			}
 
-			void Drawギルメン(Warker* it,double px, double py)
+			void Drawギルメン(Hunter* it,double px, double py)
 			{
 				int 向き = 0;
 				double サイズ = 2;
@@ -656,6 +658,37 @@ namespace SDX_BSC
 				}
 			}
 
+
+			void Drawエフェクト()
+			{
+				/*
+				static int anime = 0;
+				const int 枚数 = MEffect::エフェクト[EffectType::牙].GetSize();
+				anime++;
+
+				int a = 0;
+
+				Screen::SetBlendMode(BlendMode::Add, 255);
+
+				for (auto& it : MEffect::エフェクト)
+				{
+					const int 枚数 = it.GetSize();
+					a++;
+
+
+					it[anime / 5 % 枚数]->DrawRotate({ px - 20 + a * 30 ,py + Lp(58) }, 0.3, 0);
+				}
+
+				Screen::SetBlendMode();
+				*/
+
+				//文字エフェクト
+
+				//スキルエフェクト
+
+				//素材獲得エフェクト
+			}
+
 			void Click(double px, double py)
 			{
 				if (所属->探索状態 == ExplorerType::リザルト中)
@@ -718,7 +751,7 @@ namespace SDX_BSC
 		{
 		public:
 			int ID;
-			Warker* ギルメン;
+			Hunter* ギルメン;
 
 			void Draw派生(double px, double py)
 			{
@@ -809,6 +842,66 @@ namespace SDX_BSC
 			}
 		};
 
+		class GUI_求人 : public GUI_Object
+		{
+		public:
+			W_Recruit 求人ウィンドウ;
+
+			GUI_求人()
+			{
+				求人ウィンドウ.init();
+				求人ウィンドウ.GUI_Init();
+			}
+
+			void Draw派生(double px, double py)
+			{
+				//アイコン、Lv
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
+
+				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
+			}
+
+			void Click(double px, double py)
+			{
+				//ギルメン掴む
+				int result = 求人ウィンドウ.ポップアップ呼び出し();
+			}
+		};
+
+		class GUI_除名 : public GUI_Object
+		{
+		public:
+			W_Popup 確認ウィンドウ;
+
+			GUI_除名()
+			{
+				確認ウィンドウ.init();
+				確認ウィンドウ.GUI_Init();
+				確認ウィンドウ.文章.text = "除名しますか？";
+			}
+
+			void Draw派生(double px, double py)
+			{
+				//アイコン、Lv
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
+
+				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
+			}
+
+			void Drop(double px, double py)
+			{
+				if (W_Drag_Drop::探索メン == nullptr) { return; }
+				W_Drag_Drop::探索メン = nullptr;
+
+				int result = 確認ウィンドウ.ポップアップ呼び出し();
+
+				if (result == 1)
+				{
+					Guild::P->除名(W_Drag_Drop::並びID);
+				}
+			}
+		};
+
 	public:
 		//パーティ
 		W_Skilltree スキルツリー;
@@ -818,6 +911,8 @@ namespace SDX_BSC
 		GUI_パーティメンバー パーティメンバー[CV::最大パーティ数 * CV::パーティ人数];
 		GUI_控え 控え[CV::最大控え人数];
 		GUI_控え枠 控え枠;
+		GUI_求人 求人;
+		GUI_除名 除名;
 
 		void init()
 		{
@@ -854,6 +949,7 @@ namespace SDX_BSC
 				探索先[a].csv_page = 8;
 			}
 
+			//パーティだけCSVページ分ける
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
 			{
 				gui_objects.push_back(&パーティ[a]);
@@ -866,9 +962,15 @@ namespace SDX_BSC
 				控え[a].ID = a;
 				控え[a].csv_page = 8;
 			}
+			gui_objects.push_back(&除名);
+			除名.csv_page = 8;
+
+			gui_objects.push_back(&求人);
+			求人.csv_page = 8;
 
 			gui_objects.push_back(&控え枠);
 			控え枠.csv_page = 8;
+
 
 			GUI_Init();
 		}
@@ -914,31 +1016,20 @@ namespace SDX_BSC
 					控え[a].is表示 = false;
 				}
 			}
+			if (Guild::P->ギルメン控え.size() < CV::最大控え人数)
+			{
+				const int n = (int)Guild::P->ギルメン控え.size();
+				求人.位置 = { Lp(77) + Lp(81) * (n % Lp(83)) , Lp(82) * (n / Lp(83)) + Lp(78) + Guild::P->最大パーティ数 * Lp(62) , Lp(79) , Lp(80) };
+				求人.is表示 = true;
+			} else {
+				求人.is表示 = false;
+			}
+
+
+			const int n = CV::最大控え人数;
+			除名.位置 = { Lp(77) + Lp(81) * (n % Lp(83)) , Lp(82) * (n / Lp(83)) + Lp(78) + Guild::P->最大パーティ数 * Lp(62) , Lp(79) , Lp(80) };
 
 			控え枠.位置 = { Lp(0) , Lp(61) + Guild::P->最大パーティ数 * Lp(62) , Lp(2) , Lp(63) };
-		}
-
-		void 派生Draw()
-		{
-			GUI_Init();
-
-			for (int a = 0; a < Guild::P->最大パーティ数; a++)
-			{
-				パーティ[a].Draw();
-				探索先[a].Draw();
-			}
-
-			for (auto& it : パーティメンバー)
-			{
-				if (it.is表示 && it.所属 != nullptr && it.所属->探索状態 == ExplorerType::編成中) { it.Draw(); }
-			}
-
-			控え枠.Draw();
-
-			for (auto& it : 控え)
-			{
-				it.Draw();
-			}
 		}
 	};
 }

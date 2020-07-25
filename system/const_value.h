@@ -14,7 +14,7 @@ namespace SDX_BSC
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 5;
 
-		constexpr int 最大控え人数 = 36;
+		constexpr int 最大控え人数 = 35;
 
 		constexpr int 最大素材種 = 100;
 		constexpr int 最大素材レシピ = 10;
@@ -47,7 +47,7 @@ namespace SDX_BSC
 		constexpr int 装備部位数 = 3;
 
 
-		constexpr int ウィンドウ数 = 10;
+		constexpr int ウィンドウ数 = 9;
 
 		constexpr int 要求経験値 = 200;
 

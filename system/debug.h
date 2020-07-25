@@ -270,12 +270,12 @@ namespace SDX_BSC
 			DV::line++;
 		}
 		//行移動
-		if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount% 5 == 0))
+		if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount% 1 == 0))
 		{
 			DV::I[DV::page][DV::line] -= 1;
 		}
 
-		if (Input::key.Right.on || (Input::key.Right.holdCount > 30 && Input::key.Right.holdCount % 5 == 0))
+		if (Input::key.Right.on || (Input::key.Right.holdCount > 30 && Input::key.Right.holdCount % 1 == 0))
 		{
 			DV::I[DV::page][DV::line] += 1;
 		}

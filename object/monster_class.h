@@ -50,8 +50,8 @@ namespace SDX_BSC
 		std::string 説明;
 		UnitImageType 見た目;
 
-		MaterialNo 通常素材 = 0;
-		MaterialNo レア素材 = 0;
+		ID_Material 通常素材 = 0;
+		ID_Material レア素材 = 0;
 		double レア素材率 = 0.01;
 
 		//基礎ステータスーLvでスケーリングする

@@ -27,7 +27,6 @@ namespace SDX_BSC
 		W_Material Win_Material;//素材
 		W_Party Win_Party;//ギルメン
 		W_Quest Win_Quest;//クエスト
-		W_Recruit Win_Recruit;//求職
 
 		W_Config Win_Config;//設定ウィンドウ
 		W_Popup Win_Title;//タイトルに戻る
@@ -46,7 +45,6 @@ namespace SDX_BSC
 			windows.push_back(&Win_Factory);
 			windows.push_back(&Win_Dungeon);
 			windows.push_back(&Win_Party);
-			windows.push_back(&Win_Recruit);
 			windows.push_back(&Win_Management);
 			windows.push_back(&Win_Material);
 			windows.push_back(&Win_Quest);
@@ -73,8 +71,7 @@ namespace SDX_BSC
 			Win_Item.is表示 = true;
 			Win_Factory.is表示 = true;
 			Win_Dungeon.is表示 = true;
-			Win_Party.is表示 = true;
-			Win_Recruit.is表示 = true;			
+			Win_Party.is表示 = true;		
 
 			WinPosSaveAndLoad(FileMode::Read);
 
@@ -445,7 +442,6 @@ namespace SDX_BSC
 			wins.push_back(&Win_Factory);
 			wins.push_back(&Win_Dungeon);
 			wins.push_back(&Win_Party);
-			wins.push_back(&Win_Recruit);
 			wins.push_back(&Win_Management);
 			wins.push_back(&Win_Material);
 			wins.push_back(&Win_Quest);

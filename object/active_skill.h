@@ -131,7 +131,9 @@ namespace SDX_BSC
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
+
 		StatusType 依存ステータス;
+		FormationType 適正隊列;
 		ASkillType 種類;
 		DamageType 属性;
 		ItemType 装備種 = ItemType::すべて;
@@ -158,7 +160,9 @@ namespace SDX_BSC
 	class ASkillEffect
 	{
 	public:
+
 		StatusType 依存ステータス;
+		FormationType 適正隊列;
 		ItemType 装備種;
 		DamageType 属性;//物理,魔法
 		bool is奥義;

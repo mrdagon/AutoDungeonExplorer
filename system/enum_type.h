@@ -237,6 +237,24 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	//戦闘エフェクト
+	enum class EffectType
+	{
+		斬,
+		打,
+		突,
+		炎,
+		雷,
+		氷,
+		バフ,
+		デバフ,
+		回復,
+		異常,
+		爪,
+		牙,
+		COUNT
+	};
+
 	//効果音
 	enum class SEType
 	{
@@ -433,7 +451,6 @@ namespace SDX_BSC
 	enum class FormationType
 	{
 		前列,
-		中列,//未使用
 		後列,
 		全列,
 		COUNT
@@ -447,11 +464,33 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	enum class JobType
+	{
+		ガーディアン,
+		グラディエーター,
+		カートグラファ,
+		メディック,
+		ミスティック,
+		オカルティスト,
+		バーサーカー,
+		スレイヤー,
+		シノビ,
+		デッドアイ,
+		エレメンタリスト,
+		トリックスター,
+		COUNT
+	};
+
+
 	//◆全種類列挙◆
-	typedef unsigned int ItemNo;
-	typedef unsigned int JobNo;
-	typedef unsigned int MonsterNo;
-	typedef unsigned int MaterialNo;
-	typedef unsigned int TacticsNo;
+	typedef unsigned int JobNo;//消す予定
+
+	typedef unsigned int ID_Item;
+	typedef unsigned int ID_Monster;
+	typedef unsigned int ID_Material;
+	typedef unsigned int ID_Tactics;
+	typedef unsigned int ID_ASkill;
+	typedef unsigned int ID_PSkill;
+	typedef unsigned int ID_Dungeon;
 
 }

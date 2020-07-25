@@ -158,7 +158,7 @@ namespace SDX_BSC
 			//配列の後ろから描画
 			for (int a = (int)gui_objects.size() - 1; a >= 0; a--)
 			{
-				gui_objects[a]->Draw();
+				if (gui_objects[a]->is表示) { gui_objects[a]->Draw(); }
 			}
 
 			return;
@@ -437,10 +437,9 @@ namespace SDX_BSC
 		{
 			is表示 = true;
 			//裏をやや暗くする
-
-
 			Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
 
+			//現在の画面を記憶
 			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth(), Window::GetHeight());
 
 			while (System::Update(true,false))

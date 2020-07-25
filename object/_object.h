@@ -22,10 +22,9 @@
 #include "guild_master.h"
 
 
-#include "warker.h"
+#include "hunter.h"
 #include "crafter.h"
 
-//#include "party.h"
 #include "quest.h"
 
 #include "guild.h"

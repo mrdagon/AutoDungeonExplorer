@@ -14,7 +14,7 @@ namespace SDX_BSC
 
 		int アイテム = -1;
 
-		Warker* 探索メン = nullptr;
+		Hunter* 探索メン = nullptr;
 		Crafter* 製造メン = nullptr;
 		int 並びID = 0;//パーティと製造部門での位置
 
@@ -23,7 +23,7 @@ namespace SDX_BSC
 		struct equipItem
 		{
 			int 部位 = 0;
-			Warker* メンバー = nullptr;
+			Hunter* メンバー = nullptr;
 		} ギルメン装備;
 
 		void Draw()
@@ -70,7 +70,7 @@ namespace SDX_BSC
 			return false;
 		}
 
-		void パーティ移動(Warker* 移動先メンバー, int 移動先ID)
+		void パーティ移動(Hunter* 移動先メンバー, int 移動先ID)
 		{
 			//控え枠へドロップ
 			if (移動先メンバー == nullptr && 移動先ID == -100)

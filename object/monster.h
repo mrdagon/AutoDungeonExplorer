@@ -29,7 +29,7 @@ namespace SDX_BSC
 		}
 
 
-		Monster(MonsterNo 種族, int Lv, bool isボス)
+		Monster(ID_Monster 種族, int Lv, bool isボス)
 		{
 			this->種族 = &MonsterClass::data[種族];
 			this->Lv = Lv;
@@ -71,8 +71,8 @@ namespace SDX_BSC
 			//とりあえずアクティブスキルは固定
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				this->AスキルS[a] = type->ASkill[a];
-				if (this->AスキルS[a] != nullptr && this->AスキルS[a]->id > 0)
+				this->Aスキル[a] = type->ASkill[a];
+				if (this->Aスキル[a] != nullptr && this->Aスキル[a]->id > 0)
 				{
 					クールダウン速度[a] = 1;
 				} else {
@@ -83,7 +83,7 @@ namespace SDX_BSC
 			}
 			//とりあえずパッシブスキル無し
 
-			PスキルS.clear();
+			Pスキル.clear();
 		}
 
 		void 気絶()

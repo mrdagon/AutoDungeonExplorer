@@ -24,8 +24,8 @@ namespace SDX_BSC
 		UnitImageType 見た目;
 
 		//●固定、基礎ステータス
-		ActiveSkill* AスキルS[CV::最大Aスキル数] = {nullptr};
-		std::vector<PassiveSkill*> PスキルS;//本人のパッシブ、装備、パーティパッシブを格納
+		ActiveSkill* Aスキル[CV::最大Aスキル数] = {nullptr};
+		std::vector<PassiveSkill*> Pスキル;//本人のパッシブ、装備、パーティパッシブを格納
 
 		//●基礎ステータス
 		int 基礎HP;
@@ -46,6 +46,8 @@ namespace SDX_BSC
 		double クールダウン速度[CV::最大Aスキル数];
 
 		//一時的なバフ兼デバフ、効果量、効果時間
+
+		int 隊列ID;//0が先頭、以下1.2.3.4...
 
 		struct Buff
 		{
@@ -274,12 +276,12 @@ namespace SDX_BSC
 			//スキル発動チェック
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (AスキルS[a] == nullptr) { continue; }
+				if (Aスキル[a] == nullptr) { continue; }
 
-				if ( 合計クールダウン[a] > AスキルS[a]->必要チャージ)
+				if ( 合計クールダウン[a] > Aスキル[a]->必要チャージ)
 				{
-					合計クールダウン[a] -= AスキルS[a]->必要チャージ;
-					Aスキル使用(AスキルS[a], 味方, 敵);
+					合計クールダウン[a] -= Aスキル[a]->必要チャージ;
+					Aスキル使用(Aスキル[a], 味方, 敵);
 					return true;
 				}
 			}
@@ -600,7 +602,7 @@ namespace SDX_BSC
 		//条件をチェックして、条件にあってるならPスキル処理
 		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
-			for (auto &it : PスキルS)
+			for (auto &it : Pスキル)
 			{
 				if (it->タイミング != タイミング) { continue; }
 				if (Aスキル != nullptr)
@@ -682,9 +684,9 @@ namespace SDX_BSC
 			case PSkillEffect::スキルCT増減:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
-					if (Pスキル->Aスキル種 != AスキルS[a]->種類) { continue; }
-					if (Pスキル->装備種 != ItemType::すべて && Pスキル->装備種 != AスキルS[a]->装備種) { continue; }
-					if (Pスキル->is奥義 == true && AスキルS[a]->is奥義 == false) { continue; }
+					if (Pスキル->Aスキル種 != Aスキル[a].種類) { continue; }
+					if (Pスキル->装備種 != ItemType::すべて && Pスキル->装備種 != Aスキル[a].装備種) { continue; }
+					if (Pスキル->is奥義 == true && Aスキル[a].is奥義 == false) { continue; }
 					クールダウン速度[a] *= 1.0 + Pスキル->効果量;
 				}
 				break;

@@ -45,14 +45,12 @@ void LoadAndInitData()
 	Sound::SetMainVolume(Game::SE音量);
 
 	//各種リソース読み込み
-
-
 	LoadAsset();
 
 	LoadPassiveSkill();
 	LoadActiveSkill();
 	LoadMonsterClass();
-	LoadWarkerClass();
+	LoadHunterClass();
 	LoadMaterialClass();
 	LoadItem();
 

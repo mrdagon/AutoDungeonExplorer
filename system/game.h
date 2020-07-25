@@ -35,6 +35,12 @@ namespace SDX_BSC
 		static double BGM音量;//
 		static double SE音量;//
 		static bool isフルスクリーン = false;
+		static int フルスクリーン倍率 = 1;
+		static bool is装備自動更新 = true;
+		static bool isボス戦時等速 = true;
+		static bool isスキル習得ストップ = false;
+		static bool is右クリック停止 = true;//
+		static bool isヘルプ詳細 = false;
 		static int 解像度W = 1600 , 解像度H = 900;
 		static int 最大解像度W = 1600, 最大解像度H = 900;
 

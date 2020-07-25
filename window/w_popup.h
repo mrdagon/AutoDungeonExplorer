@@ -79,8 +79,8 @@ namespace SDX_BSC
 
 			確定.base = this;
 			キャンセル.base = this;
-			確定.id = 0;
-			キャンセル.id = 1;
+			確定.id = 1;
+			キャンセル.id = 0;
 
 			gui_objects.push_back(&文章);
 			gui_objects.push_back(&確定);

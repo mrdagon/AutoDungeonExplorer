@@ -13,12 +13,13 @@ namespace SDX_BSC
 	private:
 	public:
 
+		//内部クラスにして循環参照解決
 		class Party
 		{
 		private:
 
 		public:
-			Party():
+			Party() :
 				isボス戦(false)
 			{
 				味方.reserve(6);
@@ -38,7 +39,7 @@ namespace SDX_BSC
 			OrderType 探索指示 = OrderType::探索;
 
 			std::vector<Monster> 魔物;
-			Warker* メンバー[CV::パーティ人数];
+			Hunter* メンバー[CV::パーティ人数];
 
 			std::vector<Fighter*> 味方;
 			std::vector<Fighter*> 敵;
@@ -73,12 +74,13 @@ namespace SDX_BSC
 					if (メンバー[a] == nullptr) { continue; }
 
 					味方.push_back(メンバー[a]);
-					メンバー[a]->PスキルS.clear();
+					メンバー[a]->Pスキル.clear();
 				}
 
 				//パーティスキルや装備品スキル等の計算
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
+					味方[a]->隊列ID = a;
 					味方[a]->基礎ステータス計算();
 				}
 				for (int a = 0; a < (int)味方.size(); a++)
@@ -104,7 +106,7 @@ namespace SDX_BSC
 				獲得地図数 = 0;
 				撃破ボス数 = 0;
 
-				//パーティメンバーの体力回復、ステータス計算
+				//パーティメンバーの体力回復、ステータス再計算等
 				基礎ステ再計算();
 
 				//０人パーティは全滅扱いにする
@@ -114,17 +116,17 @@ namespace SDX_BSC
 			void 探索終了()
 			{
 				//素材獲得
-				
+
 				for (int a = 0; a < CV::最大素材種; a++)
 				{
 					if (獲得素材[a] > 0)
 					{
 						Guild::P->素材数[a] += 獲得素材[a];
-						Guild::P->総素材+= 獲得素材[a];
+						Guild::P->総素材 += 獲得素材[a];
 						Guild::P->is素材発見[a] = true;
 					}
 				}
-				
+
 				//経験値獲得とレベルアップ
 				for (int a = 0; a < CV::パーティ人数; a++)
 				{
@@ -167,28 +169,28 @@ namespace SDX_BSC
 				//待機中(収集中、戦闘後待機、宝部屋etc)				
 				switch (探索状態)
 				{
-					case ExplorerType::戦闘中:
-						戦闘処理();
+				case ExplorerType::戦闘中:
+					戦闘処理();
 					break;
-					case ExplorerType::移動中:
-						待ち時間--;
-						移動量 += 2;
-						if (待ち時間 == 0){ 部屋選び(); }
+				case ExplorerType::移動中:
+					待ち時間--;
+					移動量 += 2;
+					if (待ち時間 == 0) { 部屋選び(); }
 					break;
-					case ExplorerType::収集中:
-						収集処理();
+				case ExplorerType::収集中:
+					収集処理();
 					break;
-					case ExplorerType::撤退中:
-						撤退処理();
+				case ExplorerType::撤退中:
+					撤退処理();
 					break;
-					case ExplorerType::全滅中:
-						if (暗転 > 128)
-						{
-							暗転--;
-						}
-					case ExplorerType::リザルト中:
-						//特に処理しない
-						break;
+				case ExplorerType::全滅中:
+					if (暗転 > 128)
+					{
+						暗転--;
+					}
+				case ExplorerType::リザルト中:
+					//特に処理しない
+					break;
 				}
 			}
 
@@ -204,7 +206,8 @@ namespace SDX_BSC
 							return true;
 						}
 					}
-				} else {
+				}
+				else {
 
 					for (int a = (int)Dungeon::data.size() - 1; a >= 0; a--)
 					{
@@ -228,10 +231,10 @@ namespace SDX_BSC
 				switch (探索指示)
 				{
 				case OrderType::探索:
-					Set部屋抽選リスト(room_deck,false);
+					Set部屋抽選リスト(room_deck, false);
 					break;
 				case OrderType::ボス://発見済みならボス戦へ
-					Set部屋抽選リスト(room_deck,true);
+					Set部屋抽選リスト(room_deck, true);
 					break;
 				}
 
@@ -240,27 +243,27 @@ namespace SDX_BSC
 				部屋選択後処理();
 			}
 
-			void Set部屋抽選リスト(std::vector<int>& room_deck , bool isボス戦)
+			void Set部屋抽選リスト(std::vector<int>& room_deck, bool isボス戦)
 			{
-				if ( 探索先->isボス発見 && 探索先->部屋[0].種類 == RoomType::ボス && isボス戦 && !探索先->部屋[0].is入場 )
+				if (探索先->isボス発見 && 探索先->部屋[0].種類 == RoomType::ボス && isボス戦 && !探索先->部屋[0].is入場)
 				{
 					room_deck.push_back(0);
 					return;
 				}
 
 				//地図部屋確定
-				if( 探索先->探索率 > Game::地図発見探索率 && 探索先->部屋[1].地図 > 0 && !探索先->部屋[1].is入場)
+				if (探索先->探索率 > Game::地図発見探索率&& 探索先->部屋[1].地図 > 0 && !探索先->部屋[1].is入場)
 				{
 					room_deck.push_back(1);
 					return;
 				}
 
 				//未探索部屋から抽選
-				if ( Rand::Coin(Guild::P->未開探索) )
+				if (Rand::Coin(Guild::P->未開探索))
 				{
 					for (int a = 1; a < 探索先->部屋数; a++)
 					{
-						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索 ){ continue; }
+						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索) { continue; }
 						room_deck.push_back(a);
 					}
 				}
@@ -270,7 +273,7 @@ namespace SDX_BSC
 				//未探索部屋0の場合
 				for (int a = 1; a < 探索先->部屋数; a++)
 				{
-					if ( 探索先->部屋[a].is入場 )
+					if (探索先->部屋[a].is入場)
 					{
 						continue;
 					}
@@ -320,7 +323,7 @@ namespace SDX_BSC
 				//素材獲得処理
 				int 素材ID = 0;
 				int 素材数 = 1;
-				
+
 				double レア素材確率 = 探索先->レア収集率;
 				double 素材数増加率 = 0;
 
@@ -335,10 +338,11 @@ namespace SDX_BSC
 					素材数++;
 				}
 
-				if (Rand::Coin( レア素材確率 ) )
+				if (Rand::Coin(レア素材確率))
 				{
-					素材ID = 探索先->レア収集素材[Rand::Get(CV::最大収集種-1)];
-				}else {
+					素材ID = 探索先->レア収集素材[Rand::Get(CV::最大収集種 - 1)];
+				}
+				else {
 					素材ID = 探索先->収集素材[Rand::Get(CV::最大収集種 - 1)];
 				}
 
@@ -356,7 +360,7 @@ namespace SDX_BSC
 				if (発見物X座標 > 0)
 				{
 					移動量 += 2;
-					発見物X座標-= 2;
+					発見物X座標 -= 2;
 				}
 
 				待ち時間--;
@@ -368,7 +372,7 @@ namespace SDX_BSC
 				}
 			}
 
-			void 素材獲得(int 素材ID,int 素材数)
+			void 素材獲得(int 素材ID, int 素材数)
 			{
 				獲得素材[素材ID] += 素材数;
 				if (発見物 == nullptr) { 発見物 = &MIcon::アイコン[Material::data[素材ID].アイコン]; }
@@ -400,6 +404,7 @@ namespace SDX_BSC
 				for (int a = 0; a < 敵数; a++)
 				{
 					敵[a] = &魔物[a];
+					敵[a]->隊列ID = a;
 				}
 
 				//戦闘開始時のパッシブ
@@ -422,7 +427,7 @@ namespace SDX_BSC
 					戦闘中行動待機--;
 					return;
 				}
-				
+
 				bool isBreak = false;
 
 				while (true)
@@ -466,7 +471,7 @@ namespace SDX_BSC
 					}
 				}
 
-				if ( !is生存 )
+				if (!is生存)
 				{
 					戦闘敗北();
 					探索先->部屋[部屋ID].is入場 = false;
@@ -482,7 +487,7 @@ namespace SDX_BSC
 					}
 				}
 
-				if ( !is生存 )
+				if (!is生存)
 				{
 					戦闘勝利();
 					探索先->部屋[部屋ID].is入場 = false;
@@ -529,7 +534,7 @@ namespace SDX_BSC
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
 					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
-					味方[a]->現在HP = std::min(味方[a]->現在HP , 味方[a]->最大HP);
+					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->最大HP);
 					味方[a]->Eダメージ = -(int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
 					味方[a]->Eダメージ時間 = 16;
 				}
@@ -559,7 +564,8 @@ namespace SDX_BSC
 					if (Rand::Coin(レア率))
 					{
 						素材ID = it.種族->レア素材;
-					}else {
+					}
+					else {
 						素材ID = it.種族->通常素材;
 					}
 
@@ -632,7 +638,8 @@ namespace SDX_BSC
 					Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
 
 					//倒した敵の分だけ素材獲得
-				} else {
+				}
+				else {
 					//戦闘中以外は敵消去
 					魔物.clear();
 					敵.clear();
@@ -685,11 +692,11 @@ namespace SDX_BSC
 		int 名声 = 100;
 
 		//従業員一覧
-		std::vector<Warker> 探索要員;
+		std::vector<Hunter> 探索要員;
 		std::vector<Crafter> 製造要員;
 
 		Party 探索パーティ[CV::最大パーティ数];
-		std::vector<Warker*> ギルメン控え;
+		std::vector<Hunter*> ギルメン控え;
 
 		EnumArray<std::vector<Crafter*>, CraftType> 製造メンバー;
 
@@ -762,7 +769,6 @@ namespace SDX_BSC
 		std::vector<int> R全滅数;
 		std::vector<int> R名声;
 
-
 		static Guild* P;//プレイヤーのギルド
 		static Guild data;
 
@@ -778,6 +784,20 @@ namespace SDX_BSC
 			探索要員.back().Make((int)探索要員.size()-1, 求人職業, 1, 求人名前);
 			ギルメン控え.push_back(&探索要員.back());
 			求人リロール();
+		}
+
+		void 除名(int ID)
+		{
+			if (ID >= 0)
+			{
+				//探索パーティから除名
+				探索パーティ[ID / 5].メンバー[ID % 5] = nullptr;
+			} else {
+				//控えから除名
+
+				ギルメン控え.erase(ギルメン控え.begin() -(ID+1));
+			}
+
 		}
 
 		void 製造力計算()
@@ -985,7 +1005,7 @@ namespace SDX_BSC
 		}
 
 		//no 0-1 装備部位
-		void 個別装備更新(Warker* ギルメン , int no)
+		void 個別装備更新(Hunter* ギルメン , int no)
 		{
 			if (ギルメン == nullptr) { return; }
 			if (ギルメン->is装備更新 == false) { return; }

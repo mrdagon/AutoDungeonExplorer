@@ -50,7 +50,11 @@ namespace SDX_BSC
 					親->配置id++;
 					if (親->配置id >= Guild::P->最大パーティ数 * 5) { 親->配置id = 0; }
 				}
+
+				
 				親->ギルメン = Guild::P->探索パーティ[親->配置id / 5].メンバー[親->配置id % 5];
+				親->Pスキル仮習得ID = 親->ギルメン->Pスキル習得予約ID;
+
 				W_Drag_Drop::Aスキル = nullptr;
 			}
 
@@ -93,7 +97,7 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				auto it = 親->ギルメン->AスキルS[id+2];
+				auto it = 親->ギルメン->Aスキル[id];
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
 				//スキルアイコン
@@ -106,18 +110,22 @@ namespace SDX_BSC
 			{
 				if (W_Drag_Drop::Aスキル == nullptr) { return; }
 				
-				if (親->ギルメン->AスキルS[(1 - id) + 2] == W_Drag_Drop::Aスキル)
+				for (int a = 0; a < 4; a++)
 				{
-					親->ギルメン->AスキルS[(1-id) + 2] = 親->ギルメン->AスキルS[id + 2];
-					親->ギルメン->AスキルS[id + 2] = W_Drag_Drop::Aスキル;
-				} else {
-					親->ギルメン->AスキルS[id + 2] = W_Drag_Drop::Aスキル;
+					if (親->ギルメン->Aスキル[a] == W_Drag_Drop::Aスキル)
+					{
+						親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
+						親->ギルメン->Aスキル[id] = W_Drag_Drop::Aスキル;
+						return;
+					}
 				}
+
+				親->ギルメン->Aスキル[id] = W_Drag_Drop::Aスキル;
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoASkillSub(親->ギルメン->AスキルS[id + 2], 座標, true);
+				InfoASkillSub(親->ギルメン->Aスキル[id], 座標, true);
 			}
 		};
 
@@ -137,10 +145,12 @@ namespace SDX_BSC
 
 				if (!is習得) {
 					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
-					if (親->Aスキル仮習得ID == id) { 凹み = -1; }
+					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
+				} else {
+					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 5, 凹み);
 				}
 
-				MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み*2 , 凹み );
+
 				//スキルアイコン
 				MSystem::DrawSkill( it->アイコン , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(0, 141, 255) : Color::Gray);
 				//習得に必要なポイントorレベル
@@ -158,10 +168,9 @@ namespace SDX_BSC
 				}
 
 				//未習得でポイント足りてるなら仮習得
-				if (親->ギルメン->スキルポイント < it->必要SP) { return; }
-
-				親->Aスキル仮習得ID = (親->Aスキル仮習得ID == id) ? (-1) : (id);
-				親->Pスキル仮習得ID =-1;
+				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
+				//親->Aスキル仮習得ID = (親->Aスキル仮習得ID == id) ? (-1) : (id);
+				//親->Pスキル仮習得ID =-1;
 			}
 
 			void Info派生(Point 座標) override
@@ -186,7 +195,7 @@ namespace SDX_BSC
 
 				if (!is習得) {
 					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
-					if (親->Pスキル仮習得ID == id) { 凹み = -1; }
+					if (親->Pスキル仮習得ID == id || 親->Pスキル仮習得ID == id) { 凹み = -1; }
 				}
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
@@ -202,10 +211,10 @@ namespace SDX_BSC
 				auto it = Job::data[親->ギルメン->職業].習得Pスキル[id];
 
 				if (親->ギルメン->isPスキル習得[id]) { return; }
-				if (親->ギルメン->スキルポイント < it->必要SP) { return; }
+				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
 
 				親->Pスキル仮習得ID = (親->Pスキル仮習得ID == id) ? (-1) : (id);
-				親->Aスキル仮習得ID = -1;
+				親->ギルメン->Pスキル習得予約ID = -1;
 			}
 
 			void Info派生(Point 座標) override
@@ -242,7 +251,7 @@ namespace SDX_BSC
 				int res = 確認ウィンドウ.ポップアップ呼び出し();
 
 				//はい ならレベル下げてスキルリセット
-				if (res == 0)
+				if (res == 1)
 				{
 					親->ギルメン->スキルリセット(5);
 				}
@@ -258,34 +267,47 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				if (親->Aスキル仮習得ID >= 0 || 親->Pスキル仮習得ID >= 0)
+				std::string str = "";
+
+				if (親->ギルメン->Pスキル習得予約ID > 0)
 				{
+					str = "予約";
+					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 3, -1);
+				} else if (親->Pスキル仮習得ID >= 0 ) {
+					if (親->ギルメン->スキルポイント >= Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID]->必要SP){
+						str = "習得";
+					} else {
+						str = "予約";
+					}
+
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
 				} else {
+					str = "習得";
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2, 0);
 				}
 
 
-				MFont::BMSize.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, "習得", false);
+				MFont::BMSize.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, str, false);
 			}
 
 			void Click(double px, double py)
 			{
-				auto it = 親->ギルメン;
-
 				//選択中のスキルを習得
-				if (親->Aスキル仮習得ID >= 0)
-				{
-					it->isAスキル習得[親->Aスキル仮習得ID] = true;
-					it->スキルポイント -= Job::data[it->職業].習得Aスキル[親->Aスキル仮習得ID]->必要SP;
-				}
 				if (親->Pスキル仮習得ID >= 0)
 				{
-					it->isPスキル習得[親->Pスキル仮習得ID] = true;
-					it->スキルポイント -= Job::data[it->職業].習得Pスキル[親->Pスキル仮習得ID]->必要SP;
+					auto ps = Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID];
+
+					if (親->ギルメン->スキルポイント < ps->必要SP)
+					{
+						親->ギルメン->Pスキル習得予約ID = 親->Pスキル仮習得ID;
+						return;
+					}
+
+					//習得処理
+					親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
+					親->ギルメン->スキルポイント -= Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID]->必要SP;
+					親->Pスキル仮習得ID = -1;
 				}
-				親->Aスキル仮習得ID = -1;
-				親->Pスキル仮習得ID = -1;
 			}
 		};
 
@@ -294,7 +316,7 @@ namespace SDX_BSC
 		GUI_スキルポイント スキルポイント;//現在のスキルポイントと獲得後のスキルポイント
 		GUI_スキル枠 Aスキル枠;//Aスキル表示エリア
 		GUI_スキル枠 Pスキル枠;//Pスキル表示エリア
-		GUI_NowAスキル NowAスキル[2];//Pスキル
+		GUI_NowAスキル NowAスキル[CV::最大Aスキル数];//Pスキル
 		GUI_再教育 再教育;
 		GUI_習得 習得;
 
@@ -302,10 +324,8 @@ namespace SDX_BSC
 		std::array<GUI_Pスキル, CV::最大Pスキル習得リスト> Pスキル;
 		//決定ボタン
 		//キャンセルボタン
-		Warker* ギルメン;
-		int 配置id;
-
-		int Aスキル仮習得ID = -1;
+		Hunter* ギルメン;
+		int 配置id;;
 		int Pスキル仮習得ID = -1;
 
 		void init()
@@ -331,15 +351,20 @@ namespace SDX_BSC
 			Pスキル枠.isアクティブ枠 = false;
 			再教育.親 = this;
 			習得.親 = this;
-			NowAスキル[0].親 = this;
-			NowAスキル[1].親 = this;
-			NowAスキル[0].id = 0;
-			NowAスキル[1].id = 1;
+
+			int a = 0;
+
 
 			gui_objects.push_back(&編集中ギルメン);
 			gui_objects.push_back(&スキルポイント);
-			gui_objects.push_back(&NowAスキル[0]);
-			gui_objects.push_back(&NowAスキル[1]);
+
+			for (auto& it : NowAスキル)
+			{
+				gui_objects.push_back(&it);
+				it.親 = this;
+				it.id = a;
+				a++;
+			}
 			gui_objects.push_back(&再教育);
 			gui_objects.push_back(&習得);
 
@@ -375,20 +400,24 @@ namespace SDX_BSC
 			スキルポイント.位置 = { Lp(6),Lp(7),Lp(8),Lp(9) };
 			Aスキル枠.位置 = { Lp(10),Lp(11),Lp(13),Lp(14) };
 			Pスキル枠.位置 = { Lp(10),Lp(12),Lp(13),Lp(15) };
-			NowAスキル[0].位置 = { Lp(16),Lp(18)       ,Lp(35),Lp(20) };
-			NowAスキル[1].位置 = { Lp(16)+Lp(36),Lp(18),Lp(35),Lp(20) };
+
+
+			for (int a = 0; a < CV::最大Aスキル数; a++)
+			{
+				NowAスキル[a].位置 = { Lp(10) + Lp(16) + Lp(36) * a , Lp(11) + Lp(18) ,Lp(35),Lp(20) };
+			}
 
 			for (int a = 0; a < Aスキル.size(); a++)
 			{
-				Aスキル[a].位置 = { Lp(21) + Lp(22)*a,Lp(23),Lp(19),Lp(20) };
+				Aスキル[a].位置 = { Lp(10) + Lp(21) + Lp(22)*a,Lp(11) + Lp(23),Lp(19),Lp(20) };
 			}
 			for (int a = 0; a < CV::最大キーPスキル習得リスト; a++)
 			{
-				Pスキル[a].位置 = { Lp(24) + Lp(26) * a,Lp(34) ,Lp(19),Lp(20) };
+				Pスキル[a].位置 = { Lp(10) + Lp(24) + Lp(26) * a,Lp(12) + Lp(34) ,Lp(19),Lp(20) };
 			}
 			for (int a = 0; a < Pスキル.size() - CV::最大キーPスキル習得リスト; a++)
 			{
-				Pスキル[a+ CV::最大キーPスキル習得リスト].位置 = { Lp(24) + Lp(26)* (a % Lp(27)) ,Lp(25) + Lp(26) * (a / Lp(27)) ,Lp(19),Lp(20) };
+				Pスキル[a+ CV::最大キーPスキル習得リスト].位置 = { Lp(10) + Lp(24) + Lp(26)* (a % Lp(27)) ,Lp(12) + Lp(25) + Lp(26) * (a / Lp(27)) ,Lp(19),Lp(20) };
 			}
 
 

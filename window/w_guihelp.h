@@ -94,7 +94,7 @@ namespace SDX_BSC
 			MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 		}
 
-		void InfoHunter(Warker* it, Point 座標)
+		void InfoHunter(Hunter* it, Point 座標)
 		{
 			help_csv_page = 11;
 
@@ -158,7 +158,7 @@ namespace SDX_BSC
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				InfoASkillSub(it->AスキルS[a], { 座標.x , 座標.y + a * 80} , true);
+				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80} , true);
 			}
 
 			//Pスキル-アイコン、名前、説明
@@ -166,8 +166,10 @@ namespace SDX_BSC
 			座標.y += Lph(35);
 			MSystem::DrawWindow({ 座標.x + Lph(45),座標.y + Lph(46) }, Lph(47), Lph(48), 内スキン, 0, 枠透過率);
 			int sp = it->スキルポイント;
-			for (int a = 0; a < CV::最大Pスキル数; a++)
+
+			for (auto& itp : it->Pスキル)
 			{
+				InfoPSkillSub(itp, { 座標.x , 座標.y },true,false);
 				座標.y += Lph(44);
 			}
 		}
@@ -431,9 +433,9 @@ namespace SDX_BSC
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (it->AスキルS[a] == nullptr || it->AスキルS[a]->id <= 0) { continue; }
+				if (it->Aスキル[a] == nullptr || it->Aスキル[a]->id <= 0) { continue; }
 
-				InfoASkillSub(it->AスキルS[a], { 座標.x , 座標.y + a * 80 }, true);
+				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80 }, true);
 			}
 
 			//Pスキル-アイコン、名前、説明

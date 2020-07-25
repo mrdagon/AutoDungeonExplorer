@@ -118,6 +118,9 @@ namespace SDX_BSC
 
 				//ジョブ説明
 				MFont::BMSize.DrawBold({ px + Lp(51),py + Lp(52) }, Color::White, Color::Black, { job->説明 });
+
+				//立ち絵
+				MJob::立ち絵[job->職種].DrawRotate({ px + Lp(56),py + Lp(57) }, 2, 0);
 			}
 		};
 
@@ -125,15 +128,10 @@ namespace SDX_BSC
 		{
 		public:
 			W_Recruit* 親;
-			int 連打 = 0;
 
 			void Draw派生(double px, double py)
 			{
-				連打--;
-				//枠の描画
-				int n = (連打 <= 0) ? (0) : (1);
-
-				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), n, 1 - n*2);
+				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 0 , 1);
 
 				//採用の文字
 				MFont::BMSize.DrawBoldRotate({ px + Lp(53),py + Lp(54) }, 1, 0, Color::White, Color::Black, { TX::Recruit_採用 });
@@ -142,11 +140,10 @@ namespace SDX_BSC
 			void Click(double px, double py)
 			{
 				//空きがあって編成中のパーティか、控えに追加
-				if (連打 > 0) { return; }
-				連打 = 10;
 				親->名前確定();
 				Guild::P->求人採用();
 				MSound::効果音[SE::決定].Play();
+				親->is表示 = false;
 			}
 		};
 
@@ -254,6 +251,8 @@ namespace SDX_BSC
 
 			職業説明枠.位置 = { Lp(22), Lp(23) , Lp(24) , Lp(25) };
 
+			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
+			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 		}
 
 		void 名前確定()

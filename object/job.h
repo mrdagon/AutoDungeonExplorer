@@ -14,9 +14,9 @@ namespace SDX_BSC
 	public:
 		static std::vector<Job> data;
 
-		Job(JobNo 職種,std::string 名前,std::string 説明,UnitImageType 見た目)
+		Job(JobType 職種,std::string 名前,std::string 説明,UnitImageType 見た目)
 		{
-			this->ID = 職種;
+			this->職種 = 職種;
 			this->名前 = 名前;
 			this->説明 = 説明;
 			this->見た目 = 見た目;
@@ -45,12 +45,6 @@ namespace SDX_BSC
 
 		static void SetSkill(int ID,int ファイター,int ナイト,int レンジャー,int ウィザード,int クレリック)
 		{
-			Job::data[0].PSkillRate[ID] = ファイター;
-			Job::data[1].PSkillRate[ID] = ナイト;
-			Job::data[2].PSkillRate[ID] = レンジャー;
-			Job::data[3].PSkillRate[ID] = ウィザード;
-			Job::data[4].PSkillRate[ID] = クレリック;
-
 			if (ファイター > 0) { Job::data[0].SetP習得スキル(ID); }
 			if (ナイト> 0) { Job::data[1].SetP習得スキル(ID); }
 			if (レンジャー > 0) { Job::data[2].SetP習得スキル(ID); }
@@ -100,7 +94,9 @@ namespace SDX_BSC
 			}
 		}
 
-		JobNo ID;
+		JobType 職種;
+
+		//JobNo ID;
 
 		std::string 名前;
 		std::string 概説 = "前列:物理アタッカー";
@@ -118,27 +114,23 @@ namespace SDX_BSC
 		EnumArray<int, StatusType> ステ;
 		EnumArray<int, DamageType> 防御;
 		int 命中, 回避;
-
-		//他ステータス
-		int PSkillRate[CV::Pスキル種];//各スキルの習得確率-廃止予定
 	};
 
-	void LoadWarkerClass()
+	void LoadHunterClass()
 	{
-		Job::data.emplace_back(0, "ファイター", "STR/DEX物理",UnitImageType::傭兵);//90
-		Job::data.emplace_back(1, "ナイト", "STRタンク",UnitImageType::重装);//78
-		Job::data.emplace_back(2, "レンジャー", "DEX物理",UnitImageType::レンジャー);//66
-		Job::data.emplace_back(3, "ウィザード", "INT魔法",UnitImageType::魔女);//59
-		Job::data.emplace_back(4, "クレリック", "INT回復",UnitImageType::司祭);//99
+		Job::data.emplace_back(JobType::スレイヤー, "スレイヤー", "STR/DEX物理",UnitImageType::傭兵);//90
+		Job::data.emplace_back(JobType::ガーディアン, "ガーディアン", "STRタンク",UnitImageType::重装);//78
+		Job::data.emplace_back(JobType::デッドアイ, "デッドアイ", "DEX物理",UnitImageType::レンジャー);//66
+		Job::data.emplace_back(JobType::エレメンタリスト, "エレメンタリスト", "INT魔法",UnitImageType::魔女);//59
+		Job::data.emplace_back(JobType::メディック, "メディック", "INT回復",UnitImageType::司祭);//99
 
-		Job::data.emplace_back(5, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(6, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(7, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(8, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(9, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(10, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-		Job::data.emplace_back(11, "*未実装*", "INT回復", UnitImageType::おじいさん);//99
-
+		Job::data.emplace_back(JobType::オカルティスト, "オカルティスト", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::グラディエーター, "グラディエータ", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::シノビ, "シノビ", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::バーサーカー, "バーサーカー", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::トリックスター, "トリックスター", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::ミスティック, "ミスティック", "INT回復", UnitImageType::おじいさん);//99
+		Job::data.emplace_back(JobType::カートグラファ, "カートグラファ", "INT回復", UnitImageType::おじいさん);//99
 
 		Job::data[0].Set( 90, 13, 11, 5, 5 , 5 , 5 , 5);
 		Job::data[1].Set(100, 11, 10, 7, 15, 10, 0, 0);
