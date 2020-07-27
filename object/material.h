@@ -23,7 +23,7 @@ namespace SDX_BSC
 		{
 			for (auto& it : レシピ)
 			{
-				it.id = -1;
+				it.id = 0;
 				it.製造確率 = 100;
 			}
 		}
@@ -43,7 +43,7 @@ namespace SDX_BSC
 
 		struct Recipe
 		{
-			int id;
+			ID_Item id;
 			int 製造確率;
 		};
 
@@ -63,29 +63,29 @@ namespace SDX_BSC
 		Material::data.emplace_back(6, IconType::鉄材, CraftType::鍛造, 2);
 		Material::data.emplace_back(7, IconType::皮材, CraftType::裁縫, 2);
 
-		Material::data[0].レシピ[0].id = 9;//盾弓
-		Material::data[0].レシピ[1].id = 13;
-		Material::data[4].レシピ[0].id = 9;
-		Material::data[4].レシピ[1].id = 13;
+		Material::data[0].レシピ[0].id = 3;//盾弓
+		Material::data[0].レシピ[1].id = 4;
+		Material::data[4].レシピ[0].id = 3;
+		Material::data[4].レシピ[1].id = 4;
 
-		Material::data[1].レシピ[0].id = 17;//杖２種
-		Material::data[1].レシピ[1].id = 21;
-		Material::data[5].レシピ[0].id = 17;
-		Material::data[5].レシピ[1].id = 21;
+		Material::data[1].レシピ[0].id = 5;//杖２種
+		Material::data[1].レシピ[1].id = 6;
+		Material::data[5].レシピ[0].id = 5;
+		Material::data[5].レシピ[1].id = 6;
 
 		Material::data[2].レシピ[0].id = 1;//剣、斧、鎧
-		Material::data[2].レシピ[1].id = 5;
-		Material::data[2].レシピ[2].id = 25;
+		Material::data[2].レシピ[1].id = 2;
+		Material::data[2].レシピ[2].id = 7;
 		Material::data[6].レシピ[0].id = 1;
-		Material::data[6].レシピ[1].id = 5;
-		Material::data[6].レシピ[2].id = 25;
+		Material::data[6].レシピ[1].id = 2;
+		Material::data[6].レシピ[2].id = 7;
 		Material::data[2].合計確率 = 300;
 		Material::data[6].合計確率 = 300;
 
-		Material::data[3].レシピ[0].id = 29;//帷子、ローブ
-		Material::data[3].レシピ[1].id = 33;
-		Material::data[7].レシピ[0].id = 29;
-		Material::data[7].レシピ[1].id = 33;
+		Material::data[3].レシピ[0].id = 8;//帷子、ローブ
+		Material::data[3].レシピ[1].id = 9;
+		Material::data[7].レシピ[0].id = 8;
+		Material::data[7].レシピ[1].id = 9;
 
 	}
 

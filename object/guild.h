@@ -443,13 +443,13 @@ namespace SDX_BSC
 
 					for (auto& it : 味方)
 					{
-						if (it->Aスキル使用(味方, 敵) == true) { isBreak = true;  break; }
+						if (it->Aスキル使用チェック(味方, 敵) == true) { isBreak = true;  break; }
 					}
 					if (isBreak) { break; }
 
 					for (auto& it : 敵)
 					{
-						if (it->Aスキル使用(敵, 味方) == true) { isBreak = true;  break; }
+						if (it->Aスキル使用チェック(敵, 味方) == true) { isBreak = true;  break; }
 					}
 					if (isBreak) { break; }
 
@@ -710,7 +710,7 @@ namespace SDX_BSC
 
 		//キャラクリ関係
 		std::string 求人名前 = "名前を入力して下さい";
-		JobNo 求人職業 = 0;
+		ID_Job 求人職業 = 0;
 
 		//経営戦術効果
 		double 集客補正 = 1.0;
@@ -772,6 +772,7 @@ namespace SDX_BSC
 		static Guild* P;//プレイヤーのギルド
 		static Guild data;
 
+		//人事関係処理
 		void 求人リロール()
 		{
 			std::string 求人名前 = "デフォ子";
@@ -791,15 +792,115 @@ namespace SDX_BSC
 			if (ID >= 0)
 			{
 				//探索パーティから除名
+				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[0]->ID]++;
+				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[1]->ID]++;
+				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[2]->ID]++;
+
 				探索パーティ[ID / 5].メンバー[ID % 5] = nullptr;
 			} else {
 				//控えから除名
+				装備所持数[ギルメン控え[-(ID + 1)]->装備[0]->ID]++;
+				装備所持数[ギルメン控え[-(ID + 1)]->装備[1]->ID]++;
+				装備所持数[ギルメン控え[-(ID + 1)]->装備[2]->ID]++;
 
 				ギルメン控え.erase(ギルメン控え.begin() -(ID+1));
 			}
 
 		}
 
+		void パーティ移動(Hunter* メンバー , int 並びID , Hunter* 移動先メンバー, int 移動先ID)
+		{
+			//控え枠へドロップ
+			if (移動先メンバー == nullptr && 移動先ID == -100)
+			{
+				if (並びID >= 0)
+				{
+					//パーティから控え
+					探索パーティ[並びID / 5].メンバー[並びID % 5] = nullptr;
+					ギルメン控え.push_back(メンバー);
+				}
+				else {
+					//控えから控え最後までバブルソート
+					for (int a = 0; a < ギルメン控え.size() - 1; a++)
+					{
+						if (ギルメン控え[a] == メンバー)
+						{
+							ギルメン控え[a] = ギルメン控え[a + 1];
+							ギルメン控え[a + 1] = メンバー;
+						}
+					}
+				}
+			}
+			else if (移動先ID >= 0 && 並びID >= 0)
+			{
+				//両方パーティ
+				探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = メンバー;
+				探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
+			}
+			else if (移動先ID < 0 && 並びID < 0) {
+				//両方控え
+				ギルメン控え[(-移動先ID - 1)] = メンバー;
+				ギルメン控え[(-並びID - 1)] = 移動先メンバー;
+			}
+			else if (移動先ID < 0) {
+				//移動先が控え
+				ギルメン控え[(-移動先ID - 1)] = メンバー;
+				探索パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
+			}
+			else {
+				//控えからパーティ
+				探索パーティ[移動先ID / 5].メンバー[移動先ID % 5] = メンバー;
+				ギルメン控え[(-並びID - 1)] = 移動先メンバー;
+				ギルメン控え.erase(std::remove( ギルメン控え.begin(), ギルメン控え.end(), nullptr), ギルメン控え.end());
+			}
+
+			//控えメンバーは
+			for (auto& it : ギルメン控え)
+			{
+				it->基礎ステータス計算();
+			}
+
+			//全パーティメンバーの基礎ステ再計算
+			for (auto& it : 探索パーティ)
+			{
+				it.基礎ステ再計算();
+			}
+
+			MSound::効果音[SE::配置換え].Play();
+		}
+
+		void 製造移動( Crafter*メンバー , int 並びID , Crafter* 移動先製造メンバー, CraftType 移動先部門, int 移動先ID = 0)
+		{
+			CraftType 部署 = メンバー->配置部門;
+
+			//移動先が空き
+			if (移動先製造メンバー == nullptr)
+			{
+				//現在の部署から削除して、新部署の最後に移動
+				for (int a = 0; a < (int)製造メンバー[部署].size(); a++)
+				{
+					if (メンバー == 製造メンバー[部署][a])
+					{
+						製造メンバー[部署].erase(製造メンバー[部署].begin() + a);
+						break;
+					}
+				}
+				製造メンバー[移動先部門].emplace_back(メンバー);
+				メンバー->配置部門 = 移動先部門;
+			}
+			else {
+				//移動先と入れ替え
+				製造メンバー[移動先部門][移動先ID] = メンバー;
+				製造メンバー[部署][並びID] = 移動先製造メンバー;
+
+				メンバー->配置部門 = 移動先部門;
+				移動先製造メンバー->配置部門 = 部署;
+			}
+
+			MSound::効果音[SE::配置換え].Play();
+		}
+
+		//製造関係処理
 		void 製造力計算()
 		{
 			合計製造力[CraftType::裁縫] = 0;
@@ -905,23 +1006,7 @@ namespace SDX_BSC
 			}
 
 			//品質処理
-			int 品質 = Material::data[素材ID].品質;
-
-			if (Rand::Coin(0.002))
-			{
-				品質 += 3;
-			}
-			else if (Rand::Coin(0.01))
-			{
-				品質 += 2;
-			}
-			else if (Rand::Coin(0.1))
-			{
-				品質++;
-			}
-
-			完成品[種類] += std::min( 品質 , CV::最大装備ランク - 1);
-
+						
 			製造進行度[種類] = 0;
 
 			return true;
@@ -965,6 +1050,7 @@ namespace SDX_BSC
 			クエスト進行(QuestType::装備製造, 1);
 		}
 
+		//探索関係処理
 		void 探索開始()
 		{
 			for (int a = 0; a < 最大パーティ数; a++)
@@ -979,14 +1065,6 @@ namespace SDX_BSC
 			for (int a = 0; a < 最大パーティ数; a++)
 			{
 				探索パーティ[a].探索処理();
-			}
-		}
-
-		void 装備取置解除()
-		{
-			for (int a = 0; a < CV::装備種; a++)
-			{
-				販売可能数[a] = 装備所持数[a];
 			}
 		}
 
@@ -1005,33 +1083,16 @@ namespace SDX_BSC
 		}
 
 		//no 0-1 装備部位
-		void 個別装備更新(Hunter* ギルメン , int no)
+		void 個別装備更新(Hunter* ギルメン , int 部位)
 		{
 			if (ギルメン == nullptr) { return; }
-			if (ギルメン->is装備更新 == false) { return; }
+			if ( Config::is装備自動更新 == false) { return; }
 
 			//同じ系統でランク上の装備があったら交換
-			auto item = Item::data[ギルメン->装備[no]];
 
-			if (item.isレア == true) { return; }
-
-			for (int b = CV::装備種 - 1; b >= 0; b--)
-			{
-				if ( 装備所持数[b] <= 0) { continue; }
-					
-				if ( Item::data[b].種類 == item.種類 &&
-					 Item::data[b].Lv > item.Lv&&
-					 Item::data[b].isレア == false )
-				{
-					装備所持数[ギルメン->装備[no]]++;
-					装備所持数[b]--;
-					ギルメン->装備[no] = b;
-					ギルメン->装備スキル更新();
-					break;
-				}
-			}
 		}
 
+		//販売関係処理
 		void アイテム販売()
 		{
 			//客が来る判定-一日に集客力/10人が期待値
@@ -1060,8 +1121,8 @@ namespace SDX_BSC
 					{
 						販売可能数[a]--;
 						装備所持数[a]--;
-						資金 += Item::data[a].値段 * 価格補正;
-						総売上 += Item::data[a].値段;
+						資金 += 0;
+						総売上 += 0;
 						総販売++;
 						クエスト進行(QuestType::装備販売, 1);
 						break;
@@ -1069,6 +1130,14 @@ namespace SDX_BSC
 				}
 			}
 
+		}
+
+		void 装備取置解除()
+		{
+			for (int a = 0; a < CV::装備種; a++)
+			{
+				販売可能数[a] = 装備所持数[a];
+			}
 		}
 
 		//クエスト関係

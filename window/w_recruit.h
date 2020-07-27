@@ -62,7 +62,7 @@ namespace SDX_BSC
 					親->入力中文字 = 親->conv.from_bytes(Guild::P->求人名前);
 					親->挿入位置 = (int)親->入力中文字.size();
 					親->is名前入力中 = true;
-					DV::isDebugInput = false;
+					CSV::isDebugInput = false;
 					MSound::効果音[SE::決定].Play();
 				}
 			}
@@ -73,9 +73,9 @@ namespace SDX_BSC
 		class GUI_職業選択 : public GUI_Object
 		{
 		public:
-			JobNo 職業;
+			ID_Job 職業;
 
-			GUI_職業選択(JobNo 職業):
+			GUI_職業選択(ID_Job 職業):
 				職業(職業)
 			{}
 
@@ -85,7 +85,7 @@ namespace SDX_BSC
 				//選択中は枠の色を変える			
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), (職業 == Guild::P->求人職業) ? (10) : (11) );
 				//職業見た目
-				MUnit::ユニット[job->見た目][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
+				job->Img[0][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
 				//職業名表示、職業番号表示、職業説明
 				MFont::BMSize.DrawBold({ px + Lp(40),py + Lp(41) }, Color::White, Color::Black, { job->名前 });
 			}
@@ -109,7 +109,7 @@ namespace SDX_BSC
 				//ジョブ名
 				MFont::BMSize.DrawBoldRotate({ px + Lp(42) ,py + Lp(43) }, 1, 0, Color::White, Color::Black, job->名前, false);
 				//ジョブ装備種
-				MIcon::アイテム[Item::data[job->初期装備[0]].見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
+				MIcon::アイテム[job->初期装備[0]->見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
 
 				//推奨隊列
 				MFont::BMSize.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, job->概説 , false);
@@ -174,7 +174,7 @@ namespace SDX_BSC
 				if (連打 > 0) { return; }
 				連打 = 10;
 				親->is名前入力中 = false;
-				DV::isDebugInput = true;
+				CSV::isDebugInput = true;
 				Guild::P->求人リロール();
 				MSound::効果音[SE::決定].Play();
 			}
@@ -194,7 +194,7 @@ namespace SDX_BSC
 		std::wstring 入力中文字;
 		bool is変換 = false;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Recruit;
 			名前 = TX::Window_名前[種類];
@@ -231,7 +231,7 @@ namespace SDX_BSC
 			SetCSVPage(6);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			横幅 = Lp(0);
 			縦幅 = Lp(1);
@@ -262,7 +262,7 @@ namespace SDX_BSC
 			Guild::P->求人名前 = conv.to_bytes(入力中文字);
 
 			is名前入力中 = false;
-			DV::isDebugInput = true;
+			CSV::isDebugInput = true;
 
 			MSound::効果音[SE::決定].Play();			
 

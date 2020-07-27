@@ -101,6 +101,7 @@ namespace SDX_BSC
 		製造力,
 		完了,
 		ランク,
+		ゴミ箱,
 		//各種ウィンドウアイコン
 		装備,
 		製造,
@@ -303,15 +304,6 @@ namespace SDX_BSC
 	};
 
 	//◆系統定義用
-	//ゲームモード、複雑さ、難易度
-	enum class GameType
-	{
-		ノーマル,
-		ハード,
-		デスマーチ,
-		COUNT
-	};
-
 	enum class WindowType
 	{
 		//常時ウィンドウ
@@ -324,8 +316,8 @@ namespace SDX_BSC
 		Material,
 		Party,
 		Quest,
-		Recruit,	
-		//一時ウィンドウ
+		//ポップアップウィンドウ
+		Recruit,
 		Config,//設定
 		Skilltree,
 		COUNT,
@@ -483,8 +475,7 @@ namespace SDX_BSC
 
 
 	//◆全種類列挙◆
-	typedef unsigned int JobNo;//消す予定
-
+	typedef unsigned int ID_Job;
 	typedef unsigned int ID_Item;
 	typedef unsigned int ID_Monster;
 	typedef unsigned int ID_Material;

@@ -25,15 +25,19 @@ namespace SDX_BSC
 		部門Lv上昇,
 		経営戦術使用,
 		//人事
-		雇用,//○
-		再募集,//○
+		雇用,//
+		除名,//
+		スキル習得,//
 		//探索
 		地図発見,
 		ボス発見,
 		ボス討伐,
+		完全探索,
+		石版発見,
 		//製造
 		技術Lv上昇,//○
 		新装備開発,//○
+		装備Lv上昇,
 		レア装備製造,
 		COUNT,
 	};
@@ -55,14 +59,14 @@ namespace SDX_BSC
 		{
 			if ((int)種類 <= (int)LogDetailType::クエスト受注) { 系統 = LogType::重要; }
 			else if ((int)種類 <= (int)LogDetailType::経営戦術使用) { 系統 = LogType::経営; }
-			else if ((int)種類 <= (int)LogDetailType::再募集) { 系統 = LogType::人事; }
+			else if ((int)種類 <= (int)LogDetailType::スキル習得) { 系統 = LogType::人事; }
 			else if ((int)種類 <= (int)LogDetailType::ボス討伐) { 系統 = LogType::探索; }
 			else if ((int)種類 <= (int)LogDetailType::レア装備製造) { 系統 = LogType::製造; }
 		}
 
 		int ギルド;
 		int 日付;
-		int 参照ID;//戦術ID、人材ID、ダンジョンID、アイテムID
+		int 参照ID;//戦術ID、人材ID、ダンジョンID、アイテムID、スキルIDなど
 		LogType 系統;
 		LogDetailType 種類;
 	};

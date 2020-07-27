@@ -39,16 +39,16 @@ namespace SDX_BSC
 				MIcon::アイコン[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
 				MFont::BMSize.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
-				if (GUI_Help::戦術 != nullptr)
+				if (W_Drag::Over戦術 != nullptr)
 				{
-					Color fc = { 255,64,64 };
-					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,GUI_Help::戦術->消費資金 , " G" }, true);
-					GUI_Help::戦術 = nullptr;
+					Color fc = { 255,128,128 };
+					if (W_Drag::Over戦術->消費資金 <= Guild::P->資金) { fc = Color(128,255,128); }
+					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
+					W_Drag::Over戦術 = nullptr;
 				}
 				else if (Guild::P->選択戦術 != MSkillType::COUNT )
 				{
-					Color fc = {255,64,64};
+					Color fc = {255,128,128};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
 					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[(int)Guild::P->選択戦術].消費資金 , " G"}, true);
 				}
@@ -164,7 +164,7 @@ namespace SDX_BSC
 		int 現在タブ = 0;
 		int 戦術数 = 0;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Management;
 			名前 = TX::Window_名前[種類];
@@ -214,11 +214,11 @@ namespace SDX_BSC
 			for (int a = 0; a < 4; a++) { タブ[a].is固定 = true; }
 			for (int a = 0; a < 4; a++) { gui_mlv[a].is固定 = true; }
 
-			GUI_Init();
+			GUI_Update();
 			Tub_Change();
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
 			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
@@ -292,7 +292,7 @@ namespace SDX_BSC
 
 		void 派生Draw()
 		{			
-			GUI_Init();
+			GUI_Update();
 
 			//固定描画
 			for (auto&it : タブ)

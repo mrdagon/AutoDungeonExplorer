@@ -42,7 +42,7 @@ namespace SDX_BSC
 				}
 
 				//探索先アイコン、レベル
-				MIcon::アイコン[dun->アイコン].Draw({ px + Lp(12),py + Lp(13) });
+				dun->Img->Draw({ px + Lp(12),py + Lp(13) });
 				MFont::BSSize.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->Lv });
 				//探索度ゲージと探索率
 				MSystem::DrawBar({ px + Lp(18) , py + Lp(19) }, Lp(20), Lp(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
@@ -127,16 +127,16 @@ namespace SDX_BSC
 
 			void Drop(double px, double py)
 			{
-				if (W_Drag_Drop::ダンジョン == nullptr) { return; }
+				if (W_Drag::ダンジョン == nullptr) { return; }
 				if (所属->探索状態 != ExplorerType::編成中 && 所属->探索状態 != ExplorerType::リザルト中)
 				{ 
-					所属->探索先予約 = W_Drag_Drop::ダンジョン;
+					所属->探索先予約 = W_Drag::ダンジョン;
 					MSound::効果音[SE::配置換え].Play();
 					return;
 				}
 
 				//探索先変更
-				所属->探索先 = W_Drag_Drop::ダンジョン;
+				所属->探索先 = W_Drag::ダンジョン;
 				MSound::効果音[SE::配置換え].Play();
 			}
 
@@ -186,7 +186,7 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
 				//アイコン、Lv、Expゲージ
-				MUnit::ユニット[ギルメン->見た目][10]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
+				ギルメン->Img[0][10]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
 				MSystem::DrawBar({ px + Lp(39),py + Lp(40) }, Lp(41), Lp(42), ギルメン->経験値 / ギルメン->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);
 				MFont::BSSize.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
 
@@ -194,22 +194,17 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ px + Lp(43) ,py + Lp(46) }, Lp(48), Lp(49), 0);
 				MSystem::DrawWindow({ px + Lp(44) ,py + Lp(46) }, Lp(48), Lp(49), 0);
 				MSystem::DrawWindow({ px + Lp(45) ,py + Lp(47) }, Lp(48), Lp(49), 0);
-				MIcon::アイテム[Item::data[ギルメン->装備[0]].見た目].Draw({ px + Lp(43) + Lp(50) , py + Lp(46) + Lp(51) });
-				MIcon::アイテム[Item::data[ギルメン->装備[1]].見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
-				MIcon::アイテム[Item::data[ギルメン->装備[2]].見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
+				MIcon::アイテム[ギルメン->装備[0]->見た目].Draw({ px + Lp(43) + Lp(50) , py + Lp(46) + Lp(51) });
+				MIcon::アイテム[ギルメン->装備[1]->見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
+				MIcon::アイテム[ギルメン->装備[2]->見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
 
-				MFont::BSSize.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , Item::data[ギルメン->装備[0]].Lv });
-				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " ,Item::data[ギルメン->装備[1]].Lv });
+				MFont::BSSize.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->Lv });
+				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->Lv });
 
 				//装備更新ボタン
-				if (ギルメン->is装備更新)
-				{
-					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 2, -1);
-				} else {
-					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
-				}
+				MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
 
-				MFont::BSSize.DrawBold({ px + Lp(59) ,py + Lp(60) }, Color::White, Color::Black, "装備更新");
+				MFont::BSSize.DrawBold({ px + Lp(59) ,py + Lp(60) }, Color::White, Color::Black, "スキル");
 			}
 
 			void Click(double px, double py)
@@ -220,22 +215,22 @@ namespace SDX_BSC
 				//装備掴み
 				if (Point(px, py).Hit(&Rect(Lp(43), Lp(46), Lp(48), Lp(49))) == true)
 				{
-					W_Drag_Drop::ギルメン装備.メンバー = ギルメン;
-					W_Drag_Drop::ギルメン装備.部位 = 0;
+					W_Drag::ギルメン装備.メンバー = ギルメン;
+					W_Drag::ギルメン装備.部位 = 0;
 					return;
 				}
 
 				if (Point(px, py).Hit(&Rect(Lp(44), Lp(46), Lp(48), Lp(49))) == true)
 				{
-					W_Drag_Drop::ギルメン装備.メンバー = ギルメン;
-					W_Drag_Drop::ギルメン装備.部位 = 1;
+					W_Drag::ギルメン装備.メンバー = ギルメン;
+					W_Drag::ギルメン装備.部位 = 1;
 					return;
 				}
 
 				if (Point(px, py).Hit(&Rect(Lp(45), Lp(47), Lp(48), Lp(49))) == true)
 				{
-					W_Drag_Drop::ギルメン装備.メンバー = ギルメン;
-					W_Drag_Drop::ギルメン装備.部位 = 2;
+					W_Drag::ギルメン装備.メンバー = ギルメン;
+					W_Drag::ギルメン装備.部位 = 2;
 					return;
 				}
 
@@ -246,7 +241,7 @@ namespace SDX_BSC
 					//MSound::効果音[SE::ボタンクリック].Play();
 					スキルツリー->ギルメン = ギルメン;
 					スキルツリー->配置id = 並びID;
-					スキルツリー->init();
+					スキルツリー->Init();
 					スキルツリー->ポップアップ呼び出し();
 					所属->基礎ステ再計算();
 
@@ -254,8 +249,8 @@ namespace SDX_BSC
 				}
 
 				//ギルメン掴む
-				W_Drag_Drop::探索メン = ギルメン;
-				W_Drag_Drop::並びID = 並びID;
+				W_Drag::探索メン = ギルメン;
+				W_Drag::並びID = 並びID;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -263,50 +258,62 @@ namespace SDX_BSC
 			{
 				if (所属->探索状態 != ExplorerType::編成中) { return; }
 
-				if (W_Drag_Drop::探索メン != nullptr)
+				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					W_Drag_Drop::パーティ移動( ギルメン , 並びID);
+					Guild::P->パーティ移動( W_Drag::探索メン, W_Drag::並びID , ギルメン , 並びID);
 				}
-				else if(W_Drag_Drop::アイテム != -1 && ギルメン != nullptr)
+				else if(W_Drag::アイテム != nullptr && ギルメン != nullptr)
 				{
 					//装備変更
 					int 部位 = 0;
-					if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::アクセサリー)
+					if (W_Drag::アイテム->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
-					}else if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::隠鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::軽鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::重鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::力鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::技鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::知鎧 )
+					}else if (W_Drag::アイテム->種類 == ItemType::隠鎧 ||
+						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
+						W_Drag::アイテム->種類 == ItemType::重鎧 ||
+						W_Drag::アイテム->種類 == ItemType::力鎧 ||
+						W_Drag::アイテム->種類 == ItemType::技鎧 ||
+						W_Drag::アイテム->種類 == ItemType::知鎧 )
 					{
 						部位 = 1;
-					}					
+					}
 
-					Guild::P->装備所持数[ギルメン->装備[部位]]++;
-					Guild::P->装備所持数[W_Drag_Drop::アイテム]--;
-					ギルメン->装備[部位] = W_Drag_Drop::アイテム;
-					ギルメン->装備スキル更新();
+					//武器は装備種があってないと交換不可
+					if (部位 == 0 && W_Drag::アイテム->種類 != ギルメン->職業->武器種)
+					{
+						return;
+					}
+
+					Guild::P->装備所持数[ギルメン->装備[部位]->ID]++;
+					Guild::P->装備所持数[W_Drag::アイテム->ID]--;
+					ギルメン->装備[部位] = W_Drag::アイテム;
 
 					所属->基礎ステ再計算();
 					MSound::効果音[SE::装備変更].Play();
 				}
-				else if (W_Drag_Drop::ダンジョン != nullptr) 
+				else if (W_Drag::ダンジョン != nullptr) 
 				{ 
-					所属->探索先 = W_Drag_Drop::ダンジョン;
+					所属->探索先 = W_Drag::ダンジョン;
 					MSound::効果音[SE::配置換え].Play();				
 				}
-				else if (W_Drag_Drop::ギルメン装備.メンバー != nullptr && ギルメン != nullptr)
+				else if (W_Drag::ギルメン装備.メンバー != nullptr && ギルメン != nullptr)
 				{
-					int n = W_Drag_Drop::ギルメン装備.部位;
-					int buf = W_Drag_Drop::ギルメン装備.メンバー->装備[n];
-					W_Drag_Drop::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
-					ギルメン->装備[n] = buf;
+					int n = W_Drag::ギルメン装備.部位;
 
-					ギルメン->装備スキル更新();
-					W_Drag_Drop::ギルメン装備.メンバー->装備スキル更新();
+					//武器は装備種あってないと交換不可
+					if (n == 0)
+					{
+						if (W_Drag::ギルメン装備.メンバー->装備[n]->種類 != ギルメン->装備[n]->種類)
+						{
+							return;
+						}
+					}
+
+					auto buf = W_Drag::ギルメン装備.メンバー->装備[n];
+					W_Drag::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
+					ギルメン->装備[n] = buf;
 
 					for (auto& it : Guild::P->探索パーティ)
 					{
@@ -490,13 +497,13 @@ namespace SDX_BSC
 				}
 
 
-				MUnit::ユニット[it->見た目][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
+				it->Img[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
 				if (it->E光強さ > 0)
 				{
 					Screen::SetBlendMode(BlendMode::Add, int(it->E光強さ * 255));
-					MUnit::ユニット[it->見た目][向き]->SetColor(it->E光色);
-					MUnit::ユニット[it->見た目][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
-					MUnit::ユニット[it->見た目][向き]->SetColor(Color::White);
+					it->Img[0][向き]->SetColor(it->E光色);
+					it->Img[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
+					it->Img[0][向き]->SetColor(Color::White);
 					Screen::SetBlendMode();
 				}
 
@@ -528,7 +535,7 @@ namespace SDX_BSC
 			{					
 				//←向き
 				if (it.現在HP <= 0) { return; }
-				UnitImageType 見た目 = it.種族->見た目;
+				auto img = it.種族->Img;
 				int 向き = 7;
 				double サイズ = 2;
 
@@ -540,13 +547,13 @@ namespace SDX_BSC
 				}
 
 
-				MUnit::ユニット[見た目][向き]->DrawRotate({ px - (int)it.E座標,py }, サイズ, 0);
+				img[0][向き]->DrawRotate({ px - (int)it.E座標,py }, サイズ, 0);
 				if (it.E光強さ > 0)
 				{
 					Screen::SetBlendMode(BlendMode::Add, int(it.E光強さ * 255));
-					MUnit::ユニット[見た目][向き]->SetColor(it.E光色);
-					MUnit::ユニット[見た目][向き]->DrawRotate({ px - (int)it.E座標,py }, サイズ, 0);
-					MUnit::ユニット[見た目][向き]->SetColor(Color::White);
+					img[0][向き]->SetColor(it.E光色);
+					img[0][向き]->DrawRotate({ px - (int)it.E座標,py }, サイズ, 0);
+					img[0][向き]->SetColor(Color::White);
 					Screen::SetBlendMode();
 				}
 
@@ -600,7 +607,7 @@ namespace SDX_BSC
 					auto it = 所属->メンバー[a];
 					if ( it == nullptr) { continue; }
 					//キャラ
-					MUnit::ユニット[it->見た目][2]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
+					it->Img[0][2]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
 					//経験値バー-獲得分の表示
 					int バー幅 = Lp(23);
 					double 経験値割合 = it->経験値 / it->Get要求経験値();
@@ -701,13 +708,13 @@ namespace SDX_BSC
 			{
 				if (所属->探索状態 != ExplorerType::編成中 && 所属->探索状態 != ExplorerType::リザルト中)
 				{
-					所属->探索先予約 = W_Drag_Drop::ダンジョン;
+					所属->探索先予約 = W_Drag::ダンジョン;
 					MSound::効果音[SE::配置換え].Play();
 					return;
 				}
-				if (W_Drag_Drop::ダンジョン == nullptr) { return; }
+				if (W_Drag::ダンジョン == nullptr) { return; }
 
-				所属->探索先 = W_Drag_Drop::ダンジョン;
+				所属->探索先 = W_Drag::ダンジョン;
 				MSound::効果音[SE::配置換え].Play();
 			}
 
@@ -738,10 +745,10 @@ namespace SDX_BSC
 
 			void Drop(double px, double py)
 			{
-				if (W_Drag_Drop::探索メン != nullptr)
+				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					W_Drag_Drop::パーティ移動(nullptr, -100);
+					Guild::P->パーティ移動( W_Drag::探索メン , W_Drag::並びID , nullptr, -100);
 				}
 			}
 
@@ -766,7 +773,7 @@ namespace SDX_BSC
 
 				//アイコン、Lv
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
-				MUnit::ユニット[ギルメン->見た目][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
+				ギルメン->Img[0][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
 			}
 
 			void Click(double px, double py)
@@ -774,8 +781,8 @@ namespace SDX_BSC
 				if (ギルメン == nullptr) { return; }
 
 				//ギルメン掴む
-				W_Drag_Drop::探索メン = ギルメン;
-				W_Drag_Drop::並びID = -ID - 1;
+				W_Drag::探索メン = ギルメン;
+				W_Drag::並びID = -ID - 1;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -783,45 +790,41 @@ namespace SDX_BSC
 			{
 				if (ギルメン == nullptr) { return; }
 
-				if (W_Drag_Drop::探索メン != nullptr)
+				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					W_Drag_Drop::パーティ移動(ギルメン, -ID-1);
+					Guild::P->パーティ移動(W_Drag::探索メン, W_Drag::並びID , ギルメン, -ID-1);
 				}
-				else if (W_Drag_Drop::アイテム != -1)
+				else if (W_Drag::アイテム != nullptr)
 				{
 					//装備変更
 					int 部位 = 0;
-					if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::アクセサリー)
+					if ( W_Drag::アイテム->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
 					}
-					else if (Item::data[W_Drag_Drop::アイテム].種類 == ItemType::隠鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::軽鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::重鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::力鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::技鎧 ||
-						Item::data[W_Drag_Drop::アイテム].種類 == ItemType::知鎧)
+					else if ( W_Drag::アイテム->種類 == ItemType::隠鎧 ||
+						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
+						W_Drag::アイテム->種類 == ItemType::重鎧 ||
+						W_Drag::アイテム->種類 == ItemType::力鎧 ||
+						W_Drag::アイテム->種類 == ItemType::技鎧 ||
+						W_Drag::アイテム->種類 == ItemType::知鎧)
 					{
 						部位 = 1;
 					}
 
-					Guild::P->装備所持数[ギルメン->装備[部位]]++;
-					Guild::P->装備所持数[W_Drag_Drop::アイテム]--;
-					ギルメン->装備[部位] = W_Drag_Drop::アイテム;
-					ギルメン->装備スキル更新();
+					Guild::P->装備所持数[ギルメン->装備[部位]->ID]++;
+					Guild::P->装備所持数[W_Drag::アイテム->ID]--;
+					ギルメン->装備[部位] = W_Drag::アイテム;
 					ギルメン->基礎ステータス計算();
 					MSound::効果音[SE::装備変更].Play();
 				}
-				else if (W_Drag_Drop::ギルメン装備.メンバー != nullptr )
+				else if (W_Drag::ギルメン装備.メンバー != nullptr )
 				{
-					int n = W_Drag_Drop::ギルメン装備.部位;
-					int buf = W_Drag_Drop::ギルメン装備.メンバー->装備[n];
-					W_Drag_Drop::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
+					int n = W_Drag::ギルメン装備.部位;
+					auto buf = W_Drag::ギルメン装備.メンバー->装備[n];
+					W_Drag::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
 					ギルメン->装備[n] = buf;
-
-					ギルメン->装備スキル更新();
-					W_Drag_Drop::ギルメン装備.メンバー->装備スキル更新();
 
 					for (auto& it : Guild::P->探索パーティ)
 					{
@@ -849,14 +852,16 @@ namespace SDX_BSC
 
 			GUI_求人()
 			{
-				求人ウィンドウ.init();
-				求人ウィンドウ.GUI_Init();
+				求人ウィンドウ.Init();
+				求人ウィンドウ.GUI_Update();
 			}
 
 			void Draw派生(double px, double py)
 			{
 				//アイコン、Lv
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
+
+				MIcon::アイコン[IconType::求人].DrawRotate({ px + 位置.GetW() / 2,py + 位置.GetH() / 2 }, 2, 0);
 
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
 			}
@@ -875,8 +880,8 @@ namespace SDX_BSC
 
 			GUI_除名()
 			{
-				確認ウィンドウ.init();
-				確認ウィンドウ.GUI_Init();
+				確認ウィンドウ.Init();
+				確認ウィンドウ.GUI_Update();
 				確認ウィンドウ.文章.text = "除名しますか？";
 			}
 
@@ -885,19 +890,21 @@ namespace SDX_BSC
 				//アイコン、Lv
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
+				MIcon::アイコン[IconType::ゴミ箱].DrawRotate({ px + 位置.GetW()/2,py + 位置.GetH() /2 } , 2, 0);
+
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
 			}
 
 			void Drop(double px, double py)
 			{
-				if (W_Drag_Drop::探索メン == nullptr) { return; }
-				W_Drag_Drop::探索メン = nullptr;
+				if (W_Drag::探索メン == nullptr) { return; }
+				W_Drag::探索メン = nullptr;
 
 				int result = 確認ウィンドウ.ポップアップ呼び出し();
 
 				if (result == 1)
 				{
-					Guild::P->除名(W_Drag_Drop::並びID);
+					Guild::P->除名(W_Drag::並びID);
 				}
 			}
 		};
@@ -914,7 +921,7 @@ namespace SDX_BSC
 		GUI_求人 求人;
 		GUI_除名 除名;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Party;
 			名前 = TX::Window_名前[種類];
@@ -931,7 +938,7 @@ namespace SDX_BSC
 
 			csv_page = 8;
 
-			スキルツリー.init();
+			スキルツリー.Init();
 
 			for (int a = 0; a < Guild::P->最大パーティ数 * CV::パーティ人数; a++)
 			{
@@ -972,10 +979,10 @@ namespace SDX_BSC
 			控え枠.csv_page = 8;
 
 
-			GUI_Init();
+			GUI_Update();
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			//オブジェクト初期化
 			int cnt = 0;

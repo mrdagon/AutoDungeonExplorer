@@ -23,8 +23,6 @@ namespace SDX_BSC
 	};
 }
 
-#include "config.h"
-#include "game_option.h"
 #include "credit.h"
 #include "main_game.h"
 #include "main_menu.h"

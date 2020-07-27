@@ -12,9 +12,9 @@ namespace SDX_BSC
 		//バイナリ形式で保存
 		File file("file/save/config.sav", 保存or読み込み, false);
 
-		file.ReadWrite(Game::BGM設定);
-		file.ReadWrite(Game::SE設定);
-		file.ReadWrite(Game::解像度設定);
+		file.ReadWrite(Config::BGM設定);
+		file.ReadWrite(Config::SE設定);
+		file.ReadWrite(Config::解像度設定);
 
 		return false;
 	}

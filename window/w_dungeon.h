@@ -20,25 +20,25 @@ namespace SDX_BSC
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				MIcon::アイコン[参照->アイコン].DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
+				参照->Img->DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
 				MFont::BSSize.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
 				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->Lv }, false);
 
 				//ボス
-				MUnit::ユニット[参照->ボスモンスター[0].見た目][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
+				参照->ボスモンスター[0].Img[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
 				MFont::BSSize.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
 
 				//ザコ
 				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
 				{
-					MUnit::ユニット[参照->雑魚モンスター[a].見た目][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
+					参照->雑魚モンスター[a].Img[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
 				}
 			}
 
 			void Click(double px, double py)
 			{
 				//ダンジョンを掴む
-				W_Drag_Drop::ダンジョン = 参照;
+				W_Drag::ダンジョン = 参照;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -78,7 +78,7 @@ namespace SDX_BSC
 		int 現在タブ = 0;
 
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Dungeon;
 			名前 = TX::Window_名前[種類];
@@ -121,7 +121,7 @@ namespace SDX_BSC
 			SetCSVPage(1);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			枠.位置 = { Lp(5) , Lp(6) ,Lp(7) , Lp(8) };
 			枠.枠No = 12;
@@ -159,7 +159,7 @@ namespace SDX_BSC
 
 		void 派生Draw()
 		{
-			GUI_Init();
+			GUI_Update();
 
 			//タブ部分
 			for (auto& it : タブ)

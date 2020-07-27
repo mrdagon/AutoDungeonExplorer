@@ -56,16 +56,10 @@ namespace SDX_BSC
 		bool isスクロールバー表示 = true;
 
 		/*各種初期化*/
-		virtual void init()
-		{
-			return;
-		}
+		virtual void Init() = 0;
 
-		/*GUI初期化*/
-		virtual void GUI_Init()
-		{
-
-		}
+		/*GUI更新*/
+		virtual void GUI_Update() = 0;
 
 		/*描画処理と操作処理*/
 		void Draw()
@@ -76,7 +70,6 @@ namespace SDX_BSC
 			相対座標.y = 座標.y - スクロール位置 + タイトル枠高さ + 固定縦;
 
 			共通Draw();
-			//描画領域計算
 			//固定部分なしなら全体
 			描画範囲(固定縦 == 0);
 			派生Draw();
@@ -154,7 +147,7 @@ namespace SDX_BSC
 
 		virtual void 派生Draw()
 		{ 
-			GUI_Init();
+			GUI_Update();
 			//配列の後ろから描画
 			for (int a = (int)gui_objects.size() - 1; a >= 0; a--)
 			{
@@ -439,19 +432,26 @@ namespace SDX_BSC
 			//裏をやや暗くする
 			Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
 
+			//描画倍率を取得
+			int full_rate = 1;
+			if (Config::ウィンドウモード == Config::WindowmodeType::二倍フルスクリーン) { full_rate = 2; }
+			if (Config::ウィンドウモード == Config::WindowmodeType::四倍フルスクリーン) { full_rate = 4; }
+
 			//現在の画面を記憶
-			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth(), Window::GetHeight());
+			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth() , Window::GetHeight() );
+
+			GUI_Update();
 
 			while (System::Update(true,false))
 			{
-				img.Draw({ 0,0 });
+				img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
 
 				Draw();
-				DebugDraw();
+				CSVDraw();
 				CheckInfo();
-				W_Drag_Drop::Draw();
+				W_Drag::Draw();
 				派生操作();
-				W_Drag_Drop::操作();
+				W_Drag::Drop();
 
 				if (isポップアップ == false &&
 					abs(Input::mouse.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
@@ -466,7 +466,7 @@ namespace SDX_BSC
 
 				if (CV::isデバッグ)
 				{
-					DebugCheckInput();
+					CSVCheckInput();
 				}
 
 				if (is表示 == false)
@@ -494,7 +494,7 @@ namespace SDX_BSC
 
 		inline int Lp(int no)
 		{
-			return DV::I[csv_page][no];
+			return CSV::I[csv_page][no];
 		}
 	};
 

@@ -164,6 +164,7 @@ LRESULT CALLBACK MyEditProc(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 	HIMC hImc;
 
 	switch (msg) {
+
 	case WM_CHAR:
 		if (wp == (WPARAM)0x1b) {
 			hImc = ImmGetContext(hWnd);

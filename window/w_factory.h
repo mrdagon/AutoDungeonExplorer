@@ -73,10 +73,10 @@ namespace SDX_BSC
 				if (Game::is仕事中 == true) { return; }
 
 				//ギルメン移動して最後に追加
-				if (W_Drag_Drop::製造メン != nullptr)
+				if (W_Drag::製造メン != nullptr)
 				{
-					W_Drag_Drop::製造移動(nullptr,部門);
-					W_Drag_Drop::製造メン = nullptr;
+					Guild::P->製造移動( W_Drag::製造メン , W_Drag::並びID, nullptr,部門);
+					W_Drag::製造メン = nullptr;
 				}
 			}
 		};
@@ -104,10 +104,10 @@ namespace SDX_BSC
 					if (n == 3) { n = 1; }
 					n += 6;
 
-					MUnit::ユニット[製造メン->見た目][n]->DrawRotate({ px + Lp(35) , py + Lp(36) }, 2, 0);
+					製造メン->Img[0][n]->DrawRotate({ px + Lp(35) , py + Lp(36) }, 2, 0);
 				} else {
 					//休み中
-					MUnit::ユニット[製造メン->見た目][1]->DrawRotate({ px + Lp(35) , py + Lp(36) }, 2, 0);
+					製造メン->Img[0][1]->DrawRotate({ px + Lp(35) , py + Lp(36) }, 2, 0);
 				}
 
 				MFont::BSSize.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, 製造メン->製造力 , true);
@@ -118,8 +118,8 @@ namespace SDX_BSC
 			{
 				if (Game::is仕事中 == true) { return; }
 				//ギルメン掴む
-				W_Drag_Drop::製造メン = 製造メン;
-				W_Drag_Drop::並びID = 並びID;
+				W_Drag::製造メン = 製造メン;
+				W_Drag::並びID = 並びID;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -128,17 +128,17 @@ namespace SDX_BSC
 				if (Game::is仕事中 == true) { return; }
 
 				//ギルメン入れ替え
-				if (W_Drag_Drop::製造メン != nullptr)
+				if (W_Drag::製造メン != nullptr)
 				{
-					W_Drag_Drop::製造移動(製造メン,製造メン->配置部門, 並びID);
-					W_Drag_Drop::製造メン = nullptr;
+					Guild::P->製造移動(W_Drag::製造メン, W_Drag::並びID,製造メン,製造メン->配置部門, 並びID);
+					W_Drag::製造メン = nullptr;
 				}
 			}
 
 			void Info派生(Point 座標) override
 			{
-				ヘルプ横幅 = DV::I[11][0];
-				ヘルプ縦幅 = DV::I[11][1];
+				ヘルプ横幅 = CSV::I[11][0];
+				ヘルプ縦幅 = CSV::I[11][1];
 				//InfoHunter(製造メン, 座標);
 			}
 		};
@@ -149,7 +149,7 @@ namespace SDX_BSC
 
 		EnumArray < std::vector<GUI_製造メンバー>, CraftType> 製造メンバー;
 
-		void init()
+		void Init()
 		{
 			gui_objects.reserve(256);
 
@@ -173,7 +173,7 @@ namespace SDX_BSC
 			}
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			//オブジェクト初期化
 			for (auto& it : 製造メンバー)

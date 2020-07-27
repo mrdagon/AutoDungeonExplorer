@@ -72,10 +72,10 @@ namespace SDX_BSC
 
 		ActiveSkill(int id, std::string 名前, std::string 説明, SkillType 系統)
 		{
-			this->id = id;
+			this->ID = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->アイコン = 系統;
+			this->Img = &MIcon::スキル[系統];
 		}
 
 		void Set(ASkillTarget 対象,StatusType 依存ステータス,DamageType 属性,ASkillType スキル種)
@@ -123,11 +123,11 @@ namespace SDX_BSC
 			this->is奥義 = is奥義;
 		}
 
-		int id;
+		ID_ASkill ID;
 		std::string 名前;
 		std::string 説明;
 
-		SkillType アイコン;
+		Image* Img;
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
@@ -157,6 +157,7 @@ namespace SDX_BSC
 		int 必要SP = 5;
 	};
 
+	/*ダメージ計算用*/
 	class ASkillEffect
 	{
 	public:

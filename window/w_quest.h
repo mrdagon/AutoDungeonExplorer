@@ -52,7 +52,7 @@ namespace SDX_BSC
 
 		std::vector<GUI_依頼> 依頼;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Quest;
 			名前 = TX::Window_名前[種類];
@@ -82,7 +82,7 @@ namespace SDX_BSC
 			SetCSVPage(15);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 
 			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
@@ -95,7 +95,7 @@ namespace SDX_BSC
 
 		void 派生Draw()
 		{
-			GUI_Init();
+			GUI_Update();
 
 			for (auto& it : gui_objects)
 			{

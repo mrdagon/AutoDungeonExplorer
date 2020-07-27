@@ -119,6 +119,7 @@ namespace SDX_BSC
 			アイコン[IconType::製造力].Load("file/icon/seizouryoku.png");
 			アイコン[IconType::製造力].Load("file/icon/kanryou.png");
 			アイコン[IconType::ランク].Load("file/icon/rank.png");
+			アイコン[IconType::ゴミ箱].Load("file/icon/dustbox.png");
 			//各種ウィンドウアイコン
 			アイコン[IconType::装備].Load("file/icon/item.png");
 			アイコン[IconType::製造].Load("file/icon/seizou.png");
@@ -531,13 +532,13 @@ namespace SDX_BSC
 			}
 		}
 
-		static void DrawSkill(SkillType スキル種, const Point& 座標, Color 色, std::string messe = "")
+		static void DrawSkill(Image* スキル種, const Point& 座標, Color 色, std::string messe = "")
 		{
 			Drawing::Rect({ 座標.x ,座標.y ,29,29 }, 色, true);
 			Drawing::Rect({ 座標.x + 1,座標.y + 1,27,27 }, Color::White, true);
 			Drawing::Rect({ 座標.x + 2,座標.y + 2 ,25,25 }, 色, true);
 
-			MIcon::スキル[スキル種].Draw({ 座標.x + 2,座標.y + 2 });
+			スキル種->Draw({ 座標.x + 2,座標.y + 2 });
 			MFont::BSSize.DrawBold({ 座標.x + 2 , 座標.y + 12 }, Color::White, Color::Black, messe);
 		}
 
@@ -605,7 +606,6 @@ namespace SDX_BSC
 				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
 			}
 		}
-
 	}
 
 

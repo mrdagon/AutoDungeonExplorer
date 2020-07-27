@@ -24,7 +24,7 @@ namespace SDX_BSC
 			Lv(コピー元.Lv),
 			経験値(コピー元.経験値)
 		{
-			見た目 = this->種族->見た目;
+			Img = this->種族->Img;
 			基礎ステータス計算();
 		}
 
@@ -36,7 +36,7 @@ namespace SDX_BSC
 			this->isボス = isボス;
 			経験値 = std::pow((double)Lv,1.5) * 10;
 
-			見た目 = this->種族->見た目;
+			Img = this->種族->Img;
 
 			//基礎ステータス
 			基礎ステータス計算();
@@ -72,7 +72,7 @@ namespace SDX_BSC
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				this->Aスキル[a] = type->ASkill[a];
-				if (this->Aスキル[a] != nullptr && this->Aスキル[a]->id > 0)
+				if (this->Aスキル[a] != nullptr && this->Aスキル[a]->ID > 0)
 				{
 					クールダウン速度[a] = 1;
 				} else {
@@ -84,11 +84,6 @@ namespace SDX_BSC
 			//とりあえずパッシブスキル無し
 
 			Pスキル.clear();
-		}
-
-		void 気絶()
-		{
-			MSound::効果音[SE::敵気絶].Play();
 		}
 	};
 }

@@ -78,7 +78,7 @@ namespace SDX_BSC
 
 		inline int Lp(int no)
 		{
-			return DV::I[csv_page][no];
+			return CSV::I[csv_page][no];
 		}
 	};
 

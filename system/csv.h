@@ -7,8 +7,8 @@
 namespace SDX_BSC
 {
 	using namespace SDX;
-	//デバッグ用変数
-	namespace DV
+	//レイアウトCSV用変数
+	namespace CSV
 	{
 		static int input_mode = 0;//数値変更モード
 
@@ -23,7 +23,7 @@ namespace SDX_BSC
 		static std::vector<std::vector<std::string>> memo;//各セルのメモ
 	}
 
-	void DebugReadMemo()
+	void CSVReadMemo()
 	{
 		//各行のメモを読み込む
 		File file("file/layout/layout_memo.txt", FileMode::Read, true);
@@ -34,23 +34,23 @@ namespace SDX_BSC
 		file.Read(bom);
 
 		auto strS = file.GetCsvToString2();
-		DV::memo.resize(DV::page_max);
+		CSV::memo.resize(CSV::page_max);
 
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			for (int b = 0; b < DV::page_count[a]; b++)
+			for (int b = 0; b < CSV::page_count[a]; b++)
 			{
 				if (strS.size() > a&& strS[a].size() > b)
 				{
-					DV::memo[a].push_back(strS[a][b]);
+					CSV::memo[a].push_back(strS[a][b]);
 				} else {
-					DV::memo[a].push_back("-");
+					CSV::memo[a].push_back("-");
 				}
 			}
 		}
 	}
 
-	void DebugWriteMemo()
+	void CSVWriteMemo()
 	{
 		std::string fileName = "file/layout/layout_memo.txt";
 		//デバッグ用数値をテキストで保存
@@ -64,12 +64,12 @@ namespace SDX_BSC
 
 		std::string buffer = "";
 
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
 			buffer = "";
-			for (int b = 0; b < DV::page_count[a]; b++)
+			for (int b = 0; b < CSV::page_count[a]; b++)
 			{
-				buffer += DV::memo[a][b];
+				buffer += CSV::memo[a][b];
 				buffer += ",";
 			}
 
@@ -78,7 +78,7 @@ namespace SDX_BSC
 	}
 
 
-	bool DebugInit()
+	bool CSVInit()
 	{
 		//ファイル形式
 		//1行目selectの値,ページ数,最大ページ数
@@ -96,35 +96,35 @@ namespace SDX_BSC
 		
 		auto strS = file.GetCsvToString2();
 
-		DV::line = std::stoi(strS[0][0]);
-		DV::page = std::stoi(strS[0][1]);
-		DV::page_max = std::stoi(strS[0][2]);
+		CSV::line = std::stoi(strS[0][0]);
+		CSV::page = std::stoi(strS[0][1]);
+		CSV::page_max = std::stoi(strS[0][2]);
 
-		DV::I.resize(DV::page_max);
+		CSV::I.resize(CSV::page_max);
 
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			DV::page_name.push_back(strS[1][a]);
+			CSV::page_name.push_back(strS[1][a]);
 		}
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			DV::page_count.push_back(std::stoi(strS[2][a]));
+			CSV::page_count.push_back(std::stoi(strS[2][a]));
 		}
 		
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			for (int b = 0; b < DV::page_count[a]; b++)
+			for (int b = 0; b < CSV::page_count[a]; b++)
 			{
-				DV::I[a].push_back(std::stoi(strS[a+3][b]));
+				CSV::I[a].push_back(std::stoi(strS[a+3][b]));
 			}
 		}
 
-		DebugReadMemo();
+		CSVReadMemo();
 
 		return true;
 	}
 
-	void DebugEnd(std::string fileName)
+	void CSVEnd(std::string fileName)
 	{
 		//デバッグ用数値をテキストで保存
 		File file(fileName.c_str(), FileMode::Write, true);
@@ -135,101 +135,101 @@ namespace SDX_BSC
 		file.Write(bom[1]);
 		file.Write(bom[2]);
 
-		file.AddLine({ DV::line ,",",DV::page,",",DV::page_max });
+		file.AddLine({ CSV::line ,",",CSV::page,",",CSV::page_max });
 
 		std::string buffer = "";
 
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			buffer += DV::page_name[a];
+			buffer += CSV::page_name[a];
 			buffer += ",";
 		}
 		file.AddLine(buffer);
 
 		buffer = "";
 
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
-			buffer += std::to_string(DV::page_count[a]);
+			buffer += std::to_string(CSV::page_count[a]);
 			buffer += ",";
 		}
 		file.AddLine(buffer);
 
 		
-		for (int a = 0; a < DV::page_max; a++)
+		for (int a = 0; a < CSV::page_max; a++)
 		{
 			buffer = "";
-			for (int b = 0; b < DV::page_count[a]; b++)
+			for (int b = 0; b < CSV::page_count[a]; b++)
 			{
-				buffer += std::to_string(DV::I[a][b]);
+				buffer += std::to_string(CSV::I[a][b]);
 				buffer += ",";
 			}
 
 			file.AddLine( buffer );
 		}
 
-		DebugWriteMemo();
+		CSVWriteMemo();
 	}
 
-	void DebugDraw()
+	void CSVDraw()
 	{
 		//std::string str =  + System::textComposition;
 
 		MFont::LSize.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText);
-		MFont::MSize.DrawBold({ 10,100 }, Color::White, Color::Black, DV::page_name[DV::page]);
+		MFont::MSize.DrawBold({ 10,100 }, Color::White, Color::Black, CSV::page_name[CSV::page]);
 
 		MFont::MSize.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
 
-		int p_no = DV::line/30;//30ライン以上ある場合ずらす
+		int p_no = CSV::line/30;//30ライン以上ある場合ずらす
 
-		if (DV::input_mode == 0)
+		if (CSV::input_mode == 0)
 		{
 			MFont::SSize.DrawBold({ 10,50 }, Color::White, Color::Black, "数値入力モード");
 		} else {
 			MFont::SSize.DrawBold({ 10,50 }, Color::White, Color::Black, "メモ入力モード");
 		}
 
-		for (int a = 0; a < std::min(30,DV::page_count[DV::page]- p_no*30); a++)
+		for (int a = 0; a < std::min(30,CSV::page_count[CSV::page]- p_no*30); a++)
 		{
-			if (DV::line == a+ p_no *30)
+			if (CSV::line == a+ p_no *30)
 			{
 				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::Red, Color::Black, { a+ p_no * 30 , ":" });
 			} else {
 				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::White, Color::Black, { a + p_no * 30, ":" });
 			}
 
-			MFont::MSize.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, DV::I[DV::page][a+p_no*30], true);
-			MFont::MSize.DrawBold({ 130 , a * 20 + 120 }, Color::White, Color::Black, DV::memo[DV::page][a + p_no * 30], false);
+			MFont::MSize.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, CSV::I[CSV::page][a+p_no*30], true);
+			MFont::MSize.DrawBold({ 130 , a * 20 + 120 }, Color::White, Color::Black, CSV::memo[CSV::page][a + p_no * 30], false);
 		}
 
 		return;
 	}
 
 	/*変更するテキストの選択、テキスト入力の反映*/
-	void DebugCheckInput()
+	void CSVCheckInput()
 	{
-		if ( !DV::isDebugInput ) { return; }
+		if ( !CSV::isDebugInput ) { return; }
 
 		//ページの移動
 		if (Input::key.PageUp.on)
 		{
-			DV::page++;
-			DV::line = 0;
+			CSV::page++;
+			CSV::line = 0;
 		}
 		if (Input::key.PageDown.on)
 		{
-			DV::page--;
-			DV::line = 0;
+			CSV::page--;
+			CSV::line = 0;
 		}
-		if (DV::page < 0) { DV::page = DV::page_max - 1; }
-		if (DV::page >= DV::page_max) { DV::page = 0; }
+		if (CSV::page < 0) { CSV::page = CSV::page_max - 1; }
+		if (CSV::page >= CSV::page_max) { CSV::page = 0; }
 
 		//項目の追加
 		if (Input::key.Insert.on)
 		{
-			DV::page_count[DV::page]++;
-			DV::I[DV::page].push_back(0);
-			DV::memo[DV::page].push_back("-");
+			CSV::page_count[CSV::page]++;
+			CSV::I[CSV::page].push_back(0);
+			CSV::memo[CSV::page].push_back("-");
 		}
 
 
@@ -244,8 +244,8 @@ namespace SDX_BSC
 		if (Input::key.Return.on )
 		{
 			try {
-				if(DV::input_mode == 0 ) DV::I[DV::page][DV::line] = std::stoi(System::inputText);
-				if(DV::input_mode == 1 ) DV::memo[DV::page][DV::line] = System::inputText;
+				if(CSV::input_mode == 0 ) CSV::I[CSV::page][CSV::line] = std::stoi(System::inputText);
+				if(CSV::input_mode == 1 ) CSV::memo[CSV::page][CSV::line] = System::inputText;
 			}
 			catch (const std::invalid_argument& err) {
 				//変換出来ない場合は処理を飛ばす
@@ -257,30 +257,30 @@ namespace SDX_BSC
 
 		//数値とメモの切り替え
 		if (Input::key.Tab.on) {
-			DV::input_mode = 1 - DV::input_mode;
+			CSV::input_mode = 1 - CSV::input_mode;
 		}
 
 		//数値調整
 		if(Input::key.Up.on || (Input::key.Up.holdCount > 30 && Input::key.Up.holdCount % 2 == 0))
 		{
-			DV::line--;
+			CSV::line--;
 		}
 		if (Input::key.Down.on || (Input::key.Down.holdCount > 30 && Input::key.Down.holdCount % 2 == 0))
 		{
-			DV::line++;
+			CSV::line++;
 		}
 		//行移動
 		if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount% 1 == 0))
 		{
-			DV::I[DV::page][DV::line] -= 1;
+			CSV::I[CSV::page][CSV::line] -= 1;
 		}
 
 		if (Input::key.Right.on || (Input::key.Right.holdCount > 30 && Input::key.Right.holdCount % 1 == 0))
 		{
-			DV::I[DV::page][DV::line] += 1;
+			CSV::I[CSV::page][CSV::line] += 1;
 		}
-		if (DV::line < 0) { DV::line = DV::page_count[DV::page]-1; }
-		if (DV::line >= DV::page_count[DV::page]) { DV::line = 0; }
+		if (CSV::line < 0) { CSV::line = CSV::page_count[CSV::page]-1; }
+		if (CSV::line >= CSV::page_count[CSV::page]) { CSV::line = 0; }
 	}
 
 };

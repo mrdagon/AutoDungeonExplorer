@@ -15,32 +15,34 @@ namespace SDX_BSC
 	public:
 
 		Hunter()
-		{}
+		{
+			気絶時SE = SE::味方気絶;
+		}
 
-		void Make(int id , JobNo ジョブ , int Lv , std::string 名前)
+		void Make(int id , ID_Job ジョブ , int Lv , std::string 名前)
 		{
 			this->ID = id;
 			this->Lv = Lv;
-			this->職業 = ジョブ;
+			this->職業 = &Job::data[ジョブ];
 
 			所属 = -1;
 
 			this->名前 = 名前;
 
 			int job = (int)ジョブ;
-			見た目 = Job::data[job].見た目;
+			Img = Job::data[job].Img;
 
 			装備[0] = Job::data[job].初期装備[0];
 			装備[1] = Job::data[job].初期装備[1];
-			装備[2] = 0;
+			装備[2] = Job::data[job].初期装備[2];
 
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			Aスキル[0] = Item::data[装備[0]].Aスキル[0];
-			Aスキル[1] = Item::data[装備[0]].Aスキル[1];
-			Aスキル[2] = Job::data[job].Aスキル[0];
-			Aスキル[3] = Job::data[job].Aスキル[1];
+			Aスキル[0] = Job::data[job].初期Aスキル[0];
+			Aスキル[1] = Job::data[job].初期Aスキル[1];
+			Aスキル[2] = Job::data[job].初期Aスキル[2];
+			Aスキル[3] = Job::data[job].初期Aスキル[3];
 
 			スキルリセット(0);
 
@@ -48,12 +50,6 @@ namespace SDX_BSC
 
 			基礎ステータス計算();
 			基礎Pスキル補正(仮メンバー,仮メンバー);
-		}
-
-		void 装備スキル更新()
-		{
-			Aスキル[0] = Item::data[装備[0]].Aスキル[0];
-			Aスキル[1] = Item::data[装備[0]].Aスキル[1];
 		}
 
 		bool is特殊人材;//(解雇不可、イベントに絡む等)
@@ -82,11 +78,10 @@ namespace SDX_BSC
 		int ID;//data配列内のID
 
 		int 所属;//-1なら無所属
-		bool is装備更新 = true;
 
 		//●固定ステータス
 		std::string 名前;
-		JobNo 職業;
+		Job* 職業;
 
 		std::array<bool, CV::最大Aスキル習得リスト> isAスキル習得;
 		std::array<bool, CV::最大Pスキル習得リスト> isPスキル習得;
@@ -97,8 +92,7 @@ namespace SDX_BSC
 		double 経験値 = 0;
 		int スキルポイント;
 
-		int 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
-
+		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
 		//UI表示用
 		int 探検前Lv;
@@ -133,31 +127,31 @@ namespace SDX_BSC
 		//パッシブ無しの基礎ステータス計算
 		void 基礎ステータス計算()
 		{
-			基礎HP = (int)(Job::data[(int)職業].Hp * (10 + Lv) / 10.0);
-			基礎ステ[StatusType::Str] = Job::data[(int)職業].ステ[StatusType::Str] * (10 + Lv) / 10;
-			基礎ステ[StatusType::Dex] = Job::data[(int)職業].ステ[StatusType::Dex] * (10 + Lv) / 10;
-			基礎ステ[StatusType::Int] = Job::data[(int)職業].ステ[StatusType::Int] * (10 + Lv) / 10;
+			基礎HP = int(職業->Hp * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::Str] = int(職業->ステ[StatusType::Str] * (10 + Lv) / 10);
+			基礎ステ[StatusType::Dex] = int(職業->ステ[StatusType::Dex] * (10 + Lv) / 10);
+			基礎ステ[StatusType::Int] = int(職業->ステ[StatusType::Int] * (10 + Lv) / 10);
 
-			基礎防御[DamageType::物理] = Job::data[(int)職業].防御[DamageType::物理];
-			基礎防御[DamageType::魔法] = Job::data[(int)職業].防御[DamageType::魔法];
+			基礎防御[DamageType::物理] = 職業->防御[DamageType::物理];
+			基礎防御[DamageType::魔法] = 職業->防御[DamageType::魔法];
 
-			基礎命中 = Job::data[(int)職業].命中;
-			基礎回避 = Job::data[(int)職業].回避;
+			基礎命中 = 職業->命中;
+			基礎回避 = 職業->回避;
 
 			Reset補正ステータス();
 
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				最大HP += Item::data[装備[a]].追加Hp;
-				補正ステ[StatusType::Str] += Item::data[装備[a]].追加Str;
-				補正ステ[StatusType::Dex] += Item::data[装備[a]].追加Dex;
-				補正ステ[StatusType::Int] += Item::data[装備[a]].追加Int;
+				最大HP += 装備[a]->追加Hp;
+				補正ステ[StatusType::Str] += 装備[a]->追加Str;
+				補正ステ[StatusType::Dex] += 装備[a]->追加Dex;
+				補正ステ[StatusType::Int] += 装備[a]->追加Int;
 
-				補正防御[DamageType::物理] += Item::data[装備[a]].防御[DamageType::物理];
-				補正防御[DamageType::魔法] += Item::data[装備[a]].防御[DamageType::魔法];
+				補正防御[DamageType::物理] += 装備[a]->防御[DamageType::物理];
+				補正防御[DamageType::魔法] += 装備[a]->防御[DamageType::魔法];
 
-				補正命中 += Item::data[装備[a]].命中;
-				補正回避 += Item::data[装備[a]].回避;
+				補正命中 += 装備[a]->命中;
+				補正回避 += 装備[a]->回避;
 			}
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
@@ -173,14 +167,14 @@ namespace SDX_BSC
 			{
 				if (isPスキル習得[a] == true )
 				{					
-					Pスキル.push_back( Job::data[職業].習得Pスキル[a] );
+					Pスキル.push_back( 職業->習得Pスキル[a] );
 				}
 			}
 
 			//装備品パッシブ
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				for ( auto& it : Item::data[装備[a]].Pスキル )
+				for ( auto& it : 装備[a]->Pスキル )
 				{
 					if (it != nullptr && it->id != 0)
 					{
@@ -224,9 +218,9 @@ namespace SDX_BSC
 
 		}
 
-		void 気絶()
+		void On気絶()
 		{
-			MSound::効果音[SE::味方気絶].Play();
+			
 		}
 	};
 }

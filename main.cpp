@@ -27,39 +27,39 @@ void LoadAndInitData()
 
 	ConfigSaveAndLoad(FileMode::Read);
 
-	Game::解像度W = Game::解像度設定 * 160;
-	Game::解像度H = Game::解像度設定 * 90;
+	Config::解像度W = Config::解像度設定 * 160;
+	Config::解像度H = Config::解像度設定 * 90;
 
-	Game::最大解像度W = GetSystemMetrics(SM_CXSCREEN);
+	Game::最大解像度W = GetSystemMetrics(SM_CXSCREEN);//Windows依存コード
 	Game::最大解像度H = GetSystemMetrics(SM_CYSCREEN);
 
-	Game::解像度W = std::min(Game::解像度W, Game::最大解像度W);
-	Game::解像度H = std::min(Game::解像度H, Game::最大解像度H);
+	Config::解像度W = std::min( Config::解像度W , Game::最大解像度W);
+	Config::解像度H = std::min( Config::解像度H , Game::最大解像度H);
 
-	System::Initialise( TX::タイトル.c_str() , Game::解像度W, Game::解像度H);//ライブラリの初期化
+	System::Initialise( TX::タイトル.c_str() , Config::解像度W, Config::解像度H);//ライブラリの初期化
 
-	Game::BGM音量 = double(Game::BGM設定 * Game::BGM設定) / 100;
-	Game::SE音量 = double(Game::SE設定 * Game::SE設定) / 100;
+	Config::BGM音量 = double(Config::BGM設定 * Config::BGM設定) / 100;
+	Config::SE音量 = double(Config::SE設定 * Config::SE設定) / 100;
 
-	Music::SetMainVolume(Game::BGM音量);
-	Sound::SetMainVolume(Game::SE音量);
+	Music::SetMainVolume(Config::BGM音量);
+	Sound::SetMainVolume(Config::SE音量);
 
 	//各種リソース読み込み
 	LoadAsset();
 
 	LoadPassiveSkill();
 	LoadActiveSkill();
+	LoadItem();
 	LoadMonsterClass();
 	LoadHunterClass();
 	LoadMaterialClass();
-	LoadItem();
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }
 
 int main(int argc, char* argv[])
 {
-	DebugInit();
+	CSVInit();
 	LoadAndInitData();
 
 	/*未返還テキスト位置*/

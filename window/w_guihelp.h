@@ -24,11 +24,9 @@ namespace SDX_BSC
 		bool isヘルプ表示 = true;
 		std::string ヘルプメッセージ = "";
 
-		static Management* 戦術;
-
 		inline int Lph(int no)
 		{
-			return DV::I[help_csv_page][no];
+			return CSV::I[help_csv_page][no];
 		}
 
 		/*ヘルプウィンドウ描画共通処理*/
@@ -108,7 +106,7 @@ namespace SDX_BSC
 			座標.y += Lph(2);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5), Lph(6), 内スキン, 0, 枠透過率);
 
-			MUnit::ユニット[it->見た目][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
+			it->Img[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
 			MFont::BSSize.DrawBold({ 座標.x + Lph(9) , 座標.y + Lph(10) }, Color::White, Color::Black, { "Lv " , it->Lv });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(11) , 座標.y + Lph(12) }, Color::White, Color::Black, it->名前);
@@ -122,9 +120,9 @@ namespace SDX_BSC
 
 			for (int a = 0; a < 2; a++)
 			{
-				MIcon::アイテム[Item::data[it->装備[a]].見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , Item::data[it->装備[a]].Lv });
-				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, Item::data[it->装備[a]].名前);
+				MIcon::アイテム[it->装備[a]->見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
+				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->Lv });
+				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
 			}
 			
 			//各種ステータス
@@ -174,18 +172,16 @@ namespace SDX_BSC
 			}
 		}
 
-		void InfoItem(int itemID, Point 座標)
+		void InfoItem(Item* item, Point 座標)
 		{
 			help_csv_page = 9;
 
-			auto* it = &Item::data[itemID];
 			ヘルプ横幅 = Lph(0);
 			ヘルプ縦幅 = Lph(1);
 
 			for (int a = 0; a < 2; a++)
 			{
-				if (it->Aスキル[a] != nullptr && it->Aスキル[a]->id != 0) { ヘルプ縦幅 += Lph(22); };
-				if (it->Pスキル[a] != nullptr && it->Pスキル[a]->id != 0) { ヘルプ縦幅 += Lph(22); };
+				if (item->Pスキル[a] != nullptr && item->Pスキル[a]->id != 0) { ヘルプ縦幅 += Lph(22); };
 			}
 
 			Info座標補正(座標);
@@ -194,16 +190,16 @@ namespace SDX_BSC
 			//アイコン、武器系統、名前、Lv、ユニーク
 			MSystem::DrawWindow({ 座標.x + Lph(2),座標.y + Lph(3) }, Lph(0)-10, Lph(5), 内スキン, 0, 枠透過率);
 
-			MIcon::アイテム[it->見た目].Draw({ 座標.x + Lph(6),座標.y + Lph(7) });
-			MFont::BSSize.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , it->Lv});
+			MIcon::アイテム[item->見た目].Draw({ 座標.x + Lph(6),座標.y + Lph(7) });
+			MFont::BSSize.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , item->Lv});
 
 
-			MFont::BMSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, it->名前);
+			MFont::BMSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, item->名前);
 
 			//販売価格、集客力
 			MIcon::アイコン[IconType::資金].Draw({ 座標.x + Lph(10),座標.y + Lph(11) });//販売価格
 
-			MFont::BMSize.DrawBold({ 座標.x + Lph(12) , 座標.y + Lph(13) }, Color::White, Color::Black, { it->値段 , " G"}, true);
+			//MFont::BMSize.DrawBold({ 座標.x + Lph(12) , 座標.y + Lph(13) }, Color::White, Color::Black, { it->値段 , " G"}, true);
 
 			//基礎ステータス
 			MSystem::DrawWindow({ 座標.x + Lph(2),座標.y + Lph(14) }, Lph(0) - 10, Lph(15), 内スキン, 0, 枠透過率);
@@ -218,14 +214,14 @@ namespace SDX_BSC
 
 				switch (a)
 				{
-				case 0:num = it->追加Hp; break;
-				case 1:num = it->追加Str;break;
-				case 2:num = it->追加Dex; break;
-				case 3:num = it->追加Int; break;
-				case 4:num = it->防御[DamageType::物理]; break;
-				case 5:num = it->防御[DamageType::魔法]; break;
-				case 6:num = it->命中; break;
-				case 7:num = it->回避; break;
+				case 0:num = item->追加Hp; break;
+				case 1:num = item->追加Str;break;
+				case 2:num = item->追加Dex; break;
+				case 3:num = item->追加Int; break;
+				case 4:num = item->防御[DamageType::物理]; break;
+				case 5:num = item->防御[DamageType::魔法]; break;
+				case 6:num = item->命中; break;
+				case 7:num = item->回避; break;
 				}
 
 				if (num <= 0) { continue; }
@@ -239,6 +235,7 @@ namespace SDX_BSC
 			int now_y = Lph(35);
 
 			//Aスキルアイコン、名前 、チャージ 、依存 、説明文 X 02
+			/*
 			for (int a = 0; a < 2; a++)
 			{
 
@@ -248,7 +245,7 @@ namespace SDX_BSC
 
 				now_y += Lph(21);
 			}
-
+			*/
 			//Pスキル、とりあえず未実装
 		}
 
@@ -268,7 +265,7 @@ namespace SDX_BSC
 			MSystem::DrawWindow({ 座標.x + 5,座標.y + Lph(13) + 10 }, Lph(1) - 10, Lph(0) - Lph(13) - 15, 内スキン, 0, 枠透過率);
 
 			//アイコン
-			MIcon::アイコン[it->アイコン].Draw({ 座標.x + Lph(2),座標.y + Lph(3) });
+			it->Img->Draw({ 座標.x + Lph(2),座標.y + Lph(3) });
 			//エリアレベル
 			MFont::BSSize.DrawBold({ 座標.x + Lph(6),座標.y + Lph(7) }, Color::White, Color::Black, {"Lv" ,it->Lv});
 
@@ -296,12 +293,11 @@ namespace SDX_BSC
 				MFont::BSSize.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_捜索 });
 			}
 
-			MUnit::ユニット[it->ボスモンスター[0].見た目][1]->DrawRotate({ 座標.x + Lph(24),座標.y + Lph(25) }, 3, 0);
+			it->ボスモンスター[0].Img[0][1]->DrawRotate({ 座標.x + Lph(24),座標.y + Lph(25) }, 3, 0);
 
 			for(int a=0;a<it->雑魚モンスター.size();a++)
 			{ 
-				MUnit::ユニット[it->雑魚モンスター[a].見た目][1]->DrawRotate({ 座標.x + Lph(26),座標.y + Lph(27) }, 2, 0);
-
+				it->雑魚モンスター[a].Img[0][1]->DrawRotate({ 座標.x + Lph(26),座標.y + Lph(27) }, 2, 0);
 			}
 			//Lph 28 29未使用
 			
@@ -313,7 +309,7 @@ namespace SDX_BSC
 		{
 			help_csv_page = 12;
 
-			戦術 = it;//消費資金表示するための代入
+			W_Drag::Over戦術 = it;//消費資金表示するための代入
 
 			ヘルプ縦幅 = Lph(0);
 			ヘルプ横幅 = Lph(1);
@@ -357,7 +353,7 @@ namespace SDX_BSC
 			{
 				const auto it = パーティ->メンバー[a];
 				if ( it == nullptr) { continue; }
-				MUnit::ユニット[ it->見た目][1]->DrawRotate({ 座標.x + Lph(5) + Lph(6)*a , 座標.y + Lph(7) }, 2, 0);
+				it->Img[0][1]->DrawRotate({ 座標.x + Lph(5) + Lph(6)*a , 座標.y + Lph(7) }, 2, 0);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 0 }, Color::White, Color::Black, it->与ダメージログ,true);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 1 }, Color(255,80,80), Color::Black, it->受ダメージログ, true);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 2 }, Color(128,255,128), Color::Black, it->回復ログ, true);
@@ -379,7 +375,7 @@ namespace SDX_BSC
 			座標.y += Lph(2);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5) - Lph(54), Lph(6), 内スキン, 0, 枠透過率);
 
-			MUnit::ユニット[it->見た目][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
+			it->Img[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
 			MFont::BSSize.DrawBold({ 座標.x + Lph(50) , 座標.y + Lph(51) }, Color::White, Color::Black, { "Lv " , Lv });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(52) , 座標.y + Lph(53) }, Color::White, Color::Black, it->種族->名前);
@@ -433,7 +429,7 @@ namespace SDX_BSC
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (it->Aスキル[a] == nullptr || it->Aスキル[a]->id <= 0) { continue; }
+				if (it->Aスキル[a] == nullptr || it->Aスキル[a]->ID <= 0) { continue; }
 
 				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80 }, true);
 			}
@@ -443,8 +439,8 @@ namespace SDX_BSC
 			座標.y += Lph(35);
 			MSystem::DrawWindow({ 座標.x + Lph(45),座標.y + Lph(46) }, Lph(47), Lph(48), 内スキン, 0, 枠透過率);
 			
-			for (int a = 0; a < CV::最大Pスキル数; a++)
-			{
+			//for (int a = 0; a < CV::最大Pスキル数; a++)
+			//{
 				//auto pskill = &PassiveSkill::data[it->PスキルID[a]];
 
 				//MSystem::DrawSkill(pskill->系統, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color(0, 141, 255));
@@ -453,8 +449,8 @@ namespace SDX_BSC
 
 				//MFont::BSSize.DrawBold({ 座標.x + Lph(42) , 座標.y + Lph(43) }, Color::White, Color::Black, pskill->説明);//説明文
 
-				座標.y += Lph(44);
-			}
+				//座標.y += Lph(44);
+			//}
 
 		}
 
@@ -531,7 +527,7 @@ namespace SDX_BSC
 
 			std::string s = "";
 
-			MSystem::DrawSkill(スキル->アイコン, { 座標.x + Lph(25),座標.y + Lph(26) },Color(200,64,64 ), s);
+			MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(25),座標.y + Lph(26) },Color(200,64,64 ), s);
 
 			MIcon::アイコン[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
 
@@ -557,9 +553,9 @@ namespace SDX_BSC
 
 			if ( is習得)
 			{
-				MSystem::DrawSkill(スキル->アイコン, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color(0, 141, 255));
+				MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color(0, 141, 255));
 			}else {
-				MSystem::DrawSkill(スキル->アイコン, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color::Gray, s);
+				MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color::Gray, s);
 			}
 
 			MFont::BMSize.DrawBold({ 座標.x + Lph(40) , 座標.y + Lph(41) }, Color::White, Color::Black, スキル->名前);//スキル名
@@ -570,6 +566,4 @@ namespace SDX_BSC
 		}
 
 	};
-
-	Management* GUI_Help::戦術 = nullptr;
 }

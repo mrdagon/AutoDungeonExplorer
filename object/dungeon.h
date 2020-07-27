@@ -31,7 +31,7 @@ namespace SDX_BSC
 			ID = no;
 			this->名前 = 名前;
 			this->部屋数 = 部屋数;
-			this->アイコン = 種類;
+			this->Img = &MIcon::アイコン[種類];
 			this->層 = ランク;
 			this->Lv = Lv;
 
@@ -114,9 +114,9 @@ namespace SDX_BSC
 			探索率 = n / 部屋.size();
 		}
 
-		int ID;
+		ID_Dungeon ID;
 		std::string 名前;
-		IconType アイコン;
+		Image* Img;
 		int 部屋数;
 		std::vector<Room>部屋;
 

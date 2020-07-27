@@ -80,7 +80,6 @@ namespace SDX_BSC
 
 
 		GUI_数値 製造数;//個
-		//GUI_数値 開発数;//種
 		GUI_数値 素材在庫;//個
 
 		GUI_数値 地図数;//枚
@@ -89,7 +88,7 @@ namespace SDX_BSC
 
 		GUI_数値 名声値;//P
 		
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Guild;
 
@@ -138,7 +137,7 @@ namespace SDX_BSC
 			SetCSVPage(5);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			ギルマス.位置 = { Lp(0),Lp(1) ,Lp(2),Lp(5)-2 };
 

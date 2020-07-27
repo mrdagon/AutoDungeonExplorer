@@ -16,7 +16,7 @@ namespace SDX_BSC
 		
 		int 現在タブ = 0;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::EventLog;
 			名前 = TX::Window_名前[種類];
@@ -59,7 +59,7 @@ namespace SDX_BSC
 
 		}
 
-		void GUI_init()
+		void GUI_Update()
 		{
 			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
 			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
@@ -71,7 +71,7 @@ namespace SDX_BSC
 
 		void 派生Draw()
 		{
-			GUI_init();
+			GUI_Update();
 
 			for (auto& it : タブ)
 			{
@@ -130,28 +130,23 @@ namespace SDX_BSC
 					break;
 				case LogDetailType::雇用:
 					//キャラアイコン
-					MUnit::ユニット[Guild::P->探索要員[id].見た目][1]->DrawRotate({ Lp(30) , Lp(31) + yy }, 2, 0);
+					Guild::P->探索要員[id].Img[0][1]->DrawRotate({ Lp(30) , Lp(31) + yy }, 2, 0);
 					str = Guild::P->探索要員[id].名前;
 					str += TX::Log_雇用;
 					break;
-				case LogDetailType::再募集:
-					str = TX::Log_募集;
-					break;
 				case LogDetailType::地図発見:
 					//ダンジョンアイコンと名前
-					MIcon::アイコン[Dungeon::data[id].アイコン].DrawRotate({Lp(30),Lp(31) + yy },1,0);
+					Dungeon::data[id].Img->DrawRotate({Lp(30),Lp(31) + yy },1,0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_地図;
 					break;
 				case LogDetailType::ボス発見:
-					//魔物アイコン
-					MIcon::アイコン[Dungeon::data[id].アイコン].DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
+					Dungeon::data[id].Img->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_ボス発見;
 					break;
 				case LogDetailType::ボス討伐:
-					//魔物アイコン
-					MIcon::アイコン[Dungeon::data[id].アイコン].DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
+					Dungeon::data[id].Img->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_ボス討伐;
 					break;

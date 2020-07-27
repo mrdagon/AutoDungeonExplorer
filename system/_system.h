@@ -8,7 +8,7 @@
 #include "game.h"
 #include "init_data.h"
 #include "asset.h"
-#include "debug.h"
+#include "csv.h"
 #include "save_and_load.h"
 #include "text.h"
 #include "sound.h"

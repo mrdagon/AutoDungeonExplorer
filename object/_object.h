@@ -10,17 +10,15 @@
 
 #include "monster_class.h"
 
-#include "job.h"
-
 #include "item.h"
+
+#include "job.h"
 
 #include "fighter.h"
 
 #include "monster.h"
 #include "dungeon.h"
 #include "event_log.h"
-#include "guild_master.h"
-
 
 #include "hunter.h"
 #include "crafter.h"

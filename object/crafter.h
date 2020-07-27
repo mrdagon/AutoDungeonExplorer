@@ -22,7 +22,7 @@ namespace SDX_BSC
 			this->Lv = Lv;
 			this->名前 = 名前;
 			配置部門 = 配属;
-			見た目 = UnitImageType(0);
+			Img = &MUnit::ユニット[UnitImageType(0)];
 		}
 
 		void 基礎ステータス計算()
@@ -41,10 +41,10 @@ namespace SDX_BSC
 
 		//●固定ステータス
 		std::string 名前;
-		UnitImageType 見た目;
+		ImagePack* Img;
 
-		int PスキルID[CV::最大Pスキル数];
-		bool isPスキル習得[CV::最大Pスキル数];
+		//int PスキルID[CV::最大Pスキル数];
+		//bool isPスキル習得[CV::最大Pスキル数];
 
 		//●Lvアップ時等更新ステータス
 		int Lv;

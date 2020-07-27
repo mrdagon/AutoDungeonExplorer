@@ -180,9 +180,9 @@ namespace SDX_BSC
 			{
 				if (px < 位置.GetW() / 2)
 				{
-					Game::ゲームスピード = std::max(1, Game::ゲームスピード / Game::ゲーム速度変更倍率);
+					Game::ゲームスピード = std::max(1, Game::ゲームスピード / Config::ゲーム速度変更倍率);
 				}else {
-					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * Game::ゲーム速度変更倍率);
+					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * Config::ゲーム速度変更倍率);
 				}
 				MSound::効果音[SE::ボタンクリック].Play();
 			}
@@ -231,14 +231,10 @@ namespace SDX_BSC
 				対象ウィンドウ->is最前面 = true;
 				int id = 対象ウィンドウ->ポップアップ呼び出し();
 
-				if (id == 0)//はい
+				if (id == 1)//はい
 				{
 					Game::isゲーム終了 = true;
-
-					//アンケート開く
-					//HINSTANCE ret = ShellExecute(nullptr, L"open", TX::アンケURL, NULL, NULL, SW_SHOW);
 				}
-
 			}
 		};
 	public:
@@ -270,7 +266,7 @@ namespace SDX_BSC
 			タイトル.対象ウィンドウ = title;
 		}
 
-		void init()
+		void Init()
 		{
 			gui_objects.push_back(&日付);
 			gui_objects.push_back(&時刻);
@@ -300,10 +296,10 @@ namespace SDX_BSC
 			設定.SetHelp(TX::Tool_Help設定);
 			タイトル.SetHelp(TX::Tool_Helpタイトル);
 
-			GUI_Init();
+			GUI_Update();
 		}
 
-		void GUI_init()
+		void GUI_Update()
 		{
 			for (int a = 0; a < CV::ウィンドウ数; a++)
 			{
@@ -326,7 +322,7 @@ namespace SDX_BSC
 
 		void Draw()
 		{
-			GUI_init();
+			GUI_Update();
 			for (int a = (int)gui_objects.size() - 1; a>=0;a--)
 			{
 				gui_objects[a]->Draw();
@@ -342,7 +338,7 @@ namespace SDX_BSC
 			return false;
 		}
 
-		bool CheckInformation()
+		bool CheckInfo()
 		{
 			for (auto& it : gui_objects)
 			{

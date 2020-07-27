@@ -119,7 +119,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->アイコン = 系統;
+			this->Img = &MIcon::スキル[系統];
 
 			this->装備種 = 装備種;//武器種条件
 			this->Aスキル種 = Aスキル種;//Aスキル条件
@@ -130,7 +130,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->アイコン = 系統;
+			this->Img = &MIcon::スキル[系統];
 
 			this->装備種 = 装備種;//武器種条件
 			this->Aスキル種 = Aスキル種;//Aスキル条件
@@ -149,12 +149,13 @@ namespace SDX_BSC
 		}
 
 		//-基本情報
-		int id;
+		ID_PSkill id;
 		std::string 名前;
 		std::string 説明;
-		SkillType アイコン;
+		Image* Img;
 		int 必要SP;
 		double 効果量;
+		bool isキースキル = false;
 
 		//-条件
 		ASkillType Aスキル種;

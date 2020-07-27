@@ -26,7 +26,7 @@ namespace SDX_BSC
 				//枠
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 				//キャラクター
-				MUnit::ユニット[it->見た目][1]->DrawRotate({ px + Lp(40) , py + Lp(41) }, 2, 0);
+				it->Img[0][1]->DrawRotate({ px + Lp(40) , py + Lp(41) }, 2, 0);
 				//名前
 				MFont::BMSize.DrawBold({ px + Lp(42) ,py + Lp(43) }, Color::White, Color::Black, it->名前, false);
 				//LV
@@ -55,7 +55,7 @@ namespace SDX_BSC
 				親->ギルメン = Guild::P->探索パーティ[親->配置id / 5].メンバー[親->配置id % 5];
 				親->Pスキル仮習得ID = 親->ギルメン->Pスキル習得予約ID;
 
-				W_Drag_Drop::Aスキル = nullptr;
+				W_Drag::Aスキル = nullptr;
 			}
 
 			void Info派生(Point 座標) override
@@ -101,26 +101,26 @@ namespace SDX_BSC
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
 				//スキルアイコン
-				MSystem::DrawSkill(it->アイコン, { px + Lp(64) , py + Lp(65) }, Color(0, 141, 255));
+				MSystem::DrawSkill(it->Img, { px + Lp(64) , py + Lp(65) }, Color(200, 64, 64));
 				//習得に必要なポイントorレベル
 				MFont::BSSize.DrawBold({ px + Lp(66) ,py + Lp(67) }, Color::White, Color::Black, {"Slot ",id+1}, true);
 			}
 
 			void Drop(double px, double py)
 			{
-				if (W_Drag_Drop::Aスキル == nullptr) { return; }
+				if (W_Drag::Aスキル == nullptr) { return; }
 				
 				for (int a = 0; a < 4; a++)
 				{
-					if (親->ギルメン->Aスキル[a] == W_Drag_Drop::Aスキル)
+					if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
 					{
 						親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
-						親->ギルメン->Aスキル[id] = W_Drag_Drop::Aスキル;
+						親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 						return;
 					}
 				}
 
-				親->ギルメン->Aスキル[id] = W_Drag_Drop::Aスキル;
+				親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 			}
 
 			void Info派生(Point 座標) override
@@ -137,7 +137,7 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				auto it = Job::data[親->ギルメン->職業].習得Aスキル[id];
+				auto it = 親->ギルメン->職業->習得Aスキル[id];
 				bool is習得 = 親->ギルメン->isAスキル習得[id];
 				int 凹み = 0;
 
@@ -147,23 +147,22 @@ namespace SDX_BSC
 					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
 					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
 				} else {
-					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 5, 凹み);
+					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 0, 凹み);
 				}
 
-
 				//スキルアイコン
-				MSystem::DrawSkill( it->アイコン , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(0, 141, 255) : Color::Gray);
+				MSystem::DrawSkill( it->Img , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
 				//習得に必要なポイントorレベル
-				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { it->必要SP , "P" }, true); }
+				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , it->必要SP }, true); }
 			}
 
 			void Click(double px, double py)
 			{
-				auto it = Job::data[親->ギルメン->職業].習得Aスキル[id];
+				auto it = 親->ギルメン->職業->習得Aスキル[id];
 
 				//習得済みなら掴む
 				if (親->ギルメン->isAスキル習得[id]){
-					W_Drag_Drop::Aスキル = it;
+					W_Drag::Aスキル = it;
 					return;
 				}
 
@@ -175,7 +174,7 @@ namespace SDX_BSC
 
 			void Info派生(Point 座標) override
 			{
-				InfoASkillSub(Job::data[親->ギルメン->職業].習得Aスキル[id],座標,true);
+				InfoASkillSub( 親->ギルメン->職業->習得Aスキル[id],座標,true);
 			}
 		};
 
@@ -187,7 +186,7 @@ namespace SDX_BSC
 
 			void Draw派生(double px, double py)
 			{
-				auto it = Job::data[親->ギルメン->職業].習得Pスキル[id];
+				auto it = 親->ギルメン->職業->習得Pスキル[id];
 				bool is習得 = 親->ギルメン->isPスキル習得[id];
 				int 凹み = 0;
 
@@ -195,12 +194,12 @@ namespace SDX_BSC
 
 				if (!is習得) {
 					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
-					if (親->Pスキル仮習得ID == id || 親->Pスキル仮習得ID == id) { 凹み = -1; }
+					if (親->Pスキル仮習得ID == id ) { 凹み = -1; }
 				}
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
 				//スキルアイコン
-				MSystem::DrawSkill( it->アイコン, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
+				MSystem::DrawSkill( it->Img, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
 				//習得に必要なポイントorレベル
 				if (!is習得){ MFont::BSSize.DrawBold({ px + Lp(56) ,py + Lp(57) }, Color::White, Color::Black, { it->必要SP,"P" }, true); }
 			}
@@ -208,7 +207,7 @@ namespace SDX_BSC
 			void Click(double px, double py)
 			{
 				//未習得でポイント足りてるなら仮習得
-				auto it = Job::data[親->ギルメン->職業].習得Pスキル[id];
+				auto it = 親->ギルメン->職業->習得Pスキル[id];
 
 				if (親->ギルメン->isPスキル習得[id]) { return; }
 				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
@@ -220,7 +219,7 @@ namespace SDX_BSC
 			void Info派生(Point 座標) override
 			{
 				//親->ギルメン->isPスキル習得[id]
-				auto it = Job::data[親->ギルメン->職業].習得Pスキル[id];
+				auto it = 親->ギルメン->職業->習得Pスキル[id];
 				if (it == nullptr) { return; }
 
 				InfoPSkillSub(it,座標,true,true);
@@ -245,7 +244,7 @@ namespace SDX_BSC
 			{
 				//ポップアップでスキルリセットするか確認してするなら
 				確認ウィンドウ.is表示 = true;
-				確認ウィンドウ.init();
+				確認ウィンドウ.Init();
 				確認ウィンドウ.文章.text = "スキルをリセットする？\n(レベルが５下がる)";
 
 				int res = 確認ウィンドウ.ポップアップ呼び出し();
@@ -274,7 +273,7 @@ namespace SDX_BSC
 					str = "予約";
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 3, -1);
 				} else if (親->Pスキル仮習得ID >= 0 ) {
-					if (親->ギルメン->スキルポイント >= Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID]->必要SP){
+					if (親->ギルメン->スキルポイント >= 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID]->必要SP){
 						str = "習得";
 					} else {
 						str = "予約";
@@ -295,7 +294,7 @@ namespace SDX_BSC
 				//選択中のスキルを習得
 				if (親->Pスキル仮習得ID >= 0)
 				{
-					auto ps = Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID];
+					auto ps = 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID];
 
 					if (親->ギルメン->スキルポイント < ps->必要SP)
 					{
@@ -305,7 +304,7 @@ namespace SDX_BSC
 
 					//習得処理
 					親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
-					親->ギルメン->スキルポイント -= Job::data[親->ギルメン->職業].習得Pスキル[親->Pスキル仮習得ID]->必要SP;
+					親->ギルメン->スキルポイント -= 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID]->必要SP;
 					親->Pスキル仮習得ID = -1;
 				}
 			}
@@ -328,7 +327,7 @@ namespace SDX_BSC
 		int 配置id;;
 		int Pスキル仮習得ID = -1;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Skilltree;
 			名前 = TX::Window_名前[種類];
@@ -386,10 +385,10 @@ namespace SDX_BSC
 
 			SetCSVPage(23);
 
-			GUI_Init();
+			GUI_Update();
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			横幅 = Lp(0);
 			縦幅 = Lp(1);
@@ -411,13 +410,13 @@ namespace SDX_BSC
 			{
 				Aスキル[a].位置 = { Lp(10) + Lp(21) + Lp(22)*a,Lp(11) + Lp(23),Lp(19),Lp(20) };
 			}
-			for (int a = 0; a < CV::最大キーPスキル習得リスト; a++)
+			for (int a = 0; a < CV::最大キースキル習得リスト; a++)
 			{
-				Pスキル[a].位置 = { Lp(10) + Lp(24) + Lp(26) * a,Lp(12) + Lp(34) ,Lp(19),Lp(20) };
+				Pスキル[a].位置 = { Lp(10) + Lp(24) + Lp(38) * a, Lp(12) + Lp(34) ,Lp(37),Lp(20) };
 			}
-			for (int a = 0; a < Pスキル.size() - CV::最大キーPスキル習得リスト; a++)
+			for (int a = 0; a < Pスキル.size() - CV::最大キースキル習得リスト; a++)
 			{
-				Pスキル[a+ CV::最大キーPスキル習得リスト].位置 = { Lp(10) + Lp(24) + Lp(26)* (a % Lp(27)) ,Lp(12) + Lp(25) + Lp(26) * (a / Lp(27)) ,Lp(19),Lp(20) };
+				Pスキル[a+ CV::最大キースキル習得リスト].位置 = { Lp(10) + Lp(24) + Lp(26)* (a % Lp(27)) ,Lp(12) + Lp(25) + Lp(26) * (a / Lp(27)) ,Lp(19),Lp(20) };
 			}
 
 

@@ -19,9 +19,11 @@ namespace SDX_BSC
 			this->職種 = 職種;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->見た目 = 見た目;
+			this->Img = &MUnit::ユニット[見た目];
 
-			初期装備[0] = 0;
+			初期装備[0] = &Item::data[0];
+			初期装備[1] = &Item::data[0];
+			初期装備[2] = &Item::data[0];
 
 			ResetP習得スキル();
 			SetA習得スキル();
@@ -65,13 +67,15 @@ namespace SDX_BSC
 			}
 		}
 
-		void SetItemASkill(int 武器, int 防具, int スキルA, int スキルB)
+		void SetItemASkill(int 武器, int 防具, int スキルA, int スキルB ,int スキルC ,int スキルD)
 		{
-			初期装備[0] = 武器;
-			初期装備[1] = 防具;
-			初期装備[2] = -1;
-			Aスキル[0] = &ActiveSkill::data[スキルA];
-			Aスキル[1] = &ActiveSkill::data[スキルB];
+			初期装備[0] = &Item::data[武器];
+			初期装備[1] = &Item::data[防具];
+			初期装備[2] = &Item::data[0];
+			初期Aスキル[0] = &ActiveSkill::data[スキルA];
+			初期Aスキル[1] = &ActiveSkill::data[スキルB];
+			初期Aスキル[2] = &ActiveSkill::data[スキルC];
+			初期Aスキル[3] = &ActiveSkill::data[スキルD];
 		}
 
 		void SetA習得スキル()
@@ -96,14 +100,14 @@ namespace SDX_BSC
 
 		JobType 職種;
 
-		//JobNo ID;
-
 		std::string 名前;
 		std::string 概説 = "前列:物理アタッカー";
 		std::string 説明;
-		UnitImageType 見た目;
-		int 初期装備[CV::装備部位数];
-		ActiveSkill* Aスキル[CV::ジョブAスキル数];//初期スキル
+		ImagePack *Img;
+
+		ItemType 武器種;
+		Item* 初期装備[CV::装備部位数];
+		ActiveSkill* 初期Aスキル[CV::最大Aスキル数];//初期スキル
 		
 		//キャラクリ
 		ActiveSkill* 習得Aスキル[CV::最大Aスキル習得リスト];
@@ -138,11 +142,17 @@ namespace SDX_BSC
 		Job::data[3].Set( 60,  5,  9,17, 0, 5,  0, 5);
 		Job::data[4].Set( 90, 10,  7,12, 6, 8,  0, 0);
 
-		Job::data[0].SetItemASkill(5, 25, 22 , 23);
-		Job::data[1].SetItemASkill(13, 25, 24, 25);
-		Job::data[2].SetItemASkill(9, 29, 26, 27);
-		Job::data[3].SetItemASkill(21, 33, 28, 29);
-		Job::data[4].SetItemASkill(17, 33, 30, 31);
+		Job::data[0].SetItemASkill(1, 7,1,2, 22 , 23);
+		Job::data[1].SetItemASkill(4, 7, 7,8,24, 25);
+		Job::data[2].SetItemASkill(3, 8,5,6, 26, 27);
+		Job::data[3].SetItemASkill(5, 9,9,10, 28, 29);
+		Job::data[4].SetItemASkill(6, 9,11,12, 30, 31);
+
+		Job::data[0].武器種 = ItemType::剣;
+		Job::data[1].武器種 = ItemType::盾;
+		Job::data[2].武器種 = ItemType::弓;
+		Job::data[3].武器種 = ItemType::神杖;
+		Job::data[4].武器種 = ItemType::魔杖;
 
 		///1全然出ない、5そこそこ出る、10出やすい
 

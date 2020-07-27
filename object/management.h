@@ -21,7 +21,6 @@ namespace SDX_BSC
 			MID = MSkillType(ID);
 		}
 
-
 		int ID;
 		int Lv;//習得レベル
 		std::string 名前;

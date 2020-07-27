@@ -36,7 +36,7 @@ namespace SDX_BSC
 			{
 				int dif_x = MFont::BMSize.GetDrawStringWidth(文字) / 2;
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1,1);
+				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,1);
 				MFont::BMSize.DrawBold({ px + Lp(11) - dif_x ,py + Lp(12) }, Color::White, Color::Black, 文字, false);
 			}
 
@@ -55,7 +55,7 @@ namespace SDX_BSC
 		GUI_ボタン 確定;
 		GUI_ボタン キャンセル;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Guild;
 
@@ -89,8 +89,11 @@ namespace SDX_BSC
 			SetCSVPage(20);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
+			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
+			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+
 			文章.位置 = { Lp(0),Lp(1) ,Lp(2),Lp(3) };
 			確定.位置 = { Lp(4),Lp(6),Lp(7),Lp(8) };
 			キャンセル.位置 = { Lp(5),Lp(6) , Lp(7),Lp(8) };

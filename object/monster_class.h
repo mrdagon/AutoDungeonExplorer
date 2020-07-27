@@ -19,7 +19,7 @@ namespace SDX_BSC
 			this->id = id;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->見た目 = 見た目;
+			this->Img = &MUnit::ユニット[見た目];
 		}
 
 		void Set(int Hp , int Str, int Dex, int Int, int 物防, int 魔防 , int 回避 , int 命中)
@@ -48,7 +48,7 @@ namespace SDX_BSC
 
 		std::string 名前;
 		std::string 説明;
-		UnitImageType 見た目;
+		ImagePack *Img;
 
 		ID_Material 通常素材 = 0;
 		ID_Material レア素材 = 0;

@@ -36,6 +36,22 @@ namespace SDX_BSC
 		std::string Config_音楽 = "音楽";
 		std::string Config_効果音 = "効果音";
 		std::string Config_解像度 = "解像度";
+		std::string Config_ウィンドウモード = "画面モード";
+		std::string Config_装備更新 = "自動装備更新";
+		std::string Config_ボス戦速度 = "ボス戦時";
+		std::string Config_夜間加速 = "夜の時間";
+		std::string Config_スキル習得停止 = "スキル習得時";
+		std::string Config_超加速 = "速度上限";
+		std::string Config_ヘルプ詳細 = "スキル詳細";
+
+		std::string Config_ウィンドウモード設定[4] = { "ウィンドウ" , "等倍フル" , "２倍フル"  , "４倍フル" };
+
+		std::string Config_装備更新_設定[2] = { "ON" , "OFF" };
+		std::string Config_ボス戦速度_設定[2] = { "等速" , "そのまま"};
+		std::string Config_夜間加速_設定[2] = { "４倍速" , "そのまま" };
+		std::string Config_スキル習得停止_設定[2] = { "停止する" , "停止しない" };
+		std::string Config_超加速_設定[2] = { "16倍速" , "64倍速" };
+		std::string Config_ヘルプ詳細_設定[2] = { "表示する" , "表示しない" };
 
 		////Dungeon Window
 		std::string Dungeon_タブ名[5] = { "I層","II層","III層","IV層","V層" };
@@ -101,7 +117,7 @@ namespace SDX_BSC
 		std::string Tool_速度 = "速度";
 		std::string Tool_設定 = "設定";
 
-		std::string Tool_タイトル = "アンケ";
+		std::string Tool_タイトル = "終了";
 
 		std::string Tool_待機中 = "準備中…";
 		std::string TooL_活動中 = "活動中！";

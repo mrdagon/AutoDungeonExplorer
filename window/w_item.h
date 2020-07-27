@@ -38,14 +38,14 @@ namespace SDX_BSC
 				//掴む
 				if (Guild::P->装備所持数[id] > 0)
 				{
-					W_Drag_Drop::アイテム = id;
+					W_Drag::アイテム = &Item::data[id];
 					MSound::効果音[SE::ドラッグ].Play();
 				}
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoItem(id, 座標);
+				InfoItem(&Item::data[id], 座標);
 			}
 
 		};
@@ -57,7 +57,7 @@ namespace SDX_BSC
 		int 装備数 = 0;
 		int 現在タブ = 0;
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Item;
 			名前 = TX::Window_名前[種類];
@@ -106,7 +106,7 @@ namespace SDX_BSC
 			SetCSVPage(7);
 		}
 
-		void GUI_Init()
+		void GUI_Update()
 		{
 			for (int a = 0; a < (int)タブ.size() ; a++)
 			{
@@ -158,7 +158,7 @@ namespace SDX_BSC
 
 		void 派生Draw()
 		{
-			GUI_Init();
+			GUI_Update();
 
 			for (auto&it : タブ)
 			{

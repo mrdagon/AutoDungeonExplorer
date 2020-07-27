@@ -20,8 +20,8 @@ namespace SDX_BSC
 				if (it->現在HP > 0) { 生存リスト.push_back(it); }
 			}
 		}
-	public:		
-		UnitImageType 見た目;
+	public:
+		ImagePack *Img;
 
 		//●固定、基礎ステータス
 		ActiveSkill* Aスキル[CV::最大Aスキル数] = {nullptr};
@@ -44,6 +44,8 @@ namespace SDX_BSC
 		//スキルクールダウン
 		double 合計クールダウン[CV::最大Aスキル数];
 		double クールダウン速度[CV::最大Aスキル数];
+
+		SEType 気絶時SE = SE::敵気絶;
 
 		//一時的なバフ兼デバフ、効果量、効果時間
 
@@ -86,8 +88,6 @@ namespace SDX_BSC
 
 		//ギルメンは基礎ステ+装備
 		virtual void 基礎ステータス計算() = 0;
-
-		virtual void 気絶() = 0;
 
 		void 基礎Pスキル補正(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
 		{
@@ -268,8 +268,7 @@ namespace SDX_BSC
 			}
 		}
 
-		//スキルクールダウン処理と発動処理
-		bool Aスキル使用(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		bool Aスキル使用チェック(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
 		{
 			if (現在HP <= 0) { return false; }
 
@@ -281,7 +280,7 @@ namespace SDX_BSC
 				if ( 合計クールダウン[a] > Aスキル[a]->必要チャージ)
 				{
 					合計クールダウン[a] -= Aスキル[a]->必要チャージ;
-					Aスキル使用(Aスキル[a], 味方, 敵);
+					Aスキル処理(Aスキル[a], 味方, 敵);
 					return true;
 				}
 			}
@@ -289,7 +288,6 @@ namespace SDX_BSC
 			return false;
 		}
 
-		/*戦闘開始時の初期化処理、パッシブ*/
 		void 戦闘開始(std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//初期化
@@ -463,7 +461,7 @@ namespace SDX_BSC
 			}
 		}
 
-		void Aスキル使用(const ActiveSkill* スキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void Aスキル処理(const ActiveSkill* スキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//攻撃エフェクト
 			エフェクト移動(10, 2);
@@ -593,13 +591,13 @@ namespace SDX_BSC
 
 			if (現在HP <= 0)
 			{
-				気絶();
+				MSound::効果音[気絶時SE].Play();
 			}
 
 			Hit数 = 0;
 		}
 
-		//条件をチェックして、条件にあってるならPスキル処理
+		//条件をチェックして、条件にあってるならPスキル処理を呼び出す
 		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			for (auto &it : Pスキル)

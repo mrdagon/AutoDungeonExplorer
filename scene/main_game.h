@@ -53,15 +53,15 @@ namespace SDX_BSC
 
 			ToolBar.SetConfig(&Win_Config,&Win_Title);
 
-			Win_Config.init();
-			Win_Title.init();
+			Win_Config.Init();
+			Win_Title.Init();
 
-			ToolBar.init();
+			ToolBar.Init();
 
 			int XXX = 100;
 			for (auto& it : windows)
 			{
-				it->init();
+				it->Init();
 				it->座標.y = 120;
 				it->座標.x = XXX;
 				it->is表示 = false;
@@ -99,11 +99,11 @@ namespace SDX_BSC
 			Time::GetDate(&time);
 			Rand::Reset(time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec);
 
-			for (int a = 0; a < 9; a++)
+			for (int a = 1; a <= 9; a++)
 			{
-				Guild::P->is装備開発[1+a*4] = true;
-				Guild::P->is新規[1 + a * 4] = false;
-				Guild::P->装備所持数[1 + a * 4] = 3;
+				Guild::P->is装備開発[a] = true;
+				Guild::P->is新規[a] = false;
+				Guild::P->装備所持数[a] = 3;
 			}
 
 			for (auto& it : Guild::P->is素材発見)
@@ -213,8 +213,8 @@ namespace SDX_BSC
 
 			if (CV::isデバッグ)
 			{
-				DebugEnd("file/layout/layout_data.txt");
-				DebugEnd("file/layout/backup.txt");
+				CSVEnd("file/layout/layout_data.txt");
+				CSVEnd("file/layout/backup.txt");
 			}
 
 			WinPosSaveAndLoad(FileMode::Write);
@@ -246,7 +246,7 @@ namespace SDX_BSC
 					break;
 				}
 			}
-			W_Drag_Drop::操作();
+			W_Drag::Drop();
 
 		}
 		//描画処理
@@ -271,7 +271,7 @@ namespace SDX_BSC
 
 			ToolBar.Draw();
 
-			bool isH = ToolBar.CheckInformation();
+			bool isH = ToolBar.CheckInfo();
 			if (Input::mouse.y < WindowBox::ツールバー高さ)
 			{
 				isH = true;
@@ -294,12 +294,12 @@ namespace SDX_BSC
 				no_help.Info();
 			}
 
-			W_Drag_Drop::Draw();
+			W_Drag::Draw();
 
 			if (CV::isデバッグ)
 			{
-				DebugDraw();
-				DebugCheckInput();
+				CSVDraw();
+				CSVCheckInput();
 			}
 
 		}
@@ -383,12 +383,6 @@ namespace SDX_BSC
 			Guild::P->R名声.push_back(Guild::P->名声);
 
 			Guild::P->装備自動更新();
-		}
-
-		//月初の処理
-		void StartMonth()
-		{
-
 		}
 
 		//製造処理

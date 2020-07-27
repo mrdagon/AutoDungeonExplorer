@@ -51,7 +51,7 @@ namespace SDX_BSC
 	public:
 		GUI_Mat_num GUI_素材数[CV::最大素材種];
 
-		void init()
+		void Init()
 		{
 			種類 = WindowType::Material;
 			名前 = TX::Window_名前[種類];
@@ -73,11 +73,11 @@ namespace SDX_BSC
 
 			SetCSVPage(3);
 
-			GUI_init();
+			GUI_Update();
 		}
 
 
-		void GUI_init()
+		void GUI_Update()
 		{
 			int xx = -Lp(1);
 			int yy = -Lp(3);

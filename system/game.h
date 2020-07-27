@@ -7,46 +7,26 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/*メインゲームで使う変数*/
+	/*色んな所で使う変数*/
 	namespace Game
 	{
 		static int 日付 = 0;
 		static int 時間 = CV::一時間フレーム数 *6;//初回は6時スタート(仮)
 		static int ゲームスピード = 1;
-		static int ゲーム速度変更倍率 = 4;
-
+		
 		static bool is停止 = false;
 		static int アニメーション時間 = 0;
 		static bool isヘルプ = true;
 		static bool isゲーム終了 = false;
-
-		static bool is翌日スキップ = false;
-		
 
 		static double 自動回復 = 0.1;//自動回復基準値(仮)
 		static double 地図発見探索率 = 0.5;
 		static double ボス発見探索率 = 0.7;
 		static double 基礎未探索部屋発見率 = 0.1;
 
+		static int 最大解像度W = 1600, 最大解像度H = 900;
 		//
 		static bool isメインクエスト = false;//メインクエスト終了フラグ
-	
-		//コンフィグ項目
-		static double BGM音量;//
-		static double SE音量;//
-		static bool isフルスクリーン = false;
-		static int フルスクリーン倍率 = 1;
-		static bool is装備自動更新 = true;
-		static bool isボス戦時等速 = true;
-		static bool isスキル習得ストップ = false;
-		static bool is右クリック停止 = true;//
-		static bool isヘルプ詳細 = false;
-		static int 解像度W = 1600 , 解像度H = 900;
-		static int 最大解像度W = 1600, 最大解像度H = 900;
-
-		static int BGM設定 = 1, SE設定 =1 ,解像度設定 = 9;
-
-		static bool is夜間加速 = true;
 
 		//60F = 10分、360= 1時間
 		static int 起床時間 = CV::一時間フレーム数 * 6;//6時
@@ -56,9 +36,42 @@ namespace SDX_BSC
 
 		static bool is仕事中;
 
-		bool isデバッグ大きさ表示 = false;
+		static bool isデバッグ大きさ表示 = false;
 
 		//UI関連の変数
 		static EnumArray<CraftType, ItemType> 対応レシピ;
 	};
+
+	namespace Config
+	{
+		//コンフィグ項目
+		static int BGM設定 = 1, SE設定 = 1;
+		static double BGM音量;//設定値の２乗/100になる
+		static double SE音量;//
+
+		static int 解像度設定 = 9;
+		static int 解像度W = 1600, 解像度H = 900;
+
+		enum class WindowmodeType
+		{
+			ウィンドウ,
+			等倍フルスクリーン,
+			二倍フルスクリーン,
+			四倍フルスクリーン,
+			COUNT
+		};
+
+		static WindowmodeType ウィンドウモード = WindowmodeType::ウィンドウ;
+
+		static bool is装備自動更新 = true;
+		static bool isボス戦時等速 = true;
+		static bool is夜間加速 = true;
+
+		static bool isスキル習得時停止 = false;
+
+		static bool is超加速モード = false;
+		static int ゲーム速度変更倍率 = 4;
+
+		static bool isヘルプ詳細 = false;
+	}
 }
