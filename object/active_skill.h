@@ -7,6 +7,7 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
+	//スキル対象
 	enum class ASkillTarget
 	{
 		自分,
@@ -19,9 +20,11 @@ namespace SDX_BSC
 		敵後,
 		敵全,
 		敵弱者,
-		その他
+		その他,
+		COUNT
 	};
 
+	//メイン属性
 	enum class ASkillType
 	{
 		物理,
@@ -30,36 +33,71 @@ namespace SDX_BSC
 		//バフ系
 		バフ,
 		デバフ,
-		指定なし
+		指定なし,
+		COUNT
 	};
 
-	//Fighter::バフ更新処理のためにBuffTypeとASkillEffectTypeの並びを揃える
 	enum class BuffType
 	{
-		与ダメ増加,//割合増加
-		受ダメ軽減,//割合軽減
+		与ダメ増減,//割合増減
+		被ダメ軽減,//割合増減
 		物防,//+数値
 		魔防,//+数値
-		Str,//1.0+数値x
-		Dex,//1.0+数値x
-		Int,//1.0+数値x
+		Str,//+数値
+		Dex,//+数値
+		Int,//+数値
 		命中,//+数値
 		回避,//+数値
-		挑発,//+なら有効
+		挑発,//ターゲットになる
+		隠密,//ターゲットから外れる
+		速度,//CT速度割合増減
+		異常バリア,//状態異常を１回無効化する
+		物理バリア,//物理ダメージを数値分吸収
+		魔法バリア,//魔法ダメージを数値分吸収
+		再生,//時間経過で回復
+		回復倍率,//回復効果低減 or 増加
+		復活,//気絶しても回復する
+		分身,//スキルのHit数が増加、攻撃を受けると回避して分身消滅
+
+		//デメリットのみのやつ
+		出血,//行動時ダメージ
+		猛毒,//一定時間毎にダメージ
+		スタン,//一時行動不能、回避減少
+		麻痺,//物理スキルの速度低下、回避減少？
+		沈黙,//魔法スキルの速度低下
+		暗闇,//物理スキルの命中低下、回避減少
+		混乱,//攻撃対象が敵味方ランダムに
+		石化,//行動不能、回復が遅い、回避０
+		睡眠,//行動不能、ダメージで回復、回避０
+		宣告,//時間経過で気絶
 		COUNT
 	};
 
+	//追加効果
 	enum class ASkillSubType
 	{
-		//追加効果
-		防御無視,
-		回避無視,
-		デバフ解除,
-		デバフ無効,
+		//実質bool値
+		必中,
+		隠れる無視,
+		挑発無視,
+		異常回復,
+
+		//double値
+		防御貫通,//1で完全無視
+		回避貫通,
+		ダメージ幅,//1で0～2.0倍
+		バフ延長,//-1で解除、1で持続倍増
+		デバフ延長,//-1で解除、1で持続倍増
+		バフ強化,//-0.5で半減、1で倍増
+		デバフ強化,//-0.5で半減、1で倍増
+		先制,//1で戦闘開始時100%
+		吸収,//1で与えたダメージと同じだけ回復
+		コスト,//1で残りHPの100%消費
+		全力,//自分のHPが100%なら威力増加
+		窮地,//自分のHPが30%以下なら威力増加
+		反撃,//ダメージを受けるスキルを食らった時数値分CTが貯まる
 		COUNT
 	};
-
-	/*発動中のスキル*/
 
 	/*アクティブスキル*/
 	class ActiveSkill
@@ -85,7 +123,7 @@ namespace SDX_BSC
 			this->依存ステータス = 依存ステータス;
 			this->種類 = スキル種;
 
-			for (auto& it : バフ効果量)
+			for (auto& it : バフ反映率)
 			{
 				it = 0;
 			}
@@ -97,37 +135,38 @@ namespace SDX_BSC
 			{
 				it = 0;
 			}
-			for (auto& it : is追加効果)
+			for (auto& it : 追加効果)
 			{
-				it = false;
+				it = 0;
 			}
 
 		}
 
 		void SetEffect(BuffType 効果種, double 効果量, int 効果時間, double 効果発動率 = 1.0)
 		{
-			バフ効果量[効果種] = 効果量;
+			バフ反映率[効果種] = 効果量;
 			バフ確率[効果種] = 効果発動率;
 			バフ持続[効果種] = 効果時間;
 		}
 
 		void SetP(int 効果回数, double 効果量, double ステータス反映率,double 命中, double 効果時間, double 必要チャージ, bool is奥義 = false)
 		{
-			this->効果回数 = 効果回数;//ランダムだったり単体に多段攻撃
-			this->威力 = 効果量;
+			this->Hit数 = 効果回数;//ランダムだったり単体に多段攻撃
+			this->基礎効果 = 効果量;
 			this->反映率 = ステータス反映率;
 			//効果時間は未使用
 			this->命中 = 命中;
 
-			this->必要チャージ = 必要チャージ;
-			this->is奥義 = is奥義;
+			this->必要クールタイム = 必要チャージ;
 		}
 
 		ID_ASkill ID;
 		std::string 名前;
 		std::string 説明;
 
-		Image* Img;
+		Image* Img;//スキルアイコン
+
+		EffectAnimeType 戦闘エフェクト = EffectAnimeType::斬;
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
@@ -135,24 +174,35 @@ namespace SDX_BSC
 		StatusType 依存ステータス;
 		FormationType 適正隊列;
 		ASkillType 種類;
+
 		DamageType 属性;
+		DamageSubType サブ属性;
+
 		ItemType 装備種 = ItemType::すべて;
 
-		EnumArray<double, BuffType> バフ効果量;
+		ID_ASkill 連続スキル;
+
+		int Hit数 = 1;//多段ヒット数
+		double 命中 = 1.0;
+
+		double 基礎効果 = 0;//固定ダメージ
+		double 反映率 = 0;
+
+		double 会心率 = 0.05;
+		double 会心倍率 = 1.5;
+
+		double 必要クールタイム;
+
+		//バフ効果
+		EnumArray<double, BuffType> バフ基礎値;
+		EnumArray<double, BuffType> バフ反映率;
 		EnumArray<double, BuffType> バフ確率;
 		EnumArray<int, BuffType> バフ持続;
 
-		EnumArray<bool, ASkillSubType> is追加効果;
-
-		bool is奥義 = false;
-
-		int 効果回数 = 1;//多段攻撃系
-		double 命中 = 1.0;
-		double 威力 = 0;//基礎値
-		double 反映率 = 0;
-		double 追加効果率 = 1.0;
-
-		double 必要チャージ;
+		//追加効果など
+		EnumArray<double, ASkillSubType> 追加効果;
+		bool is自己バフ = false;//バフ効果の対象が命中した相手でなく自分になる
+		double 減衰率 = 1.0;//2番目以降のターゲットへのダメージ倍率
 
 		int 必要SP = 5;
 	};
@@ -161,60 +211,79 @@ namespace SDX_BSC
 	class ASkillEffect
 	{
 	public:
+		EffectAnimeType 戦闘エフェクト;
+
+		ASkillTarget 対象;
+		int 範囲 = 1;
 
 		StatusType 依存ステータス;
 		FormationType 適正隊列;
-		ItemType 装備種;
-		DamageType 属性;//物理,魔法
-		bool is奥義;
-		double 威力;//基礎値
-		double 反映率;
-
-		ASkillTarget 対象;
-		int 範囲;
-
 		ASkillType 種類;
 
-		double 命中;
-		int 効果回数;
+		DamageType 属性;
+		DamageSubType サブ属性;
 
-		EnumArray<double, BuffType> バフ効果量;
+		ItemType 装備種 = ItemType::すべて;
+
+		int Hit数 = 1;//多段ヒット数
+		double 命中 = 1.0;
+
+		double 基礎効果 = 0;//固定ダメージ
+		double 反映率 = 0;
+
+		double 会心率 = 0.05;
+		double 会心倍率 = 1.5;
+
+		//バフ効果
+		EnumArray<double, BuffType> バフ基礎値;
+		EnumArray<double, BuffType> バフ反映率;
 		EnumArray<double, BuffType> バフ確率;
 		EnumArray<int, BuffType> バフ持続;
 
-		EnumArray<bool, ASkillSubType> is追加効果;
+		//追加効果など
+		EnumArray<double, ASkillSubType> 追加効果;
+		bool is自己バフ = false;//バフ効果の対象が命中した相手でなく自分になる
+		double 減衰率 = 1.0;//2番目以降のターゲットへのダメージ倍率
 
-		double 追加効果補正 = 1.0;
-		double 追加持続補正 = 1.0;
+		//ASkillにないやつ
+		double バフ効果補正 = 1.0;
+		double バフ持続補正 = 1.0;
 
-		ASkillEffect(const ActiveSkill* スキルベース):
-			依存ステータス(スキルベース->依存ステータス),
-			装備種(スキルベース->装備種),
-			属性(スキルベース->属性),
-			is奥義(スキルベース->is奥義),
-			威力(スキルベース->威力),
-			反映率(スキルベース->反映率),
+		ASkillEffect(const ActiveSkill* スキルベース) :
+			戦闘エフェクト(スキルベース->戦闘エフェクト),
 			対象(スキルベース->対象),
 			範囲(スキルベース->範囲),
+			依存ステータス(スキルベース->依存ステータス),
+			適正隊列(スキルベース->適正隊列),
 			種類(スキルベース->種類),
+			属性(スキルベース->属性),
+			サブ属性(スキルベース->サブ属性),
+			装備種(スキルベース->装備種),
+			Hit数(スキルベース->Hit数),
 			命中(スキルベース->命中),
-			効果回数(スキルベース->効果回数)
+			基礎効果(スキルベース->基礎効果),
+			反映率(スキルベース->反映率),
+			会心率(スキルベース->会心率),
+			会心倍率(スキルベース->会心倍率),
+			is自己バフ(スキルベース->is自己バフ),
+			減衰率(スキルベース->減衰率)
 		{
 			for (int a = 0; a < (int)BuffType::COUNT; a++)
 			{
 				auto s = BuffType(a);
-
-				バフ効果量[s] = スキルベース->バフ効果量[s];
+				バフ基礎値[s] = スキルベース->バフ基礎値[s];
+				バフ反映率[s] = スキルベース->バフ反映率[s];
 				バフ持続[s] = スキルベース->バフ持続[s];
 				バフ確率[s] = スキルベース->バフ確率[s];
 			}
 
 			for (int a = 0; a < (int)ASkillSubType::COUNT; a++)
 			{
-				is追加効果[ASkillSubType(a)] = スキルベース->is追加効果[ASkillSubType(a)];
+				追加効果[ASkillSubType(a)] = スキルベース->追加効果[ASkillSubType(a)];
 			}
 
-			//回復とバフは必中(仮)
+
+			//回復とバフは必中(暫定)
 			if (種類 == ASkillType::回復 || 種類 == ASkillType::バフ)
 			{
 				命中 = 10.0;

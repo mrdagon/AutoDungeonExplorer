@@ -160,7 +160,6 @@ namespace SDX_BSC
 		//-条件
 		ASkillType Aスキル種;
 		ItemType 装備種;
-		bool is奥義 = false;
 
 		PSkillTime タイミング;
 		double 発動率;
@@ -285,8 +284,6 @@ namespace SDX_BSC
 		PassiveSkill::data.emplace_back(47, "必殺+", "奥義スキル CT-15%", SkillType::バフ, ItemType::すべて, ASkillType::指定なし);
 		PassiveSkill::data[46].Set(4, 0.10, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
 		PassiveSkill::data[47].Set(7, 0.15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::スキルCT増減);
-		PassiveSkill::data[46].is奥義 = true;
-		PassiveSkill::data[47].is奥義 = true;
 
 		//戦闘後味方全員のHP回復
 		PassiveSkill::data.emplace_back(48, "手当", "戦闘終了時、味方全員のHP4%回復", SkillType::回復, ItemType::すべて, ASkillType::指定なし);

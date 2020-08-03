@@ -31,14 +31,15 @@ namespace SDX_BSC
 
 		void Set(int Hp,int Str,int Dex,int Int,int 物防,int 魔防 , int 命中 , int 回避)
 		{
-			this->Hp = Hp;
+			this->ステ[StatusType::Hp] = Hp;
 			this->ステ[StatusType::Str] = Str;
 			this->ステ[StatusType::Int] = Int;
 			this->ステ[StatusType::Dex] = Dex;
-			this->防御[DamageType::物理] = 物防;
-			this->防御[DamageType::魔法] = 魔防;
-			this->命中 = 命中;
-			this->回避 = 回避;
+			this->ステ[StatusType::命中] = 命中;
+			this->ステ[StatusType::回避] = 回避;
+
+			this->ステ[StatusType::物防] = 物防;
+			this->ステ[StatusType::魔防] = 魔防;
 		}
 
 		void SetSkill(std::vector<int> rate)
@@ -114,10 +115,9 @@ namespace SDX_BSC
 		PassiveSkill* 習得Pスキル[CV::最大Pスキル習得リスト];
 
 		//基礎ステータスーLvでスケーリングする
-		int Hp;
+		//int Hp;
 		EnumArray<int, StatusType> ステ;
-		EnumArray<int, DamageType> 防御;
-		int 命中, 回避;
+		//int 命中, 回避;
 	};
 
 	void LoadHunterClass()

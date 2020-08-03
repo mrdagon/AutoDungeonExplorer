@@ -7,7 +7,7 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	//◆画像、音声等
+	//◆画像、音声の管理用
 	//ユニット
 	enum class UnitImageType
 	{
@@ -152,6 +152,13 @@ namespace SDX_BSC
 		塔,
 		廃墟,
 
+		//探索用
+		探索_伐採,
+		探索_採掘,
+		探索_財宝,
+		探索_地図,
+		探索_石版,
+
 		//上部分バー
 		日付,
 		時間,
@@ -239,7 +246,7 @@ namespace SDX_BSC
 	};
 
 	//戦闘エフェクト
-	enum class EffectType
+	enum class EffectAnimeType
 	{
 		斬,
 		打,
@@ -362,7 +369,7 @@ namespace SDX_BSC
 		COUNT
 	};
 
-	//経営戦術系統
+	//◆投資系統
 	enum class ManagementType
 	{
 		経営,
@@ -386,7 +393,7 @@ namespace SDX_BSC
 		COUNT,
 	};
 
-	//依頼系統
+	//◆依頼系統
 	enum class QuestType
 	{
 		装備販売,
@@ -398,6 +405,7 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	//◆探索関係
 	//部屋種
 	enum class RoomType
 	{
@@ -424,7 +432,6 @@ namespace SDX_BSC
 
 	};
 
-	//探索指示
 	enum class OrderType
 	{
 		探索,
@@ -432,11 +439,23 @@ namespace SDX_BSC
 		COUNT
 	};
 
-	//ダメージ属性
+	//◆戦闘関係
+	//基本ダメージ属性
 	enum class DamageType
 	{
 		物理,
 		魔法,
+		COUNT
+	};
+
+	enum class DamageSubType
+	{
+		斬,
+		打,
+		突,
+		炎,
+		氷,
+		雷,
 		COUNT
 	};
 
@@ -450,9 +469,15 @@ namespace SDX_BSC
 
 	enum class StatusType
 	{
+		Hp,
 		Str,
 		Int,
 		Dex,
+		物防,
+		魔防,
+		命中,
+		回避,
+		会心,
 		COUNT
 	};
 
@@ -473,8 +498,9 @@ namespace SDX_BSC
 		COUNT
 	};
 
+	//◆アクティブ、パッシブスキル
 
-	//◆全種類列挙◆
+	//◆data配列index用変数◆
 	typedef unsigned int ID_Job;
 	typedef unsigned int ID_Item;
 	typedef unsigned int ID_Monster;

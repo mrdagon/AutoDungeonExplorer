@@ -24,16 +24,16 @@ namespace SDX_BSC
 
 		void Set(int Hp , int Str, int Dex, int Int, int 物防, int 魔防 , int 回避 , int 命中)
 		{
-			this->Hp = Hp;
+			this->ステ[StatusType::Hp] = Hp;
 			this->ステ[StatusType::Str] = Str;
 			this->ステ[StatusType::Int] = Int;
 			this->ステ[StatusType::Dex] = Dex;
 
-			this->防御[DamageType::物理] = 物防;
-			this->防御[DamageType::魔法] = 魔防;
+			this->ステ[StatusType::物防] = 物防;
+			this->ステ[StatusType::魔防] = 魔防;
 
-			this->回避 = 回避;
-			this->命中 = 命中;
+			this->ステ[StatusType::回避] = 回避;
+			this->ステ[StatusType::命中] = 命中;
 		}
 
 		void SetSkill(int askill1, int askill2, int askill3)
@@ -55,9 +55,7 @@ namespace SDX_BSC
 		double レア素材率 = 0.01;
 
 		//基礎ステータスーLvでスケーリングする
-		int Hp,命中,回避;
 		EnumArray<int, StatusType> ステ;
-		EnumArray<int, DamageType> 防御;
 
 		ActiveSkill* ASkill[CV::最大Aスキル数] = { 0 };//最大４個とか
 		int ASkillLv[CV::最大Aスキル数] = { 0 };//習得レベル[未実装]

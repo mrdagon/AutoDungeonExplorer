@@ -160,6 +160,13 @@ namespace SDX_BSC
 			アイコン[IconType::皮材].Load("file/system/mat_003.png");
 			アイコン[IconType::骨材].Load("file/system/mat_004.png");
 
+			//探索用
+			アイコン[IconType::探索_伐採].Load("file/system/dun00.png");
+			アイコン[IconType::探索_採掘].Load("file/system/dun01.png");
+			アイコン[IconType::探索_財宝].Load("file/system/dun02.png");
+			アイコン[IconType::探索_地図].Load("file/system/dun03.png");
+			アイコン[IconType::探索_石版].Load("file/system/dun04.png");
+
 			//上部分バー
 			アイコン[IconType::日付].Load("file/icon/hiduke.png");
 			アイコン[IconType::時間].Load("file/icon/jikan.png");
@@ -321,22 +328,22 @@ namespace SDX_BSC
 	//戦闘エフェクト
 	namespace MEffect
 	{
-		EnumArray<ImagePack, EffectType> エフェクト;
+		EnumArray<ImagePack, EffectAnimeType> エフェクト;
 
 		static void Load()
 		{
-			エフェクト[EffectType::斬].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
-			エフェクト[EffectType::打].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
-			エフェクト[EffectType::突].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
-			エフェクト[EffectType::炎].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
-			エフェクト[EffectType::雷].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
-			エフェクト[EffectType::氷].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
-			エフェクト[EffectType::バフ].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
-			エフェクト[EffectType::デバフ].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
-			エフェクト[EffectType::回復].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
-			エフェクト[EffectType::異常].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
-			エフェクト[EffectType::爪].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
-			エフェクト[EffectType::牙].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
+			エフェクト[EffectAnimeType::斬].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
+			エフェクト[EffectAnimeType::打].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
+			エフェクト[EffectAnimeType::突].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
+			エフェクト[EffectAnimeType::炎].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
+			エフェクト[EffectAnimeType::雷].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
+			エフェクト[EffectAnimeType::氷].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
+			エフェクト[EffectAnimeType::バフ].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
+			エフェクト[EffectAnimeType::デバフ].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
+			エフェクト[EffectAnimeType::回復].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
+			エフェクト[EffectAnimeType::異常].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
+			エフェクト[EffectAnimeType::爪].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
+			エフェクト[EffectAnimeType::牙].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
 		}
 	}
 
@@ -433,6 +440,11 @@ namespace SDX_BSC
 		ImagePack ウィンドウ枠;
 		Image 背景;
 		Image ダンジョン背景[5];
+		Image 題字;
+		Image はじめから;
+		Image つづきから;
+		Image しゅうりょう;
+
 		EnumArray<Image, CraftType> クラフト台;
 
 		static void Load()
@@ -442,6 +454,11 @@ namespace SDX_BSC
 			ダンジョン背景[0].Load("file/system/dunback00.png");
 			ダンジョン背景[1].Load("file/system/dunback01.png");
 			ダンジョン背景[2].Load("file/system/facback.png");
+
+			題字.Load("file/logo/titke_kana.png");
+			はじめから.Load("file/logo/hajime_b.png");
+			つづきから.Load("file/logo/tuduki_b.png");
+			しゅうりょう.Load("file/logo/syuuryou_b.png");
 
 			クラフト台[CraftType::鍛造].Load("file/system/craft00.png");
 			クラフト台[CraftType::裁縫].Load("file/system/craft01.png");

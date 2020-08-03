@@ -10,6 +10,7 @@
 #include "w_windowbox.h"//継承元
 #include "w_popup.h"
 
+#include "w_scenario.h"
 #include "w_skilltree.h"
 #include "w_toolbar.h"
 #include "w_dungeon.h"

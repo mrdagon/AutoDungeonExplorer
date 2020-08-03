@@ -12,8 +12,7 @@ namespace SDX_BSC
 	{
 	private:
 	public:
-
-		//内部クラスにして循環参照解決
+		//内部クラスにして循環参照解決する場合
 		class Party
 		{
 		private:
@@ -22,8 +21,6 @@ namespace SDX_BSC
 			Party() :
 				isボス戦(false)
 			{
-				味方.reserve(6);
-				敵.reserve(6);
 				魔物.reserve(6);
 
 				for (auto& it : メンバー)
@@ -32,7 +29,7 @@ namespace SDX_BSC
 				}
 			}
 
-			int ギルドID;
+			int パーティID;
 
 			Dungeon* 探索先 = nullptr;
 			Dungeon* 探索先予約 = nullptr;
@@ -44,6 +41,7 @@ namespace SDX_BSC
 			std::vector<Fighter*> 味方;
 			std::vector<Fighter*> 敵;
 
+			CraftType 発見素材種;
 			int 獲得素材[CV::最大素材種];
 
 			double 獲得経験値;
@@ -81,6 +79,7 @@ namespace SDX_BSC
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
 					味方[a]->隊列ID = a;
+					味方[a]->パーティID = パーティID;
 					味方[a]->基礎ステータス計算();
 				}
 				for (int a = 0; a < (int)味方.size(); a++)
@@ -116,7 +115,6 @@ namespace SDX_BSC
 			void 探索終了()
 			{
 				//素材獲得
-
 				for (int a = 0; a < CV::最大素材種; a++)
 				{
 					if (獲得素材[a] > 0)
@@ -174,7 +172,7 @@ namespace SDX_BSC
 					break;
 				case ExplorerType::移動中:
 					待ち時間--;
-					移動量 += 2;
+					移動量 += CV::探索移動速度;
 					if (待ち時間 == 0) { 部屋選び(); }
 					break;
 				case ExplorerType::収集中:
@@ -184,7 +182,7 @@ namespace SDX_BSC
 					撤退処理();
 					break;
 				case ExplorerType::全滅中:
-					if (暗転 > 128)
+					if (暗転 > CV::全滅暗さ)
 					{
 						暗転--;
 					}
@@ -320,47 +318,34 @@ namespace SDX_BSC
 			//素材収集関係
 			void 収集開始()
 			{
-				//素材獲得処理
-				int 素材ID = 0;
-				int 素材数 = 1;
-
-				double レア素材確率 = 探索先->レア収集率;
-				double 素材数増加率 = 0;
-
-				for (auto& it : 味方)
-				{
-					レア素材確率 += it->レア素材収集補正;
-					素材数増加率 += it->素材収集量;
-				}
-
-				if (Rand::Coin(素材数増加率))
-				{
-					素材数++;
-				}
-
-				if (Rand::Coin(レア素材確率))
-				{
-					素材ID = 探索先->レア収集素材[Rand::Get(CV::最大収集種 - 1)];
-				}
-				else {
-					素材ID = 探索先->収集素材[Rand::Get(CV::最大収集種 - 1)];
-				}
-
-				素材獲得(素材ID, 素材数);
-
 				部屋探索完了();
-				探索状態 = ExplorerType::収集中;
-				待ち時間 = 120;
 
-				発見物X座標 = 120;
+				探索状態 = ExplorerType::収集中;
+
+				発見素材種 = Rand::Coin(0.5) ? CraftType::鍛造 : CraftType::木工;
+
+				if (発見素材種 == CraftType::木工)
+				{
+					発見物 = &MIcon::アイコン[IconType::探索_伐採];
+				} else {
+					発見物 = &MIcon::アイコン[IconType::探索_採掘];
+				}
+
+				待ち時間 = CV::収集待機A;
+				発見物X座標 = CV::収集待機A;
 			}
 
 			void 収集処理()
 			{
 				if (発見物X座標 > 0)
 				{
-					移動量 += 2;
-					発見物X座標 -= 2;
+					移動量 += CV::探索移動速度;
+					発見物X座標 -= CV::探索移動速度;
+
+					if (発見物X座標 == 0)
+					{
+						素材収集処理();
+					}
 				}
 
 				待ち時間--;
@@ -372,10 +357,69 @@ namespace SDX_BSC
 				}
 			}
 
-			void 素材獲得(int 素材ID, int 素材数)
+			void 素材収集処理()
 			{
-				獲得素材[素材ID] += 素材数;
-				if (発見物 == nullptr) { 発見物 = &MIcon::アイコン[Material::data[素材ID].アイコン]; }
+				//素材数とレア率を計算
+				int 素材ID = 0;
+				int 素材数 = Rand::Get(2,3);
+
+				double レア素材確率 = 探索先->レア収集率;
+				double 素材数増加率 = 0;
+
+				//パッシブ補正
+				for (auto& it : 味方)
+				{
+					レア素材確率 += it->レア素材収集補正;
+					素材数増加率 += it->素材収集量;
+				}
+
+				//素材獲得処理
+				if (Rand::Coin(素材数増加率))
+				{
+					素材数++;
+				}
+
+				for (int a = 0; a < 素材数; a++)
+				{
+					int id = Rand::Get(CV::最大収集種 - 1);
+
+					if (発見素材種 == CraftType::木工)
+					{
+						素材ID = Rand::Coin(レア素材確率) ? 探索先->レア伐採素材[id] : 探索先->伐採素材[id];
+					} else {
+						素材ID = Rand::Coin(レア素材確率) ? 探索先->レア採掘素材[id] : 探索先->採掘素材[id];
+					}
+
+					獲得素材[素材ID] += 素材数;
+					Effect::素材[パーティID].emplace_back(&MIcon::アイコン[Material::data[素材ID].アイコン] , a);
+				}
+			}
+
+			void 素材剥取処理(Monster& it)
+			{
+				//素材獲得処理
+				int 素材ID = 0;
+				double レア率 = it.種族->レア素材率;
+				double 素材数増加率 = 0;
+
+				for (auto& it : 味方)
+				{
+					レア率 += it->レア素材剥取補正;
+					素材数増加率 += it->素材剥取量;
+				}
+
+				int 素材数 = Rand::Coin(素材数増加率) ? 2 : 1;
+			
+				for (int a = 0; a < 素材数; a++)
+				{
+					if (Rand::Coin(0.5) && !it.isボス) { continue; }//とりあえず基本ドロップ率50%
+
+					素材ID = Rand::Coin(レア率) ? it.種族->レア素材 : it.種族->通常素材;
+					獲得素材[素材ID]++;
+					Effect::素材[パーティID].emplace_back(&MIcon::アイコン[Material::data[素材ID].アイコン],a,it.隊列ID);
+				}
+
+				獲得経験値 += it.経験値;
 			}
 
 			//戦闘関係
@@ -405,6 +449,7 @@ namespace SDX_BSC
 				{
 					敵[a] = &魔物[a];
 					敵[a]->隊列ID = a;
+					敵[a]->パーティID = パーティID;
 				}
 
 				//戦闘開始時のパッシブ
@@ -432,15 +477,7 @@ namespace SDX_BSC
 
 				while (true)
 				{
-					for (auto& it : 味方)
-					{
-						it->ターン経過();
-					}
-					for (auto& it : 敵)
-					{
-						it->ターン経過();
-					}
-
+					//スキルCT上がってるかチェック
 					for (auto& it : 味方)
 					{
 						if (it->Aスキル使用チェック(味方, 敵) == true) { isBreak = true;  break; }
@@ -453,7 +490,27 @@ namespace SDX_BSC
 					}
 					if (isBreak) { break; }
 
+					//スキルクールタイムとバフ/デバフ持続計算
+					for (auto& it : 味方)
+					{
+						it->ターン経過();
+					}
+					for (auto& it : 敵)
+					{
+						it->ターン経過();
+					}
+
 				}
+
+				for (auto& it : 魔物)
+				{
+					if (it.is死亡 == false && it.現在HP <= 0)
+					{
+						it.is死亡 = true;
+						素材剥取処理(it);
+					}
+				}
+
 
 				戦闘終了判定();
 				戦闘中行動待機 = 15;
@@ -533,51 +590,13 @@ namespace SDX_BSC
 				//体力回復
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
-					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->最大HP);
-					味方[a]->Eダメージ = -(int)(味方[a]->戦闘後回復 * 味方[a]->最大HP);
-					味方[a]->Eダメージ時間 = 16;
+					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::Hp]);
+					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->補正ステ[StatusType::Hp]);
+					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::Hp]));
 				}
 
-				//経験値獲得 - 素材獲得処理
-				for (auto& it : 魔物)
-				{
-					獲得経験値 += it.経験値;
-
-					int 素材数 = 1;
-					int 素材ID = 0;
-
-					double レア率 = it.種族->レア素材率;
-					double 素材数増加率 = 0;
-
-					for (auto& it : 味方)
-					{
-						レア率 += it->レア素材剥取補正;
-						素材数増加率 += it->素材剥取量;
-					}
-
-					if (Rand::Coin(素材数増加率))
-					{
-						素材数++;
-					}
-
-					if (Rand::Coin(レア率))
-					{
-						素材ID = it.種族->レア素材;
-					}
-					else {
-						素材ID = it.種族->通常素材;
-					}
-
-					素材獲得(素材ID, 素材数);
-				}
-
-
-
-				敵.clear();
-				魔物.clear();
 				探索状態 = ExplorerType::収集中;
-				待ち時間 = 60;
+				待ち時間 = CV::戦闘後待ち時間;
 			}
 
 			void 戦闘敗北()
@@ -588,7 +607,6 @@ namespace SDX_BSC
 					ザコ討伐数++;
 				}
 				Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
-
 
 				探索先->部屋[部屋ID].is入場 = false;
 				探索状態 = ExplorerType::全滅中;
@@ -636,13 +654,6 @@ namespace SDX_BSC
 					}
 
 					Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
-
-					//倒した敵の分だけ素材獲得
-				}
-				else {
-					//戦闘中以外は敵消去
-					魔物.clear();
-					敵.clear();
 				}
 
 				for (auto& it : 味方)
@@ -681,9 +692,6 @@ namespace SDX_BSC
 			}
 		};
 
-		int id = 0;
-
-
 		int 素材数[CV::最大素材種];
 		bool is素材発見[CV::最大素材種];
 
@@ -695,6 +703,7 @@ namespace SDX_BSC
 		std::vector<Hunter> 探索要員;
 		std::vector<Crafter> 製造要員;
 
+		//Party test;
 		Party 探索パーティ[CV::最大パーティ数];
 		std::vector<Hunter*> ギルメン控え;
 
@@ -771,6 +780,14 @@ namespace SDX_BSC
 
 		static Guild* P;//プレイヤーのギルド
 		static Guild data;
+
+		Guild()
+		{
+			for (int a = 0; a < CV::最大パーティ数; a++)
+			{
+				探索パーティ[a].パーティID = a;
+			}
+		}
 
 		//人事関係処理
 		void 求人リロール()
@@ -1053,6 +1070,14 @@ namespace SDX_BSC
 		//探索関係処理
 		void 探索開始()
 		{
+			//エフェクト初期化
+			for (int a = 0; a < CV::最大パーティ数; a++)
+			{
+				Effect::アニメ[a].clear();
+				Effect::素材[a].clear();
+				Effect::文字[a].clear();
+			}
+
 			for (int a = 0; a < 最大パーティ数; a++)
 			{
 				//パーティ人数をチェック
@@ -1062,9 +1087,21 @@ namespace SDX_BSC
 
 		void 探索処理()
 		{
+			エフェクト更新();
+
 			for (int a = 0; a < 最大パーティ数; a++)
 			{
 				探索パーティ[a].探索処理();
+			}
+		}
+
+		void エフェクト更新()
+		{
+			for (int a = 0; a < CV::最大パーティ数; a++)
+			{
+				Effect::UpdateAndDelete(Effect::アニメ[a]);
+				Effect::UpdateAndDelete(Effect::素材[a]);
+				Effect::UpdateAndDelete(Effect::文字[a]);
 			}
 		}
 

@@ -29,11 +29,7 @@ namespace SDX_BSC
 		PassiveSkill* Pスキル[2] = { nullptr };//未実装
 
 		//攻撃力等のステータス、追加されるスキル等
-		int 追加Str, 追加Int, 追加Dex, 追加Hp = 0;
-
-		EnumArray<int, DamageType> 防御;
-		int 命中 = 0;
-		int 回避 = 0;
+		EnumArray<int, StatusType> ステ;
 
 		Item(int id,std::string 名前,std::string 説明,ItemImageType 見た目)
 		{
@@ -54,16 +50,15 @@ namespace SDX_BSC
 		{
 			this->Lv = ランク;
 			this->種類 = 種類;
-			this->追加Hp = 追加Hp;
-			this->追加Str = 追加Str;
-			this->追加Int = 追加Int;
-			this->追加Dex = 追加Dex;
+			this->ステ[StatusType::Hp] = 追加Hp;
+			this->ステ[StatusType::Str] = 追加Str;
+			this->ステ[StatusType::Int] = 追加Int;
+			this->ステ[StatusType::Dex] = 追加Dex;
+			this->ステ[StatusType::命中] = 命中;
+			this->ステ[StatusType::回避] = 回避;
 
-			this->防御[DamageType::物理] = 物防;
-			this->防御[DamageType::魔法] = 魔防;
-
-			this->命中 = 命中;
-			this->回避 = 回避;
+			this->ステ[StatusType::物防] = 物防;
+			this->ステ[StatusType::魔防] = 魔防;
 		}
 	};
 

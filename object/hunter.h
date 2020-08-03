@@ -17,6 +17,7 @@ namespace SDX_BSC
 		Hunter()
 		{
 			気絶時SE = SE::味方気絶;
+			is味方 = true;
 		}
 
 		void Make(int id , ID_Job ジョブ , int Lv , std::string 名前)
@@ -127,31 +128,31 @@ namespace SDX_BSC
 		//パッシブ無しの基礎ステータス計算
 		void 基礎ステータス計算()
 		{
-			基礎HP = int(職業->Hp * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::Hp] = int(職業->ステ[StatusType::Hp] * (10 + Lv) / 10.0);
 			基礎ステ[StatusType::Str] = int(職業->ステ[StatusType::Str] * (10 + Lv) / 10);
 			基礎ステ[StatusType::Dex] = int(職業->ステ[StatusType::Dex] * (10 + Lv) / 10);
 			基礎ステ[StatusType::Int] = int(職業->ステ[StatusType::Int] * (10 + Lv) / 10);
 
-			基礎防御[DamageType::物理] = 職業->防御[DamageType::物理];
-			基礎防御[DamageType::魔法] = 職業->防御[DamageType::魔法];
+			基礎ステ[StatusType::命中] = 職業->ステ[StatusType::命中];
+			基礎ステ[StatusType::回避] = 職業->ステ[StatusType::回避];
 
-			基礎命中 = 職業->命中;
-			基礎回避 = 職業->回避;
+			基礎ステ[StatusType::物防] = 職業->ステ[StatusType::物防];
+			基礎ステ[StatusType::魔防] = 職業->ステ[StatusType::魔防];
 
 			Reset補正ステータス();
 
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				最大HP += 装備[a]->追加Hp;
-				補正ステ[StatusType::Str] += 装備[a]->追加Str;
-				補正ステ[StatusType::Dex] += 装備[a]->追加Dex;
-				補正ステ[StatusType::Int] += 装備[a]->追加Int;
+				補正ステ[StatusType::Hp] += 装備[a]->ステ[StatusType::Hp];
+				補正ステ[StatusType::Str] += 装備[a]->ステ[StatusType::Str];
+				補正ステ[StatusType::Dex] += 装備[a]->ステ[StatusType::Dex];
+				補正ステ[StatusType::Int] += 装備[a]->ステ[StatusType::Int];
 
-				補正防御[DamageType::物理] += 装備[a]->防御[DamageType::物理];
-				補正防御[DamageType::魔法] += 装備[a]->防御[DamageType::魔法];
+				補正ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
+				補正ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
 
-				補正命中 += 装備[a]->命中;
-				補正回避 += 装備[a]->回避;
+				補正ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
+				補正ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
 			}
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
@@ -184,7 +185,7 @@ namespace SDX_BSC
 			}
 			
 			//製造能力(仮)
-			現在HP = 最大HP;
+			現在HP = 補正ステ[StatusType::Hp];
 
 			戦闘後回復 = Game::自動回復;
 			レア素材剥取補正 = 0.0;
@@ -198,7 +199,6 @@ namespace SDX_BSC
 			E反転時間 = 0;
 			E座標 = 0;
 			E光強さ = 0;
-			Eダメージ時間 = 0;
 
 			//ログ用
 			与ダメージログ = 0;

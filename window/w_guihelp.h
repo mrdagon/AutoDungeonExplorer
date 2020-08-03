@@ -114,7 +114,7 @@ namespace SDX_BSC
 			MSystem::DrawBar({ 座標.x + Lph(13) , 座標.y + Lph(14) }, Lph(15), Lph(16), it->経験値 / it->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);//経験値
 
 			//装備品、Aスキル
-			//最大HP、基礎ステ、製造力
+			//基礎ステ、製造力
 			座標.y += Lph(17);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5), Lph(18), 内スキン, 0, 枠透過率);
 
@@ -135,14 +135,14 @@ namespace SDX_BSC
 				int na, nb;
 				switch (a)
 				{
-					case 0: na = it->基礎HP; nb = it->最大HP; break;
+					case 0: na = it->基礎ステ[StatusType::Hp]; nb = it->補正ステ[StatusType::Hp]; break;
 					case 1: na = it->基礎ステ[StatusType::Str]; nb = it->補正ステ[StatusType::Str]; break;
 					case 2: na = it->基礎ステ[StatusType::Dex]; nb = it->補正ステ[StatusType::Dex]; break;
 					case 3: na = it->基礎ステ[StatusType::Int]; nb = it->補正ステ[StatusType::Int]; break;
-					case 4: na = it->基礎防御[DamageType::物理]; nb = it->補正防御[DamageType::物理]; break;
-					case 5: na = it->基礎防御[DamageType::魔法]; nb = it->補正防御[DamageType::魔法]; break;
-					case 6: na = it->基礎命中; nb = it->補正命中; break;
-					case 7: na = it->基礎回避; nb = it->補正回避; break;
+					case 4: na = it->基礎ステ[StatusType::物防]; nb = it->補正ステ[StatusType::物防]; break;
+					case 5: na = it->基礎ステ[StatusType::魔防]; nb = it->補正ステ[StatusType::魔防]; break;
+					case 6: na = it->基礎ステ[StatusType::命中]; nb = it->補正ステ[StatusType::命中]; break;
+					case 7: na = it->基礎ステ[StatusType::回避]; nb = it->補正ステ[StatusType::回避]; break;
 				}
 
 				MFont::BMSize.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na , true);
@@ -208,27 +208,26 @@ namespace SDX_BSC
 			int num = 0;
 			std::string ステ名 = "";
 
-			for (int a = 0; a < 8; a++)
+			for (int a = 0; a < 8 ; a++)
 			{
 				ステ名 = TX::Help_ステータス[a];
 
 				switch (a)
 				{
-				case 0:num = item->追加Hp; break;
-				case 1:num = item->追加Str;break;
-				case 2:num = item->追加Dex; break;
-				case 3:num = item->追加Int; break;
-				case 4:num = item->防御[DamageType::物理]; break;
-				case 5:num = item->防御[DamageType::魔法]; break;
-				case 6:num = item->命中; break;
-				case 7:num = item->回避; break;
+					case 0:num = item->ステ[StatusType::Hp]; break;
+					case 1:num = item->ステ[StatusType::Str];break;
+					case 2:num = item->ステ[StatusType::Dex]; break;
+					case 3:num = item->ステ[StatusType::Int]; break;
+					case 4:num = item->ステ[StatusType::物防]; break;
+					case 5:num = item->ステ[StatusType::魔防]; break;
+					case 6:num = item->ステ[StatusType::命中]; break;
+					case 7:num = item->ステ[StatusType::回避]; break;
 				}
 
 				if (num <= 0) { continue; }
 
 				MFont::BSSize.DrawBold({ 座標.x + Lph(16) + now_x,座標.y + Lph(17) }, Color::White, Color::Black, { ステ名 , "+" , num });
-				//MFont::BSSize.DrawBold({ 座標.x + Lph(18) + now_x,座標.y + Lph(19) }, Color::White, Color::Black, { num }, true);
-
+				
 				now_x += Lph(20);
 			}
 
@@ -401,7 +400,7 @@ namespace SDX_BSC
 			}
 
 			//各種ステータス
-			for (int a = 0; a < 8; a++)
+			for (int a = 0; a < (int)StatusType::COUNT + (int)DamageType::COUNT; a++)
 			{
 				//ステータス名
 				MFont::BMSize.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
@@ -410,14 +409,14 @@ namespace SDX_BSC
 				int na;
 				switch (a)
 				{
-					case 0: na = it->最大HP; break;
+					case 0: na = it->補正ステ[StatusType::Hp]; break;
 					case 1: na = it->補正ステ[StatusType::Str]; break;
 					case 2: na = it->補正ステ[StatusType::Dex]; break;
 					case 3: na = it->補正ステ[StatusType::Int]; break;
-					case 4: na = it->補正防御[DamageType::物理]; break;
-					case 5: na = it->補正防御[DamageType::魔法]; break;
-					case 6: na = it->補正命中; break;
-					case 7: na = it->補正回避; break;
+					case 4: na = it->補正ステ[StatusType::物防]; break;
+					case 5: na = it->補正ステ[StatusType::魔防]; break;
+					case 6: na = it->補正ステ[StatusType::命中]; break;
+					case 7: na = it->補正ステ[StatusType::回避]; break;
 				}
 
 				//補正後のみ表示
@@ -532,7 +531,7 @@ namespace SDX_BSC
 			MIcon::アイコン[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
 
 			MFont::BMSize.DrawBold({ 座標.x + Lph(29),座標.y + Lph(30) }, Color::White, Color::Black, スキル->名前);
-			MFont::BSSize.DrawBold({ 座標.x + Lph(31),座標.y + Lph(32) }, Color::White, Color::Black, { スキル->必要チャージ });
+			MFont::BSSize.DrawBold({ 座標.x + Lph(31),座標.y + Lph(32) }, Color::White, Color::Black, { スキル->必要クールタイム });
 			if ( スキル->命中 < 2.0 ) { MFont::BSSize.DrawBold({ 座標.x + Lph(36),座標.y + Lph(37) }, Color::White, Color::Black, { "命中 " , (int)(スキル->命中*100) , "%" }); }
 			MFont::BSSize.DrawBold({ 座標.x + Lph(33),座標.y + Lph(34) }, Color::White, Color::Black, スキル->説明);
 

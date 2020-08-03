@@ -14,6 +14,8 @@
 
 #include "job.h"
 
+#include "effect.h"
+
 #include "fighter.h"
 
 #include "monster.h"

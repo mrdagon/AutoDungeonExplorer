@@ -230,13 +230,20 @@ namespace SDX_BSC
 
 				座標.x = マウス座標.x + 掴み座標.x;
 				座標.y = マウス座標.y + 掴み座標.y;
-				座標.x = std::max(0.0, 座標.x);
-				座標.x = std::min(double(Window::GetWidth() - 横幅), 座標.x);
 
-				座標.y = std::max(double(ツールバー高さ), 座標.y);
+				座標.x = std::min(double(Window::GetWidth() - 横幅), 座標.x);
+				座標.x = std::max(0.0, 座標.x);
+
 				座標.y = std::min(double(Window::GetHeight() - 縦幅 - タイトル枠高さ), 座標.y);
+				座標.y = std::max(double(ツールバー高さ), 座標.y);
 
 				return true;
+			} else {
+				座標.x = std::min(double(Window::GetWidth() - 横幅), 座標.x);
+				座標.x = std::max(0.0, 座標.x);
+
+				座標.y = std::min(double(Window::GetHeight() - 縦幅 - タイトル枠高さ), 座標.y);
+				座標.y = std::max(double(ツールバー高さ), 座標.y);
 			}
 
 			//上側掴んで拡大縮小中
@@ -453,6 +460,8 @@ namespace SDX_BSC
 				派生操作();
 				W_Drag::Drop();
 
+
+				//☓クリック
 				if (isポップアップ == false &&
 					abs(Input::mouse.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
 					abs(Input::mouse.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1 && 

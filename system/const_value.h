@@ -19,7 +19,16 @@ namespace SDX_BSC
 		constexpr int 最大素材種 = 100;
 		constexpr int 最大素材レシピ = 10;//1素材から作れるアイテムの種類数
 
-		constexpr int 最大収集種 = 10;//1ダンジョンに設定可能な収集アイテム最大数
+		constexpr int 最大収集種 = 5;//1ダンジョンに設定可能な収集アイテム最大数
+
+		//探索エフェクト用
+		constexpr int 探索移動速度 = 2;
+		constexpr int 収集待機A = 120;
+		constexpr int 全滅暗さ = 128;
+
+		constexpr int 戦闘後待ち時間 = 60;
+
+
 
 		//外部データ最大数//
 		constexpr int 装備種 = 240;

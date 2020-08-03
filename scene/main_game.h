@@ -36,7 +36,6 @@ namespace SDX_BSC
 		{
 			//ギルド初期化
 			Guild::P = &Guild::data;
-			Guild::P->id = 0;
 
 			BetaInit();
 
@@ -80,11 +79,6 @@ namespace SDX_BSC
 
 			Win_Config.is表示 = true;
 			Win_Title.is表示 = false;
-
-			for (int a = 0; a < CV::最大パーティ数; a++)
-			{
-				Guild::P->探索パーティ[a].ギルドID = Guild::P->id;
-			}
 		}
 
 		//デモ版用初期化処理

@@ -7,9 +7,6 @@ namespace SDX_BSC
 {
 	using namespace SDX;
 
-	/*上部ツールバー*/
-	using namespace SDX;
-
 	/*待遇変更ウィンドウ*/
 	class W_Skilltree : public WindowBox
 	{

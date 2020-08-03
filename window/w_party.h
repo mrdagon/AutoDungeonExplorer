@@ -371,7 +371,6 @@ namespace SDX_BSC
 			Guild::Party* 所属;
 			W_Party* 親ウィンドウ;
 
-
 			void Init(int パーティID, W_Party* 親ウィンドウ)
 			{
 				this->パーティID = パーティID;
@@ -392,6 +391,7 @@ namespace SDX_BSC
 					return;
 				}
 
+				//全滅時の暗転
 				Screen::SetBright(Color(所属->暗転, 所属->暗転, 所属->暗転));
 
 				//探索中のダンジョン背景
@@ -410,23 +410,13 @@ namespace SDX_BSC
 					所属->発見物->DrawRotate({ Lp(14) + px + 所属->発見物X座標 ,Lp(15) + py }, 2, 0);
 				}
 
-				//探索状態により描画処理
-				switch( 所属->探索状態 )
+				//敵の描画
+				for (int a = 0; a < (int)所属->魔物.size(); a++)
 				{
-					case ExplorerType::移動中://パーティメンバーのみ、歩くモーション
-						break;
-					case ExplorerType::収集中://地図、宝箱、素材に対して収集アニメーション
-						break;
-					case ExplorerType::全滅中:
-					case ExplorerType::戦闘中:
-					case ExplorerType::撤退中:
-						//敵
-						for (int a = 0; a < (int)所属->魔物.size(); a++)
-						{
-							Draw敵(所属->魔物[a], px - Lp(0) + Lp(8) + Lp(1) * a, py + Lp(2 + a));
-						}
-						break;
+					Draw敵(所属->魔物[a], px - Lp(0) + Lp(8) + Lp(1) * a, py + Lp(2 + a));
 				}
+
+				Drawエフェクト(px,py);
 
 				Screen::SetBright(Color::White);
 
@@ -512,29 +502,20 @@ namespace SDX_BSC
 				//ライフバー
 				int バー幅 = int(Lp(12) * サイズ);
 
-				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->最大HP, 1, Color::Blue, Color::White, Color::White, true);
-
-				if ( it->Eダメージ時間 > 0)
-				{
-					if (it->Eダメージ == 0)
-					{
-						//0ならmiss
-						MFont::BSSize.DrawBold({ px-15 , py }, Color::White, Color::Black, "miss");
-					} else if(it->Eダメージ > 0) {
-						//+はダメージ
-						MFont::BSSize.DrawBold({ px , py }, Color::White, Color::Black, it->Eダメージ);
-					} else if(it->Eダメージ < 0){
-						//-は回復
-						MFont::BSSize.DrawBold({ px , py }, Color(128,255,128), Color::Black, -it->Eダメージ);
-					}
-				}
-
+				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->補正ステ[StatusType::Hp], 1, Color::Blue, Color::White, Color::White, true);
 			}
 
 			void Draw敵(Monster& it, double px, double py)
 			{					
 				//←向き
-				if (it.現在HP <= 0) { return; }
+				if (it.現在HP <= 0)
+				{
+					if( it.消滅中 <= 0) { return; }
+					Screen::SetDrawMode(Color(it.消滅中, it.消滅中, it.消滅中), BlendMode::Add);
+					if (Game::is停止 == false) { it.消滅中 -= 10 * Game::ゲームスピード; }
+				}
+				
+
 				auto img = it.種族->Img;
 				int 向き = 7;
 				double サイズ = 2;
@@ -559,26 +540,90 @@ namespace SDX_BSC
 
 				int バー幅 = int(Lp(12) * サイズ);
 				int ボスY = (it.isボス) ? Lp(18) : 0;
-				//ライフバー
-				MSystem::DrawBar({ px + Lp(10) - バー幅/2 ,py + Lp(11) + ボスY }, バー幅 , Lp(13), (double)it.現在HP / it.最大HP, 1, Color::Blue, Color::White, Color::White, true);
 
-				if (it.Eダメージ時間 > 0)
+				Screen::SetDrawMode();
+
+				//ライフバー
+				if (it.現在HP > 0)
 				{
-					if (it.Eダメージ == 0)
+					MSystem::DrawBar({ px + Lp(10) - バー幅 / 2 ,py + Lp(11) + ボスY }, バー幅, Lp(13), (double)it.現在HP / it.補正ステ[StatusType::Hp], 1, Color::Blue, Color::White, Color::White, true);
+				}
+			}
+
+			void Drawエフェクト(double px, double py)
+			{
+				double buf_x;
+				double buf_y;
+				//スキルエフェクト
+				for (auto& it : Effect::アニメ[パーティID])
+				{
+					if (it.is味方)
 					{
-						//0ならmiss
-						MFont::BSSize.DrawBold({ px - 15 , py }, Color::White, Color::Black, "miss");
+						buf_x = px + Lp(0) - Lp(1) * it.配置ID;
+						buf_y = py + Lp(2+it.配置ID);
+					} else if (所属->isボス戦) {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
+						buf_y = py + Lp(2 + it.配置ID) + Lp(17);
+					} else {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID;
+						buf_y = py + Lp(2 + it.配置ID);
 					}
-					else if (it.Eダメージ > 0)
+
+					MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y } , 0.4,0);
+				}
+
+				//文字エフェクト
+				for (auto& it : Effect::文字[パーティID])
+				{
+					if (it.is味方)
 					{
-						//+はダメージ
-						MFont::BSSize.DrawBold({ px , py }, Color::White, Color::Black, it.Eダメージ);
+						buf_x = px + Lp(0) - Lp(1) * it.配置ID;
+						buf_y = py + Lp(2 + it.配置ID) + it.座標Y;
 					}
-					else if (it.Eダメージ < 0)
+					else if (所属->isボス戦) {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
+						buf_y = py + Lp(2 + it.配置ID) + Lp(17) + it.座標Y;
+					}
+					else {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID;
+						buf_y = py + Lp(2 + it.配置ID) + it.座標Y;
+					}
+
+					switch (it.種類)
 					{
-						//-は回復
-						MFont::BSSize.DrawBold({ px , py }, Color(128, 255, 128), Color::Black, -it.Eダメージ);
+						case TextEffect::TextType::ダメージ:
+							MFont::BMSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.ダメージ色, Color::Black, it.ダメージ量);
+							break;
+						case TextEffect::TextType::回復:
+							MFont::BMSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.回復色, Color::Black, it.ダメージ量);
+							break;
+						case TextEffect::TextType::回避:
+							MFont::BSSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, Color::White, Color::Black, "miss");
+							break;
 					}
+
+				}
+				
+
+				//素材獲得エフェクト
+				for (auto& it : Effect::素材[パーティID])
+				{
+					if (it.隠れ時間 > 0) { continue; }
+
+					//敵素材の場合
+					if (it.配置ID < 0)
+					{
+						buf_x = Lp(14) + px;
+						buf_y = Lp(15) + py + it.座標Y;
+					} else if (所属->isボス戦) {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
+						buf_y = py + Lp(2 + it.配置ID) + Lp(17) + it.座標Y;
+					} else {
+						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID;
+						buf_y = py + Lp(2 + it.配置ID) + it.座標Y;
+					}
+
+					it.Img->DrawRotate({ buf_x , buf_y }, 1, 0);
 				}
 
 			}
@@ -665,37 +710,6 @@ namespace SDX_BSC
 				}
 			}
 
-
-			void Drawエフェクト()
-			{
-				/*
-				static int anime = 0;
-				const int 枚数 = MEffect::エフェクト[EffectType::牙].GetSize();
-				anime++;
-
-				int a = 0;
-
-				Screen::SetBlendMode(BlendMode::Add, 255);
-
-				for (auto& it : MEffect::エフェクト)
-				{
-					const int 枚数 = it.GetSize();
-					a++;
-
-
-					it[anime / 5 % 枚数]->DrawRotate({ px - 20 + a * 30 ,py + Lp(58) }, 0.3, 0);
-				}
-
-				Screen::SetBlendMode();
-				*/
-
-				//文字エフェクト
-
-				//スキルエフェクト
-
-				//素材獲得エフェクト
-			}
-
 			void Click(double px, double py)
 			{
 				if (所属->探索状態 == ExplorerType::リザルト中)
@@ -732,7 +746,6 @@ namespace SDX_BSC
 				MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
 				MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 			}
-
 		};
 
 		class GUI_控え枠 : public GUI_Object
@@ -977,7 +990,6 @@ namespace SDX_BSC
 
 			gui_objects.push_back(&控え枠);
 			控え枠.csv_page = 8;
-
 
 			GUI_Update();
 		}

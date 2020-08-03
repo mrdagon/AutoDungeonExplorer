@@ -198,7 +198,7 @@ namespace SDX_BSC
 					Config::解像度W = std::min(Config::解像度設定 * 160, Game::最大解像度W);
 					Config::解像度H = std::min(Config::解像度設定 * 90, Game::最大解像度H);
 					Window::SetSize(Config::解像度W, Config::解像度H);
-					Window::SetFullscreen(false);
+					Window::SetFullscreen(Config::解像度W == Game::最大解像度W && Config::解像度H == Game::最大解像度H);
 					break;
 				case Config::WindowmodeType::等倍フルスクリーン:
 					full_rate = 1;
