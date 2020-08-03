@@ -4,3 +4,6 @@ AGPL ver3 なのはソースコードとlayout_data.txtファイルだけです
 
 ビルドには下のURLで配布しているライブラリが必要です
 https://ja.osdn.net/projects/dxframework/
+
+コード解説記事はこちら
+https://qiita.com/mrdagon/private/42e9ee4ae745383ca92d
