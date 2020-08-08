@@ -4,7 +4,7 @@
 #pragma once
 
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -400,7 +400,7 @@ namespace SDX_BSC
 			}
 
 			//各種ステータス
-			for (int a = 0; a < (int)StatusType::COUNT + (int)DamageType::COUNT; a++)
+			for (int a = 0; a < (int)StatusType::COUNT; a++)
 			{
 				//ステータス名
 				MFont::BMSize.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);

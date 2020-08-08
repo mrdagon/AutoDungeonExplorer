@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -113,6 +113,8 @@ namespace SDX_BSC
 					n = +1;
 					MSound::効果音[SE::ボタンクリック].Play();
 				}
+
+				if (n == 0) { return; }
 
 				int buf = 0;
 				switch (type)
@@ -301,6 +303,7 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
 			種類 = WindowType::Config;
 
 			名前 = TX::Window_名前[種類];
@@ -314,7 +317,8 @@ namespace SDX_BSC
 			最大縦 = 170;
 			縦内部幅 = 170;
 			スクロール位置 = 0;
-			isポップアップ = true;
+			is閉じるボタン = false;
+			isスクロールバー表示 = false;
 
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
@@ -342,7 +346,6 @@ namespace SDX_BSC
 			超加速.Set(TX::Config_超加速.c_str(), IconType::時間, ConfigType::超加速, this);
 			ヘルプ詳細.Set(TX::Config_ヘルプ詳細.c_str(), IconType::ヘルプ, ConfigType::ヘルプ詳細, this);
 
-			gui_objects.clear();
 
 			gui_objects.push_back(&BGM音量);
 			gui_objects.push_back(&SE音量);

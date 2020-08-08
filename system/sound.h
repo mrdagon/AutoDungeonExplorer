@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	namespace SE
 	{

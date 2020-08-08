@@ -3,9 +3,18 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 ;
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
+
+	//難易度
+	enum class GameType
+	{
+		ノーマル,
+		ハードコア,
+		デスマーチ,
+		COUNT
+	};
 
 	//◆画像、音声の管理用
 	//ユニット
@@ -325,9 +334,12 @@ namespace SDX_BSC
 		Quest,
 		//ポップアップウィンドウ
 		Recruit,
-		Config,//設定
 		Skilltree,
-		COUNT,
+		Config,
+		Newgame,
+		Continue,
+		Credit,
+		COUNT
 	};
 
 	enum class CraftType

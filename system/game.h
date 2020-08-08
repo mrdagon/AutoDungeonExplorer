@@ -3,13 +3,15 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
 	/*色んな所で使う変数*/
 	namespace Game
 	{
+		static GameType 難易度;
+
 		static int 日付 = 0;
 		static int 時間 = CV::一時間フレーム数 *6;//初回は6時スタート(仮)
 		static int ゲームスピード = 1;

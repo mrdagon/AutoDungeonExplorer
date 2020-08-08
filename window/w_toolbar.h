@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 	/*上部ツールバー*/
@@ -268,6 +268,7 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
 			gui_objects.push_back(&日付);
 			gui_objects.push_back(&時刻);
 			gui_objects.push_back(&人口);

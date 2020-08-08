@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -31,11 +31,15 @@ namespace SDX_BSC
 		W_Config Win_Config;//設定ウィンドウ
 		W_Popup Win_Title;//タイトルに戻る
 
+
+
 		//ゲーム開始時の初期化処理
 		void Init()
 		{
 			//ギルド初期化
 			Guild::P = &Guild::data;
+
+			windows.clear();
 
 			BetaInit();
 
@@ -80,6 +84,12 @@ namespace SDX_BSC
 			Win_Config.is表示 = true;
 			Win_Title.is表示 = false;
 		}
+
+		void Init(GameType 難易度)
+		{}
+
+		void Init(SaveData* セーブ)
+		{}
 
 		//デモ版用初期化処理
 		void BetaInit()
@@ -130,9 +140,6 @@ namespace SDX_BSC
 				Guild::P->完成品[CraftType(a)] = -1;
 			}
 
-			//戦術仮データ読み込み
-			Management::Load();
-
 			//求人＆初期人材ダミー
 			Guild::P->製造要員.clear();
 			Guild::P->探索要員.clear();
@@ -155,6 +162,7 @@ namespace SDX_BSC
 			{
 				Guild::P->製造要員.emplace_back();
 				Guild::P->製造要員.back().Make(a, 1, CraftType(a), "クラフト");
+				Guild::P->製造メンバー[CraftType(a % 4)].clear();
 				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Guild::P->製造要員[a]);
 			}
 
@@ -178,7 +186,6 @@ namespace SDX_BSC
 
 			Guild::P->製造力計算();
 
-			Quest::BetaQuest();
 		}
 
 		//メインループ処理
@@ -192,7 +199,7 @@ namespace SDX_BSC
 				frame++;
 				
 				Input();
-				GameProcess();
+				Process();
 				Draw();
 
 				//60fpsの調整
@@ -201,14 +208,8 @@ namespace SDX_BSC
 					if (Time::GetNowCount() - time > frame * 50 / 3.0) { break; }
 				}
 
-				if (Game::isゲーム終了 == true) { break; }
+				if (Game::isゲーム終了 == true) { Game::isゲーム終了 = false; break; }
 
-			}
-
-			if (CV::isデバッグ)
-			{
-				CSVEnd("file/layout/layout_data.txt");
-				CSVEnd("file/layout/backup.txt");
 			}
 
 			WinPosSaveAndLoad(FileMode::Write);
@@ -249,13 +250,44 @@ namespace SDX_BSC
 			Game::アニメーション時間++;
 
 			//暫定背景表示-時間で明るさ変化
-			if(Game::時間 > 22 * 360) { MSystem::背景.SetColor({ 0,0,0 }); }
-			else if (Game::時間 > 20 * 360) { MSystem::背景.SetColor({255-(Game::時間 - 20 * 360)*255/720,255 - (Game::時間 - 20 * 360) * 255 / 720,255 - (Game::時間 - 20 * 360) * 255 / 720 }); }//20~22で暗くなる
-			else if (Game::時間 < 4 * 360) { MSystem::背景.SetColor({0,0,0}); }
-			else if (Game::時間 < 6 * 360) { MSystem::背景.SetColor({ (Game::時間 - 4 * 360)*255/720,(Game::時間 - 4 * 360) * 255 / 720,(Game::時間 - 4 * 360) * 255 / 720 }); }//4~6で明るくなる
-			else { MSystem::背景.SetColor(Color::White); }
+			//if(Game::時間 > 22 * 360) { MSystem::背景.SetColor({ 0,0,0 }); }
+			//else if (Game::時間 > 20 * 360) { MSystem::背景.SetColor({255-(Game::時間 - 20 * 360)*255/720,255 - (Game::時間 - 20 * 360) * 255 / 720,255 - (Game::時間 - 20 * 360) * 255 / 720 }); }//20~22で暗くなる
+			//else if (Game::時間 < 4 * 360) { MSystem::背景.SetColor({0,0,0}); }
+			//else if (Game::時間 < 6 * 360) { MSystem::背景.SetColor({ (Game::時間 - 4 * 360)*255/720,(Game::時間 - 4 * 360) * 255 / 720,(Game::時間 - 4 * 360) * 255 / 720 }); }//4~6で明るくなる
+			//else { MSystem::背景.SetColor(Color::White); }
 
-			MSystem::背景.DrawExtend({ 0,0,Window::GetWidth(),Window::GetHeight()});
+			const int back_w = 384;
+			const int back_h = 288;
+
+			int b倍率 = (Window::GetHeight() - ToolBar.ツールバー高さ) / back_h + 1;
+			int h余り = (Window::GetHeight() - ToolBar.ツールバー高さ) % back_h - back_h;
+
+			int w余り = Window::GetWidth() - back_w * b倍率;
+			int x差分 = w余り / 2;
+			int y差分 = h余り / 2;
+
+			int 幅 = back_w * b倍率;
+			int 高 = back_h * b倍率;
+
+			//背景描画
+			if (y差分 > 0)
+			{
+				Drawing::Rect({ 0,ToolBar.ツールバー高さ,Window::GetWidth() , y差分 }, Color(113, 63, 90), true);
+				Drawing::Rect({ 0,Window::GetHeight() - y差分,Window::GetWidth() , y差分 }, Color(57, 45, 85), true);
+			}
+			y差分 += ToolBar.ツールバー高さ;
+			x差分 = (Window::GetWidth() - 幅);
+			
+			static int scr_x = 0;
+
+			MSystem::メインゲーム背景.DrawExtend({ x差分 + scr_x - 幅   ,y差分,幅,高 });
+			MSystem::メインゲーム背景.DrawExtend({ x差分 + scr_x        ,y差分,幅,高 });
+			MSystem::メインゲーム背景.DrawExtend({ x差分 + scr_x + 幅   ,y差分,幅,高 });
+			MSystem::メインゲーム背景.DrawExtend({ x差分 + scr_x + 幅 * 2,y差分,幅,高 });
+
+			MSystem::メインゲーム前景.DrawExtend({ x差分 - 幅,y差分,幅,高 });
+			MSystem::メインゲーム前景.DrawExtend({ x差分     ,y差分,幅,高 });
+			MSystem::メインゲーム前景.DrawExtend({ x差分 + 幅,y差分,幅,高 });
 
 			for (auto& it : windows)
 			{
@@ -299,7 +331,7 @@ namespace SDX_BSC
 		}
 
 		//各種処理
-		void GameProcess()
+		void Process()
 		{
 
 			UseManagement();
@@ -328,12 +360,12 @@ namespace SDX_BSC
 				}
 
 				//探索＆製造中
-				ExploreDungeon();
+				Guild::P->探索処理();
 
 				if (Game::is仕事中 == true)
 				{
-					SellItem();
-					MakeItem();
+					Guild::P->アイテム販売();
+					Guild::P->製造処理();
 				}
 
 				Game::時間++;
@@ -359,6 +391,7 @@ namespace SDX_BSC
 			MSound::効果音[SEType::探索終了].Play();
 			Game::is仕事中 = false;
 		}
+
 		//一日終了の処理
 		void EndDay()
 		{
@@ -377,24 +410,6 @@ namespace SDX_BSC
 			Guild::P->R名声.push_back(Guild::P->名声);
 
 			Guild::P->装備自動更新();
-		}
-
-		//製造処理
-		void MakeItem()
-		{
-			Guild::P->製造処理();
-		}
-
-		//販売処理
-		void SellItem()
-		{
-			Guild::P->アイテム販売();
-		}
-
-		//探索処理
-		void ExploreDungeon()
-		{
-			Guild::P->探索処理();
 		}
 
 		//投資処理
@@ -416,7 +431,10 @@ namespace SDX_BSC
 		bool WinPosSaveAndLoad(FileMode 保存or読み込み)
 		{
 			//バイナリ形式で保存
-			File file("file/save/window_pos.dat", 保存or読み込み, false);
+			std::string fname = "file/save/";
+			fname += TX::Save_システムファイル名;
+
+			File file( fname.c_str() , 保存or読み込み, false);
 
 			//ファイルが無いのに読み込もうとしたら初期データにする
 			if (file.GetFileMode() == FileMode::None)

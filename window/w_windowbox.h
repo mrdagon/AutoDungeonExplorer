@@ -3,8 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -42,15 +41,17 @@ namespace SDX_BSC
 
 		//つかみ処理用
 		Point 掴み座標;
-		bool is移動中;
-		bool is上拡縮中;
-		bool is下拡縮中;
-		bool isスクロール中;
+		bool is移動中 = false;
+		bool is上拡縮中 = false;
+		bool is下拡縮中 = false;
+		bool isスクロール中 = false;
 
 		//最前面移動用
 		bool is最前面 = false;
 
-		bool isポップアップ = false;
+		bool is閉じるボタン = true;
+		bool is固定 = false;//大きさ変更と掴み移動可能フラグ
+
 		int ポップアップ戻り値 = 0;
 
 		bool isスクロールバー表示 = true;
@@ -177,7 +178,7 @@ namespace SDX_BSC
 			MIcon::アイコン[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン
-			if (isポップアップ == false)
+			if (is閉じるボタン == true)
 			{
 				MSystem::DrawWindow({ 座標.x + 横幅 - 25,座標.y + 6 }, タイトル枠高さ - 12, タイトル枠高さ - 12, 11);
 				MIcon::アイコン[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
@@ -204,7 +205,7 @@ namespace SDX_BSC
 			Point マウス座標 = Input::mouse.GetPoint();
 
 			//ホイール操作
-			if (Rect(座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅).Hit(&Input::mouse.GetPoint()) && Input::mouse.Whell != 0 && !is下拡縮中 && !is上拡縮中 && !isスクロール中)
+			if (isスクロールバー表示 && Rect(座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅).Hit(&Input::mouse.GetPoint()) && Input::mouse.Whell != 0 && !is下拡縮中 && !is上拡縮中 && !isスクロール中)
 			{
 				スクロール位置 -= Input::mouse.Whell * 20;
 
@@ -311,7 +312,7 @@ namespace SDX_BSC
 			}
 
 			//スクロールバー掴んでいる
-			if (isスクロール中 &&
+			if (isスクロール中 && isスクロールバー表示 &&
 				マウス座標.y > 座標.y + タイトル枠高さ &&
 				マウス座標.y < 座標.y + タイトル枠高さ + 縦幅)
 			{
@@ -328,7 +329,8 @@ namespace SDX_BSC
 			}
 			
 			//閉じる判定//
-			if (abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ/2-1 &&
+			if (is閉じるボタン &&
+				abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ/2-1 &&
 				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ/2)) < タイトル枠高さ/2-1)
 			{
 				is表示 = false;
@@ -336,9 +338,9 @@ namespace SDX_BSC
 				return true;
 			}
 
-
 			//上側掴む
-			if (abs(マウス座標.y - 座標.y) < 10 &&
+			if (is固定 == false &&
+				abs(マウス座標.y - 座標.y) < 10 &&
 				マウス座標.x > 座標.x &&
 				マウス座標.x < 座標.x + 横幅) 
 			{
@@ -349,7 +351,8 @@ namespace SDX_BSC
 				return true;
 			}
 			//下側掴む
-			if (abs(マウス座標.y - (座標.y + 縦幅 + タイトル枠高さ)) < 10 &&
+			if (is固定 == false &&
+				abs(マウス座標.y - (座標.y + 縦幅 + タイトル枠高さ)) < 10 &&
 				マウス座標.x > 座標.x &&
 				マウス座標.x < 座標.x + 横幅)
 			{
@@ -359,7 +362,8 @@ namespace SDX_BSC
 				return true;
 			}
 			//タイトル掴む
-			if (マウス座標.y > 座標.y &&
+			if (is固定 == false &&
+				マウス座標.y > 座標.y &&
 				マウス座標.y < 座標.y + タイトル枠高さ &&
 				マウス座標.x > 座標.x &&
 				マウス座標.x < 座標.x + 横幅 )
@@ -371,7 +375,8 @@ namespace SDX_BSC
 			}
 
 			//スクロール掴む
-			if (マウス座標.y > 座標.y + タイトル枠高さ &&
+			if (isスクロールバー表示 &&
+				マウス座標.y > 座標.y + タイトル枠高さ &&
 				マウス座標.y < 座標.y + タイトル枠高さ + 縦幅 &&
 				マウス座標.x > 座標.x + 横幅 - 24 &&
 				マウス座標.x < 座標.x + 横幅)
@@ -418,7 +423,7 @@ namespace SDX_BSC
 		void 描画範囲(bool is全体)
 		{
 			int スクロールバー太さ = 28;
-			if (isポップアップ || isスクロールバー表示 == false) { スクロールバー太さ = 0; }
+			if ( isスクロールバー表示 == false) { スクロールバー太さ = 0; }
 
 			if (is全体)
 			{
@@ -436,6 +441,7 @@ namespace SDX_BSC
 		int ポップアップ呼び出し()
 		{
 			is表示 = true;
+			is固定 = true;
 			//裏をやや暗くする
 			Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
 
@@ -451,18 +457,18 @@ namespace SDX_BSC
 
 			while (System::Update(true,false))
 			{
-				img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
+				//img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
+				img.DrawPartExtend({ 0,0 , Window::GetWidth() , Window::GetHeight() }, { 0,0 , Window::GetWidth() * full_rate , Window::GetHeight() * full_rate });
 
 				Draw();
-				CSVDraw();
 				CheckInfo();
 				W_Drag::Draw();
+				if (isスクロールバー表示) { 共通操作(); }
 				派生操作();
 				W_Drag::Drop();
 
-
 				//☓クリック
-				if (isポップアップ == false &&
+				if (is閉じるボタン == true &&
 					abs(Input::mouse.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
 					abs(Input::mouse.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1 && 
 					Input::mouse.Left.on )
@@ -475,13 +481,11 @@ namespace SDX_BSC
 
 				if (CV::isデバッグ)
 				{
+					CSVDraw();
 					CSVCheckInput();
 				}
 
-				if (is表示 == false)
-				{
-					break;
-				}
+				if (is表示 == false){ break; }
 			}
 
 			img.Release();

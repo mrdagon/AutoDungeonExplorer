@@ -1,23 +1,15 @@
 ﻿//Copyright © 2019 (´･@･)
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
-#include <Windows.h>
-#include <windowsx.h>
-#include <string>
-#include <imm.h>
-//imm32.libが必要
 
-//SDLのアプデで不要になった
+#include <Windows.h>
 
 #undef min
 #undef max
-LRESULT CALLBACK MyEditProc(HWND, UINT, WPARAM, LPARAM);
 
-//#using "Windows.UI.Text.Core.dll"
-
-namespace SDX_BSC
+namespace SDX_ADE
 {
-	//各種テキスト、外部ファイルから読み込むやつ
+	//各種テキスト
 	//各スキル、装備、投資、ジョブ、モンスター、ダンジョン、クエストはエディタでデータ作成
 
 	//各種UIのタイトル、説明文などはここで読込
@@ -29,6 +21,10 @@ namespace SDX_BSC
 
 		std::string タイトル = "おーと だんじょん えくすぷろーら ＜仮＞ 0.1 β";
 		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
+
+		////Save data
+		const std::string Save_コンフィグファイル名 = "config.sav";
+		const std::string Save_システムファイル名 = "system.sav";
 
 		////Config Window
 		std::string Config_決定 = "決定";
@@ -110,7 +106,7 @@ namespace SDX_BSC
 		std::string Recruit_抽選 = "ランダム";
 
 		//Tool Bar
-		std::string Tool_日付 = " 日目";
+		std::string Tool_日付 = " 日";
 		std::string Tool_人口 = " 人/日";
 		std::string Tool_ヘルプ = "ヘルプ";
 		std::string Tool_停止 = "停止";

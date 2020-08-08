@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -54,6 +54,8 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
+			依頼.clear();
 			種類 = WindowType::Quest;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];
@@ -87,6 +89,8 @@ namespace SDX_BSC
 
 			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
 			{
+				//未受注依頼は表示しない、完了依頼は後ろに回す
+
 				依頼[a].位置 = { Lp(0) , Lp(1) + (Lp(3) + Lp(4)) * a , Lp(2) , Lp(3) };
 			}
 

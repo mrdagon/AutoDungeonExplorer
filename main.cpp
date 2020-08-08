@@ -9,13 +9,9 @@
 #include "window/_window.h"
 
 #include "scene/_scene.h"
-#include "save.h"
-
-#include <windows.h>
-
 
 using namespace SDX;
-using namespace SDX_BSC;
+using namespace SDX_ADE;
 
 
 void LoadAndInitData()
@@ -25,7 +21,7 @@ void LoadAndInitData()
 	auto time_t = time(nullptr);
 	Rand::Reset((int)time_t);
 
-	ConfigSaveAndLoad(FileMode::Read);
+	SDX_ADE::SaveData::ConfigSaveAndLoad(FileMode::Read);
 
 	Config::解像度W = Config::解像度設定 * 160;
 	Config::解像度H = Config::解像度設定 * 90;
@@ -54,6 +50,10 @@ void LoadAndInitData()
 	LoadHunterClass();
 	LoadMaterialClass();
 
+	Management::Load();
+
+	Quest::BetaQuest();
+
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }
 
@@ -62,24 +62,37 @@ int main(int argc, char* argv[])
 	CSVInit();
 	LoadAndInitData();
 
-	/*未返還テキスト位置*/
-	/*
-	SDL_Rect srcrect;
-	srcrect.x = 0;
-	srcrect.y = 0;
-	srcrect.w = 300;
-	srcrect.h = 300;
-	SDL_SetTextInputRect(&srcrect);
-	*/
 	Camera camera({0,0},1);
 	SDX::Camera::Set(&camera);
 
 	MainGame game;
+	MainMenu menu;
 
-	game.Init();
-	game.Main();
+	while (System::ProcessMessage())
+	{
+		menu.Init();
+		menu.Main();
 
-	ConfigSaveAndLoad(FileMode::Write);
+		if (Game::isゲーム終了) { break; }
+
+		if (menu.セーブ == nullptr)
+		{
+			game.Init(menu.難易度);
+		} else {
+			game.Init(menu.セーブ);
+		}
+
+		game.Init();
+		game.Main();
+	}
+
+	if (CV::isデバッグ)
+	{
+		CSVEnd("file/layout/layout_data.txt");
+		CSVEnd("file/layout/backup.txt");
+	}
+
+	SDX_ADE::SaveData::ConfigSaveAndLoad(FileMode::Write);
 
 	System::End();//ライブラリの終了処理
 	return 0;

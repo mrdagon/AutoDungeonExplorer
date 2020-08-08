@@ -4,7 +4,7 @@
 #pragma once
 #include <stdexcept>
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 	//レイアウトCSV用変数

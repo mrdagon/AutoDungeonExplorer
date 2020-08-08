@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -326,6 +326,7 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
 			種類 = WindowType::Skilltree;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];
@@ -338,8 +339,6 @@ namespace SDX_BSC
 			縦内部幅 = 縦幅;
 			スクロール位置 = 0;
 			isスクロールバー表示 = false;
-
-			gui_objects.clear();
 			
 			編集中ギルメン.親 = this;
 			スキルポイント.親 = this;

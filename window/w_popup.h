@@ -3,11 +3,11 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
-	/*ポップアップウィンドウ用*/
+	/*汎用２択ポップアップウィンドウ用*/
 	class W_Popup : public WindowBox
 	{
 	private:
@@ -57,6 +57,7 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
 			種類 = WindowType::Guild;
 
 			名前 = "確認";
@@ -68,7 +69,8 @@ namespace SDX_BSC
 			最大縦 = 170;
 			縦内部幅 = 170;
 			スクロール位置 = 0;
-			isポップアップ = true;
+			is閉じるボタン = false;
+			isスクロールバー表示 = false;
 
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;

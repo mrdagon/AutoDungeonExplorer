@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -30,12 +30,10 @@ namespace SDX_BSC
 
 		//●基礎ステータス
 		EnumArray<int, StatusType> 基礎ステ;
-		//EnumArray<int,DamageType> 基礎防御;
 		//●装備とパッシブ補正後
 		EnumArray<int, StatusType> 補正ステ;
-		//EnumArray<int, DamageType> 補正防御;
-		//●計算後ステータス、戦闘中ステータス、パッシブ計算
 		int 現在HP = 0;
+
 		//スキルクールダウン
 		double 合計クールダウン[CV::最大Aスキル数];
 		double クールダウン速度[CV::最大Aスキル数];
@@ -75,7 +73,7 @@ namespace SDX_BSC
 		double 素材剥取量 = 0.0;
 		double 素材収集量 = 0.0;
 
-		//攻撃受け時用の一時変数
+		//攻撃受け側の一時変数
 		int Hit数 = 0;
 
 		//ギルメンは基礎ステ+装備
@@ -135,10 +133,10 @@ namespace SDX_BSC
 
 			switch (ダメージ種)
 			{
-			case SDX_BSC::DamageType::物理:
+			case SDX_ADE::DamageType::物理:
 				return 補正ステ[StatusType::物防] + バフ[t].効果;
 				break;
-			case SDX_BSC::DamageType::魔法:
+			case SDX_ADE::DamageType::魔法:
 				return 補正ステ[StatusType::魔防] + バフ[t].効果;
 				break;
 			default:
@@ -477,7 +475,8 @@ namespace SDX_BSC
 
 			//スキル処理
 			ASkillEffect ase(スキル);
-			//パッシブ補正、威力命中補正、追加効果追加等
+
+			//スキル使用者のパッシブ補正、威力命中補正、追加効果追加等
 			Pスキル条件チェック(PSkillTime::スキル使用時, &ase, 味方, 敵);
 			if (ase.種類 == ASkillType::回復)
 			{
@@ -494,6 +493,8 @@ namespace SDX_BSC
 				//MSound::効果音[SE::補助].Play();
 				Pスキル条件チェック(PSkillTime::補助スキル使用時, &ase, 味方, 敵);
 			}
+
+			//スキル受ける側のパッシブ補正
 
 			//対象選択
 			std::vector<Fighter*> 対象;

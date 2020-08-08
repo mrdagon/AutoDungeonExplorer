@@ -4,6 +4,8 @@
 #pragma once
 #include <SDXFramework.h>
 
+#include <filesystem>
+
 #include "material.h"
 #include "active_skill.h"
 #include "passive_skill.h"

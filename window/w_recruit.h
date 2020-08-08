@@ -3,10 +3,9 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-#include <locale>
 #include <codecvt>
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -38,7 +37,7 @@ namespace SDX_BSC
 
 					wstr.insert(親->挿入位置,L"|");
 					wstr.insert(親->挿入位置, 親->conv.from_bytes(System::textComposition));
-
+					
 					str = 親->conv.to_bytes(wstr);
 
 					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { str.c_str() });
@@ -196,6 +195,7 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
 			種類 = WindowType::Recruit;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];

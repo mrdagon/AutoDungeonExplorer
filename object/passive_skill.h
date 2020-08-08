@@ -4,7 +4,7 @@
 #pragma once
 #include "../system/enum_type.h"
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 

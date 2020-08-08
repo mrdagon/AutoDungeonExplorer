@@ -3,13 +3,13 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	//各種定数
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		constexpr bool isデバッグ = true;
+		constexpr bool isデバッグ = false;
 
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 3;

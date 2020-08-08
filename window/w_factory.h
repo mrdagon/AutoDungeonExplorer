@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -164,7 +164,7 @@ namespace SDX_BSC
 			最小縦 = 125;
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
-			スクロール位置 = 0;
+			スクロール位置 = 0;;
 
 			for (int a = 0; a < (int)CraftType::COUNT; a++)
 			{

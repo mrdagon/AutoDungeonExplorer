@@ -2,10 +2,8 @@
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
-#include <SDXFramework.h>
-#include "../System/enum_type.h"
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 	//画像、音声、フォント
@@ -298,21 +296,24 @@ namespace SDX_BSC
 
 		static void Load()
 		{
-			//std::string f1 = "file/font/NotoSans-Regular.ttf";
-			//std::string f1b = "file/font/NotoSans-Bold.ttf";
 			std::string f1 = "file/font/mplus-1m-Regular.ttf";
 			std::string f1b = "file/font/mplus-1m-Bold.ttf";
-			//f1 = "file/font/mplus-1m-Regular.ttf";
-			//f1b = "file/font/mplus-1m-Bold.ttf";
+
+			f1 = "file/font/PixelMplus10-Regular.ttf";
+			f1b = "file/font/PixelMplus10-Regular.ttf";
+
+			//f1b = "file/font/PixelMplus12-Bold.ttf";
+
+
+			SSize.Load(f1.c_str(), 14 , 2);
+			MSize.Load(f1.c_str(), 18 , 3);
+			LSize.Load(f1.c_str(), 24 , 4);
+			BSSize.Load(f1b.c_str(), 14 , 2);
+			BMSize.Load(f1b.c_str(), 18 , 3);
+			BLSize.Load(f1b.c_str(), 24 , 4);
+
+			//0を０(オー)にする
 			bool iszeroswap = true;
-
-			SSize.Load(f1.c_str(), 14);
-			MSize.Load(f1.c_str(), 18);
-			LSize.Load(f1.c_str(), 24);
-			BSSize.Load(f1b.c_str(), 14);
-			BMSize.Load(f1b.c_str(), 18);
-			BLSize.Load(f1b.c_str(), 24);
-
 			if (iszeroswap)
 			{
 				SSize.SetImage("0", SSize.GetImage("O"));
@@ -438,32 +439,38 @@ namespace SDX_BSC
 	namespace MSystem
 	{
 		ImagePack ウィンドウ枠;
-		Image 背景;
 		Image ダンジョン背景[5];
-		Image 題字;
-		Image はじめから;
-		Image つづきから;
-		Image しゅうりょう;
+
+		Image メインゲーム前景;
+		Image メインゲーム背景;
+
+		Image タイトル背景;
+		Image タイトル前景;
+
+		Image 吹き出し;
 
 		EnumArray<Image, CraftType> クラフト台;
 
 		static void Load()
 		{
 			ウィンドウ枠.Load("file/system/window_skin.png", 60, 10, 6);
-			背景.Load("file/system/town02.png");
+
 			ダンジョン背景[0].Load("file/system/dunback00.png");
 			ダンジョン背景[1].Load("file/system/dunback01.png");
 			ダンジョン背景[2].Load("file/system/facback.png");
-
-			題字.Load("file/logo/titke_kana.png");
-			はじめから.Load("file/logo/hajime_b.png");
-			つづきから.Load("file/logo/tuduki_b.png");
-			しゅうりょう.Load("file/logo/syuuryou_b.png");
 
 			クラフト台[CraftType::鍛造].Load("file/system/craft00.png");
 			クラフト台[CraftType::裁縫].Load("file/system/craft01.png");
 			クラフト台[CraftType::木工].Load("file/system/craft02.png");
 			クラフト台[CraftType::魔術].Load("file/system/craft03.png");
+
+			メインゲーム背景.Load("file/title/background.png");
+			メインゲーム前景.Load("file/title/middleground.png");
+
+			タイトル背景.Load("file/title/background2.png");
+			タイトル前景.Load("file/title/middleground2.png");
+
+			吹き出し.Load("file/system/huki_01.png");
 		}
 
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
@@ -624,7 +631,6 @@ namespace SDX_BSC
 			}
 		}
 	}
-
 
 	//全読み込み
 	static void LoadAsset()

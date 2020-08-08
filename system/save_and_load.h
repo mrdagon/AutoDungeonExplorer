@@ -3,44 +3,100 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+#include <filesystem>
+
+namespace SDX_ADE
 {
 	using namespace SDX;
 
-	bool ConfigSaveAndLoad(FileMode 保存or読み込み)
+	class SaveData
 	{
-		//バイナリ形式で保存
-		File file("file/save/config.sav", 保存or読み込み, false);
+	public:
+		//見出し部分の読み込み
+		int id;
+		std::string ファイル名;
 
-		file.ReadWrite(Config::BGM設定);
-		file.ReadWrite(Config::SE設定);
-		file.ReadWrite(Config::解像度設定);
+		bool isクリア;
+		double プレイ時間;//単位は分
+		int 日数;
+		int 最深フロア;
+		GameType 難易度;
+		ID_Job メインパーティ職業[CV::パーティ人数];
 
-		return false;
-	}
+		//保存読込はMainGameClassの関数で実装
 
+		SaveData()
+		{}
 
-	bool SaveAndLoad(FileMode 保存or読み込み, int 読み込みスロット番号)
-	{
-		//バイナリ形式で保存
-		File file("file/save/save.dat", 保存or読み込み, false);
-
-		//ファイルが無いのに読み込もうとしたら初期データにする
-		if (file.GetFileMode() == FileMode::None)
+		SaveData(int id, std::string& ファイル名)
 		{
-			return false;
+			Load見出しデータ(id , ファイル名);
 		}
 
-		//古いバージョンのセーブデータを読み込む時のなんちゃら用
-		double version = CV::バージョン;
-		file.ReadWrite(version);
-
-		//version 0.01以下は無効
-		if (version < CV::バージョン)
+		static bool Getセーブデータinフォルダ(std::vector<std::string>&ファイル名)
 		{
-			return false;
+			//フォルダ内のセーブデータファイルをチェックして
+			const std::string save_folder = "./file/save";
+
+			for (const std::filesystem::directory_entry& it : std::filesystem::directory_iterator( save_folder)) {
+
+				//システムとコンフィグセーブデータはスキップ
+				if (it.path().filename().string() == TX::Save_コンフィグファイル名 || it.path().filename().string() == TX::Save_システムファイル名 )
+				{
+					continue;
+				}
+
+				ファイル名.push_back( it.path().filename().string() );
+			}
+
+			return true;
 		}
 
-		return true;
-	}
+		//
+		bool Load見出しデータ(int id , std::string& ファイル名)
+		{
+			//セーブデータ先頭の見出しデータだけ読み込む
+			this->id = id;
+			this->ファイル名 = ファイル名;
+			プレイ時間 = 1000;
+			日数 = 100;
+			最深フロア = 99;
+			難易度 = GameType::ノーマル;
+			isクリア = true;
+
+			for (int a = 0; a < CV::パーティ人数; a++)
+			{
+				メインパーティ職業[a] = a;
+			}
+
+			return true;
+		}
+
+		//コンフィグデータ
+		static bool ConfigSaveAndLoad(FileMode 保存or読み込み)
+		{
+			//バイナリ形式で保存
+			std::string fname = "file/save/";
+			fname += TX::Save_コンフィグファイル名;
+
+			File file( fname.c_str() , 保存or読み込み, false);
+
+			file.ReadWrite(Config::BGM設定);
+			file.ReadWrite(Config::SE設定);
+			file.ReadWrite(Config::解像度設定);
+
+			return true;
+		}
+
+		//各種累計記録など
+		static bool SystemSaveAndLoad(FileMode 保存or読み込み)
+		{
+			std::string fname = "file/save/";
+			fname += TX::Save_システムファイル名;
+
+			File file( fname.c_str() , 保存or読み込み, false);
+
+			return true;
+		}
+	};	
 }

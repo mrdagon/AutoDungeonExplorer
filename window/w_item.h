@@ -3,7 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
@@ -59,6 +59,8 @@ namespace SDX_BSC
 
 		void Init()
 		{
+			gui_objects.clear();
+			タブ.clear();
 			種類 = WindowType::Item;
 			名前 = TX::Window_名前[種類];
 			略記 = TX::Window_略記[種類];

@@ -1,4 +1,4 @@
-namespace SDX_BSC
+namespace SDX_ADE
 {
 	using namespace SDX;
 
