@@ -16,19 +16,26 @@ namespace SDX_ADE
 
 		constexpr int 最大控え人数 = 35;
 
+		constexpr int 最大製造人数 = 12;//部門毎の最大製造人数
+
 		constexpr int 最大素材種 = 100;
 		constexpr int 最大素材レシピ = 10;//1素材から作れるアイテムの種類数
 
 		constexpr int 最大収集種 = 5;//1ダンジョンに設定可能な収集アイテム最大数
 
-		//探索エフェクト用
+		//探索エフェクト、待ち時間用
 		constexpr int 探索移動速度 = 2;
-		constexpr int 収集待機A = 120;
+		constexpr int 収集待機A = 160;//素材が流れてくる時間
+		constexpr int 収集待機B = 200;//素材収集中の時間
 		constexpr int 全滅暗さ = 128;
 
-		constexpr int 戦闘後待ち時間 = 60;
+		constexpr int 戦闘開始後待ち時間 = 120;
+		constexpr int 戦闘1ターン待ち時間 = 40;
+		constexpr int 戦闘終了後待ち時間 = 120;
 
-
+		constexpr int 探索開始時移動時間 = 60;//移動アニメ用
+		constexpr int 探索開始時待ち時間 = 120;
+		constexpr int 撤退後待ち時間 = 120;
 
 		//外部データ最大数//
 		constexpr int 装備種 = 240;
@@ -55,8 +62,7 @@ namespace SDX_ADE
 
 		constexpr int 要求経験値 = 200;
 
-		constexpr int 一時間フレーム数 = 360;
+		constexpr int 一時間フレーム数 = 720;
 
-		constexpr int 戦闘基本ウェイト = 20;
 	}
 }

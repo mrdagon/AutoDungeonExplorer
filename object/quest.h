@@ -10,8 +10,6 @@ namespace SDX_ADE
 	/*依頼*/
 	class Quest
 	{
-
-
 	public:
 		static std::vector<Quest> data;
 
@@ -23,7 +21,7 @@ namespace SDX_ADE
 		bool isメイン = false;//main or sub
 		int 達成度 = 0;
 		int 条件数値;//作る装備の数、倒すモンスターの数など
-		int 条件番号;//攻略対象があるクエスト用、ダンジョンIDやらボスIDやら
+		int 条件ID;//攻略対象があるクエスト用、ダンジョンIDやらボスIDやら
 		bool is受注;
 		bool is完了 = false;
 
@@ -33,7 +31,7 @@ namespace SDX_ADE
 		int 報酬名誉 = 0;
 
 		Quest(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注):
-			名前(名前),種類(種類),条件数値(条件数値),条件番号(条件番号),is受注(is受注)
+			名前(名前),種類(種類),条件数値(条件数値),条件ID(条件番号),is受注(is受注)
 		{
 			id = (int)data.size();
 		}
@@ -59,6 +57,11 @@ namespace SDX_ADE
 			data.emplace_back(名前,種類, 条件番号, 条件数値, is受注);
 		}
 
+		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+			//達成度、is受注、is完了
+		}
+
 		/*idはボスIDやら倒した敵数やら*/
 		bool 達成度計算(int id)
 		{
@@ -80,7 +83,7 @@ namespace SDX_ADE
 				達成度++;
 				break;
 			case QuestType::固定ボス討伐://特定ダンジョンのボス討伐
-				if (id == 条件番号)
+				if (id == 条件ID)
 				{
 					達成度++;
 				}

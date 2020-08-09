@@ -28,6 +28,7 @@ namespace SDX_ADE
 				つづきから,
 				せってい,
 				クレジット,
+				アンケート,
 				おしまい,
 				COUNT
 			};
@@ -82,10 +83,12 @@ namespace SDX_ADE
 					親->Win_Credit.Init();
 					親->Win_Credit.ポップアップ呼び出し();
 					break;
-				case MenuType::おしまい:
+				case MenuType::アンケート:
 					親->Win_Scenario.Init(0);
 					親->Win_Scenario.ポップアップ呼び出し();
-					//Game::isゲーム終了 = true;
+					break;
+				case MenuType::おしまい:
+					Game::isゲーム終了 = true;
 					break;
 				}
 			}
@@ -96,7 +99,7 @@ namespace SDX_ADE
 			}
 		};
 
-		std::array<GUI_ボタン, 5> ボタン;
+		std::array<GUI_ボタン, 6> ボタン;
 	public:
 		const int csv_page = 24;
 		bool isゲーム開始;
@@ -126,8 +129,11 @@ namespace SDX_ADE
 			ボタン[3].文字 = "くれじっと";
 			ボタン[3].id = GUI_ボタン::MenuType::クレジット;
 
-			ボタン[4].文字 = "しゅうりょう";
-			ボタン[4].id = GUI_ボタン::MenuType::おしまい;
+			ボタン[4].文字 = "あんけーと";
+			ボタン[4].id = GUI_ボタン::MenuType::アンケート;
+
+			ボタン[5].文字 = "しゅうりょう";
+			ボタン[5].id = GUI_ボタン::MenuType::おしまい;
 		}
 
 		void GUI_Init()
@@ -145,6 +151,8 @@ namespace SDX_ADE
 		//メインループ処理
 		void Main()
 		{
+			MMusic::BGM[BGMType::タイトル].Play();
+
 			double frame = 0;
 			double time = Time::GetNowCount();
 
@@ -207,11 +215,12 @@ namespace SDX_ADE
 
 
 			static int scr_x = 0;
+
 			//背景描画
 			if (y差分 > 0)
 			{
-				Drawing::Rect({ 0,0,Window::GetWidth() , y差分 }, Color(116, 112, 41), true);
-				Drawing::Rect({ 0,Window::GetHeight()-y差分,Window::GetWidth() , y差分 }, Color(75, 57, 22), true);
+				Drawing::Rect({ 0,0,Window::GetWidth() , y差分 }, Color(107, 93, 80), true);
+				Drawing::Rect({ 0,Window::GetHeight()-y差分,Window::GetWidth() , y差分 }, Color(58, 50, 43), true);
 			}
 
 			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x - 幅   ,y差分,幅,高 });

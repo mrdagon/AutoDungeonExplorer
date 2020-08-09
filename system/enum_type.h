@@ -424,7 +424,6 @@ namespace SDX_ADE
 		ザコ,
 		素材,
 		ボス,
-		大ボス,
 		財宝,//お金や名誉
 		地図,
 		COUNT

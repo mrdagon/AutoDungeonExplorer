@@ -31,9 +31,10 @@ namespace SDX_ADE
 		W_Config Win_Config;//設定ウィンドウ
 		W_Popup Win_Title;//タイトルに戻る
 
-
-
 		//ゲーム開始時の初期化処理
+		MainGame()
+		{}
+
 		void Init()
 		{
 			//ギルド初期化
@@ -76,7 +77,7 @@ namespace SDX_ADE
 			Win_Dungeon.is表示 = true;
 			Win_Party.is表示 = true;		
 
-			WinPosSaveAndLoad(FileMode::Read);
+			WindowSaveLoad(FileMode::Read);
 
 			ToolBar.SetWindow(windows);
 
@@ -212,7 +213,7 @@ namespace SDX_ADE
 
 			}
 
-			WinPosSaveAndLoad(FileMode::Write);
+			WindowSaveLoad(FileMode::Write);
 		}
 
 		//操作処理
@@ -354,7 +355,7 @@ namespace SDX_ADE
 				{
 					EndWork();
 				}
-				if (Game::時間 >= 360 * 24) 
+				if (Game::時間 >= Game::日没時間) 
 				{
 					EndDay();
 				}
@@ -427,8 +428,45 @@ namespace SDX_ADE
 		}
 
 		//●セーブ処理
+		bool Save(SaveData* セーブデータ)
+		{
+			File file(セーブデータ->ファイル名.c_str() ,FileMode::Write, false);
+
+			//ヘッダー部分セーブ
+
+			//
+			Game::SaveLoad(file, FileMode::Write);
+			Dungeon::SaveLoad(file, FileMode::Write);
+			EventLog::SaveLoad(file, FileMode::Write);
+			Item::SaveLoad(file, FileMode::Write);
+			Management::SaveLoad(file, FileMode::Write);
+			Quest::SaveLoad(file, FileMode::Write);
+			Effect::SaveLoad(file, FileMode::Write);
+			Guild::P->SaveLoad(file, FileMode::Write);
+			WindowSaveLoad(FileMode::Write);
+		}
+
+		bool Load(SaveData* セーブデータ)
+		{
+			File file(セーブデータ->ファイル名.c_str(), FileMode::Read, false);
+
+			//ヘッダー部分ロードスキップ
+
+			//
+			Game::SaveLoad(file, FileMode::Read);
+			Dungeon::SaveLoad(file, FileMode::Read);
+			EventLog::SaveLoad(file, FileMode::Read);
+			Item::SaveLoad(file, FileMode::Read);
+			Management::SaveLoad(file, FileMode::Read);
+			Quest::SaveLoad(file, FileMode::Read);
+			Effect::SaveLoad(file, FileMode::Read);
+			Guild::P->SaveLoad(file, FileMode::Read);
+			WindowSaveLoad(FileMode::Read);
+
+		}
+
 		//ウィンドウ位置保存
-		bool WinPosSaveAndLoad(FileMode 保存or読み込み)
+		bool WindowSaveLoad(FileMode 保存or読み込み)
 		{
 			//バイナリ形式で保存
 			std::string fname = "file/save/";

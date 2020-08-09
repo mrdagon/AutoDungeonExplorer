@@ -488,6 +488,7 @@ namespace SDX_ADE
 				if (is表示 == false){ break; }
 			}
 
+			Input::mouse.Left.on = false;
 			img.Release();
 
 			return ポップアップ戻り値;

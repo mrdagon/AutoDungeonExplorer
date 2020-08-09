@@ -45,7 +45,7 @@ namespace SDX_ADE
 			int 獲得素材[CV::最大素材種];
 
 			double 獲得経験値;
-			int 獲得財宝数;
+			int 獲得石版数;
 			int 獲得地図数;
 			int 撃破ボス数;
 
@@ -96,12 +96,12 @@ namespace SDX_ADE
 				発見物 = nullptr;
 
 				探索状態 = ExplorerType::移動中;
-				待ち時間 = 60;
+				待ち時間 = CV::探索開始時待ち時間;
 
 				//獲得素材数リセット
 				獲得経験値 = 0;
 				for (auto& it : 獲得素材) { it = 0; }
-				獲得財宝数 = 0;
+				獲得石版数 = 0;
 				獲得地図数 = 0;
 				撃破ボス数 = 0;
 
@@ -353,7 +353,7 @@ namespace SDX_ADE
 				{
 					発見物 = nullptr;
 					探索状態 = ExplorerType::移動中;
-					待ち時間 = 60;
+					待ち時間 = CV::収集待機B;
 				}
 			}
 
@@ -385,9 +385,9 @@ namespace SDX_ADE
 
 					if (発見素材種 == CraftType::木工)
 					{
-						素材ID = Rand::Coin(レア素材確率) ? 探索先->レア伐採素材[id] : 探索先->伐採素材[id];
+						素材ID = 探索先->伐採素材[id];
 					} else {
-						素材ID = Rand::Coin(レア素材確率) ? 探索先->レア採掘素材[id] : 探索先->採掘素材[id];
+						素材ID = 探索先->採掘素材[id];
 					}
 
 					獲得素材[素材ID] += 素材数;
@@ -431,6 +431,7 @@ namespace SDX_ADE
 				//敵の生成
 				if (isボス戦 == true)
 				{
+					MMusic::BGM[BGMType::通常ボス].Play();
 					敵数 = 1;
 					魔物.emplace_back(探索先->ボスモンスター[0]);
 				}
@@ -462,6 +463,8 @@ namespace SDX_ADE
 				{
 					it->戦闘開始(敵, 味方);
 				}
+
+				戦闘中行動待機 = CV::戦闘開始後待ち時間;
 			}
 
 			void 戦闘処理()
@@ -498,8 +501,7 @@ namespace SDX_ADE
 					for (auto& it : 敵)
 					{
 						it->ターン経過();
-					}
-
+					}				
 				}
 
 				for (auto& it : 魔物)
@@ -513,7 +515,7 @@ namespace SDX_ADE
 
 
 				戦闘終了判定();
-				戦闘中行動待機 = 15;
+				戦闘中行動待機 = CV::戦闘1ターン待ち時間;
 			}
 
 			bool 戦闘終了判定()
@@ -563,6 +565,12 @@ namespace SDX_ADE
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ボス:
+					if (Config::isボス戦時等速 == true)
+					{
+						Game::ゲームスピード = 1;
+					}
+
+					MMusic::BGM[BGMType::探検中].Play();
 					探索先->isボス生存 = false;
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
 					撃破ボス数++;
@@ -596,11 +604,16 @@ namespace SDX_ADE
 				}
 
 				探索状態 = ExplorerType::収集中;
-				待ち時間 = CV::戦闘後待ち時間;
+				待ち時間 = CV::戦闘終了後待ち時間;
 			}
 
 			void 戦闘敗北()
 			{
+				if (探索先->部屋[部屋ID].種類 == RoomType::ボス)
+				{
+					MMusic::BGM[BGMType::探検中].Play();
+				}
+
 				int ザコ討伐数 = 0;
 				for (auto& it : 敵)
 				{
@@ -636,7 +649,7 @@ namespace SDX_ADE
 			void 財宝獲得()
 			{
 				探索先->発見財宝++;
-				獲得財宝数++;
+				獲得石版数++;
 				発見物 = &MIcon::アイコン[IconType::宝箱];
 			}
 
@@ -664,7 +677,7 @@ namespace SDX_ADE
 
 				探索状態 = ExplorerType::撤退中;
 				探索先->部屋[部屋ID].is入場 = false;
-				待ち時間 = 120;
+				待ち時間 = CV::撤退後待ち時間;
 			}
 
 			void 撤退処理()
@@ -690,6 +703,12 @@ namespace SDX_ADE
 					EventLog::Add(0, Game::日付, LogDetailType::ボス発見, 探索先->ID);
 				}
 			}
+
+			bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+			{
+
+			}
+
 		};
 
 		int 素材数[CV::最大素材種];
@@ -718,7 +737,7 @@ namespace SDX_ADE
 		int 集客力 = 100;//10で割った数値が一日の来客期待値
 
 		//キャラクリ関係
-		std::string 求人名前 = "名前を入力して下さい";
+		std::string 求人名前 = "ナナーシ";
 		ID_Job 求人職業 = 0;
 
 		//経営戦術効果
@@ -758,6 +777,7 @@ namespace SDX_ADE
 		EnumArray < bool, ItemType> is新開発タブ;
 
 		//各種記録_Record
+		int 総石版;
 		int 総人数;
 		int 総販売;
 		double 総売上;
@@ -1212,6 +1232,10 @@ namespace SDX_ADE
 			}
 		}
 
+		bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+
+		}
 	};
 
 	Guild* Guild::P;

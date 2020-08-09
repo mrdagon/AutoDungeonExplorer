@@ -153,6 +153,11 @@ namespace SDX_ADE
 			//製造、全部門技術Lv上昇が何回でも、素材消費減少が一回だけ。
 			//探索、未探索部屋発見率＋が何回でも使える。探索パーティ＋１が一回だけ。
 		}
+
+		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+			//増加資金と使用回数
+		}
 	};
 
 	std::vector<Management> Management::data;

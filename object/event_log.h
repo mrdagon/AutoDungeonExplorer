@@ -64,6 +64,11 @@ namespace SDX_ADE
 			else if ((int)種類 <= (int)LogDetailType::レア装備製造) { 系統 = LogType::製造; }
 		}
 
+		static void SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+
+		}
+
 		int ギルド;
 		int 日付;
 		int 参照ID;//戦術ID、人材ID、ダンジョンID、アイテムID、スキルIDなど

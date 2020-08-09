@@ -8,6 +8,18 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+	/*ダンジョンの部屋*/
+	class Room
+	{
+	private:
+	public:
+		Room() {}
+
+		RoomType 種類;
+		bool is探索 = false;//探索し終わったかどうか
+		bool is入場 = false;//同時に２パーティ探索するのを防ぐ
+		int 地図 = -1;//0以上なら接続先MapIndex
+	};
 
 	/*ダンジョン*/
 	class Dungeon
@@ -91,9 +103,7 @@ namespace SDX_ADE
 			for (int a = 0; a < CV::最大収集種; a++)
 			{
 				伐採素材[a] = 0;
-				レア伐採素材[a] = 4;
 				採掘素材[a] = 2;
-				レア採掘素材[a] = 6;
 			}
 
 		}
@@ -141,10 +151,24 @@ namespace SDX_ADE
 
 		int 採掘素材[CV::最大収集種];
 		int 伐採素材[CV::最大収集種];
-		int レア採掘素材[CV::最大収集種];
-		int レア伐採素材[CV::最大収集種];
 
 		double レア収集率 = 0.1;
+
+		static bool SaveLoad(File& ファイル , FileMode 読み書きモード)
+		{
+			//Loadなら再読み込み
+
+			//部屋状態
+
+
+			//
+
+			//is発見;
+			//is新規;
+			//isボス生存
+			//isボス発見
+		}
+
 	};
 
 	std::vector<Dungeon> Dungeon::data;

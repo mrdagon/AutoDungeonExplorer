@@ -29,8 +29,8 @@ namespace SDX_ADE
 		public:
 			void Draw派生(double px, double py)
 			{
-				int jikan = Game::時間 / 360;
-				int hun = (Game::時間 / 6 )% 60;
+				int jikan = Game::時間 / CV::一時間フレーム数;
+				int hun = (Game::時間 / (CV::一時間フレーム数 / 60) )% 60;
 				Color 文字色 = Color::White;
 				if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 文字色 = Color::Blue; }
 				else if (Game::is仕事中 == true) { 文字色 = {255,128,128}; }

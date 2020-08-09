@@ -35,6 +35,7 @@ namespace SDX_ADE
 		static int 始業時間 = CV::一時間フレーム数 * 8;//8時
 		static int 終業時間 = CV::一時間フレーム数 * 20;//18時
 		static int 就寝時間 = CV::一時間フレーム数 * 22;//22時
+		static int 日没時間 = CV::一時間フレーム数 * 24;//22時
 
 		static bool is仕事中;
 
@@ -42,6 +43,11 @@ namespace SDX_ADE
 
 		//UI関連の変数
 		static EnumArray<CraftType, ItemType> 対応レシピ;
+
+		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+
+		}
 	};
 
 	namespace Config

@@ -303,7 +303,9 @@ namespace SDX_ADE
 			f1b = "file/font/PixelMplus10-Regular.ttf";
 
 			//f1b = "file/font/PixelMplus12-Bold.ttf";
-
+			//f1 = "file/font/JF-Dot-k14.ttf";
+			//f1b = "file/font/JF-Dot-k14.ttf";
+			
 
 			SSize.Load(f1.c_str(), 14 , 2);
 			MSize.Load(f1.c_str(), 18 , 3);
@@ -375,15 +377,13 @@ namespace SDX_ADE
 	{
 		EnumArray<Music, BGMType> BGM;
 
-
 		static void Load()
 		{
 			BGM[BGMType::準備中].Load("file/music/furattoguild.mp3");
 			BGM[BGMType::探検中].Load("file/music/komichiwokakenukete.mp3");
 			BGM[BGMType::通常ボス].Load("file/music/kinokomonchaku.mp3");
 			BGM[BGMType::エリアボス].Load("file/music/wazawainobisyu.mp3");
-			BGM[BGMType::タイトル].Load("file/music/furattoguild.mp3");
-
+			BGM[BGMType::タイトル].Load("file/music/ouzokunokeifu.mp3");
 
 			for (auto& it : BGM)
 			{
@@ -464,11 +464,11 @@ namespace SDX_ADE
 			クラフト台[CraftType::木工].Load("file/system/craft02.png");
 			クラフト台[CraftType::魔術].Load("file/system/craft03.png");
 
-			メインゲーム背景.Load("file/title/background.png");
-			メインゲーム前景.Load("file/title/middleground.png");
+			メインゲーム背景.Load("file/title/background4.png");
+			メインゲーム前景.Load("file/title/middleground6.png");
 
-			タイトル背景.Load("file/title/background2.png");
-			タイトル前景.Load("file/title/middleground2.png");
+			タイトル背景.Load("file/title/background5.png");
+			タイトル前景.Load("file/title/middleground5.png");
 
 			吹き出し.Load("file/system/huki_01.png");
 		}

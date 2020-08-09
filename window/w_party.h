@@ -421,7 +421,7 @@ namespace SDX_ADE
 				Screen::SetBright(Color::White);
 
 				MSystem::DrawWindow({ px - 10 ,py - 10 }, 10 , (int)位置.GetH() + 20 , 11);
-
+				//MSystem::DrawWindow({ px + 位置.GetW() ,py - 10 }, 28, (int)位置.GetH() + 20, 11);
 			}
 
 			void Draw背景(double px, double py)
@@ -455,6 +455,11 @@ namespace SDX_ADE
 			{
 				int 向き = 0;
 				double サイズ = 2;
+				//探索直後は画面外から走ってくる
+				if (Game::時間 < Game::始業時間 + CV::探索開始時移動時間)
+				{
+					px += (Game::時間 - Game::始業時間 - CV::探索開始時移動時間) * 3;
+				}
 
 				switch (所属->探索状態)
 				{
@@ -687,7 +692,7 @@ namespace SDX_ADE
 					cnt++;
 				}
 				//宝箱
-				for (int a = 0; a < 所属->獲得財宝数; a++)
+				for (int a = 0; a < 所属->獲得石版数; a++)
 				{
 					MIcon::アイコン[IconType::宝箱].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;

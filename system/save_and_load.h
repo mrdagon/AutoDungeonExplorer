@@ -30,7 +30,7 @@ namespace SDX_ADE
 
 		SaveData(int id, std::string& ファイル名)
 		{
-			Load見出しデータ(id , ファイル名);
+			Loadヘッダー(id , ファイル名);
 		}
 
 		static bool Getセーブデータinフォルダ(std::vector<std::string>&ファイル名)
@@ -53,7 +53,7 @@ namespace SDX_ADE
 		}
 
 		//
-		bool Load見出しデータ(int id , std::string& ファイル名)
+		bool Loadヘッダー(int id , std::string& ファイル名)
 		{
 			//セーブデータ先頭の見出しデータだけ読み込む
 			this->id = id;

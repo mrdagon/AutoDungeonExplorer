@@ -172,7 +172,6 @@ namespace SDX_ADE
 		std::vector<BattleEffect> アニメ[CV::最大パーティ数];
 		std::vector<MaterialEffect> 素材[CV::最大パーティ数];
 
-
 		template <class T>
 		void UpdateAndDelete(std::vector<T> &エフェクト)
 		{
@@ -182,6 +181,11 @@ namespace SDX_ADE
 				[](T& it) ->bool { return it.Update(); });
 			
 			エフェクト.erase(it_del, エフェクト.end());
+		}
+
+		void SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+
 		}
 	}
 }

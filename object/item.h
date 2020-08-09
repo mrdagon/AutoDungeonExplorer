@@ -60,6 +60,14 @@ namespace SDX_ADE
 			this->ステ[StatusType::物防] = 物防;
 			this->ステ[StatusType::魔防] = 魔防;
 		}
+
+
+		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
+		{
+			//品質と経験値を読込
+		}
+
+
 	};
 
 	void LoadItem()
@@ -79,7 +87,6 @@ namespace SDX_ADE
 		//盾　：　前。HPとガード上昇。CD普通、低威力、先頭対象。スキルは挑発してターゲットを取る。
 		//魔　：　後。INTのみ上昇。CD長、高威力高命中。先頭対象。スキルは全体ダメージ。
 		//神　：　後。INTのみ上昇。CD普通、低威力、先頭対象。スキルは一番HP減少率が低い味方を単体回復。
-
 
 		//・防具
 		//重鎧：　HPが大きく上昇、防御も上昇
@@ -137,8 +144,6 @@ namespace SDX_ADE
 
 		name = "ローブ"; Item::data.emplace_back(9, name , "INT系防具", ItemImageType::皮のローブ);
 		Item::data[9].Set(1, ItemType::隠鎧, 0, 0, 8, 0, 0, 2, 0, 5, 0, 0, 0);
-
-
 	}
 
 	std::vector<Item> Item::data;

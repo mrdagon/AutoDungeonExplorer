@@ -75,7 +75,7 @@ namespace SDX_ADE
 				//ギルメン移動して最後に追加
 				if (W_Drag::製造メン != nullptr)
 				{
-					Guild::P->製造移動( W_Drag::製造メン , W_Drag::並びID, nullptr,部門);
+					if (Guild::P->製造メンバー[部門].size() < CV::最大製造人数 ) { Guild::P->製造移動(W_Drag::製造メン, W_Drag::並びID, nullptr, 部門); }
 					W_Drag::製造メン = nullptr;
 				}
 			}
@@ -87,11 +87,6 @@ namespace SDX_ADE
 			Crafter* 製造メン;
 			W_Factory* 親ウィンドウ;
 			int 並びID;
-
-			GUI_製造メンバー(Crafter* 製造メン)
-			{
-				this->製造メン = 製造メン;
-			}
 
 			void Draw派生(double px, double py)
 			{
@@ -147,7 +142,10 @@ namespace SDX_ADE
 		//生産割り当て、武器６系統、防具３系統
 		EnumArray<GUI_メンバーゾーン,CraftType> メンバーゾーン;//製造メンバーの表示領域
 
-		EnumArray < std::vector<GUI_製造メンバー>, CraftType> 製造メンバー;
+		EnumArray <std::array<GUI_製造メンバー,CV::最大製造人数>, CraftType> 製造メンバー;
+
+		W_Factory()
+		{}
 
 		void Init()
 		{
@@ -170,45 +168,20 @@ namespace SDX_ADE
 			{
 				メンバーゾーン[CraftType(a)].部門 = CraftType(a);
 				メンバーゾーン[CraftType(a)].SetHelp(TX::Factory_部門説明[CraftType(a)]);
-			}
-		}
-
-		void GUI_Update()
-		{
-			//オブジェクト初期化
-			for (auto& it : 製造メンバー)
-			{
-				it.clear();
+				メンバーゾーン[CraftType(a)].親ウィンドウ = this;
 			}
 
 			gui_objects.clear();
-
-			for (auto& it : メンバーゾーン)
+			//オブジェクト初期化
+			for (auto& it : 製造メンバー)
 			{
-				it.親ウィンドウ = this;
-			}
-
-			for (int b = 0; b < (int)CraftType::COUNT;b++)
-			{
-				CraftType t = (CraftType)b;
-
-				for (int a = 0; a < (int)Guild::P->製造メンバー[t].size(); a++)
-				{
-					if (Guild::P->製造メンバー[t][a] == nullptr) { break; }
-
-					製造メンバー[t].emplace_back(Guild::P->製造メンバー[t][a]);
-					製造メンバー[t][a].並びID = a;
-					製造メンバー[t][a].親ウィンドウ = this;
-				}
-			}
-
-			for (int b = 0; b < (int)CraftType::COUNT; b++)
-			{
-				CraftType t = (CraftType)b;
-
-				for (int a = 0; a < (int)製造メンバー[t].size(); a++)
-				{
-					gui_objects.push_back(&製造メンバー[t][a]);
+				int a = 0;
+				for (auto& it2 : it)
+				{					
+					gui_objects.push_back(&it2);
+					it2.親ウィンドウ = this;
+					it2.並びID = a;
+					a++;
 				}
 			}
 
@@ -218,26 +191,36 @@ namespace SDX_ADE
 			gui_objects.push_back(&メンバーゾーン[CraftType::木工]);
 
 			SetCSVPage(13);
+		}
 
+		void GUI_Update()
+		{
 			//座標初期化
 			int n = 0;
 			int y = 0;
 			const int 列数 = 6;
-			int 段数 = 0;
+			const int 段数 = 2;
 
 			横幅 = Lp(0);
 
 			for (int b = 0; b < (int)CraftType::COUNT; b++)
 			{
 				CraftType t = CraftType(b);
-				段数 = (int)製造メンバー[t].size() / 列数 + 1;
-				if (段数 < 2) { 段数 = 2; }
 
 				//人数に応じてメンバーゾーンのサイズは変動
 				メンバーゾーン[t].位置 = { Lp(1) , Lp(2)+y , Lp(0) - Lp(3) , Lp(4) + 段数 * Lp(5) };
 				
 				for (int a = 0; a < (int)製造メンバー[t].size(); a++)
 				{
+
+					if ( a >= Guild::P->製造メンバー[t].size() || Guild::P->製造メンバー[t][a] == nullptr)
+					{ 
+						製造メンバー[t][a].is表示 = false;
+						continue;
+					}
+
+					製造メンバー[t][a].is表示 = true;
+					製造メンバー[t][a].製造メン = Guild::P->製造メンバー[t][a];
 					製造メンバー[t][a].位置 = { Lp(1) + Lp(8) + Lp(9) * (a % 列数) , Lp(2) + Lp(10) + Lp(11) * (a / 列数) + y ,Lp(12),Lp(13) };
 				}
 
