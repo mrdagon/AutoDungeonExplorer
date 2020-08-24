@@ -31,6 +31,8 @@ namespace SDX_ADE
 		W_Config Win_Config;//設定ウィンドウ
 		W_Popup Win_Title;//タイトルに戻る
 
+		Guild guild;
+
 		//ゲーム開始時の初期化処理
 		MainGame()
 		{}
@@ -38,7 +40,9 @@ namespace SDX_ADE
 		void Init()
 		{
 			//ギルド初期化
-			Guild::P = &Guild::data;
+
+
+			Guild::P = &guild;
 
 			windows.clear();
 
@@ -223,8 +227,8 @@ namespace SDX_ADE
 
 			if (Input::mouse.Right.on)
 			{
+				MSound::効果音[SE::ボタンクリック].Play();
 				Game::is停止 = !Game::is停止;
-				//Game::isヘルプ = !Game::isヘルプ;
 			}
 
 			ToolBar.操作();
@@ -343,10 +347,17 @@ namespace SDX_ADE
 
 			加速度 = Game::ゲームスピード;
 
-			if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 加速度 = Game::ゲームスピード * 8; }
+			if ((Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) && Config::is夜間加速) { 加速度 = Game::ゲームスピード * 4; }
 
 			for (int a = 0; a < 加速度; a++)
 			{
+				if (Game::時間 == Game::始業時間 - 1 && Game::is直前スキル自動習得 == true)
+				{
+					Game::is停止 = true;
+					Game::is直前スキル自動習得 = false;
+					break;
+				}
+
 				if (Game::時間 == Game::始業時間)
 				{
 					StartWork();
@@ -365,7 +376,7 @@ namespace SDX_ADE
 
 				if (Game::is仕事中 == true)
 				{
-					Guild::P->アイテム販売();
+					//Guild::P->アイテム販売();//装備販売は削除
 					Guild::P->製造処理();
 				}
 

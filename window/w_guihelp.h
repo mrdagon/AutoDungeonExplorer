@@ -135,10 +135,10 @@ namespace SDX_ADE
 				int na, nb;
 				switch (a)
 				{
-					case 0: na = it->基礎ステ[StatusType::Hp]; nb = it->補正ステ[StatusType::Hp]; break;
-					case 1: na = it->基礎ステ[StatusType::Str]; nb = it->補正ステ[StatusType::Str]; break;
-					case 2: na = it->基礎ステ[StatusType::Dex]; nb = it->補正ステ[StatusType::Dex]; break;
-					case 3: na = it->基礎ステ[StatusType::Int]; nb = it->補正ステ[StatusType::Int]; break;
+					case 0: na = it->基礎ステ[StatusType::生命]; nb = it->補正ステ[StatusType::生命]; break;
+					case 1: na = it->基礎ステ[StatusType::筋力]; nb = it->補正ステ[StatusType::筋力]; break;
+					case 2: na = it->基礎ステ[StatusType::技力]; nb = it->補正ステ[StatusType::技力]; break;
+					case 3: na = it->基礎ステ[StatusType::知力]; nb = it->補正ステ[StatusType::知力]; break;
 					case 4: na = it->基礎ステ[StatusType::物防]; nb = it->補正ステ[StatusType::物防]; break;
 					case 5: na = it->基礎ステ[StatusType::魔防]; nb = it->補正ステ[StatusType::魔防]; break;
 					case 6: na = it->基礎ステ[StatusType::命中]; nb = it->補正ステ[StatusType::命中]; break;
@@ -156,7 +156,7 @@ namespace SDX_ADE
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80} , true);
+				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80} , true);
 			}
 
 			//Pスキル-アイコン、名前、説明
@@ -165,7 +165,7 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x + Lph(45),座標.y + Lph(46) }, Lph(47), Lph(48), 内スキン, 0, 枠透過率);
 			int sp = it->スキルポイント;
 
-			for (auto& itp : it->Pスキル)
+			for (auto& itp : it->パッシブスキル)
 			{
 				InfoPSkillSub(itp, { 座標.x , 座標.y },true,false);
 				座標.y += Lph(44);
@@ -179,10 +179,11 @@ namespace SDX_ADE
 			ヘルプ横幅 = Lph(0);
 			ヘルプ縦幅 = Lph(1);
 
-			for (int a = 0; a < 2; a++)
+			for (auto& it : item->Pスキル)
 			{
-				if (item->Pスキル[a] != nullptr && item->Pスキル[a]->id != 0) { ヘルプ縦幅 += Lph(22); };
+				if ( it != nullptr && it->id != 0) { ヘルプ縦幅 += Lph(22); };
 			}
+
 
 			Info座標補正(座標);
 			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン, 0, 枠透過率);
@@ -214,10 +215,10 @@ namespace SDX_ADE
 
 				switch (a)
 				{
-					case 0:num = item->ステ[StatusType::Hp]; break;
-					case 1:num = item->ステ[StatusType::Str];break;
-					case 2:num = item->ステ[StatusType::Dex]; break;
-					case 3:num = item->ステ[StatusType::Int]; break;
+					case 0:num = item->ステ[StatusType::生命]; break;
+					case 1:num = item->ステ[StatusType::筋力];break;
+					case 2:num = item->ステ[StatusType::技力]; break;
+					case 3:num = item->ステ[StatusType::知力]; break;
 					case 4:num = item->ステ[StatusType::物防]; break;
 					case 5:num = item->ステ[StatusType::魔防]; break;
 					case 6:num = item->ステ[StatusType::命中]; break;
@@ -383,15 +384,10 @@ namespace SDX_ADE
 			座標.y += Lph(17);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5) - Lph(54), Lph(18), 内スキン, 0, 枠透過率);
 
-			for (int a = 0; a < 2; a++)
+			for (int a = 0; a < 1; a++)
 			{
-				Material* 素材 = nullptr;
-				if (a == 0)
-				{
-					if (it->種族->通常素材 > 0) { 素材 = &Material::data[it->種族->通常素材]; }
-				} else {
-					if (it->種族->レア素材 > 0) { 素材 = &Material::data[it->種族->レア素材]; }
-				}
+				Material* 素材 = &Material::data[it->種族->素材];
+
 				if (素材 == nullptr) { continue; }
 
 				MIcon::アイコン[素材->アイコン].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
@@ -406,18 +402,7 @@ namespace SDX_ADE
 				MFont::BMSize.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
 
 				//基礎ステータス
-				int na;
-				switch (a)
-				{
-					case 0: na = it->補正ステ[StatusType::Hp]; break;
-					case 1: na = it->補正ステ[StatusType::Str]; break;
-					case 2: na = it->補正ステ[StatusType::Dex]; break;
-					case 3: na = it->補正ステ[StatusType::Int]; break;
-					case 4: na = it->補正ステ[StatusType::物防]; break;
-					case 5: na = it->補正ステ[StatusType::魔防]; break;
-					case 6: na = it->補正ステ[StatusType::命中]; break;
-					case 7: na = it->補正ステ[StatusType::回避]; break;
-				}
+				int na = it->補正ステ[StatusType(a)];
 
 				//補正後のみ表示
 				MFont::BMSize.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na, true);
@@ -428,9 +413,9 @@ namespace SDX_ADE
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (it->Aスキル[a] == nullptr || it->Aスキル[a]->ID <= 0) { continue; }
+				if (it->アクティブスキル[a] == nullptr || it->アクティブスキル[a]->ID <= 0) { continue; }
 
-				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80 }, true);
+				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80 }, true);
 			}
 
 			//Pスキル-アイコン、名前、説明
@@ -467,10 +452,6 @@ namespace SDX_ADE
 			MIcon::アイコン[it->アイコン].DrawRotate({ 座標.x + Lph(2), 座標.y + Lph(3) }, 1, 0);
 
 			MFont::BSSize.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->Lv }, true);
-			if (it->品質 > 0)
-			{
-				MFont::BMSize.DrawBold({ 座標.x + Lph(6) ,座標.y + Lph(7) }, Color::White, Color::Black, { "品質+" , it->品質 }, true);
-			}
 
 			//所持数
 			MFont::BMSize.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->ID] },true);

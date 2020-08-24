@@ -46,7 +46,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px ,py }, (int)位置.GetW() , (int)位置.GetH(), 12);
-				MIcon::アイコン[アイコン].DrawRotate({px+Lp(11),py+Lp(12)},2,0);
+				//MIcon::アイコン[アイコン].DrawRotate({px+Lp(11),py+Lp(12)},2,0);//アイコン表示削除
 
 				MSystem::DrawWindow({ px + Lp(24) ,py + Lp(26) }, Lp(27), Lp(28), 0, 1);
 				MSystem::DrawWindow({ px + Lp(25) ,py + Lp(26) }, Lp(27), Lp(28), 0, 1);
@@ -191,55 +191,19 @@ namespace SDX_ADE
 				Config::is超加速モード = base->仮_超加速;
 				Config::isヘルプ詳細 = base->仮_ヘルプ詳細;
 
-				//音量と解像度設定反映
-				int full_rate = 0;
 
-				switch (Config::ウィンドウモード)
+				if (Config::is超加速モード == true)
 				{
-				case Config::WindowmodeType::ウィンドウ:
-					Config::解像度W = std::min(Config::解像度設定 * 160, Game::最大解像度W);
-					Config::解像度H = std::min(Config::解像度設定 * 90, Game::最大解像度H);
-					Window::SetSize(Config::解像度W, Config::解像度H);
-					Window::SetFullscreen(Config::解像度W == Game::最大解像度W && Config::解像度H == Game::最大解像度H);
-					break;
-				case Config::WindowmodeType::等倍フルスクリーン:
-					full_rate = 1;
-					break;
-				case Config::WindowmodeType::二倍フルスクリーン:
-					if(Game::最大解像度H >= 1080){
-						full_rate = 2;
-					} else {
-						full_rate = 1;
-						Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
-					}
-					break;
-				case Config::WindowmodeType::四倍フルスクリーン:
-					if (Game::最大解像度H >= 2160)
-					{
-						full_rate = 4;
-					} else if (Game::最大解像度H >= 1080) {
-						full_rate = 2;
-						Config::ウィンドウモード = Config::WindowmodeType::二倍フルスクリーン;
-					} else {
-						full_rate = 1;
-						Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
-					}
-					break;
+					Config::ゲーム速度変更倍率 = 4;
+					Config::最大ゲーム倍速 = 64;
+					Game::ゲームスピード = 1;
+				} else {
+					Config::ゲーム速度変更倍率 = 2;
+					Config::最大ゲーム倍速 = 16;
+					Game::ゲームスピード = 1;
 				}
 
-				if (full_rate > 0)
-				{
-					Config::解像度W = Game::最大解像度W / full_rate;
-					Config::解像度H = Game::最大解像度H / full_rate;
-					Window::SetSize(Config::解像度W, Config::解像度H);
-					Window::SetFullscreen(true);
-				}
-
-				Config::BGM音量 = Config::BGM設定 * Config::BGM設定 / 100.0;
-				Config::SE音量 = Config::SE設定 * Config::SE設定 / 100.0;
-
-				Sound::SetMainVolume(Config::SE音量);
-				Music::SetMainVolume(Config::BGM音量);
+				Config::Update();
 
 				MSound::効果音[SE::決定].Play();
 			}

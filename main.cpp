@@ -20,37 +20,24 @@ void LoadAndInitData()
 
 	auto time_t = time(nullptr);
 	Rand::Reset((int)time_t);
-
-	SDX_ADE::SaveData::ConfigSaveAndLoad(FileMode::Read);
-
-	Config::解像度W = Config::解像度設定 * 160;
-	Config::解像度H = Config::解像度設定 * 90;
-
 	Game::最大解像度W = GetSystemMetrics(SM_CXSCREEN);//Windows依存コード
 	Game::最大解像度H = GetSystemMetrics(SM_CYSCREEN);
 
-	Config::解像度W = std::min( Config::解像度W , Game::最大解像度W);
-	Config::解像度H = std::min( Config::解像度H , Game::最大解像度H);
-
+	Config::SaveLoad(FileMode::Read);
 	System::Initialise( TX::タイトル.c_str() , Config::解像度W, Config::解像度H);//ライブラリの初期化
-
-	Config::BGM音量 = double(Config::BGM設定 * Config::BGM設定) / 100;
-	Config::SE音量 = double(Config::SE設定 * Config::SE設定) / 100;
-
-	Music::SetMainVolume(Config::BGM音量);
-	Sound::SetMainVolume(Config::SE音量);
+	Config::Update();
 
 	//各種リソース読み込み
 	LoadAsset();
 
-	LoadPassiveSkill();
-	LoadActiveSkill();
-	LoadItem();
-	LoadMonsterClass();
-	LoadHunterClass();
-	LoadMaterialClass();
-
-	Management::Load();
+	//外部データ読込
+	PassiveSkill::LoadData();
+	ActiveSkill::LoadData();
+	Item::LoadData();
+	MonsterClass::LoadData();
+	Job::LoadData();
+	Material::LoadData();
+	Management::LoadData();
 
 	Quest::BetaQuest();
 
@@ -92,7 +79,7 @@ int main(int argc, char* argv[])
 		CSVEnd("file/layout/backup.txt");
 	}
 
-	SDX_ADE::SaveData::ConfigSaveAndLoad(FileMode::Write);
+	Config::SaveLoad(FileMode::Write);
 
 	System::End();//ライブラリの終了処理
 	return 0;

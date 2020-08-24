@@ -11,7 +11,6 @@ namespace SDX_ADE
 	/*ダンジョンの部屋*/
 	class Room
 	{
-	private:
 	public:
 		Room() {}
 
@@ -24,11 +23,8 @@ namespace SDX_ADE
 	/*ダンジョン*/
 	class Dungeon
 	{
-	private:
-
 	public:
-
-		static std::vector<Dungeon> data;
+		inline static std::vector<Dungeon> data;
 
 		/*暫定自動生成*/
 		static void Add(int no,std::string 名前, IconType 種類, int 部屋数, int ランク, int Lv, int 地図数 , bool isエリアボス)
@@ -169,7 +165,10 @@ namespace SDX_ADE
 			//isボス発見
 		}
 
-	};
+		static void LoadData()
+		{
 
-	std::vector<Dungeon> Dungeon::data;
+		}
+
+	};
 }

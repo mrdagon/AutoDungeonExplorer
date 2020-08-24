@@ -47,7 +47,7 @@ namespace SDX_ADE
 	{
 	private:
 	public:
-		static std::vector<EventLog> logs;
+		inline static std::vector<EventLog> logs;
 
 		static void Add(int ギルド, int 日付, LogDetailType 種類 , int 参照ID = 0)
 		{
@@ -75,6 +75,4 @@ namespace SDX_ADE
 		LogType 系統;
 		LogDetailType 種類;
 	};
-
-	std::vector<EventLog> EventLog::logs;
 }

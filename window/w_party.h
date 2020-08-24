@@ -202,9 +202,16 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->Lv });
 
 				//装備更新ボタン
-				MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
 
-				MFont::BSSize.DrawBold({ px + Lp(59) ,py + Lp(60) }, Color::White, Color::Black, "スキル");
+				if (ギルメン->Pスキル習得予約ID == -1)
+				{
+					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
+					MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル未予約);
+				} else {
+					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 3, -1);
+					MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル予約);
+				}
+
 			}
 
 			void Click(double px, double py)
@@ -270,14 +277,16 @@ namespace SDX_ADE
 					if (W_Drag::アイテム->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
-					}else if (W_Drag::アイテム->種類 == ItemType::隠鎧 ||
+					}else if (W_Drag::アイテム->種類 == ItemType::外套 ||
 						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
 						W_Drag::アイテム->種類 == ItemType::重鎧 ||
-						W_Drag::アイテム->種類 == ItemType::力鎧 ||
-						W_Drag::アイテム->種類 == ItemType::技鎧 ||
-						W_Drag::アイテム->種類 == ItemType::知鎧 )
+						W_Drag::アイテム->種類 == ItemType::軽装 )
 					{
 						部位 = 1;
+						if (W_Drag::アイテム->種類 != ギルメン->職業->防具種)
+						{
+							return;
+						}
 					}
 
 					//武器は装備種があってないと交換不可
@@ -429,18 +438,18 @@ namespace SDX_ADE
 				//背景スクロール描画
 				const int 手前W = 2, 奥W = 2;
 
-				int w幅 = MSystem::ダンジョン背景[1].GetWidth() - 所属->移動量 + 手前W + 奥W;
+				int w幅 = MSystem::ダンジョン背景[0].GetWidth() - 所属->移動量 + 手前W + 奥W;
 
 
 				if (w幅 <= 0 ) 所属->移動量 = 0;
 
 				if (w幅 < 位置.GetW() - 手前W - 奥W)
 				{
-					MSystem::ダンジョン背景[1].DrawPart({ px + 手前W + w幅 , py + 2 }, { 0    , 0 , 位置.GetW() - w幅 - 手前W - 奥W ,位置.GetH() - 4 });
-					MSystem::ダンジョン背景[1].DrawPart({ px + 手前W       , py + 2 }, { 所属->移動量, 0 , w幅 , 位置.GetH() - 4 });
+					MSystem::ダンジョン背景[0].DrawPart({ px + 手前W + w幅 , py + 2 }, { 0    , 0 , 位置.GetW() - w幅 - 手前W - 奥W ,位置.GetH() - 4 });
+					MSystem::ダンジョン背景[0].DrawPart({ px + 手前W       , py + 2 }, { 所属->移動量, 0 , w幅 , 位置.GetH() - 4 });
 				} else {
 					//一枚目だけ
-					MSystem::ダンジョン背景[1].DrawPart({ px + 手前W , py + 2 }, { 所属->移動量, 0 , 位置.GetW() - 手前W - 奥W ,位置.GetH() - 4 });
+					MSystem::ダンジョン背景[0].DrawPart({ px + 手前W , py + 2 }, { 所属->移動量, 0 , 位置.GetW() - 手前W - 奥W ,位置.GetH() - 4 });
 				}
 				
 				//各種表示
@@ -507,7 +516,7 @@ namespace SDX_ADE
 				//ライフバー
 				int バー幅 = int(Lp(12) * サイズ);
 
-				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->補正ステ[StatusType::Hp], 1, Color::Blue, Color::White, Color::White, true);
+				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->補正ステ[StatusType::生命], 1, Color::Blue, Color::White, Color::White, true);
 			}
 
 			void Draw敵(Monster& it, double px, double py)
@@ -532,9 +541,8 @@ namespace SDX_ADE
 					py += Lp(17);
 				}
 
-
 				img[0][向き]->DrawRotate({ px - (int)it.E座標,py }, サイズ, 0);
-				if (it.E光強さ > 0)
+				if (it.E光強さ > 0 )
 				{
 					Screen::SetBlendMode(BlendMode::Add, int(it.E光強さ * 255));
 					img[0][向き]->SetColor(it.E光色);
@@ -547,11 +555,12 @@ namespace SDX_ADE
 				int ボスY = (it.isボス) ? Lp(18) : 0;
 
 				Screen::SetDrawMode();
+				Screen::SetBright(Color(所属->暗転, 所属->暗転, 所属->暗転));
 
 				//ライフバー
 				if (it.現在HP > 0)
 				{
-					MSystem::DrawBar({ px + Lp(10) - バー幅 / 2 ,py + Lp(11) + ボスY }, バー幅, Lp(13), (double)it.現在HP / it.補正ステ[StatusType::Hp], 1, Color::Blue, Color::White, Color::White, true);
+					MSystem::DrawBar({ px + Lp(10) - バー幅 / 2 ,py + Lp(11) + ボスY }, バー幅, Lp(13), (double)it.現在HP / it.補正ステ[StatusType::生命], 1, Color::Blue, Color::White, Color::White, true);
 				}
 			}
 
@@ -661,13 +670,14 @@ namespace SDX_ADE
 					//経験値バー-獲得分の表示
 					int バー幅 = Lp(23);
 					double 経験値割合 = it->経験値 / it->Get要求経験値();
-					MSystem::DrawBar({ px + Lp(24) - バー幅 / 2 + Lp(21) * a ,py + Lp(25) }, バー幅, Lp(26), 経験値割合, 1, Color::Blue, Color::White, Color::White, true);
+					double 探検前割合 = (double)it->探検前経験値 / it->Get要求経験値();
 
-					//if ( !it->isレベルアップ演出)
-					//{
-					//	経験値割合 = (double)it->探検前経験値 / it->Get要求経験値();
-					//	MSystem::DrawBar({ px + Lp(94) - バー幅 / 2 + Lp(91) * a + 1 ,py + Lp(95)+1 }, バー幅-2, Lp(96), 経験値割合, 0, Color::Blue, Color::White, Color(0,0,0,0), true);
-					//}
+					if (it->isレベルアップ演出)
+					{
+						経験値割合 = 1.0;
+					}
+
+					MSystem::DrawBarTwo({ px + Lp(24) - バー幅 / 2 + Lp(21) * a ,py + Lp(25) }, バー幅, Lp(26), 探検前割合, 経験値割合, 1, Color::Blue, Color(64, 255, 64), Color::White, Color::White, true);
 
 					//LvUPとスキル習得の文字
 					if (it->isスキル習得演出)
@@ -821,12 +831,10 @@ namespace SDX_ADE
 					{
 						部位 = 2;
 					}
-					else if ( W_Drag::アイテム->種類 == ItemType::隠鎧 ||
+					else if ( W_Drag::アイテム->種類 == ItemType::外套 ||
 						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
 						W_Drag::アイテム->種類 == ItemType::重鎧 ||
-						W_Drag::アイテム->種類 == ItemType::力鎧 ||
-						W_Drag::アイテム->種類 == ItemType::技鎧 ||
-						W_Drag::アイテム->種類 == ItemType::知鎧)
+						W_Drag::アイテム->種類 == ItemType::軽装 ) 
 					{
 						部位 = 1;
 					}

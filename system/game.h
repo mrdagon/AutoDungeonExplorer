@@ -41,6 +41,8 @@ namespace SDX_ADE
 
 		static bool isデバッグ大きさ表示 = false;
 
+		static bool is直前スキル自動習得 = false;
+
 		//UI関連の変数
 		static EnumArray<CraftType, ItemType> 対応レシピ;
 
@@ -78,8 +80,100 @@ namespace SDX_ADE
 		static bool isスキル習得時停止 = false;
 
 		static bool is超加速モード = false;
-		static int ゲーム速度変更倍率 = 4;
+		static int ゲーム速度変更倍率 = 2;
+		static int 最大ゲーム倍速 = 16;
 
 		static bool isヘルプ詳細 = false;
+
+		static bool SaveLoad(FileMode 保存or読み込み)
+		{
+			//バイナリ形式で保存
+			std::string fname = "file/save/";
+			fname += TX::Save_コンフィグファイル名;
+
+			File file(fname.c_str(), 保存or読み込み, false);
+
+
+			if (file.GetFileMode() == FileMode::None)
+			{
+				return false;
+			}
+
+			file.ReadWrite(Config::BGM設定);
+			file.ReadWrite(Config::SE設定);
+			file.ReadWrite(Config::解像度設定);
+
+			file.ReadWrite(Config::isスキル習得時停止);
+			file.ReadWrite(Config::isヘルプ詳細);
+			file.ReadWrite(Config::isボス戦時等速);
+
+			file.ReadWrite(Config::ウィンドウモード);
+
+			file.ReadWrite(Config::is夜間加速);
+			file.ReadWrite(Config::is装備自動更新);
+			file.ReadWrite(Config::is超加速モード);
+
+			file.ReadWrite(Config::ゲーム速度変更倍率);
+			file.ReadWrite(Config::最大ゲーム倍速);
+
+			return true;
+		}
+
+		static void Update()
+		{
+			//音量と解像度設定反映
+			int full_rate = 0;
+
+			switch (Config::ウィンドウモード)
+			{
+			case Config::WindowmodeType::ウィンドウ:
+				Config::解像度W = std::min(Config::解像度設定 * 160, Game::最大解像度W);
+				Config::解像度H = std::min(Config::解像度設定 * 90, Game::最大解像度H);
+				Window::SetSize(Config::解像度W, Config::解像度H);
+				Window::SetFullscreen(Config::解像度W == Game::最大解像度W && Config::解像度H == Game::最大解像度H);
+				break;
+			case Config::WindowmodeType::等倍フルスクリーン:
+				full_rate = 1;
+				break;
+			case Config::WindowmodeType::二倍フルスクリーン:
+				if (Game::最大解像度H >= 1080) {
+					full_rate = 2;
+				}
+				else {
+					full_rate = 1;
+					Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
+				}
+				break;
+			case Config::WindowmodeType::四倍フルスクリーン:
+				if (Game::最大解像度H >= 2160)
+				{
+					full_rate = 4;
+				}
+				else if (Game::最大解像度H >= 1080) {
+					full_rate = 2;
+					Config::ウィンドウモード = Config::WindowmodeType::二倍フルスクリーン;
+				}
+				else {
+					full_rate = 1;
+					Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
+				}
+				break;
+			}
+
+			if (full_rate > 0)
+			{
+				Config::解像度W = Game::最大解像度W / full_rate;
+				Config::解像度H = Game::最大解像度H / full_rate;
+				Window::SetSize(Config::解像度W, Config::解像度H);
+				Window::SetFullscreen(true);
+			}
+
+			Config::BGM音量 = Config::BGM設定 * Config::BGM設定 / 100.0;
+			Config::SE音量 = Config::SE設定 * Config::SE設定 / 100.0;
+
+			Sound::SetMainVolume(Config::SE音量);
+			Music::SetMainVolume(Config::BGM音量);
+		}
+
 	}
 }

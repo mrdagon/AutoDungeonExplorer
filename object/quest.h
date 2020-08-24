@@ -11,7 +11,7 @@ namespace SDX_ADE
 	class Quest
 	{
 	public:
-		static std::vector<Quest> data;
+		inline static std::vector<Quest> data;
 
 		QuestType 種類;
 		std::string 名前;
@@ -99,6 +99,4 @@ namespace SDX_ADE
 			return false;
 		}
 	};
-
-	std::vector<Quest> Quest::data;
 }

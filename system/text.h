@@ -43,10 +43,10 @@ namespace SDX_ADE
 		std::string Config_ウィンドウモード設定[4] = { "ウィンドウ" , "等倍フル" , "２倍フル"  , "４倍フル" };
 
 		std::string Config_装備更新_設定[2] = { "ON" , "OFF" };
-		std::string Config_ボス戦速度_設定[2] = { "等速" , "そのまま"};
+		std::string Config_ボス戦速度_設定[2] = { "等速" , "そのまま" , };
 		std::string Config_夜間加速_設定[2] = { "４倍速" , "そのまま" };
 		std::string Config_スキル習得停止_設定[2] = { "停止する" , "停止しない" };
-		std::string Config_超加速_設定[2] = { "16倍速" , "64倍速" };
+		std::string Config_超加速_設定[2] = { "64倍速" , "16倍速" };
 		std::string Config_ヘルプ詳細_設定[2] = { "表示する" , "表示しない" };
 
 		////Dungeon Window
@@ -98,6 +98,10 @@ namespace SDX_ADE
 		std::string Party_ボス回避 = "ボス\n回避";
 		std::string Party_ボス討伐 = "ボス\n討伐";
 
+		std::string Party_スキル未予約 = "スキル";
+		std::string Party_スキル予約 = "予約済み";
+
+
 		//スキルツリー
 		
 
@@ -129,7 +133,7 @@ namespace SDX_ADE
 		std::string Tool_Helpタイトル = "アンケートページを開く";
 
 		//Help Window
-		std::string Help_ステータス[8] = {"HP","STR","DEX","INT","物防","魔防","命中","回避"};
+		std::string Help_ステータス[(int)StatusType::COUNT] = {"生命","筋力","技力","知力","物防","魔防","命中","回避" , "会心" };
 		//dungeonHelp、ASkillSubまだ
 
 		//tool barのヘルプ色々

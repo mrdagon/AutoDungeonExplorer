@@ -48,11 +48,11 @@ namespace SDX_ADE
 		{
 			MonsterClass* type = 種族;
 
-			this->基礎ステ[StatusType::Hp] = (int)(type->ステ[StatusType::Hp] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::生命] = (int)(type->ステ[StatusType::生命] * (10.0 + Lv * 1.2) / 10);
 
-			this->基礎ステ[StatusType::Str] = (int)(type->ステ[StatusType::Str] * (10.0 + Lv * 1.2) / 10);
-			this->基礎ステ[StatusType::Int] = (int)(type->ステ[StatusType::Int] * (10.0 + Lv * 1.2) / 10);
-			this->基礎ステ[StatusType::Dex] = (int)(type->ステ[StatusType::Dex] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::筋力] = (int)(type->ステ[StatusType::筋力] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::知力] = (int)(type->ステ[StatusType::知力] * (10.0 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::技力] = (int)(type->ステ[StatusType::技力] * (10.0 + Lv * 1.2) / 10);
 
 			this->基礎ステ[StatusType::物防] = type->ステ[StatusType::物防];
 			this->基礎ステ[StatusType::魔防] = type->ステ[StatusType::魔防];
@@ -60,21 +60,23 @@ namespace SDX_ADE
 			this->基礎ステ[StatusType::命中] = type->ステ[StatusType::命中];
 			this->基礎ステ[StatusType::回避] = type->ステ[StatusType::回避];
 
+			this->基礎ステ[StatusType::会心] = type->ステ[StatusType::会心];
+
 			Reset補正ステータス();
 
 			if (isボス)
 			{
-				this->補正ステ[StatusType::Hp] *= 20;
+				this->補正ステ[StatusType::生命] *= 20;
 				this->経験値 *= 50;
 			}
 
-			this->現在HP = 補正ステ[StatusType::Hp];
+			this->現在HP = 補正ステ[StatusType::生命];
 
 			//とりあえずアクティブスキルは固定
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				this->Aスキル[a] = type->ASkill[a];
-				if (this->Aスキル[a] != nullptr && this->Aスキル[a]->ID > 0)
+				this->アクティブスキル[a] = type->ASkill[a];
+				if (this->アクティブスキル[a] != nullptr && this->アクティブスキル[a]->ID > 0)
 				{
 					クールダウン速度[a] = 1;
 				} else {
@@ -85,7 +87,7 @@ namespace SDX_ADE
 			}
 			//とりあえずパッシブスキル無し
 
-			Pスキル.clear();
+			パッシブスキル.clear();
 		}
 	};
 }

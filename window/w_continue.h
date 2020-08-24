@@ -48,8 +48,7 @@ namespace SDX_ADE
 				}
 
 				//xマーク
-				int size = 1;
-				MIcon::アイコン[IconType::閉じる].DrawRotate({ px + Lp(63) ,py + Lp(64) },size,0);
+				MIcon::アイコン[IconType::閉じる].DrawRotate({ px + Lp(63) ,py + Lp(64) }, 1 ,0);
 			}
 
 			void Click(double px, double py)

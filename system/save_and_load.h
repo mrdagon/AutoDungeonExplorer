@@ -72,22 +72,6 @@ namespace SDX_ADE
 			return true;
 		}
 
-		//コンフィグデータ
-		static bool ConfigSaveAndLoad(FileMode 保存or読み込み)
-		{
-			//バイナリ形式で保存
-			std::string fname = "file/save/";
-			fname += TX::Save_コンフィグファイル名;
-
-			File file( fname.c_str() , 保存or読み込み, false);
-
-			file.ReadWrite(Config::BGM設定);
-			file.ReadWrite(Config::SE設定);
-			file.ReadWrite(Config::解像度設定);
-
-			return true;
-		}
-
 		//各種累計記録など
 		static bool SystemSaveAndLoad(FileMode 保存or読み込み)
 		{

@@ -3,6 +3,7 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+#pragma warning( disable : 4996 )
 #include <codecvt>
 
 namespace SDX_ADE
@@ -40,6 +41,11 @@ namespace SDX_ADE
 					
 					str = 親->conv.to_bytes(wstr);
 
+					int W変換中文字 = MFont::BMSize.GetDrawStringWidth(System::textComposition);
+					auto sstr = 親->conv.to_bytes(親->入力中文字.substr(0, 親->挿入位置));
+					int X変換中文字 = MFont::BMSize.GetDrawStringWidth(sstr.c_str());
+
+					Drawing::Rect({ px + Lp(34) + X変換中文字 , py + Lp(35) , W変換中文字 , 20 }, Color::Red);
 					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { str.c_str() });
 				}else{
 					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { Guild::P->求人名前 });
@@ -189,7 +195,7 @@ namespace SDX_ADE
 
 		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
 		bool is名前入力中 = false;
-		int 挿入位置;
+		int 挿入位置 = 0;
 		std::wstring 入力中文字;
 		bool is変換 = false;
 
@@ -283,7 +289,27 @@ namespace SDX_ADE
 		{
 			if (!is名前入力中) { return; }
 
-			if (Input::key.Back.on && 挿入位置 > 0)
+			if (Input::key.Return.on)
+			{
+				if (is変換)
+				{
+					is変換 = false;
+				} else {
+					名前確定();
+					return;
+				}
+			}
+			static int 入力中文字数 = 1;
+
+			//以下は変換前文字がある場合処理しない
+			if (入力中文字数 > 0)
+			{
+				入力中文字数 = (int)System::textComposition.size();
+				return;
+			}
+			入力中文字数 = (int)System::textComposition.size();
+			
+			if ( Input::key.Back.on && 挿入位置 > 0)
 			{
 				入力中文字.erase(挿入位置 - 1, 1);
 				挿入位置--;
@@ -292,19 +318,7 @@ namespace SDX_ADE
 			{
 				入力中文字.erase(挿入位置, 1);
 			}
-
-			if (Input::key.Return.on)
-			{
-				if (is変換)
-				{
-					is変換 = false;
-				}
-				else {
-					名前確定();
-					return;
-				}
-			}
-
+			
 			if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount % 5 == 0))
 			{
 				挿入位置 = std::max(挿入位置 - 1, 0);
@@ -313,6 +327,7 @@ namespace SDX_ADE
 			{
 				挿入位置 = std::min(挿入位置 + 1, (int)入力中文字.size());
 			}
+
 		}
 
 	};

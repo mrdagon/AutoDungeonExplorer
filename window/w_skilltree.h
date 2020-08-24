@@ -94,7 +94,7 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				auto it = 親->ギルメン->Aスキル[id];
+				auto it = 親->ギルメン->アクティブスキル[id];
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
 				//スキルアイコン
@@ -109,20 +109,20 @@ namespace SDX_ADE
 				
 				for (int a = 0; a < 4; a++)
 				{
-					if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
+					if (親->ギルメン->アクティブスキル[a] == W_Drag::Aスキル)
 					{
-						親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
-						親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
+						親->ギルメン->アクティブスキル[a] = 親->ギルメン->アクティブスキル[id];
+						親->ギルメン->アクティブスキル[id] = W_Drag::Aスキル;
 						return;
 					}
 				}
 
-				親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
+				親->ギルメン->アクティブスキル[id] = W_Drag::Aスキル;
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoASkillSub(親->ギルメン->Aスキル[id], 座標, true);
+				InfoASkillSub(親->ギルメン->アクティブスキル[id], 座標, true);
 			}
 		};
 
@@ -141,7 +141,6 @@ namespace SDX_ADE
 				if (it == nullptr) { return; }
 
 				if (!is習得) {
-					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
 					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
 				} else {
 					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 0, 凹み);
@@ -206,8 +205,9 @@ namespace SDX_ADE
 				//未習得でポイント足りてるなら仮習得
 				auto it = 親->ギルメン->職業->習得Pスキル[id];
 
+				if (it == nullptr) { return; }
 				if (親->ギルメン->isPスキル習得[id]) { return; }
-				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
+
 
 				親->Pスキル仮習得ID = (親->Pスキル仮習得ID == id) ? (-1) : (id);
 				親->ギルメン->Pスキル習得予約ID = -1;

@@ -9,7 +9,9 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		constexpr bool isデバッグ = false;
+		constexpr bool isデバッグ = true;
+
+
 
 		constexpr int パーティ人数 = 5;
 		constexpr int 最大パーティ数 = 3;
@@ -18,8 +20,8 @@ namespace SDX_ADE
 
 		constexpr int 最大製造人数 = 12;//部門毎の最大製造人数
 
-		constexpr int 最大素材種 = 100;
-		constexpr int 最大素材レシピ = 10;//1素材から作れるアイテムの種類数
+		constexpr int 最大素材種 = 8;
+		constexpr int 最大素材レシピ = 5;//1素材から作れるアイテムの種類数
 
 		constexpr int 最大収集種 = 5;//1ダンジョンに設定可能な収集アイテム最大数
 
@@ -37,6 +39,22 @@ namespace SDX_ADE
 		constexpr int 探索開始時待ち時間 = 120;
 		constexpr int 撤退後待ち時間 = 120;
 
+		//戦闘関係の定数
+		constexpr int 初期CT乱数 = 50;
+
+		constexpr int 気絶スタン値 = 100;
+
+		//製造関係の定数
+		constexpr int 最大製造スキル数 = 2;
+		constexpr int 素材消費数 = 5;
+
+		constexpr int 基礎品質経験値 = 10;
+
+		constexpr int レア素材レア率 = 5;
+		constexpr int レア素材値段倍率 = 20;
+		constexpr int レア素材経験倍率 = 5;
+
+
 		//外部データ最大数//
 		constexpr int 装備種 = 240;
 		constexpr int Pスキル種 = 64;
@@ -46,8 +64,6 @@ namespace SDX_ADE
 
 		constexpr int 最大投資Lv = 10;
 		constexpr int 最大技術Lv = 10;
-
-		constexpr int 最大ゲーム倍速 = 64;
 
 		constexpr int 最大Aスキル数 = 4;//一人が覚えるスキル数
 

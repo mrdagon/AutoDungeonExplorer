@@ -28,8 +28,8 @@ namespace SDX_ADE
 
 			void Draw()
 			{
-				int x = 座標.x;
-				int y = 座標.y + ジャンプH;
+				int x = int(座標.x);
+				int y = int(座標.y + ジャンプH);
 
 				if (ジャンプ速度 < -CSV::I[25][20])
 				{

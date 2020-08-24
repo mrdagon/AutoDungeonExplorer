@@ -182,7 +182,7 @@ namespace SDX_ADE
 				{
 					Game::ゲームスピード = std::max(1, Game::ゲームスピード / Config::ゲーム速度変更倍率);
 				}else {
-					Game::ゲームスピード = std::min(CV::最大ゲーム倍速, Game::ゲームスピード * Config::ゲーム速度変更倍率);
+					Game::ゲームスピード = std::min(Config::最大ゲーム倍速, Game::ゲームスピード * Config::ゲーム速度変更倍率);
 				}
 				MSound::効果音[SE::ボタンクリック].Play();
 			}

@@ -7,15 +7,36 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+	class CraftSkill
+	{
+	public:
+		inline static std::vector<CraftSkill> data;
+
+		enum class CraftSkillType
+		{
+			素材消費減少,
+			品質経験増加,
+			製造速度増加,
+			レア製造増加,
+			COUNT
+		};
+
+		int ID;
+		std::string 名前;
+		std::string 説明;
+		CraftType 部門;
+		double 効果値;
+
+		static void LoadData()
+		{
+
+		}
+	};
+
 	/*従業員ベースクラス*/
 	class Crafter
 	{
-	private:
-
 	public:
-
-		Crafter(){}
-
 		void Make(int id, int Lv , CraftType 配属 , std::string 名前)
 		{
 			this->ID = id;
@@ -30,11 +51,9 @@ namespace SDX_ADE
 
 		}
 
-		bool is特殊人材;//(解雇不可、イベントに絡む等)
-
 		//●人事関連
 		//所属あり、就活中、ニートの３パターン
-		int ID;//data配列内のID
+		int ID;
 
 		int 所属;//-1なら無所属
 		CraftType 配置部門;
@@ -43,13 +62,13 @@ namespace SDX_ADE
 		std::string 名前;
 		ImagePack* Img;
 
-		//int PスキルID[CV::最大Pスキル数];
-		//bool isPスキル習得[CV::最大Pスキル数];
-
 		//●Lvアップ時等更新ステータス
 		int Lv;
 		double 経験値 = 0;
 		double 製造力 = 10;
+
+		int スキルID[CV::最大製造スキル数];
+		int スキル習得Lv[CV::最大製造スキル数];
 
 		//UI表示用
 		bool isレベルアップ演出 = false;

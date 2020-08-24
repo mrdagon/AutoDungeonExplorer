@@ -12,8 +12,20 @@ namespace SDX_ADE
 	{
 	private:
 	public:
-		static std::vector<Management> data;
-		static const int 必要経験値[CV::最大投資Lv];
+		inline static std::vector<Management> data;
+		inline static const int 必要経験値[CV::最大投資Lv] =
+		{
+			500000,
+			1000000,
+			2000000,
+			4000000,
+			8000000,
+		   15000000,
+		   25000000,
+		   35000000,
+		   50000000,
+		   70000000,
+		};
 
 		Management(int ID,int Lv,ManagementType 系統, int 資金 , bool is永続):
 			ID(ID),Lv(Lv),系統(系統),消費資金(資金),is永続(is永続)
@@ -105,7 +117,7 @@ namespace SDX_ADE
 			return false;
 		}
 
-		static void Load()
+		static void LoadData()
 		{
 			//仮データ作成
 			data.emplace_back(0, 1, ManagementType::経営, 100000, false);
@@ -159,19 +171,5 @@ namespace SDX_ADE
 			//増加資金と使用回数
 		}
 	};
-
-	std::vector<Management> Management::data;
-	const int Management::必要経験値[CV::最大投資Lv] = {
-			500000,
-			1000000,
-			2000000,
-			4000000,
-			8000000,
-		   15000000,
-		   25000000,
-		   35000000,
-		   50000000,
-		   70000000,
-	};;
 
 }

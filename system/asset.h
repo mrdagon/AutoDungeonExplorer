@@ -179,15 +179,24 @@ namespace SDX_ADE
 		static void LoadOther()
 		{
 			//武器-防具
-			アイテム[ItemImageType::鉄の剣].Load("file/wepon/wepon215.png");
-			アイテム[ItemImageType::鉄の斧].Load("file/wepon/wepon004.png");
-			アイテム[ItemImageType::木の弓].Load("file/wepon/wepon058.png");
-			アイテム[ItemImageType::スタッフ].Load("file/wepon/wepon201.png");
-			アイテム[ItemImageType::ワンド].Load("file/wepon/wepon165.png");
-			アイテム[ItemImageType::鉄の盾].Load("file/wepon/mat_018.png");
-			アイテム[ItemImageType::鉄の鎧].Load("file/armor/armor006.png");
-			アイテム[ItemImageType::鎖帷子].Load("file/armor/armor016.png");
-			アイテム[ItemImageType::皮のローブ].Load("file/armor/armor066.png");
+			アイテム[ItemImageType::大剣].Load("file/equip/wepon000.png");
+			アイテム[ItemImageType::剣盾].Load("file/equip/wepon001.png");
+			アイテム[ItemImageType::大盾].Load("file/equip/wepon002.png");
+			アイテム[ItemImageType::円盤].Load("file/equip/wepon003.png");
+			アイテム[ItemImageType::斧].Load("file/equip/wepon004.png");
+			アイテム[ItemImageType::刀].Load("file/equip/wepon005.png");
+			アイテム[ItemImageType::弓].Load("file/equip/wepon006.png");
+			アイテム[ItemImageType::神杖].Load("file/equip/wepon007.png");
+			アイテム[ItemImageType::錫杖].Load("file/equip/wepon008.png");
+			アイテム[ItemImageType::導杖].Load("file/equip/wepon009.png");
+			アイテム[ItemImageType::書物].Load("file/equip/wepon010.png");
+			アイテム[ItemImageType::水晶].Load("file/equip/wepon011.png");
+
+			アイテム[ItemImageType::重鎧].Load("file/equip/armor000.png");
+			アイテム[ItemImageType::軽鎧].Load("file/equip/armor001.png");
+			アイテム[ItemImageType::軽装].Load("file/equip/armor002.png");
+			アイテム[ItemImageType::外套].Load("file/equip/armor003.png");
+
 			アイテム[ItemImageType::アクセサリ].Load("file/accessory/boots_007.png");
 			//素材
 
@@ -232,32 +241,29 @@ namespace SDX_ADE
 			スキル[SkillType::INT].Load("file/game_icons/white-book.png");
 			スキル[SkillType::その他].Load("file/game_icons/talk.png");
 
-			装備種[ItemType::剣].Load("file/game_icons/plain-dagger.png");
-			装備種[ItemType::斧].Load("file/game_icons/battle-axe.png");
-			装備種[ItemType::槌].Load("file/game_icons/flanged-mace.png");
-			装備種[ItemType::盾].Load("file/game_icons/checked-shield.png");
-			装備種[ItemType::刺剣].Load("file/game_icons/stiletto.png");
-			装備種[ItemType::槍].Load("file/game_icons/trident.png");
+			装備種[ItemType::大剣].Load("file/game_icons/plain-dagger.png");
+			装備種[ItemType::剣盾].Load("file/game_icons/battle-axe.png");
+			装備種[ItemType::大盾].Load("file/game_icons/flanged-mace.png");
+			装備種[ItemType::円盤].Load("file/game_icons/checked-shield.png");
+			装備種[ItemType::斧].Load("file/game_icons/stiletto.png");
+			装備種[ItemType::刀].Load("file/game_icons/trident.png");
 			装備種[ItemType::弓].Load("file/game_icons/pocket-bow.png");
-			装備種[ItemType::銃].Load("file/game_icons/winchester-rifle.png");
-			装備種[ItemType::魔杖].Load("file/game_icons/orb-wand.png");
-			装備種[ItemType::骨杖].Load("file/game_icons/skull-staff.png");
-			装備種[ItemType::神杖].Load("file/game_icons/wizard-staff.png");
-			装備種[ItemType::祝杖].Load("file/game_icons/lunar-wand.png");
+			装備種[ItemType::神杖].Load("file/game_icons/winchester-rifle.png");
+			装備種[ItemType::錫杖].Load("file/game_icons/orb-wand.png");
+			装備種[ItemType::導杖].Load("file/game_icons/skull-staff.png");
+			装備種[ItemType::書物].Load("file/game_icons/wizard-staff.png");
+			装備種[ItemType::水晶].Load("file/game_icons/lunar-wand.png");
 
 			装備種[ItemType::重鎧].Load("file/game_icons/breastplate.png");
 			装備種[ItemType::軽鎧].Load("file/game_icons/leather-armor.png");
-			装備種[ItemType::隠鎧].Load("file/game_icons/robe.png");
-			装備種[ItemType::力鎧].Load("file/game_icons/Plastron.png");
-			装備種[ItemType::技鎧].Load("file/game_icons/Mail shirt.png");
-			装備種[ItemType::知鎧].Load("file/game_icons/Ninja armor.png");
+			装備種[ItemType::軽装].Load("file/game_icons/robe.png");
+			装備種[ItemType::外套].Load("file/game_icons/Plastron.png");
 
 			装備種[ItemType::すべて].Load("file/game_icons/talk.png");
 
-
-			ステータス種[StatusType::Str].Load("file/game_icons/fist.png");
-			ステータス種[StatusType::Dex].Load("file/game_icons/juggler.png");
-			ステータス種[StatusType::Int].Load("file/game_icons/white-book.png");
+			ステータス種[StatusType::筋力].Load("file/game_icons/fist.png");
+			ステータス種[StatusType::技力].Load("file/game_icons/juggler.png");
+			ステータス種[StatusType::知力].Load("file/game_icons/white-book.png");
 
 			static Image img_emote;
 			img_emote.Load("file/system/emo.png");
@@ -299,14 +305,13 @@ namespace SDX_ADE
 			std::string f1 = "file/font/mplus-1m-Regular.ttf";
 			std::string f1b = "file/font/mplus-1m-Bold.ttf";
 
-			f1 = "file/font/PixelMplus10-Regular.ttf";
-			f1b = "file/font/PixelMplus10-Regular.ttf";
+			//f1 = "file/font/PixelMplus12-Regular.ttf";
+			//f1b = "file/font/PixelMplus12-Bold.ttf";
 
 			//f1b = "file/font/PixelMplus12-Bold.ttf";
 			//f1 = "file/font/JF-Dot-k14.ttf";
 			//f1b = "file/font/JF-Dot-k14.ttf";
 			
-
 			SSize.Load(f1.c_str(), 14 , 2);
 			MSize.Load(f1.c_str(), 18 , 3);
 			LSize.Load(f1.c_str(), 24 , 4);
@@ -364,7 +369,7 @@ namespace SDX_ADE
 			立ち絵[JobType::ミスティック].Load("file/job/BR122.png");
 			立ち絵[JobType::オカルティスト].Load("file/job/BR42.png");
 			立ち絵[JobType::バーサーカー].Load("file/job/BR113.png");
-			立ち絵[JobType::スレイヤー].Load("file/job/BR16.png");
+			立ち絵[JobType::スレイヤー].Load("file/job/BR16.zip");
 			立ち絵[JobType::シノビ].Load("file/job/BR200.png");
 			立ち絵[JobType::デッドアイ].Load("file/job/BR92.png");
 			立ち絵[JobType::エレメンタリスト].Load("file/job/BR207.png");
@@ -435,7 +440,6 @@ namespace SDX_ADE
 	}
 
 	//UI等のシステム画像
-	//後でライブラリに追加する候補？
 	namespace MSystem
 	{
 		ImagePack ウィンドウ枠;
@@ -447,6 +451,8 @@ namespace SDX_ADE
 		Image タイトル背景;
 		Image タイトル前景;
 
+		Image タイトルロゴ;
+
 		Image 吹き出し;
 
 		EnumArray<Image, CraftType> クラフト台;
@@ -455,9 +461,9 @@ namespace SDX_ADE
 		{
 			ウィンドウ枠.Load("file/system/window_skin.png", 60, 10, 6);
 
-			ダンジョン背景[0].Load("file/system/dunback00.png");
-			ダンジョン背景[1].Load("file/system/dunback01.png");
-			ダンジョン背景[2].Load("file/system/facback.png");
+			ダンジョン背景[0].Load("file/system/forest.png");
+			ダンジョン背景[1].Load("file/system/cave.png");
+			ダンジョン背景[2].Load("file/system/cave.png");
 
 			クラフト台[CraftType::鍛造].Load("file/system/craft00.png");
 			クラフト台[CraftType::裁縫].Load("file/system/craft01.png");
@@ -471,8 +477,14 @@ namespace SDX_ADE
 			タイトル前景.Load("file/title/middleground5.png");
 
 			吹き出し.Load("file/system/huki_01.png");
-		}
 
+			タイトルロゴ.Load("file/title/titlelogo.png");
+		}
+	}
+
+	//後でライブラリに追加する候補の描画関数
+	namespace MSystem
+	{
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
 		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0 , int 透過率 = 255)
 		{
@@ -556,6 +568,44 @@ namespace SDX_ADE
 			}
 		}
 
+		//バー２色
+		static void DrawBarTwo(const Point& 座標, const int 横幅, const int 縦幅, double 前割合 , double 後割合, int 枠太さ, const Color& 前色 , const Color& 後色, const Color& 枠色, const Color& 中色, bool is左側)
+		{
+			前割合 = std::max(0.0, 前割合);
+			前割合 = std::min(1.0, 前割合);
+
+			後割合 = std::max(0.0, 後割合);
+			後割合 = std::min(1.0, 後割合);
+
+			DrawBoxBold(座標, 横幅, 縦幅, 中色, 枠太さ, 枠色);
+
+			int ww = int((横幅 - 枠太さ * 2) * 後割合);
+			int hh = 縦幅 - 枠太さ * 2;
+
+			if ( ww > 0 )
+			{
+				if (is左側)
+				{
+					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 後色);
+				} else {
+					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 後色);
+				}
+			}
+
+			ww = int((横幅 - 枠太さ * 2) * 前割合);
+
+			if (ww > 0)
+			{
+				if (is左側)
+				{
+					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 前色);
+				} else {
+					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 前色);
+				}
+			}
+		}
+
+
 		static void DrawSkill(Image* スキル種, const Point& 座標, Color 色, std::string messe = "")
 		{
 			Drawing::Rect({ 座標.x ,座標.y ,29,29 }, 色, true);
@@ -632,6 +682,8 @@ namespace SDX_ADE
 		}
 	}
 
+
+
 	//全読み込み
 	static void LoadAsset()
 	{
@@ -652,9 +704,17 @@ namespace SDX_ADE
 		//Loading::End();
 
 		//非同期読み込み完了確認
+		/*
 		while (System::Update())
 		{
-			if (Loading::GetLoadingCount() == Loading::GetSuccesCount()) break;			
+			int nowC = Loading::GetLoadingCount();
+			int sucC = Loading::GetSuccesCount();
+
+			if (nowC == sucC)
+			{
+				break;
+			}
 		}
+		*/
 	}
 }

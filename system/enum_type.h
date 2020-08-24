@@ -181,9 +181,28 @@ namespace SDX_ADE
 		COUNT
 	};
 
-	//武器-防具画像
+	//武器-防具-アクセサリー画像
 	enum class ItemImageType
 	{
+		大剣,
+		剣盾,
+		大盾,
+		円盤,
+		斧,
+		刀,
+		弓,
+		神杖,
+		錫杖,
+		導杖,
+		書物,
+		水晶,
+
+		重鎧,
+		軽鎧,
+		軽装,
+		外套,
+
+		/*
 		鉄の剣,
 		鉄の斧,
 		木の弓,
@@ -193,7 +212,9 @@ namespace SDX_ADE
 		鉄の鎧,
 		鎖帷子,
 		皮のローブ,
+		*/
 		アクセサリ,
+
 		COUNT
 	};
 
@@ -355,26 +376,24 @@ namespace SDX_ADE
 	enum class ItemType
 	{
 		//武器
-		剣,//斬
+		大剣,
+		剣盾,
+		大盾,
+		円盤,
 		斧,
-		盾,//打
-		槌,
-		刺剣,//突
-		槍,
-		弓,//射撃
-		銃,
-		魔杖,//魔術-攻撃
-		骨杖,//魔術-補助
-		神杖,//神聖-回復
-		祝杖,//神聖-補助
+		刀,
+		弓,
+		神杖,
+		錫杖,
+		導杖,
+		書物,
+		水晶,
 
 		//防具
-		重鎧,//block
-		力鎧,//str
-		軽鎧,//dodge
-		技鎧,//dex
-		隠鎧,//隠密
-		知鎧,//int
+		重鎧,//防御
+		軽鎧,//回避
+		軽装,//命中
+		外套,//Int
 
 		アクセサリー,
 		すべて,
@@ -480,10 +499,10 @@ namespace SDX_ADE
 
 	enum class StatusType
 	{
-		Hp,
-		Str,
-		Int,
-		Dex,
+		生命,
+		筋力,
+		技力,
+		知力,
 		物防,
 		魔防,
 		命中,
@@ -509,16 +528,13 @@ namespace SDX_ADE
 		COUNT
 	};
 
-	//◆アクティブ、パッシブスキル
-
-	//◆data配列index用変数◆
-	typedef unsigned int ID_Job;
-	typedef unsigned int ID_Item;
-	typedef unsigned int ID_Monster;
-	typedef unsigned int ID_Material;
-	typedef unsigned int ID_Tactics;
-	typedef unsigned int ID_ASkill;
-	typedef unsigned int ID_PSkill;
-	typedef unsigned int ID_Dungeon;
-
+	//◆data配列index用変数の型◆
+	using ID_Job = unsigned int;
+	using ID_Item = unsigned int;
+	using ID_Monster = unsigned int;
+	using ID_Material = unsigned int;
+	using ID_Tactics = unsigned int;
+	using ID_ASkill = unsigned int;
+	using ID_PSkill = unsigned int;
+	using ID_Dungeon = unsigned int;
 }

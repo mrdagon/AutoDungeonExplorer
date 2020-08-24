@@ -236,7 +236,9 @@ namespace SDX_ADE
 			if (scr_x <= -幅) { scr_x = 0; }
 
 			//タイトル
-			MFont::BLSize.DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 } , 2, 0, Color::White, Color::Black, { "おーとだんじょんえくすぷろーら(仮)" });
+			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 }, 2, 0);
+
+			//MFont::BLSize.DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 } , 2, 0, Color::White, Color::Black, { "おーとだんじょんえくすぷろーら(仮)" });
 			//ボタン５つ表示
 			for (auto& it : ボタン)
 			{

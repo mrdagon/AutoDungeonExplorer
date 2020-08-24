@@ -10,10 +10,7 @@ namespace SDX_ADE
 	/*戦闘員ベースクラス*/
 	class Hunter : public Fighter
 	{
-	private:
-
 	public:
-
 		Hunter()
 		{
 			気絶時SE = SE::味方気絶;
@@ -40,10 +37,10 @@ namespace SDX_ADE
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			Aスキル[0] = Job::data[job].初期Aスキル[0];
-			Aスキル[1] = Job::data[job].初期Aスキル[1];
-			Aスキル[2] = Job::data[job].初期Aスキル[2];
-			Aスキル[3] = Job::data[job].初期Aスキル[3];
+			アクティブスキル[0] = Job::data[job].初期Aスキル[0];
+			アクティブスキル[1] = Job::data[job].初期Aスキル[1];
+			アクティブスキル[2] = Job::data[job].初期Aスキル[2];
+			アクティブスキル[3] = Job::data[job].初期Aスキル[3];
 
 			スキルリセット(0);
 
@@ -122,16 +119,31 @@ namespace SDX_ADE
 			スキルポイント += 1;
 			isレベルアップ演出 = true;
 
-			レベルアップ判定();
+			レベルアップ判定();//2レベ以上上がった時用の再起呼び出し
+
+			//習得予約判定
+
+			if (Pスキル習得予約ID >= 0 && スキルポイント >= 職業->習得Pスキル[Pスキル習得予約ID]->必要SP)
+			{
+				スキルポイント -= 職業->習得Pスキル[Pスキル習得予約ID]->必要SP;
+				isPスキル習得[Pスキル習得予約ID] = true;
+				Pスキル習得予約ID = -1;
+				isスキル習得演出 = true;
+
+				if (Config::isスキル習得時停止 == true)
+				{
+					Game::is直前スキル自動習得 = true;
+				}
+			}
 		}
 
 		//パッシブ無しの基礎ステータス計算
 		void 基礎ステータス計算()
 		{
-			基礎ステ[StatusType::Hp] = int(職業->ステ[StatusType::Hp] * (10 + Lv) / 10.0);
-			基礎ステ[StatusType::Str] = int(職業->ステ[StatusType::Str] * (10 + Lv) / 10);
-			基礎ステ[StatusType::Dex] = int(職業->ステ[StatusType::Dex] * (10 + Lv) / 10);
-			基礎ステ[StatusType::Int] = int(職業->ステ[StatusType::Int] * (10 + Lv) / 10);
+			基礎ステ[StatusType::生命] = int(職業->ステ[StatusType::生命] * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::筋力] = int(職業->ステ[StatusType::筋力] * (10 + Lv) / 10);
+			基礎ステ[StatusType::技力] = int(職業->ステ[StatusType::技力] * (10 + Lv) / 10);
+			基礎ステ[StatusType::知力] = int(職業->ステ[StatusType::知力] * (10 + Lv) / 10);
 
 			基礎ステ[StatusType::命中] = 職業->ステ[StatusType::命中];
 			基礎ステ[StatusType::回避] = 職業->ステ[StatusType::回避];
@@ -139,20 +151,23 @@ namespace SDX_ADE
 			基礎ステ[StatusType::物防] = 職業->ステ[StatusType::物防];
 			基礎ステ[StatusType::魔防] = 職業->ステ[StatusType::魔防];
 
+			基礎ステ[StatusType::会心] = 職業->ステ[StatusType::会心];
+
 			Reset補正ステータス();
 
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				補正ステ[StatusType::Hp] += 装備[a]->ステ[StatusType::Hp];
-				補正ステ[StatusType::Str] += 装備[a]->ステ[StatusType::Str];
-				補正ステ[StatusType::Dex] += 装備[a]->ステ[StatusType::Dex];
-				補正ステ[StatusType::Int] += 装備[a]->ステ[StatusType::Int];
+				補正ステ[StatusType::生命] += 装備[a]->Getステ(StatusType::生命);
+				補正ステ[StatusType::筋力] += 装備[a]->Getステ(StatusType::筋力);
+				補正ステ[StatusType::技力] += 装備[a]->Getステ(StatusType::技力);
+				補正ステ[StatusType::知力] += 装備[a]->Getステ(StatusType::知力);
 
-				補正ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
-				補正ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
+				補正ステ[StatusType::命中] += 装備[a]->Getステ(StatusType::命中);
+				補正ステ[StatusType::回避] += 装備[a]->Getステ(StatusType::回避);
 
-				補正ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
-				補正ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
+				補正ステ[StatusType::物防] += 装備[a]->Getステ(StatusType::物防);
+				補正ステ[StatusType::魔防] += 装備[a]->Getステ(StatusType::魔防);
+				補正ステ[StatusType::会心] += 装備[a]->Getステ(StatusType::会心);
 			}
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
@@ -162,13 +177,13 @@ namespace SDX_ADE
 			}
 
 			//PスキルSの更新
-			Pスキル.clear();
+			パッシブスキル.clear();
 			//習得済みパッシブ
 			for (int a = 0; a < CV::最大Pスキル習得リスト; a++)
 			{
 				if (isPスキル習得[a] == true )
 				{					
-					Pスキル.push_back( 職業->習得Pスキル[a] );
+					パッシブスキル.push_back( 職業->習得Pスキル[a] );
 				}
 			}
 
@@ -179,13 +194,13 @@ namespace SDX_ADE
 				{
 					if (it != nullptr && it->id != 0)
 					{
-						Pスキル.push_back(it);
+						パッシブスキル.push_back(it);
 					}
 				}
 			}
 			
 			//製造能力(仮)
-			現在HP = 補正ステ[StatusType::Hp];
+			現在HP = 補正ステ[StatusType::生命];
 
 			戦闘後回復 = Game::自動回復;
 			レア素材剥取補正 = 0.0;
