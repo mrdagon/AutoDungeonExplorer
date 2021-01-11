@@ -186,7 +186,7 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
 				//アイコン、Lv、Expゲージ
-				ギルメン->Img[0][10]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
+				ギルメン->Img[0][1]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
 				MSystem::DrawBar({ px + Lp(39),py + Lp(40) }, Lp(41), Lp(42), ギルメン->経験値 / ギルメン->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);
 				MFont::BSSize.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
 
@@ -462,6 +462,7 @@ namespace SDX_ADE
 
 			void Drawギルメン(Hunter* it,double px, double py)
 			{
+				bool is反転 = false;
 				int 向き = 0;
 				double サイズ = 2;
 				//探索直後は画面外から走ってくる
@@ -473,22 +474,23 @@ namespace SDX_ADE
 				switch (所属->探索状態)
 				{
 				case ExplorerType::移動中://パーティメンバーのみ、歩くモーション
-					向き = 9 + (Game::時間 / 5 % 4);
-					if (向き == 12) { 向き = 11; }
+					向き = 3 + (Game::時間 / 5 % 2);
 					break;
 				case ExplorerType::リザルト中://枠表示、LvUP、探索成果、活躍表示
-					向き = 9;
+					向き = 1;
 					break;
-				case ExplorerType::戦闘中://木 or 岩に対して収集アニメーション
+				case ExplorerType::戦闘中://武器をかまえる
+					向き = 7;
+					break;
 				case ExplorerType::収集中://木 or 岩に対して収集アニメーション
-					向き = 9;
-					break;
-				case ExplorerType::全滅中://全滅表示
 					向き = 4;
 					break;
+				case ExplorerType::全滅中://全滅表示
+					向き = 1;
+					break;
 				case ExplorerType::撤退中://モンスターそのままで後ろ向きにギルメン逃走
-					向き = 6 + (Game::時間 / 3 % 4);
-					if (向き == 9) { 向き = 8; }
+					is反転 = true;
+					向き = 3 + (Game::時間 / 3 % 2);
 					break;
 				}
 
@@ -583,7 +585,16 @@ namespace SDX_ADE
 						buf_y = py + Lp(2 + it.配置ID);
 					}
 
-					MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y } , 0.4,0);
+					if (it.スキルエフェクト == EffectAnimeType::回復)
+					{
+						Screen::SetBlendMode(BlendMode::Add);
+						MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
+						Screen::SetBlendMode();
+					} else {
+
+						MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
+					}
+
 				}
 
 				//文字エフェクト
@@ -666,7 +677,7 @@ namespace SDX_ADE
 					auto it = 所属->メンバー[a];
 					if ( it == nullptr) { continue; }
 					//キャラ
-					it->Img[0][2]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
+					it->Img[0][1]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
 					//経験値バー-獲得分の表示
 					int バー幅 = Lp(23);
 					double 経験値割合 = it->経験値 / it->Get要求経験値();

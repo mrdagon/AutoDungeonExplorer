@@ -114,8 +114,6 @@ namespace SDX_ADE
 
 			return *this;
 		}
-
-
 	};
 
 	//素材入手エフェクト-素材がポップする

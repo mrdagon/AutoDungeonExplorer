@@ -19,7 +19,7 @@ namespace SDX_ADE
 			this->職種 = 職種;
 			this->名前 = 名前;
 			this->説明 = 説明;
-			this->Img = &MUnit::ユニット[見た目];
+			this->Img = &MJob::ちび[職種];
 
 			初期装備[0] = &Item::data[0];
 			初期装備[1] = &Item::data[0];
@@ -102,7 +102,7 @@ namespace SDX_ADE
 		JobType 職種;
 
 		std::string 名前;
-		std::string 概説 = "前列:物理アタッカー";
+		std::string 概説 = "説明文- 未設定";
 		std::string 説明;
 		ImagePack *Img;
 
@@ -136,6 +136,22 @@ namespace SDX_ADE
 			Job::data.emplace_back(JobType::ミスティック, "ミスティック", "INT回復", UnitImageType::おじいさん);//99
 			Job::data.emplace_back(JobType::カートグラファ, "カートグラファ", "INT回復", UnitImageType::おじいさん);//99
 
+			Job::data[0].概説 = "前衛 : 物理アタッカー";
+			Job::data[0].説明 = "大剣を振るう戦士\n近接戦闘のエキスパートで、\n多数の敵をまとめて切り伏せる\n豪快な剣技を扱う";
+
+			Job::data[1].概説 = "前衛 ： 防御型タンク";
+			Job::data[1].説明 = "盾となり味方を守護する\n最前線で全ての攻撃を受けきる\n全職業でも随一のタフさを持つ";
+
+			Job::data[2].概説 = "後衛 : 射撃アタッカー";
+			Job::data[2].説明 = "弓の名手\n狙いを付けた獲物は逃さず\n一撃は必殺の射撃で仕留める";
+
+			Job::data[3].概説 = "後衛 : 魔法アタッカー";
+			Job::data[3].説明 = "元素魔術の使い手\n物理攻撃が効かない魔物も\n魔術によって打ち倒す事が出来る";
+
+			Job::data[4].概説 = "中衛 : ヒーラー";
+			Job::data[4].説明 = "回復の術に長けた神秘家\n回復に特化し、攻撃力は期待出来ないが\nパーティの生存力を大きく引き上げる";
+
+
 			Job::data[0].Set(90, 13, 11, 5, 5, 5, 5, 5);
 			Job::data[1].Set(100, 11, 10, 7, 15, 10, 0, 0);
 			Job::data[2].Set(65, 8, 16, 10, 3, 3, 10, 10);
@@ -153,6 +169,7 @@ namespace SDX_ADE
 				it.武器種 = it.初期装備[0]->種類;
 				it.防具種 = it.初期装備[1]->種類;
 			}
+
 
 			///1全然出ない、5そこそこ出る、10出やすい
 

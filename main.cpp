@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 	Camera camera({0,0},1);
 	SDX::Camera::Set(&camera);
 
-	MainGame game;
-	MainMenu menu;
+	static MainGame game;
+	static MainMenu menu;
 
 	while (System::ProcessMessage())
 	{

@@ -355,10 +355,11 @@ namespace SDX_ADE
 		}
 	}
 
-	//職業立ち絵
+	//職業立ち絵と歩行グラ
 	namespace MJob
 	{
 		EnumArray<Image, JobType> 立ち絵;
+		EnumArray<ImagePack, JobType> ちび;
 
 		static void Load()
 		{
@@ -374,6 +375,19 @@ namespace SDX_ADE
 			立ち絵[JobType::デッドアイ].Load("file/job/BR92.png");
 			立ち絵[JobType::エレメンタリスト].Load("file/job/BR207.png");
 			立ち絵[JobType::トリックスター].Load("file/job/BR44.png");
+
+			ちび[JobType::ガーディアン].Load("file/job/chibi/BR97.png",9,3,6);
+			ちび[JobType::グラディエーター].Load("file/job/chibi/BR40.png", 9, 3,6);
+			ちび[JobType::カートグラファ].Load("file/job/chibi/BR223.png", 9, 3,6);
+			ちび[JobType::メディック].Load("file/job/chibi/BR99.png", 9, 3,6);
+			ちび[JobType::ミスティック].Load("file/job/chibi/BR122.png", 9, 3,6);
+			ちび[JobType::オカルティスト].Load("file/job/chibi/BR42.png", 9, 3,6);
+			ちび[JobType::バーサーカー].Load("file/job/chibi/BR113.png", 9, 3,6);
+			ちび[JobType::スレイヤー].Load("file/job/chibi/BR16.png", 9, 3,6);
+			ちび[JobType::シノビ].Load("file/job/chibi/BR200.png", 9, 3,6);
+			ちび[JobType::デッドアイ].Load("file/job/chibi/BR92.png", 9, 3,6);
+			ちび[JobType::エレメンタリスト].Load("file/job/chibi/BR207.png", 9, 3,6);
+			ちび[JobType::トリックスター].Load("file/job/chibi/BR44.png", 9, 3,6);
 		}
 	}
 

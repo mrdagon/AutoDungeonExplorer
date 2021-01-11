@@ -9,7 +9,8 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		constexpr bool isデバッグ = true;
+		//constexpr bool isデバッグ = true;
+		constexpr bool isデバッグ = false;
 
 
 

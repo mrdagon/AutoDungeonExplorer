@@ -152,7 +152,7 @@ namespace SDX_ADE
 			Guild::P->製造要員.reserve(128);
 			Guild::P->探索要員.reserve(1024);
 
-			Guild::P->最大パーティ数 = 1;
+			Guild::P->最大パーティ数 = 3;
 				
 			//ギルメン初期
 			for (int a = 0; a < 5; a++)

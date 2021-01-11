@@ -57,6 +57,7 @@ namespace SDX_ADE
 		COUNT
 	};
 
+	//バフ・デバフ効果
 	enum class BuffType
 	{
 		与ダメ増減,//割合増減
@@ -104,7 +105,7 @@ namespace SDX_ADE
 		挑発無視,
 		異常回復,
 
-		//double値
+		//エディタ上は-100～100の整数、ゲーム上は-1.0～1.0のdouble
 		防御貫通,//1で完全無視
 		回避貫通,
 		超過回復,//最大HPを超えた分バリアを貼る
@@ -117,7 +118,7 @@ namespace SDX_ADE
 		吸収,//1で与えたダメージと同じだけ回復
 		コスト,//1で残りHPの100%消費
 		全力,//自分のHPが100%なら威力増加
-		窮地,//自分のHPが30%以下なら威力増加
+		窮地,//自分のHPが30%以下なら威力が増加
 		反撃,//ダメージを受けるスキルを食らった時数値分CTが貯まる
 		COUNT
 	};
@@ -216,7 +217,7 @@ namespace SDX_ADE
 
 		double 必要クールタイム;
 
-		//バフ効果
+		//バフ-デバフ効果
 		EnumArray<double, BuffType> バフ基礎値;
 		EnumArray<double, BuffType> バフ反映率;
 		EnumArray<double, BuffType> バフ確率;
@@ -262,6 +263,8 @@ namespace SDX_ADE
 			ActiveSkill::data[11].装備種 = ItemType::神杖;
 			ActiveSkill::data[12].装備種 = ItemType::神杖;
 
+			ActiveSkill::data[1].戦闘エフェクト = EffectAnimeType::斬;
+
 			//敵スキル。雑魚はスキル２種。ボスは必殺含めて３種。
 			ActiveSkill::data.emplace_back(13, "体当たり", "先頭にSTRx1.0ダメージ", SkillType::剣);//スライム
 			ActiveSkill::data.emplace_back(14, "溶解液"  , "前列にINTx1.0ダメージ", SkillType::剣);
@@ -272,6 +275,29 @@ namespace SDX_ADE
 			ActiveSkill::data.emplace_back(19, "叩きつけ", "先頭にSTRx1.0物理ダメージ", SkillType::剣);//ドラゴン
 			ActiveSkill::data.emplace_back(20, "尾撃"    , "前列にSTRx0.6物理ダメージ", SkillType::剣);
 			ActiveSkill::data.emplace_back(21, "炎ブレス", "全体にINTx1.8魔法ダメージ", SkillType::剣);
+
+
+			ActiveSkill::data[1].戦闘エフェクト = EffectAnimeType::斬;
+			ActiveSkill::data[2].戦闘エフェクト = EffectAnimeType::斬;
+			ActiveSkill::data[3].戦闘エフェクト = EffectAnimeType::斬;
+			ActiveSkill::data[4].戦闘エフェクト = EffectAnimeType::斬;
+			ActiveSkill::data[5].戦闘エフェクト = EffectAnimeType::突;
+			ActiveSkill::data[6].戦闘エフェクト = EffectAnimeType::突;
+			ActiveSkill::data[7].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[8].戦闘エフェクト = EffectAnimeType::バフ;
+			ActiveSkill::data[9].戦闘エフェクト = EffectAnimeType::炎;
+			ActiveSkill::data[10].戦闘エフェクト = EffectAnimeType::炎;
+			ActiveSkill::data[11].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[12].戦闘エフェクト = EffectAnimeType::回復;
+			ActiveSkill::data[13].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[14].戦闘エフェクト = EffectAnimeType::異常;
+			ActiveSkill::data[15].戦闘エフェクト = EffectAnimeType::牙;
+			ActiveSkill::data[16].戦闘エフェクト = EffectAnimeType::雷;
+			ActiveSkill::data[17].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[18].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[19].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[20].戦闘エフェクト = EffectAnimeType::打;
+			ActiveSkill::data[21].戦闘エフェクト = EffectAnimeType::炎;
 
 			ActiveSkill::data[1].Set(ASkillTarget::敵前 , StatusType::筋力, DamageType::物理 ,ASkillType::物理);
 			ActiveSkill::data[2].Set(ASkillTarget::敵前 , StatusType::筋力, DamageType::物理 , ASkillType::物理);
