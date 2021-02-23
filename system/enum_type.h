@@ -239,6 +239,32 @@ namespace SDX_ADE
 	//アクティブ&パッシブスキル種
 	enum class SkillType
 	{
+		なし,
+		攻撃,
+		回復,
+		補助,
+		異常,
+		バフ,
+		デバフ,
+		自分,
+		単体,
+		範囲,
+		全体,
+		多段,
+		暗殺,
+		物理,
+		魔法,
+		無属性,
+		斬撃,
+		打撃,
+		射撃,
+		火炎,
+		氷雪,
+		雷撃,
+		力,
+		技,
+		魔,
+
 		剣,//斬
 		斧,
 		盾,//打
@@ -365,10 +391,12 @@ namespace SDX_ADE
 
 	enum class CraftType
 	{
-		鍛造,
-		木工,
-		裁縫,
-		魔術,
+		木材,
+		鉄材,
+		石材,
+		革材,
+		骨材,
+		魔材,
 		COUNT
 	};
 
@@ -401,7 +429,7 @@ namespace SDX_ADE
 	};
 
 	//◆投資系統
-	enum class ManagementType
+	enum class ManagementType//削除予定
 	{
 		経営,
 		人事,
@@ -410,7 +438,7 @@ namespace SDX_ADE
 		COUNT
 	};
 
-	enum class MSkillType
+	enum class MSkillType//削除予定
 	{
 		ビラ配り,
 		薄利多売,
@@ -427,11 +455,12 @@ namespace SDX_ADE
 	//◆依頼系統
 	enum class QuestType
 	{
-		装備販売,
-		装備製造,
-		雑魚討伐,
+		素材売却,
+		アクセサリー発見,
+		魔物発見,
 		ダンジョン発見,//なんでもいいから発見
 		ボス討伐,//なんでもいいから討伐
+		遺物収集,
 		固定ボス討伐,//特定ダンジョンのボス討伐
 		COUNT
 	};

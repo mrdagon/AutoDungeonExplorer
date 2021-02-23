@@ -36,7 +36,12 @@ namespace SDX_ADE
 		HP一定以上,
 		HP一定以下,
 		敵の数が一定以下,
-		敵の数が一定以上
+		敵の数が一定以上,
+		自身が状態異常,
+		自身が隠密,
+		自身が挑発,
+		前列,
+		後列
 	};
 
 	enum class PSkillTarget
@@ -52,38 +57,51 @@ namespace SDX_ADE
 	enum class PSkillEffect
 	{
 		//●アクティブスキル、通常攻撃強化
+		●スキル強化,
 		ダメージ増加,
 		スキル威力増減,
 		スキル効果増減,
 		スキルCT増減,
-		スキル持続増減,
-		アクティブスキルが追加発動,
+		アクティブスキル発動,
 		物理化,
 		魔法化,
 		隊列無視,
-		軽減無視,
-		回避無視,
-		HP上限超え回復,
-		クリティカル倍率増加,
-		デバフ解除,
+		必中,
+		隠れる無視,
+		挑発無視,
+		異常回復,
+		気絶回復,
+		防御貫通,//1で完全無視
+		魔防貫通,
+		回避貫通,
+		超過回復,//最大HPを超えた分バリアを貼る
+		バフ固定値,
+		バフ反映率,
+		バフ延長,
+		デバフ延長,
+		バフ強化,//-1で解除、1で効果倍増
+		デバフ強化,//-1で解除、1で効果倍増
+		先制,//1で戦闘開始時100%
+		むらっけ,
+		吸収,//1で与えたダメージと同じだけ回復
+		処刑,
+		異常追撃,
+		挑発追撃,
 		//●バフ、特殊ステータス増加
 		与ダメージバフ,
 		受ダメージバフ,
-		//●耐久上昇
 		HP1で耐える,
+		異常無効,
 		デバフ無効,
-		//●身代わり
 		身代わり,
-		//●リアクション系
-		クールタイム獲得,
+		CT減少,
 		HP回復,
-		//●探索
 		未探索発見率増加,
 		戦闘後回復,
-		収集量増加,
-		レア収集率増加,
-		剥取量増加,
-		レア剥取率増加,
+		剥取増加,
+		レア剥取増加,
+		採取増加,
+		レア採取増加,
 		魔物部屋率上昇,
 		素材部屋率上昇,
 		移動速度上昇,
@@ -96,9 +114,12 @@ namespace SDX_ADE
 		魔防増加,
 		命中増加,
 		回避増加,
-		会心増加,
-		速度増加,
-
+		HP割合増加,
+		STR割合増加,
+		INT割合増加,
+		DEX割合増加,
+		物防割合増加,
+		魔防割合増加,
 		経験値増加,
 		キーパッシブ,
 	};
@@ -292,6 +313,7 @@ namespace SDX_ADE
 			PassiveSkill::data[50].Set(4, 0.15, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::自分, PSkillEffect::戦闘後回復);
 
 			//素材量+
+			/*
 			PassiveSkill::data.emplace_back(51, "保存術", "剥取素材数+10%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 			PassiveSkill::data.emplace_back(52, "保存術+", "剥取素材数+15%", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 			PassiveSkill::data[51].Set(3, 0.1, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::剥取量増加);
@@ -314,6 +336,7 @@ namespace SDX_ADE
 			PassiveSkill::data.emplace_back(58, "自然学+", "5%の確率で、収集素材ランク+1", SkillType::素材, ItemType::すべて, ASkillType::指定なし);
 			PassiveSkill::data[57].Set(3, 0.03, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::レア収集率増加);
 			PassiveSkill::data[58].Set(5, 0.05, 1.0, PSkillTime::常時, PSkillIf::条件無し, PSkillTarget::その他, PSkillEffect::レア収集率増加);
+			*/
 
 			//特殊効果系
 			PassiveSkill::data.emplace_back(59, "咆哮", "開戦後300T、与ダメージ+20%", SkillType::バフ, ItemType::すべて, ASkillType::指定なし);
