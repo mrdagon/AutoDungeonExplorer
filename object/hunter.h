@@ -140,10 +140,10 @@ namespace SDX_ADE
 		//パッシブ無しの基礎ステータス計算
 		void 基礎ステータス計算()
 		{
-			基礎ステ[StatusType::生命] = int(職業->ステ[StatusType::生命] * (10 + Lv) / 10.0);
-			基礎ステ[StatusType::筋力] = int(職業->ステ[StatusType::筋力] * (10 + Lv) / 10);
-			基礎ステ[StatusType::技力] = int(職業->ステ[StatusType::技力] * (10 + Lv) / 10);
-			基礎ステ[StatusType::知力] = int(職業->ステ[StatusType::知力] * (10 + Lv) / 10);
+			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (10 + Lv) / 10.0);
+			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (10 + Lv) / 10);
+			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (10 + Lv) / 10);
+			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (10 + Lv) / 10);
 
 			基礎ステ[StatusType::命中] = 職業->ステ[StatusType::命中];
 			基礎ステ[StatusType::回避] = 職業->ステ[StatusType::回避];
@@ -157,10 +157,10 @@ namespace SDX_ADE
 
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				補正ステ[StatusType::生命] += 装備[a]->Getステ(StatusType::生命);
-				補正ステ[StatusType::筋力] += 装備[a]->Getステ(StatusType::筋力);
-				補正ステ[StatusType::技力] += 装備[a]->Getステ(StatusType::技力);
-				補正ステ[StatusType::知力] += 装備[a]->Getステ(StatusType::知力);
+				補正ステ[StatusType::HP] += 装備[a]->Getステ(StatusType::HP);
+				補正ステ[StatusType::力] += 装備[a]->Getステ(StatusType::力);
+				補正ステ[StatusType::技] += 装備[a]->Getステ(StatusType::技);
+				補正ステ[StatusType::知] += 装備[a]->Getステ(StatusType::知);
 
 				補正ステ[StatusType::命中] += 装備[a]->Getステ(StatusType::命中);
 				補正ステ[StatusType::回避] += 装備[a]->Getステ(StatusType::回避);
@@ -200,7 +200,7 @@ namespace SDX_ADE
 			}
 			
 			//製造能力(仮)
-			現在HP = 補正ステ[StatusType::生命];
+			現在HP = 補正ステ[StatusType::HP];
 
 			戦闘後回復 = Game::自動回復;
 			レア素材剥取補正 = 0.0;

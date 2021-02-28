@@ -30,7 +30,7 @@ namespace SDX_ADE
 		void Init()
 		{
 			gui_objects.clear();
-			種類 = WindowType::Guild;
+			種類 = WindowType::Config;
 
 			名前 = "クレジット";
 			略記 = "クレジット";

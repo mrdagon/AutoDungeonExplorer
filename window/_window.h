@@ -23,7 +23,6 @@
 #include "w_recruit.h"
 #include "w_windowbox.h"
 #include "w_party.h"
-#include "w_factory.h"
 #include "w_config.h"
 
 //タイトル画面用ウィンドウ

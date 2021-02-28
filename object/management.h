@@ -72,8 +72,6 @@ namespace SDX_ADE
 					guild->集客力 += 5;
 					break;
 				case MSkillType::薄利多売:
-					guild->価格補正 -= 0.1;
-					guild->集客補正 += 0.2;
 					break;
 				case MSkillType::新人発掘:
 					break;
@@ -81,7 +79,6 @@ namespace SDX_ADE
 					guild->戦闘経験補正 += 0.1;
 					break;
 				case MSkillType::技術研究:
-					guild->技術経験補正 += 0.1;
 					break;
 				case MSkillType::低コスト化:
 					guild->素材節約 += 0.1;

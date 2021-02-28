@@ -81,15 +81,15 @@ namespace SDX_ADE
 				タブ[a].SetHelp(TX::Item_タブヘルプ[a]);
 			}
 
-			タブ[1].スキルアイコン = SkillType::剣;
-			タブ[2].スキルアイコン = SkillType::槌;
-			タブ[3].スキルアイコン = SkillType::槍;
-			タブ[4].スキルアイコン = SkillType::弓;
-			タブ[5].スキルアイコン = SkillType::魔杖;
-			タブ[6].スキルアイコン = SkillType::神杖;
-			タブ[7].スキルアイコン = SkillType::鎧;
-			タブ[8].スキルアイコン = SkillType::革鎧;
-			タブ[9].スキルアイコン = SkillType::ローブ;
+			タブ[1].スキルアイコン = SkillType::力;
+			タブ[2].スキルアイコン = SkillType::力;
+			タブ[3].スキルアイコン = SkillType::力;
+			タブ[4].スキルアイコン = SkillType::力;
+			タブ[5].スキルアイコン = SkillType::力;
+			タブ[6].スキルアイコン = SkillType::力;
+			タブ[7].スキルアイコン = SkillType::力;
+			タブ[8].スキルアイコン = SkillType::力;
+			タブ[9].スキルアイコン = SkillType::力;
 
 			for (auto&it : タブ)
 			{
@@ -140,22 +140,13 @@ namespace SDX_ADE
 
 			for (int a = 0; a < CV::装備種; a++)
 			{
-				if (Guild::P->is装備開発[a] == false) { continue; }
 
-				//全タブかタブ種とあってたら表示
-				if (現在タブ == 0 || int(Item::data[a].種類)/2+1 == 現在タブ)
-				{
-					アイテム[装備数].id = a;
-					アイテム[装備数].isヘルプ表示 = true;
-					装備数++;
-				}
 			}
 
 			for (int a = 装備数; a < CV::装備種; a++)
 			{
 				アイテム[a].isヘルプ表示 = false;
 			}
-
 		}
 
 		void 派生Draw()

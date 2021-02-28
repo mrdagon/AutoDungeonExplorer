@@ -149,7 +149,7 @@ namespace SDX_ADE
 				//スキルアイコン
 				MSystem::DrawSkill( it->Img , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
 				//習得に必要なポイントorレベル
-				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , it->必要SP }, true); }
+				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , 1 }, true); }
 			}
 
 			void Click(double px, double py)

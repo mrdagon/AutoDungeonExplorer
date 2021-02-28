@@ -20,11 +20,6 @@ namespace SDX_ADE
 			製造部門(製造部門),
 			Lv(Lv)
 		{
-			for (auto& it : レシピ)
-			{
-				it.id = 0;
-				it.製造確率 = 100;
-			}
 		}
 
 		int ID = 0;
@@ -32,55 +27,19 @@ namespace SDX_ADE
 		std::string 名前 = "素材(仮)";
 		std::string 説明 = "説明(仮)";
 		IconType アイコン = IconType::資金;
-		CraftType 製造部門 = CraftType::裁縫;
+		CraftType 製造部門 = CraftType::木材;
 
 		int 価格 = 10;
 		int Lv = 0;
 
-		struct Recipe
-		{
-			ID_Item id;
-			int 製造確率;
-		};
-
-		int 合計確率 = 200;
-
-		Recipe レシピ[CV::最大素材レシピ];
-
 		static void LoadData()
 		{
-			Material::data.emplace_back(0, IconType::木材, CraftType::木工, 1);
-			Material::data.emplace_back(1, IconType::骨材, CraftType::魔術, 1);
-			Material::data.emplace_back(2, IconType::鉄材, CraftType::鍛造, 1);
-			Material::data.emplace_back(3, IconType::皮材, CraftType::裁縫, 1);
-			Material::data.emplace_back(4, IconType::木材, CraftType::木工, 2);
-			Material::data.emplace_back(5, IconType::骨材, CraftType::魔術, 2);
-			Material::data.emplace_back(6, IconType::鉄材, CraftType::鍛造, 2);
-			Material::data.emplace_back(7, IconType::皮材, CraftType::裁縫, 2);
-
-			Material::data[0].レシピ[0].id = 3;//盾弓
-			Material::data[0].レシピ[1].id = 4;
-			Material::data[4].レシピ[0].id = 3;
-			Material::data[4].レシピ[1].id = 4;
-
-			Material::data[1].レシピ[0].id = 5;//杖２種
-			Material::data[1].レシピ[1].id = 6;
-			Material::data[5].レシピ[0].id = 5;
-			Material::data[5].レシピ[1].id = 6;
-
-			Material::data[2].レシピ[0].id = 1;//剣、斧、鎧
-			Material::data[2].レシピ[1].id = 2;
-			Material::data[2].レシピ[2].id = 7;
-			Material::data[6].レシピ[0].id = 1;
-			Material::data[6].レシピ[1].id = 2;
-			Material::data[6].レシピ[2].id = 7;
-			Material::data[2].合計確率 = 300;
-			Material::data[6].合計確率 = 300;
-
-			Material::data[3].レシピ[0].id = 8;//帷子、ローブ
-			Material::data[3].レシピ[1].id = 9;
-			Material::data[7].レシピ[0].id = 8;
-			Material::data[7].レシピ[1].id = 9;
+			Material::data.emplace_back(0, IconType::木材, CraftType::木材, 1);
+			Material::data.emplace_back(1, IconType::骨材, CraftType::石材, 1);
+			Material::data.emplace_back(2, IconType::鉄材, CraftType::鉄材, 1);
+			Material::data.emplace_back(3, IconType::皮材, CraftType::革材, 1);
+			Material::data.emplace_back(4, IconType::木材, CraftType::骨材, 2);
+			Material::data.emplace_back(5, IconType::骨材, CraftType::魔材, 2);
 		}
 
 	};

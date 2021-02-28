@@ -209,37 +209,12 @@ namespace SDX_ADE
 			アイコン[IconType::塔].Load("file/system/move_06.png");
 			アイコン[IconType::廃墟].Load("file/system/move_07.png");
 
-			スキル[SkillType::剣].Load("file/game_icons/plain-dagger.png");
-			スキル[SkillType::斧].Load("file/game_icons/battle-axe.png");
-			スキル[SkillType::槌].Load("file/game_icons/flanged-mace.png");
-			スキル[SkillType::盾].Load("file/game_icons/checked-shield.png");
-			スキル[SkillType::刺剣].Load("file/game_icons/stiletto.png");
-			スキル[SkillType::槍].Load("file/game_icons/trident.png");
-			スキル[SkillType::弓].Load("file/game_icons/pocket-bow.png");
-			スキル[SkillType::銃].Load("file/game_icons/winchester-rifle.png");
-			スキル[SkillType::魔杖].Load("file/game_icons/orb-wand.png");
-			スキル[SkillType::骨杖].Load("file/game_icons/skull-staff.png");
-			スキル[SkillType::神杖].Load("file/game_icons/wizard-staff.png");
-			スキル[SkillType::祝杖].Load("file/game_icons/lunar-wand.png");
-			スキル[SkillType::鎧].Load("file/game_icons/breastplate.png");
-			スキル[SkillType::革鎧].Load("file/game_icons/leather-armor.png");
-			スキル[SkillType::ローブ].Load("file/game_icons/robe.png");
-			スキル[SkillType::挑発].Load("file/game_icons/arrows-shield.png");
-			スキル[SkillType::隠密].Load("file/game_icons/invisible.png");
-			スキル[SkillType::防御].Load("file/game_icons/shield-reflect.png");
-			スキル[SkillType::回避].Load("file/game_icons/dodging.png");
-			スキル[SkillType::魔防].Load("file/game_icons/shield-bash.png");//-消して庇う
+
 			スキル[SkillType::回復].Load("file/game_icons/healing.png");
 			スキル[SkillType::攻撃].Load("file/game_icons/saber-slash.png");
 			スキル[SkillType::バフ].Load("file/game_icons/embrassed-energy.png");
 			スキル[SkillType::デバフ].Load("file/game_icons/stoned-skull.png");
-			スキル[SkillType::探索].Load("file/game_icons/tread.png");
-			スキル[SkillType::製造].Load("file/game_icons/anvil.png");
-			スキル[SkillType::素材].Load("file/game_icons/mining.png");
-			スキル[SkillType::STR].Load("file/game_icons/fist.png");
-			スキル[SkillType::DEX].Load("file/game_icons/juggler.png");
-			スキル[SkillType::INT].Load("file/game_icons/white-book.png");
-			スキル[SkillType::その他].Load("file/game_icons/talk.png");
+
 
 			装備種[ItemType::大剣].Load("file/game_icons/plain-dagger.png");
 			装備種[ItemType::剣盾].Load("file/game_icons/battle-axe.png");
@@ -261,9 +236,9 @@ namespace SDX_ADE
 
 			装備種[ItemType::すべて].Load("file/game_icons/talk.png");
 
-			ステータス種[StatusType::筋力].Load("file/game_icons/fist.png");
-			ステータス種[StatusType::技力].Load("file/game_icons/juggler.png");
-			ステータス種[StatusType::知力].Load("file/game_icons/white-book.png");
+			ステータス種[StatusType::力].Load("file/game_icons/fist.png");
+			ステータス種[StatusType::技].Load("file/game_icons/juggler.png");
+			ステータス種[StatusType::知].Load("file/game_icons/white-book.png");
 
 			static Image img_emote;
 			img_emote.Load("file/system/emo.png");
@@ -365,7 +340,7 @@ namespace SDX_ADE
 		{
 			立ち絵[JobType::ガーディアン].Load("file/job/BR97.png");
 			立ち絵[JobType::グラディエーター].Load("file/job/BR40.png");
-			立ち絵[JobType::カートグラファ].Load("file/job/BR223.png");
+			立ち絵[JobType::パスファインダー].Load("file/job/BR223.png");
 			立ち絵[JobType::メディック].Load("file/job/BR99.png");
 			立ち絵[JobType::ミスティック].Load("file/job/BR122.png");
 			立ち絵[JobType::オカルティスト].Load("file/job/BR42.png");
@@ -378,7 +353,7 @@ namespace SDX_ADE
 
 			ちび[JobType::ガーディアン].Load("file/job/chibi/BR97.png",9,3,6);
 			ちび[JobType::グラディエーター].Load("file/job/chibi/BR40.png", 9, 3,6);
-			ちび[JobType::カートグラファ].Load("file/job/chibi/BR223.png", 9, 3,6);
+			ちび[JobType::パスファインダー].Load("file/job/chibi/BR223.png", 9, 3,6);
 			ちび[JobType::メディック].Load("file/job/chibi/BR99.png", 9, 3,6);
 			ちび[JobType::ミスティック].Load("file/job/chibi/BR122.png", 9, 3,6);
 			ちび[JobType::オカルティスト].Load("file/job/chibi/BR42.png", 9, 3,6);
@@ -469,8 +444,6 @@ namespace SDX_ADE
 
 		Image 吹き出し;
 
-		EnumArray<Image, CraftType> クラフト台;
-
 		static void Load()
 		{
 			ウィンドウ枠.Load("file/system/window_skin.png", 60, 10, 6);
@@ -478,11 +451,6 @@ namespace SDX_ADE
 			ダンジョン背景[0].Load("file/system/forest.png");
 			ダンジョン背景[1].Load("file/system/cave.png");
 			ダンジョン背景[2].Load("file/system/cave.png");
-
-			クラフト台[CraftType::鍛造].Load("file/system/craft00.png");
-			クラフト台[CraftType::裁縫].Load("file/system/craft01.png");
-			クラフト台[CraftType::木工].Load("file/system/craft02.png");
-			クラフト台[CraftType::魔術].Load("file/system/craft03.png");
 
 			メインゲーム背景.Load("file/title/background4.png");
 			メインゲーム前景.Load("file/title/middleground6.png");

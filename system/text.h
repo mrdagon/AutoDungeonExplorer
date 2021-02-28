@@ -74,11 +74,6 @@ namespace SDX_ADE
 		std::string Log_初製造 = "を初めて製造";
 		std::string Log_レア製造 = "を製造";
 
-		//Factory Window
-		EnumArray<std::string, CraftType> Factory_部門名;
-		EnumArray<std::string, CraftType> Factory_部門説明;
-		std::string Factory_ヘルプ = "製造力と製造人員\nドラッグ＆ドロップで配置転換";
-
 		//Guild Window
 		std::string Guild_ギルマス[2] = { "ギルド名","ギルマス名" };
 		std::string Guild_項目[10] = { "団員","名声","資金","販売" ,"売上" ,"製造" ,"素材" ,"地図" ,"討伐" ,"全滅" };
@@ -103,8 +98,7 @@ namespace SDX_ADE
 
 
 		//スキルツリー
-		
-
+	
 		//Recruit Window
 		std::string Recruit_採用 = "！採用！";
 		std::string Recruit_抽選 = "ランダム";
@@ -149,14 +143,6 @@ namespace SDX_ADE
 			Window_略記[WindowType::EventLog] = "ログ";
 			Window_ヘルプ[WindowType::EventLog] = "ゲームのログを確認";
 
-			Window_名前[WindowType::Factory] = "装備製造";
-			Window_略記[WindowType::Factory] = "製造";
-			Window_ヘルプ[WindowType::Factory] = "各部門にギルメンをドロップ配置\n素材から装備品を作る";
-
-			Window_名前[WindowType::Guild] = "ギルド情報";
-			Window_略記[WindowType::Guild] = "情報";
-			Window_ヘルプ[WindowType::Guild] = "ギルドの各種データを確認";
-
 			Window_名前[WindowType::Item] = "装備品";
 			Window_略記[WindowType::Item] = "装備";
 			Window_ヘルプ[WindowType::Item] = "装備品の在庫表示\nギルメンにドラッグ＆ドロップで装備変更";
@@ -188,16 +174,6 @@ namespace SDX_ADE
 			Window_名前[WindowType::Skilltree] = "スキル";
 			Window_略記[WindowType::Skilltree] = "技術";
 			Window_ヘルプ[WindowType::Skilltree] = "スキルの習得と確認";
-
-			Factory_部門名[CraftType::裁縫] = "裁縫";
-			Factory_部門名[CraftType::鍛造] = "鍛造";
-			Factory_部門名[CraftType::魔術] = "魔術";
-			Factory_部門名[CraftType::木工] = "木工";
-
-			Factory_部門説明[CraftType::裁縫] = "皮革を加工\n軽鎧、ローブを製造";
-			Factory_部門説明[CraftType::鍛造] = "金属を加工\n斧、剣、重鎧を製造";
-			Factory_部門説明[CraftType::魔術] = "骨材を加工\n魔杖、神杖を製造";
-			Factory_部門説明[CraftType::木工] = "木材を加工\n盾、弓を製造";
 
 			return true;
 		}

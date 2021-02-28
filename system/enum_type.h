@@ -264,40 +264,6 @@ namespace SDX_ADE
 		力,
 		技,
 		魔,
-
-		剣,//斬
-		斧,
-		盾,//打
-		槌,
-		刺剣,//突
-		槍,
-		弓,//射撃
-		銃,
-		魔杖,//魔術-攻撃
-		骨杖,//魔術-補助
-		神杖,//神聖-回復
-		祝杖,//神聖-補助
-
-		鎧,
-		革鎧,
-		ローブ,
-
-		挑発,
-		隠密,
-		防御,
-		回避,
-		魔防,
-		回復,
-		攻撃,
-		バフ,
-		デバフ,
-		探索,
-		製造,
-		素材,
-		STR,
-		DEX,
-		INT,
-		その他,
 		COUNT
 	};
 
@@ -372,8 +338,6 @@ namespace SDX_ADE
 		//常時ウィンドウ
 		Dungeon,
 		EventLog,
-		Factory,
-		Guild,
 		Item,
 		Management,
 		Material,
@@ -455,6 +419,7 @@ namespace SDX_ADE
 	//◆依頼系統
 	enum class QuestType
 	{
+		魔物討伐,//何でもいいからモンスター退治数
 		素材売却,
 		アクセサリー発見,
 		魔物発見,
@@ -500,38 +465,26 @@ namespace SDX_ADE
 
 	//◆戦闘関係
 	//基本ダメージ属性
-	enum class DamageType
+	enum DamageType
 	{
-		物理,
-		魔法,
-		COUNT
+		物理 = 0,
+		魔法 = 1,
+		無属性 = 2,
 	};
 
-	enum class DamageSubType
+	enum FormationType
 	{
-		斬,
-		打,
-		突,
-		炎,
-		氷,
-		雷,
-		COUNT
-	};
-
-	enum class FormationType
-	{
-		前列,
-		後列,
-		全列,
-		COUNT
+		前列 = 0,
+		後列 = 1,
+		全列 = 2
 	};
 
 	enum class StatusType
 	{
-		生命,
-		筋力,
-		技力,
-		知力,
+		HP,
+		力,
+		技,
+		知,
 		物防,
 		魔防,
 		命中,
@@ -544,7 +497,7 @@ namespace SDX_ADE
 	{
 		ガーディアン,
 		グラディエーター,
-		カートグラファ,
+		パスファインダー,
 		メディック,
 		ミスティック,
 		オカルティスト,

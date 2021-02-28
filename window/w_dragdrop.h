@@ -16,7 +16,6 @@ namespace SDX_ADE
 		static Item* アイテム = nullptr;
 
 		Hunter* 探索メン = nullptr;
-		Crafter* 製造メン = nullptr;
 		int 並びID = 0;//パーティと製造部門での位置
 
 		ActiveSkill* Aスキル = nullptr;
@@ -44,11 +43,7 @@ namespace SDX_ADE
 			{
 				探索メン->Img[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
 			}
-			else if (製造メン != nullptr)
-			{
-				製造メン->Img[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
-				
-			}
+
 			else if (ギルメン装備.メンバー != nullptr)
 			{
 				MIcon::アイテム[ギルメン装備.メンバー->装備[ギルメン装備.部位]->見た目].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
@@ -68,7 +63,6 @@ namespace SDX_ADE
 				探索メン = nullptr;
 				アイテム = nullptr;
 				ギルメン装備.メンバー = nullptr;
-				製造メン = nullptr;
 				Aスキル = nullptr;
 			}
 

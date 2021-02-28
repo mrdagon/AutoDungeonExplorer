@@ -332,13 +332,24 @@ namespace SDX_ADE
 
 				探索状態 = ExplorerType::収集中;
 
-				発見素材種 = Rand::Coin(0.5) ? CraftType::鍛造 : CraftType::木工;
+				double coin = Rand::Get(3);
 
-				if (発見素材種 == CraftType::木工)
+				switch (Rand::Get(3))
 				{
+				case 0:
+					発見素材種 = CraftType::木材;
 					発見物 = &MIcon::アイコン[IconType::探索_伐採];
-				} else {
+					break;
+				case 1:
+					発見素材種 = CraftType::木材;
 					発見物 = &MIcon::アイコン[IconType::探索_採掘];
+					break;
+				case 2:
+					発見素材種 = CraftType::木材;
+					発見物 = &MIcon::アイコン[IconType::探索_採掘];
+					break;
+				default:
+					break;
 				}
 
 				待ち時間 = CV::収集待機A;
@@ -393,7 +404,7 @@ namespace SDX_ADE
 				{
 					int id = Rand::Get(CV::最大収集種 - 1);
 
-					if (発見素材種 == CraftType::木工)
+					if (発見素材種 == CraftType::木材)
 					{
 						素材ID = 探索先->伐採素材[id];
 					} else {
@@ -582,7 +593,7 @@ namespace SDX_ADE
 			void 戦闘勝利()
 			{
 				//クエスト処理
-				Guild::P->クエスト進行(QuestType::雑魚討伐, (int)敵.size());
+				Guild::P->クエスト進行(QuestType::魔物討伐, (int)敵.size());
 
 				//特殊部屋攻略
 				switch (探索先->部屋[部屋ID].種類)
@@ -621,9 +632,9 @@ namespace SDX_ADE
 				//体力回復
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::生命]);
-					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->補正ステ[StatusType::生命]);
-					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::生命]));
+					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]);
+					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->補正ステ[StatusType::HP]);
+					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]));
 				}
 
 				探索状態 = ExplorerType::収集中;
@@ -642,7 +653,7 @@ namespace SDX_ADE
 				{
 					ザコ討伐数++;
 				}
-				Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
+				Guild::P->クエスト進行(QuestType::魔物討伐, ザコ討伐数);
 
 				探索先->部屋[部屋ID].is入場 = false;
 				探索状態 = ExplorerType::全滅中;
@@ -689,7 +700,7 @@ namespace SDX_ADE
 						}
 					}
 
-					Guild::P->クエスト進行(QuestType::雑魚討伐, ザコ討伐数);
+					Guild::P->クエスト進行(QuestType::魔物討伐, ザコ討伐数);
 				}
 
 				for (auto& it : 味方)
@@ -744,13 +755,11 @@ namespace SDX_ADE
 
 		//従業員一覧
 		std::vector<Hunter> 探索要員;
-		std::vector<Crafter> 製造要員;
 
 		//Party test;
 		Party 探索パーティ[CV::最大パーティ数];
 		std::vector<Hunter*> ギルメン控え;
 
-		EnumArray<std::vector<Crafter*>, CraftType> 製造メンバー;
 
 		int 最大パーティ数 = 3;
 
@@ -765,48 +774,20 @@ namespace SDX_ADE
 		ID_Job 求人職業 = 0;
 
 		//経営戦術効果
-		double 集客補正 = 1.0;
-		double 価格補正 = 1.0;
-
 		double 戦闘経験補正 = 1.0;
-		double 技術経験補正 = 1.0;
 
 		double 素材節約 = 0.0;//確率で素材消費0
-
 		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
 
-		//製造関連
-		EnumArray<double, CraftType> 必要製造力;
-		EnumArray<double, CraftType> 合計製造力;
-		EnumArray<double, CraftType> 製造進行度;
-		EnumArray<bool, CraftType> is製造レア使用;
-		EnumArray<double, CraftType> 製造ランク;
-
-		EnumArray<int, CraftType> 完成品;
-		EnumArray<bool, CraftType> is装備修復;
-
-		EnumArray<int, CraftType> 壊れた装備;
-
-		EnumArray<int, CraftType> 製造Lv;
-		EnumArray<double, CraftType> 製造経験;
-
-		EnumArray<bool, CraftType> 製造ゲージ色;
-		//--製造特殊効果とか(未実装)
-
 		//装備品
-		bool is装備開発[CV::装備種] = {false};
-		bool is新規[CV::装備種] = { false };
 		int 装備所持数[CV::装備種] = { 0 };
-		int 販売可能数[CV::装備種] = { 0 };//仕様を戻す可能性もあるので消さない
 
 		EnumArray < bool, ItemType> is新開発タブ;
 
 		//各種記録_Record
 		int 総石版 = 0;
 		int 総人数 = 0;
-		int 総販売 = 0;
-		double 総売上 = 0;
-		int 総製造 = 0;
+
 		int 総素材 = 0;//探索後増加
 		int 総地図 = 0;//発見時増加
 		int 総討伐 = 0;//討伐時増加
@@ -831,12 +812,6 @@ namespace SDX_ADE
 			{
 				探索パーティ[a].パーティID = a;
 			}
-
-			for (auto& it : 製造進行度)
-			{
-				it = 0;
-			}
-
 		}
 
 		//人事関係処理
@@ -936,211 +911,6 @@ namespace SDX_ADE
 			MSound::効果音[SE::配置換え].Play();
 		}
 
-		void 製造移動( Crafter*メンバー , int 並びID , Crafter* 移動先製造メンバー, CraftType 移動先部門, int 移動先ID = 0)
-		{
-			CraftType 部署 = メンバー->配置部門;
-
-			//移動先が空き
-			if (移動先製造メンバー == nullptr)
-			{
-				//現在の部署から削除して、新部署の最後に移動
-				for (int a = 0; a < (int)製造メンバー[部署].size(); a++)
-				{
-					if (メンバー == 製造メンバー[部署][a])
-					{
-						製造メンバー[部署].erase(製造メンバー[部署].begin() + a);
-						break;
-					}
-				}
-				製造メンバー[移動先部門].emplace_back(メンバー);
-				メンバー->配置部門 = 移動先部門;
-			}
-			else {
-				//移動先と入れ替え
-				製造メンバー[移動先部門][移動先ID] = メンバー;
-				製造メンバー[部署][並びID] = 移動先製造メンバー;
-
-				メンバー->配置部門 = 移動先部門;
-				移動先製造メンバー->配置部門 = 部署;
-			}
-
-			MSound::効果音[SE::配置換え].Play();
-		}
-
-		//製造関係処理
-		void 製造力計算()
-		{
-			合計製造力[CraftType::裁縫] = 0;
-			合計製造力[CraftType::鍛造] = 0;
-			合計製造力[CraftType::魔術] = 0;
-			合計製造力[CraftType::木工] = 0;
-
-
-			for (int a= 0 ; a< (int)CraftType::COUNT ; a++)
-			{
-				for (auto& it : 製造メンバー[CraftType(a)])
-				{
-					it->基礎ステータス計算();
-					合計製造力[CraftType(a)] += it->製造力;
-				}
-			}
-		}
-
-		void 製造処理()
-		{
-
-			for (int a = 0; a < (int)CraftType::COUNT; a++)
-			{
-				CraftType n = (CraftType)a;
-				//素材チェック
-				if (製造進行度[n] <= 0 && 合計製造力[n] > 0)
-				{
-					if (製造開始(n) == false) { continue; }
-				}
-
-				製造進行度[n] += 合計製造力[n];
-
-				if (製造進行度[n] >= 必要製造力[n] && 完成品[n] >= 0)
-				{
-					装備完成処理(n);
-				}
-			}
-		}
-
-		int 必要技術経験(CraftType 種類)
-		{
-			if (製造Lv[種類] >= CV::最大技術Lv) { return 1; }
-
-			return (製造Lv[種類] * 2 + 1) * 100000;
-		}
-
-		bool 製造開始(CraftType 種類)
-		{
-			//素材所持チェックと消費		
-			int 素材ID = -1;
-			bool isレア = false;
-
-			//技術力以下で一番ランクが高い素材を選択
-			//レア素材をチェック
-			for (int a = CV::最大素材種 - 1; a >= 0; a--)
-			{
-				if (Material::data[a].製造部門 != 種類) { continue; }
-				if ( レア素材数[a] <= 0 ) { continue; }
-				素材ID = a;
-				isレア = true;
-				レア素材数[素材ID]--;
-				break;
-			}
-
-
-			//通常素材をチェック-素材IDが後半の物を優先
-			if (isレア == false)
-			{
-				for (int a = CV::最大素材種 - 1; a >= 0; a--)
-				{
-					if (Material::data[a].製造部門 != 種類) { continue; }
-					if (素材数[a] < CV::素材消費数) { continue; }
-					素材ID = a;
-
-					if (!Rand::Coin(素材節約))
-					{
-						素材数[素材ID] -= CV::素材消費数;
-					}
-
-					break;
-				}
-			}
-
-			//素材が無ければ製造開始しない
-			if (素材ID < 0) { return false; }
-
-			必要製造力[種類] = 10000 + Material::data[素材ID].Lv * 2000;
-			is製造レア使用[種類] = isレア;
-
-			std::vector<int> 抽選リスト;
-			int 合計確率 = 0;
-			int レシピ数 = 0;
-
-
-			for (auto& it : Material::data[素材ID].レシピ)
-			{
-				if (it.id > 0)
-				{
-					合計確率 += it.製造確率;
-					レシピ数++;
-				}
-			}
-
-			//最後のレシピはレアレシピ扱い
-			if (isレア)
-			{
-				合計確率 += Material::data[素材ID].レシピ[レシピ数-1].製造確率 * CV::レア素材レア率;
-			}
-
-			//レシピから抽選
-			int 抽選 = Rand::Get(合計確率);
-
-			for (int a = 0; a < レシピ数; a++)
-			{
-				抽選 -= Material::data[素材ID].レシピ[a].製造確率;
-
-				if (抽選 <= 0 || a == レシピ数 - 1)
-				{
-					完成品[種類] = Material::data[素材ID].レシピ[a].id;
-					break;
-				}
-			}
-
-
-			製造進行度[種類] = 0;
-			return true;
-		}
-
-		void 装備完成処理(CraftType 種類)
-		{
-			int itemID = 完成品[種類];
-			bool 効果音優先 = false;
-			double 経験値補正 = 1;
-
-
-			if (is製造レア使用[種類] == true)
-			{
-				経験値補正 = CV::レア素材経験倍率;
-			}
-
-			//所持数だけ追加して販売可能数は+しない
-			装備所持数[itemID]++;
-			総製造++;
-			製造経験[種類] += 必要製造力[種類] * Guild::P->技術経験補正 * 経験値補正;
-			Item::data[itemID].Add品質経験値(int(CV::基礎品質経験値 * 経験値補正));
-
-			//LvUP判定
-			if (製造Lv[種類] < CV::最大技術Lv && 製造経験[種類] >= 必要技術経験(種類) )
-			{
-				製造経験[種類] -= 必要技術経験(種類);
-				製造Lv[種類] ++;
-				MSound::効果音[SE::技術Lv上昇].Play();
-				EventLog::Add(0, Game::日付, LogDetailType::技術Lv上昇, (int)種類);
-				効果音優先 = true;
-			}
-
-			if ( is装備開発[itemID] == false )
-			{
-				is装備開発[itemID] = true;
-				if (効果音優先 == false) { MSound::効果音[SE::新装備作成].Play(); }
-				EventLog::Add(0, Game::日付, LogDetailType::新装備開発, itemID);
-			} else {
-				if (効果音優先 == false) { MSound::効果音[SE::装備作成].Play(); }
-			}
-
-			//非製造状態にする
-			完成品[種類] = -1;
-			製造進行度[種類] = 0;
-			製造ゲージ色[種類] = !製造ゲージ色[種類];
-
-			クエスト進行(QuestType::装備製造, 1);
-		}
-
 		//探索関係処理
 		void 探索開始()
 		{
@@ -1179,93 +949,6 @@ namespace SDX_ADE
 			}
 		}
 
-		void 装備自動更新()
-		{
-			if (Config::is装備自動更新 == false) { return; }
-
-			for (int a = 0; a < CV::最大パーティ数; a++)
-			{
-				for (int b = 0; b < CV::パーティ人数; b++)
-				{
-					auto it = 探索パーティ[a].メンバー[b];
-
-					個別装備更新(it,0);
-					個別装備更新(it,1);
-				}
-			}
-		}
-
-		//no 0-1 装備部位
-		void 個別装備更新(Hunter* ギルメン , int 部位)
-		{
-			if (ギルメン == nullptr) { return; }
-
-			//同じ系統でランク上の装備があったら交換
-
-			int a = -1;
-			for (auto& it : 装備所持数)
-			{
-				a++;
-				//在庫1つ以上、装備種一致、基礎性能 + 品質補正 が今の装備より大きい場合更新
-				if (it > 0 &&
-					Item::data[a].種類 == ギルメン->装備[部位]->種類 &&
-					Item::data[a].Get性能() > ギルメン->装備[部位]->Get性能() )
-				{
-					it--;
-					装備所持数[ギルメン->装備[部位]->ID];
-					ギルメン->装備[部位] = &Item::data[a];
-				}
-			}
-
-		}
-
-		//販売関係処理-仕様再変更に備えて残す
-		void アイテム販売()
-		{
-			//客が来る判定-一日に集客力/10人が期待値
-			if (集客力 * Guild::P->集客補正 < Rand::Get( (Game::終業時間 - Game::始業時間)*10 )) { return; }
-			MSound::効果音[SE::販売].Play();
-
-			//在庫から売るアイテムを抽選
-			int total_wait = 0;
-
-			for (int a = 0; a < CV::装備種; a++)
-			{
-				if (販売可能数[a] > 0 && 装備所持数[a] > 1)
-				{
-					total_wait += Item::data[a].Lv;
-				}			
-			}
-
-			int 乱数 = Rand::Get(total_wait);
-
-			for (int a = 0; a < CV::装備種; a++)
-			{
-				if (販売可能数[a] > 0 && 装備所持数[a] > 1)
-				{
-					乱数 -= Item::data[a].Lv;
-					if (乱数 <= 0)
-					{
-						販売可能数[a]--;
-						装備所持数[a]--;
-						資金 += 0;
-						総売上 += 0;
-						総販売++;
-						クエスト進行(QuestType::装備販売, 1);
-						break;
-					}
-				}
-			}
-
-		}
-
-		void 装備取置解除()
-		{
-			for (int a = 0; a < CV::装備種; a++)
-			{
-				販売可能数[a] = 装備所持数[a];
-			}
-		}
 
 		//クエスト関係
 		void クエスト進行(QuestType クエスト種, int id)

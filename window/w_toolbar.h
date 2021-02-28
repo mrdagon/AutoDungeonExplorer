@@ -54,9 +54,6 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
-
-				int 集客 = int(Guild::P->集客力 * Guild::P->集客補正);
-				MFont::LSize.DrawBold({ px+位置.GetW() - 5,py - 3 }, Color::White, Color::Black, { 集客/10 , "." , 集客 % 10 , TX::Tool_人口 },true);
 			}
 		};
 

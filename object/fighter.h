@@ -88,10 +88,10 @@ namespace SDX_ADE
 		//補正ステータス=基礎ステータスにしてバフ残り時間もリセット
 		void Reset補正ステータス()
 		{
-			補正ステ[StatusType::生命] = 基礎ステ[StatusType::生命];
-			補正ステ[StatusType::筋力] = 基礎ステ[StatusType::筋力];
-			補正ステ[StatusType::技力] = 基礎ステ[StatusType::技力];
-			補正ステ[StatusType::知力] = 基礎ステ[StatusType::知力];
+			補正ステ[StatusType::HP] = 基礎ステ[StatusType::HP];
+			補正ステ[StatusType::力] = 基礎ステ[StatusType::力];
+			補正ステ[StatusType::技] = 基礎ステ[StatusType::技];
+			補正ステ[StatusType::知] = 基礎ステ[StatusType::知];
 
 			補正ステ[StatusType::物防] = 基礎ステ[StatusType::物防];
 			補正ステ[StatusType::魔防] = 基礎ステ[StatusType::魔防];
@@ -113,13 +113,13 @@ namespace SDX_ADE
 
 			switch (ステータス種)
 			{
-			case StatusType::筋力:
+			case StatusType::力:
 				t = BuffType::Str;
 				break;
-			case StatusType::技力:
+			case StatusType::技:
 				t = BuffType::Dex;
 				break;
-			case StatusType::知力:
+			case StatusType::知:
 				t = BuffType::Int;				
 				break;
 			}
@@ -300,12 +300,6 @@ namespace SDX_ADE
 			{
 				if (アクティブスキル[a] == nullptr) { continue; }
 
-				if ( 合計クールダウン[a] > アクティブスキル[a]->必要クールタイム)
-				{
-					合計クールダウン[a] -= アクティブスキル[a]->必要クールタイム;
-					Aスキル処理(アクティブスキル[a], 味方, 敵);
-					return true;
-				}
 			}
 
 			return false;
@@ -338,7 +332,7 @@ namespace SDX_ADE
 			Fighter* 暫定対象 = nullptr;
 			double 暫定数値;
 			int max = 0;
-
+			/*
 			switch (Aスキル.対象)
 			{
 			case ASkillTarget::自分:
@@ -348,7 +342,7 @@ namespace SDX_ADE
 				暫定数値 = 100;
 				for (auto& it : 味方)
 				{
-					double HP割合 = (double)it->現在HP / it->補正ステ[StatusType::生命];
+					double HP割合 = (double)it->現在HP / it->補正ステ[StatusType::HP];
 					if (暫定数値 > HP割合)
 					{
 						暫定対象 = it;
@@ -441,7 +435,7 @@ namespace SDX_ADE
 					暫定数値 = 100;
 					for (auto& it : 生存リスト)
 					{
-						double HP割合 = it->現在HP / it->補正ステ[StatusType::生命];
+						double HP割合 = it->現在HP / it->補正ステ[StatusType::HP];
 						if (暫定数値 > HP割合)
 						{
 							暫定対象 = it;
@@ -453,7 +447,7 @@ namespace SDX_ADE
 				暫定対象->Hit数+= Aスキル.Hit数;
 				break;
 			}
-	
+			*/
 			for (auto& it : 敵)
 			{
 				if (it->Hit数 > 0) {
@@ -567,7 +561,7 @@ namespace SDX_ADE
 					エフェクトダメージ(合計ダメージ);
 					break;
 				case ASkillType::回復:
-					if (合計ダメージ + 現在HP > 補正ステ[StatusType::生命]) { 合計ダメージ = 補正ステ[StatusType::生命] - 現在HP; }
+					if (合計ダメージ + 現在HP > 補正ステ[StatusType::HP]) { 合計ダメージ = 補正ステ[StatusType::HP] - 現在HP; }
 					現在HP += 合計ダメージ;
 					スキル使用者->回復ログ += 合計ダメージ;
 					Pスキル条件チェック(PSkillTime::回復を受けた時, &Aスキル, 味方, 敵);
@@ -626,10 +620,10 @@ namespace SDX_ADE
 				switch (it->条件)
 				{
 				case PSkillIf::HP一定以上:
-					if (現在HP / 補正ステ[StatusType::生命] < it->条件値) { continue; }
+					if (現在HP / 補正ステ[StatusType::HP] < it->条件値) { continue; }
 					break;
 				case PSkillIf::HP一定以下:
-					if (現在HP / 補正ステ[StatusType::生命] > it->条件値) { continue; }
+					if (現在HP / 補正ステ[StatusType::HP] > it->条件値) { continue; }
 					break;
 				case PSkillIf::敵の数が一定以下:
 					for (int a = 0; a < (int)敵.size(); a++)
@@ -667,16 +661,16 @@ namespace SDX_ADE
 			{
 			//基礎限定効果
 			case PSkillEffect::HP増加:
-				補正ステ[StatusType::生命] += (int)Pスキル->効果量;
+				補正ステ[StatusType::HP] += (int)Pスキル->効果量;
 				break;
 			case PSkillEffect::STR増加:
-				補正ステ[StatusType::筋力] += (int)Pスキル->効果量;
+				補正ステ[StatusType::力] += (int)Pスキル->効果量;
 				break;
 			case PSkillEffect::INT増加:
-				補正ステ[StatusType::知力] += (int)Pスキル->効果量;
+				補正ステ[StatusType::知] += (int)Pスキル->効果量;
 				break;
 			case PSkillEffect::DEX増加:
-				補正ステ[StatusType::技力] += (int)Pスキル->効果量;
+				補正ステ[StatusType::技] += (int)Pスキル->効果量;
 				break;
 			case PSkillEffect::物防増加:
 				補正ステ[StatusType::物防] += (int)Pスキル->効果量;
@@ -693,22 +687,20 @@ namespace SDX_ADE
 			case PSkillEffect::スキルCT増減:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
-					if (Pスキル->Aスキル種 != アクティブスキル[a]->種類) { continue; }
-					if (Pスキル->装備種 != ItemType::すべて && Pスキル->装備種 != アクティブスキル[a]->装備種) { continue; }
 					クールダウン速度[a] *= 1.0 + Pスキル->効果量;
 				}
 				break;
 			//基礎非戦闘
-			case PSkillEffect::収集量増加:
+			case PSkillEffect::採取増加:
 				素材収集量 += Pスキル->効果量;
 				break;
-			case PSkillEffect::レア収集率増加:
+			case PSkillEffect::レア採取増加:
 				レア素材収集補正 += Pスキル->効果量;
 				break;
-			case PSkillEffect::剥取量増加:
+			case PSkillEffect::剥取増加:
 				素材剥取量 += Pスキル->効果量;
 				break;
-			case PSkillEffect::レア剥取率増加:
+			case PSkillEffect::レア剥取増加:
 				レア素材剥取補正 += Pスキル->効果量;
 				break;
 			case PSkillEffect::戦闘後回復:
@@ -720,9 +712,6 @@ namespace SDX_ADE
 				break;
 			case PSkillEffect::スキル効果増減:
 				Aスキル->バフ効果補正 += Pスキル->効果量;
-				break;
-			case PSkillEffect::スキル持続増減:
-				Aスキル->バフ持続補正 += Pスキル->効果量;
 				break;
 			//色んなタイミングで発動可能
 			case PSkillEffect::与ダメージバフ:
@@ -745,12 +734,6 @@ namespace SDX_ADE
 				} else {
 					//自己
 					バフ使用(BuffType::被ダメ軽減, Pスキル->効果量, Pスキル->持続時間);
-				}
-				break;
-			case PSkillEffect::クールタイム獲得:
-				for (int a = 0; a < CV::最大Aスキル数; a++)
-				{
-					合計クールダウン[a] += Pスキル->効果量;
 				}
 				break;
 			}

@@ -24,10 +24,10 @@ namespace SDX_ADE
 
 		void Set(int Hp , int Str, int Dex, int Int, int 物防, int 魔防 , int 回避 , int 命中)
 		{
-			this->ステ[StatusType::生命] = Hp;
-			this->ステ[StatusType::筋力] = Str;
-			this->ステ[StatusType::知力] = Int;
-			this->ステ[StatusType::技力] = Dex;
+			this->ステ[StatusType::HP] = Hp;
+			this->ステ[StatusType::力] = Str;
+			this->ステ[StatusType::知] = Int;
+			this->ステ[StatusType::技] = Dex;
 
 			this->ステ[StatusType::物防] = 物防;
 			this->ステ[StatusType::魔防] = 魔防;

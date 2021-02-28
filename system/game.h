@@ -43,9 +43,6 @@ namespace SDX_ADE
 
 		static bool is直前スキル自動習得 = false;
 
-		//UI関連の変数
-		static EnumArray<CraftType, ItemType> 対応レシピ;
-
 		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
 		{
 

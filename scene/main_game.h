@@ -20,9 +20,7 @@ namespace SDX_ADE
 
 		W_Dungeon  Win_Dungeon;//ダンジョン
 		W_EventLog Win_EventLog;//ログ
-		W_Guild Win_Guild;//ギルド情報
 		W_Item Win_Item;//装備品
-		W_Factory Win_Factory;//製造
 		W_Management Win_Management;//経営戦術
 		W_Material Win_Material;//素材
 		W_Party Win_Party;//ギルメン
@@ -50,13 +48,11 @@ namespace SDX_ADE
 
 			//ウィンドウ初期化
 			windows.push_back(&Win_Item);
-			windows.push_back(&Win_Factory);
 			windows.push_back(&Win_Dungeon);
 			windows.push_back(&Win_Party);
 			windows.push_back(&Win_Management);
 			windows.push_back(&Win_Material);
 			windows.push_back(&Win_Quest);
-			windows.push_back(&Win_Guild);
 			windows.push_back(&Win_EventLog);
 
 			ToolBar.SetConfig(&Win_Config,&Win_Title);
@@ -77,7 +73,6 @@ namespace SDX_ADE
 			}
 
 			Win_Item.is表示 = true;
-			Win_Factory.is表示 = true;
 			Win_Dungeon.is表示 = true;
 			Win_Party.is表示 = true;		
 
@@ -110,8 +105,6 @@ namespace SDX_ADE
 
 			for (int a = 1; a <= 9; a++)
 			{
-				Guild::P->is装備開発[a] = true;
-				Guild::P->is新規[a] = false;
 				Guild::P->装備所持数[a] = 3;
 			}
 
@@ -139,17 +132,9 @@ namespace SDX_ADE
 
 			Guild::P->資金 = 100000;
 
-			for (int a = 0; a < (int)CraftType::COUNT; a++)
-			{
-				Guild::P->製造Lv[CraftType(a)] = 1;
-				Guild::P->完成品[CraftType(a)] = -1;
-			}
-
 			//求人＆初期人材ダミー
-			Guild::P->製造要員.clear();
 			Guild::P->探索要員.clear();
 			Guild::P->ギルメン控え.clear();
-			Guild::P->製造要員.reserve(128);
 			Guild::P->探索要員.reserve(1024);
 
 			Guild::P->最大パーティ数 = 3;
@@ -160,15 +145,6 @@ namespace SDX_ADE
 				Guild::P->探索要員.emplace_back();
 				Guild::P->探索要員.back().Make(a, a, 1, "ギルメン");
 				Guild::P->探索パーティ[0].メンバー[a] = &Guild::P->探索要員[a];
-			}
-
-			//製造初期
-			for (int a = 0; a < 4; a++)
-			{
-				Guild::P->製造要員.emplace_back();
-				Guild::P->製造要員.back().Make(a, 1, CraftType(a), "クラフト");
-				Guild::P->製造メンバー[CraftType(a % 4)].clear();
-				Guild::P->製造メンバー[CraftType(a%4)].push_back(&Guild::P->製造要員[a]);
 			}
 
 			//仮ダンジョン
@@ -188,9 +164,6 @@ namespace SDX_ADE
 			}
 
 			Game::is停止 = true;
-
-			Guild::P->製造力計算();
-
 		}
 
 		//メインループ処理
@@ -373,13 +346,6 @@ namespace SDX_ADE
 
 				//探索＆製造中
 				Guild::P->探索処理();
-
-				if (Game::is仕事中 == true)
-				{
-					//Guild::P->アイテム販売();//装備販売は削除
-					Guild::P->製造処理();
-				}
-
 				Game::時間++;
 			}
 		}
@@ -391,9 +357,7 @@ namespace SDX_ADE
 			MSound::効果音[SEType::探索開始].Play();
 
 			Game::is仕事中 = true;
-			Guild::P->製造力計算();
 			Guild::P->探索開始();
-			Guild::P->装備取置解除();
 		}
 
 		//業務終了の処理
@@ -413,15 +377,11 @@ namespace SDX_ADE
 			//記録追加
 			Guild::P->R団員.push_back(Guild::P->総人数);
 			Guild::P->R資金.push_back(Guild::P->資金);
-			Guild::P->R販売.push_back(Guild::P->総販売);
-			Guild::P->R製造.push_back(Guild::P->総製造);
 			Guild::P->R素材在庫.push_back(Guild::P->総素材);
 			Guild::P->R地図数.push_back(Guild::P->総地図);
 			Guild::P->R討伐数.push_back(Guild::P->総討伐);
 			Guild::P->R全滅数.push_back(Guild::P->総全滅);
 			Guild::P->R名声.push_back(Guild::P->名声);
-
-			Guild::P->装備自動更新();
 		}
 
 		//投資処理
@@ -494,13 +454,11 @@ namespace SDX_ADE
 			std::vector<WindowBox*> wins;
 
 			wins.push_back(&Win_Item);
-			wins.push_back(&Win_Factory);
 			wins.push_back(&Win_Dungeon);
 			wins.push_back(&Win_Party);
 			wins.push_back(&Win_Management);
 			wins.push_back(&Win_Material);
 			wins.push_back(&Win_Quest);
-			wins.push_back(&Win_Guild);
 			wins.push_back(&Win_EventLog);
 
 			for (auto& it : wins)

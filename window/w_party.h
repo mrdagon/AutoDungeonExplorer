@@ -518,7 +518,7 @@ namespace SDX_ADE
 				//ライフバー
 				int バー幅 = int(Lp(12) * サイズ);
 
-				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->補正ステ[StatusType::生命], 1, Color::Blue, Color::White, Color::White, true);
+				MSystem::DrawBar({ px + Lp(10) - バー幅 / 2,py + Lp(11) }, バー幅, Lp(13), (double)it->現在HP / it->補正ステ[StatusType::HP], 1, Color::Blue, Color::White, Color::White, true);
 			}
 
 			void Draw敵(Monster& it, double px, double py)
@@ -562,7 +562,7 @@ namespace SDX_ADE
 				//ライフバー
 				if (it.現在HP > 0)
 				{
-					MSystem::DrawBar({ px + Lp(10) - バー幅 / 2 ,py + Lp(11) + ボスY }, バー幅, Lp(13), (double)it.現在HP / it.補正ステ[StatusType::生命], 1, Color::Blue, Color::White, Color::White, true);
+					MSystem::DrawBar({ px + Lp(10) - バー幅 / 2 ,py + Lp(11) + ボスY }, バー幅, Lp(13), (double)it.現在HP / it.補正ステ[StatusType::HP], 1, Color::Blue, Color::White, Color::White, true);
 				}
 			}
 

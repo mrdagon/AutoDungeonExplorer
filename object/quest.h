@@ -38,17 +38,7 @@ namespace SDX_ADE
 
 		static void BetaQuest()
 		{
-			Quest::Add("竜を倒せ", QuestType::ボス討伐, 3, 10, true);
-			Quest::Add("町の安全確保", QuestType::雑魚討伐, 3, 1000, true);
-			Quest::Add("武器を供給せよ", QuestType::装備販売, 3, 100, true);
 
-			Quest::data[0].報酬金 = 1000000;
-			Quest::data[1].報酬金 = 100000;
-			Quest::data[2].報酬金 = 100000;
-
-			Quest::data[0].報酬名誉 = 50;
-			Quest::data[1].報酬名誉 = 10;
-			Quest::data[2].報酬名誉 = 10;
 		}
 
 		static void Add(std::string 名前, QuestType 種類, int 条件番号, int 条件数値, bool is受注)
@@ -67,13 +57,16 @@ namespace SDX_ADE
 		{
 			switch (種類)
 			{
-			case QuestType::装備販売:
+			case QuestType::素材売却:
 				達成度 += id;
 				break;
-			case QuestType::装備製造:
+			case QuestType::アクセサリー発見:
 				達成度 += id;
 				break;
-			case QuestType::雑魚討伐:
+			case QuestType::遺物収集:
+				達成度 += id;
+				break;
+			case QuestType::魔物発見:
 				達成度 += id;
 				break;
 			case QuestType::ダンジョン発見://なんでもいいから発見

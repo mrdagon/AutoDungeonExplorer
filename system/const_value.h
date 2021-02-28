@@ -22,7 +22,6 @@ namespace SDX_ADE
 		constexpr int 最大製造人数 = 12;//部門毎の最大製造人数
 
 		constexpr int 最大素材種 = 8;
-		constexpr int 最大素材レシピ = 5;//1素材から作れるアイテムの種類数
 
 		constexpr int 最大収集種 = 5;//1ダンジョンに設定可能な収集アイテム最大数
 

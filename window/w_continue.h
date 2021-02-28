@@ -85,7 +85,7 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			種類 = WindowType::Guild;
+			種類 = WindowType::Config;
 
 			名前 = "記録を選ぶ";
 			略記 = "記録";

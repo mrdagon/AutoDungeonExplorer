@@ -31,10 +31,10 @@ namespace SDX_ADE
 
 		void Set(int Hp,int Str,int Dex,int Int,int 物防,int 魔防 , int 命中 , int 回避)
 		{
-			this->ステ[StatusType::生命] = Hp;
-			this->ステ[StatusType::筋力] = Str;
-			this->ステ[StatusType::知力] = Int;
-			this->ステ[StatusType::技力] = Dex;
+			this->ステ[StatusType::HP] = Hp;
+			this->ステ[StatusType::力] = Str;
+			this->ステ[StatusType::知] = Int;
+			this->ステ[StatusType::技] = Dex;
 			this->ステ[StatusType::命中] = 命中;
 			this->ステ[StatusType::回避] = 回避;
 
@@ -134,7 +134,7 @@ namespace SDX_ADE
 			Job::data.emplace_back(JobType::バーサーカー, "バーサーカー", "INT回復", UnitImageType::おじいさん);//99
 			Job::data.emplace_back(JobType::トリックスター, "トリックスター", "INT回復", UnitImageType::おじいさん);//99
 			Job::data.emplace_back(JobType::ミスティック, "ミスティック", "INT回復", UnitImageType::おじいさん);//99
-			Job::data.emplace_back(JobType::カートグラファ, "カートグラファ", "INT回復", UnitImageType::おじいさん);//99
+			Job::data.emplace_back(JobType::パスファインダー, "カートグラファ", "INT回復", UnitImageType::おじいさん);//99
 
 			Job::data[0].概説 = "前衛 : 物理アタッカー";
 			Job::data[0].説明 = "大剣を振るう戦士\n近接戦闘のエキスパートで、\n多数の敵をまとめて切り伏せる\n豪快な剣技を扱う";

@@ -58,7 +58,7 @@ namespace SDX_ADE
 		void Init()
 		{
 			gui_objects.clear();
-			種類 = WindowType::Guild;
+			種類 = WindowType::Config;
 
 			名前 = "確認";
 			略記 = "確認";
