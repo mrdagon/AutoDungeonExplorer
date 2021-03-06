@@ -25,7 +25,7 @@ namespace SDX_ADE
 		bool is完了 = false;
 		bool is新規 = false;//UI表示用
 
-		int 次クエスト = -1;//完了したら受注される依頼
+		int 必要クエスト = -1;//受注に必要なクエスト
 		
 		ID_Item 報酬アクセサリ = 0;
 		int 報酬ゴールド = 0;
@@ -55,6 +55,14 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+
+				file_data.Read( it.種類 );//画像ID
+				file_data.Read( it.条件数値 );
+				file_data.Read( it.開放フロア );
+				file_data.Read( it.必要クエスト );
+				file_data.Read( it.報酬ゴールド );
+				file_data.Read( it.報酬アクセサリ );
+
 			}
 		}
 

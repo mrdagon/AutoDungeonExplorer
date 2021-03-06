@@ -33,6 +33,7 @@ namespace SDX_ADE
 		ItemType 種類;
 
 		PassiveSkill* Pスキル[1] = { nullptr };//最大１個まで
+		int PスキルLv = 0;
 
 		//攻撃力等のステータス、追加されるスキル等
 		EnumArray<int, StatusType> ステ;
@@ -70,8 +71,8 @@ namespace SDX_ADE
 			{
 				int dummy;
 
-				equip_data.emplace_back();
-				auto& it = equip_data.back();
+				accessory_data.emplace_back();
+				auto& it = accessory_data.back();
 
 				it.名前 = strs[i][0];
 				if (strs[i].size() == 2)
@@ -80,6 +81,26 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+				file_data.Read(it.種類);
+
+				file_data.Read(dummy);
+				if (dummy < 0) { dummy = 0; }
+				it.Pスキル[0] = &PassiveSkill::data[dummy];
+
+				file_data.Read(it.PスキルLv);
+
+				file_data.Read(it.ランク);
+
+				file_data.Read(it.ステ[StatusType::HP]);
+				file_data.Read(it.ステ[StatusType::力]);
+				file_data.Read(it.ステ[StatusType::技]);
+				file_data.Read(it.ステ[StatusType::知]);
+				file_data.Read(it.ステ[StatusType::物防]);
+				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::命中]);
+				file_data.Read(it.ステ[StatusType::回避]);
+				file_data.Read(it.ステ[StatusType::会心]);
+
 			}
 		}
 
@@ -107,6 +128,27 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+				file_data.Read( dummy);//画像ID
+				it.種類 = ItemType::アクセサリー;
+
+				file_data.Read( dummy );
+				if (dummy < 0) { dummy = 0; }
+				it.Pスキル[0] = &PassiveSkill::data[dummy];
+
+				file_data.Read(it.PスキルLv);
+
+				file_data.Read(it.ランク);
+
+				file_data.Read(it.ステ[StatusType::HP]);
+				file_data.Read(it.ステ[StatusType::力]);
+				file_data.Read(it.ステ[StatusType::技]);
+				file_data.Read(it.ステ[StatusType::知]);
+				file_data.Read(it.ステ[StatusType::物防]);
+				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::命中]);
+				file_data.Read(it.ステ[StatusType::回避]);
+				file_data.Read(it.ステ[StatusType::会心]);
+
 			}
 		}
 

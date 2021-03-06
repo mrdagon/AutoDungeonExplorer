@@ -465,14 +465,14 @@ namespace SDX_ADE
 				{
 					MMusic::BGM[BGMType::通常ボス].Play();
 					敵数 = 1;
-					魔物.emplace_back(探索先->ボスモンスター[0]);
+					//魔物.emplace_back(探索先->ボスモンスター[0]);
 				}
 				else
 				{
 					for (int a = 0; a < 敵数; a++)
 					{
 						int mn = Rand::Get(2);
-						魔物.emplace_back(探索先->雑魚モンスター[mn]);
+						//魔物.emplace_back(探索先->雑魚モンスター[mn]);
 					}
 				}
 

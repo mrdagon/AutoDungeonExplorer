@@ -75,7 +75,6 @@ namespace SDX_ADE
 				file_data.Read(it.武器種);
 				file_data.Read(it.防具種);
 
-
 				file_data.Read(it.ステ[StatusType::HP]);
 				file_data.Read(it.ステ[StatusType::力]);
 				file_data.Read(it.ステ[StatusType::技]);

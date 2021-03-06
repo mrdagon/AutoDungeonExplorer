@@ -30,8 +30,8 @@ namespace SDX_ADE
 
 		static void LoadData()
 		{
-			File file_data("file/data/quest.dat", FileMode::Read, true);
-			File file_csv("file/data/quest.csv", FileMode::Read, false);
+			File file_data("file/data/material.dat", FileMode::Read, true);
+			File file_csv("file/data/material.csv", FileMode::Read, false);
 			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
@@ -51,6 +51,10 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+
+				file_data.Read(it.種類);
+				file_data.Read(it.ランク);
+				file_data.Read(it.価格);
 			}
 
 		}

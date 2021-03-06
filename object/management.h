@@ -39,7 +39,7 @@ namespace SDX_ADE
 
 		int 消費資金;
 		bool is使用済み = false;
-		bool is使用可 = true;
+		bool is使用可 = false;
 
 		bool is永続;//単発効果 or 永続効果
 
@@ -121,6 +121,12 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+
+				file_data.Read( dummy );//アイコンID
+
+				file_data.Read(it.ランク);
+				file_data.Read(it.消費資金);
+				file_data.Read(it.is永続);
 			}
 		}
 

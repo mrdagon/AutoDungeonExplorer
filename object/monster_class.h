@@ -22,8 +22,6 @@ namespace SDX_ADE
 		std::string 名前;
 		std::string 説明;
 
-		int 画像ID;
-
 		CraftType 素材種;
 
 		int レア素材率 = 0;
@@ -35,9 +33,10 @@ namespace SDX_ADE
 
 		EnumArray<int, StatusType> ステ;
 
-		ActiveSkill* ASkill[CV::最大Aスキル数] = { 0 };//最大４個
+		std::vector<ActiveSkill*> ASkill;//最大４個
+		int ASkillLv[CV::最大敵Pスキル数] = { 0 };//Pスキルの習得レベル
 
-		int PSkillID[CV::最大敵Pスキル数] = { 0 };//覚えるPスキル
+		std::vector <PassiveSkill*> PSkill;//覚えるPスキル
 		int PSkillLv[CV::最大敵Pスキル数] = { 0 };//Pスキルの習得レベル
 
 		static void LoadData()
@@ -51,7 +50,8 @@ namespace SDX_ADE
 
 			for (int i = 0; i < data_count; i++)
 			{
-				int dummy;
+				int dummyA;
+				int dummyB;
 
 				data.emplace_back();
 				auto& it = data.back();
@@ -63,6 +63,44 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+
+				file_data.Read( dummyA );//画像ID
+				file_data.Read(it.素材種);
+				file_data.Read(it.隊列);
+				file_data.Read(it.isボス);
+				file_data.Read(it.ボスドロップ);
+				file_data.Read(it.レア素材率);
+
+				file_data.Read(it.ステ[StatusType::HP]);
+				file_data.Read(it.ステ[StatusType::力]);
+				file_data.Read(it.ステ[StatusType::技]);
+				file_data.Read(it.ステ[StatusType::知]);
+				file_data.Read(it.ステ[StatusType::物防]);
+				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::命中]);
+				file_data.Read(it.ステ[StatusType::回避]);
+				file_data.Read(it.ステ[StatusType::会心]);
+
+				for (int b = 0; b < CV::最大敵Aスキル数; b++)
+				{
+					file_data.Read(dummyA);//画像ID
+					file_data.Read(dummyB);//画像ID
+					if (dummyA > 0)
+					{
+						it.ASkill.emplace_back(&ActiveSkill::data[dummyA]);
+					}
+				}
+				for (int b = 0; b < CV::最大敵Pスキル数; b++)
+				{
+
+					file_data.Read(dummyA);//画像ID
+					file_data.Read(dummyB);//画像ID
+					if (dummyA > 0)
+					{
+						it.PSkill.emplace_back(&PassiveSkill::data[dummyA]);
+					}
+				}
+
 			}
 		}
 	};

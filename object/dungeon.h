@@ -44,13 +44,17 @@ namespace SDX_ADE
 		int 最大財宝数;
 		bool is地図発見;
 
-		std::vector< Monster> ボスモンスター;
-		std::vector < Monster > 雑魚モンスター;
+		std::vector< Item* > 財宝;
+
+		std::vector< MonsterClass*> ボスモンスター;
+		std::vector < MonsterClass* > 雑魚モンスター;
 
 		double 探索率;
 
 		bool is発見;//ダンジョン発見済みフラグ
 		bool is新規;//UI用
+
+		bool isボス地図;
 
 		int ボス発見探索率;
 		int 地図発見探索率;
@@ -99,15 +103,39 @@ namespace SDX_ADE
 				it.ID = i;
 
 				file_data.Read(dummy);
-				//it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);
+				it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);
 				file_data.Read(it.ボスLv);
 
 				for (int b = 0; b < 5; b++)
 				{
 					file_data.Read(dummy);
-					//it.雑魚モンスター.emplace_back(&MonsterClass::data[dummy]);
+					it.雑魚モンスター.emplace_back(&MonsterClass::data[dummy]);
+				}
+				file_data.Read(it.雑魚Lv);
+				
+				file_data.Read(dummy);
+				if (dummy > 0)
+				{
+					it.isボス地図 = true;
+				}
+				file_data.Read(dummy);//地図番号は無視
+				file_data.Read(dummy);
+
+				for (int b = 0; b < 5; b++)
+				{
+					file_data.Read(dummy);
+					if (dummy > 0)
+					{
+						it.財宝.emplace_back(&Item::accessory_data[dummy]);
+					}
 				}
 
+				file_data.Read(dummy);
+
+
+				file_data.Read(it.ボス発見探索率);
+				file_data.Read(it.地図発見探索率);
+				file_data.Read(dummy);//地図発見2は無視
 			}
 		}
 

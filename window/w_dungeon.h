@@ -24,13 +24,13 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
 
 				//ボス
-				参照->ボスモンスター[0].Img[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
+				//参照->ボスモンスター[0].Img[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
 				MFont::BSSize.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
 
 				//ザコ
 				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
 				{
-					参照->雑魚モンスター[a].Img[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
+					//参照->雑魚モンスター[a].Img[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
 				}
 			}
 
@@ -48,7 +48,7 @@ namespace SDX_ADE
 				if ( px > Lp(21) - 20 && px < Lp(21) + 20)
 				{
 					//ボスモンスターヘルプ
-					InfoMonster( &参照->ボスモンスター[0], 参照->ボスLv, true, 座標);
+					//InfoMonster( &参照->ボスモンスター[0], 参照->ボスLv, true, 座標);
 					return;
 				}
 
@@ -57,7 +57,7 @@ namespace SDX_ADE
 					if (px > Lp(25) + Lp(26) * a - 20 && px < Lp(25) + Lp(26) * a + 20)
 					{
 						//ザコモンスターヘルプ
-						InfoMonster( &参照->雑魚モンスター[a],参照->雑魚Lv,false,座標);
+						//InfoMonster( &参照->雑魚モンスター[a],参照->雑魚Lv,false,座標);
 						
 						return;
 					}
