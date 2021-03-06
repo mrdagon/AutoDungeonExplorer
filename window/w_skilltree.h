@@ -98,7 +98,7 @@ namespace SDX_ADE
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
 				//スキルアイコン
-				MSystem::DrawSkill(it->Img, { px + Lp(64) , py + Lp(65) }, Color(200, 64, 64));
+				MSystem::DrawSkill(it->image, { px + Lp(64) , py + Lp(65) }, Color(200, 64, 64));
 				//習得に必要なポイントorレベル
 				MFont::BSSize.DrawBold({ px + Lp(66) ,py + Lp(67) }, Color::White, Color::Black, {"Slot ",id+1}, true);
 			}
@@ -147,7 +147,7 @@ namespace SDX_ADE
 				}
 
 				//スキルアイコン
-				MSystem::DrawSkill( it->Img , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
+				MSystem::DrawSkill( it->image , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
 				//習得に必要なポイントorレベル
 				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , 1 }, true); }
 			}
@@ -189,15 +189,12 @@ namespace SDX_ADE
 				if (it == nullptr) { return; }
 
 				if (!is習得) {
-					if (親->ギルメン->スキルポイント >= it->必要SP) { 凹み = 1; }
 					if (親->Pスキル仮習得ID == id ) { 凹み = -1; }
 				}
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
 				//スキルアイコン
 				MSystem::DrawSkill( it->Img, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
-				//習得に必要なポイントorレベル
-				if (!is習得){ MFont::BSSize.DrawBold({ px + Lp(56) ,py + Lp(57) }, Color::White, Color::Black, { it->必要SP,"P" }, true); }
 			}
 
 			void Click(double px, double py)
@@ -270,11 +267,6 @@ namespace SDX_ADE
 					str = "予約";
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 3, -1);
 				} else if (親->Pスキル仮習得ID >= 0 ) {
-					if (親->ギルメン->スキルポイント >= 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID]->必要SP){
-						str = "習得";
-					} else {
-						str = "予約";
-					}
 
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
 				} else {
@@ -293,15 +285,8 @@ namespace SDX_ADE
 				{
 					auto ps = 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID];
 
-					if (親->ギルメン->スキルポイント < ps->必要SP)
-					{
-						親->ギルメン->Pスキル習得予約ID = 親->Pスキル仮習得ID;
-						return;
-					}
-
 					//習得処理
 					親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
-					親->ギルメン->スキルポイント -= 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID]->必要SP;
 					親->Pスキル仮習得ID = -1;
 				}
 			}
@@ -316,8 +301,8 @@ namespace SDX_ADE
 		GUI_再教育 再教育;
 		GUI_習得 習得;
 
-		std::array<GUI_Aスキル, CV::最大Aスキル習得リスト> Aスキル;
-		std::array<GUI_Pスキル, CV::最大Pスキル習得リスト> Pスキル;
+		std::array<GUI_Aスキル, 100> Aスキル;
+		std::array<GUI_Pスキル, 100> Pスキル;
 		//決定ボタン
 		//キャンセルボタン
 		Hunter* ギルメン;

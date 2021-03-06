@@ -120,8 +120,8 @@ namespace SDX_ADE
 
 			for (int a = 0; a < 2; a++)
 			{
-				MIcon::アイテム[it->装備[a]->見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->Lv });
+				//MIcon::アイテム[it->装備[a]->見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
+				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
 				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
 			}
 			
@@ -181,7 +181,7 @@ namespace SDX_ADE
 
 			for (auto& it : item->Pスキル)
 			{
-				if ( it != nullptr && it->id != 0) { ヘルプ縦幅 += Lph(22); };
+				if ( it != nullptr && it->ID != 0) { ヘルプ縦幅 += Lph(22); };
 			}
 
 
@@ -191,8 +191,8 @@ namespace SDX_ADE
 			//アイコン、武器系統、名前、Lv、ユニーク
 			MSystem::DrawWindow({ 座標.x + Lph(2),座標.y + Lph(3) }, Lph(0)-10, Lph(5), 内スキン, 0, 枠透過率);
 
-			MIcon::アイテム[item->見た目].Draw({ 座標.x + Lph(6),座標.y + Lph(7) });
-			MFont::BSSize.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , item->Lv});
+			//MIcon::アイテム[item->見た目].Draw({ 座標.x + Lph(6),座標.y + Lph(7) });
+			MFont::BSSize.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , item->ランク });
 
 
 			MFont::BMSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, item->名前);
@@ -265,9 +265,9 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x + 5,座標.y + Lph(13) + 10 }, Lph(1) - 10, Lph(0) - Lph(13) - 15, 内スキン, 0, 枠透過率);
 
 			//アイコン
-			it->Img->Draw({ 座標.x + Lph(2),座標.y + Lph(3) });
+			it->image->Draw({ 座標.x + Lph(2),座標.y + Lph(3) });
 			//エリアレベル
-			MFont::BSSize.DrawBold({ 座標.x + Lph(6),座標.y + Lph(7) }, Color::White, Color::Black, {"Lv" ,it->Lv});
+			MFont::BSSize.DrawBold({ 座標.x + Lph(6),座標.y + Lph(7) }, Color::White, Color::Black, {"Lv" ,it->雑魚Lv });
 
 			//名前
 			MFont::BMSize.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, { "第一層\n" , it->名前 });
@@ -277,8 +277,8 @@ namespace SDX_ADE
 			MSystem::DrawBar({ 座標.x + Lph(8),座標.y + Lph(9) }, Lph(10), Lph(11), it->探索率, 1, Color::Blue, Color::White, Color::White, true);
 			MFont::BMSize.DrawBold({ 座標.x + Lph(14),座標.y + Lph(15) }, Color::White, Color::Black, { it->探索率*100, "%" },true);
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(36) }, Color::White, Color::Black, { it->発見地図 , " / " , it->最大地図 });
-			MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(37) }, Color::White, Color::Black, { it->発見財宝 , " / " , it->最大財宝 });
+			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(36) }, Color::White, Color::Black, { it->発見地図 , " / " , it->最大地図 });
+			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(37) }, Color::White, Color::Black, { it->発見財宝 , " / " , it->最大財宝 });
 			MIcon::アイコン[IconType::地図].Draw({ 座標.x + Lph(16),座標.y + Lph(17) });
 			MIcon::アイコン[IconType::宝箱].Draw({ 座標.x + Lph(18),座標.y + Lph(19) });
 			MIcon::アイコン[IconType::ボス].Draw({ 座標.x + Lph(20),座標.y + Lph(21) });
@@ -293,12 +293,12 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_捜索 });
 			}
 
-			it->ボスモンスター[0].Img[0][1]->DrawRotate({ 座標.x + Lph(24),座標.y + Lph(25) }, 3, 0);
+			//it->ボスモンスター[0]->image[0][1]->DrawRotate({ 座標.x + Lph(24),座標.y + Lph(25) }, 3, 0);
 
-			for(int a=0;a<it->雑魚モンスター.size();a++)
-			{ 
-				it->雑魚モンスター[a].Img[0][1]->DrawRotate({ 座標.x + Lph(26),座標.y + Lph(27) }, 2, 0);
-			}
+			//for(int a=0;a<it->雑魚モンスター.size();a++)
+			//{ 
+				//it->雑魚モンスター[a]->image[0][1]->DrawRotate({ 座標.x + Lph(26),座標.y + Lph(27) }, 2, 0);
+			//}
 			//Lph 28 29未使用
 			
 			MFont::BSSize.DrawBold({ 座標.x + Lph(30),座標.y + Lph(31) }, Color::White, Color::Black, "Boss");
@@ -323,11 +323,11 @@ namespace SDX_ADE
 
 			//名前、説明文、アイコン、Lv、必要資金、(使用回数)
 			MFont::MSize.DrawBold({ 座標.x + Lph(2),座標.y + Lph(3) }, Color::White, Color::Black, it->名前);
-			MFont::MSize.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, it->説明文);
+			MFont::MSize.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, it->説明);
 
-			MIcon::アイコン[it->アイコン].DrawRotate({ 座標.x + Lph(6) , 座標.y + Lph(7) }, 2, 0);
+			//MIcon::アイコン[it->アイコン].DrawRotate({ 座標.x + Lph(6) , 座標.y + Lph(7) }, 2, 0);
 
-			MFont::MSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, { "Lv", it->Lv } , true);
+			MFont::MSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, { "Lv", it->ランク } , true);
 
 			MIcon::アイコン[IconType::資金].Draw({ 座標.x + Lph(10) , 座標.y + Lph(11) });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(12) ,座標.y + Lph(13) }, Color::White, Color::Black, { (long long)it->消費資金 , " G" }, true);
@@ -386,13 +386,13 @@ namespace SDX_ADE
 
 			for (int a = 0; a < 1; a++)
 			{
-				Material* 素材 = &Material::data[it->種族->素材];
+				//Material* 素材 = &Material::data[it->種族->素材];
 
-				if (素材 == nullptr) { continue; }
+				//if (素材 == nullptr) { continue; }
 
-				MIcon::アイコン[素材->アイコン].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , 素材->Lv });
-				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, 素材->名前);
+				//MIcon::アイコン[素材->アイコン].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
+				//MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , 素材->Lv });
+				//MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, 素材->名前);
 			}
 
 			//各種ステータス
@@ -449,9 +449,9 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン, 0, 枠透過率);
 
 			//素材アイコン_Lph_所持数
-			MIcon::アイコン[it->アイコン].DrawRotate({ 座標.x + Lph(2), 座標.y + Lph(3) }, 1, 0);
+			it->image->DrawRotate({ 座標.x + Lph(2), 座標.y + Lph(3) }, 1, 0);
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->Lv }, true);
+			MFont::BSSize.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->ランク }, true);
 
 			//所持数
 			MFont::BMSize.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->ID] },true);
@@ -474,7 +474,7 @@ namespace SDX_ADE
 
 			std::string s = "";
 
-			MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(25),座標.y + Lph(26) },Color(200,64,64 ), s);
+			MSystem::DrawSkill(スキル->image, { 座標.x + Lph(25),座標.y + Lph(26) },Color(200,64,64 ), s);
 
 			MIcon::アイコン[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
 

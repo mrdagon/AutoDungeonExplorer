@@ -67,8 +67,8 @@ namespace SDX_ADE
 
 		constexpr int 最大Aスキル数 = 4;//一人が覚えるスキル数
 
-		constexpr int 最大Pスキル習得リスト = 48;//1職業毎
-		constexpr int 最大Aスキル習得リスト = 8;
+		constexpr int 最大敵Pスキル数 = 8;
+
 		constexpr int 最大キースキル習得リスト = 3;
 
 		constexpr int 最大装備Pスキル数 = 2;

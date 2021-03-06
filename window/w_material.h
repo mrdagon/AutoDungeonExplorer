@@ -30,10 +30,10 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 12);
 
 				//素材アイコン
-				MIcon::アイコン[素材種->アイコン].DrawRotate({ px + Lp(6), py + Lp(7) }, 1, 0);
+				素材種->image->DrawRotate({ px + Lp(6), py + Lp(7) }, 1, 0);
 
 				//Lv
-				MFont::BSSize.DrawBold({ px + Lp(10) ,py + Lp(11) }, Color::White, Color::Black, { "Lv" , 素材種->Lv }, true);
+				MFont::BSSize.DrawBold({ px + Lp(10) ,py + Lp(11) }, Color::White, Color::Black, { "Lv" , 素材種->ランク }, true);
 
 				//所持数
 				MFont::BSSize.DrawBold({ px + Lp(12) ,py + Lp(13) }, Color::White, Color::Black, "x", true);

@@ -260,7 +260,7 @@ namespace SDX_ADE
 				}
 
 				//地図部屋確定
-				if (探索先->探索率 > Game::地図発見探索率&& 探索先->部屋[1].地図 > 0 && !探索先->部屋[1].is入場)
+				if (探索先->探索率 > Game::地図発見探索率 && !探索先->部屋[1].is入場)
 				{
 					room_deck.push_back(1);
 					return;
@@ -269,7 +269,7 @@ namespace SDX_ADE
 				//未探索部屋から抽選
 				if (Rand::Coin(Guild::P->未開探索))
 				{
-					for (int a = 1; a < 探索先->部屋数; a++)
+					for (int a = 1; a < 探索先->部屋.size(); a++)
 					{
 						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索) { continue; }
 						room_deck.push_back(a);
@@ -279,7 +279,7 @@ namespace SDX_ADE
 				if (room_deck.size() > 0) { return; }
 
 				//未探索部屋0の場合
-				for (int a = 1; a < 探索先->部屋数; a++)
+				for (int a = 1; a < 探索先->部屋.size(); a++)
 				{
 					if (探索先->部屋[a].is入場)
 					{
@@ -384,7 +384,7 @@ namespace SDX_ADE
 				int 素材ID = 0;
 				int 素材数 = Rand::Get(2,3);
 
-				double レア素材確率 = 探索先->レア収集率;
+				double レア素材確率 = 0;
 				double 素材数増加率 = 0;
 
 				//パッシブ補正
@@ -406,9 +406,9 @@ namespace SDX_ADE
 
 					if (発見素材種 == CraftType::木材)
 					{
-						素材ID = 探索先->伐採素材[id];
+						//素材ID = 探索先->伐採素材[id];
 					} else {
-						素材ID = 探索先->採掘素材[id];
+						//素材ID = 探索先->採掘素材[id];
 					}
 
 					if (Rand::Coin(レア素材確率))
@@ -418,7 +418,7 @@ namespace SDX_ADE
 						獲得素材[素材ID] += 素材数;
 					}
 
-					Effect::素材[パーティID].emplace_back(&MIcon::アイコン[Material::data[素材ID].アイコン] , a);
+					Effect::素材[パーティID].emplace_back(Material::data[素材ID].image , a);
 				}
 			}
 
@@ -441,8 +441,6 @@ namespace SDX_ADE
 				{
 					if (Rand::Coin(0.5) && !it.isボス) { continue; }//とりあえず基本ドロップ率50%
 
-					素材ID = it.種族->素材;
-
 					if (Rand::Coin(レア率))
 					{
 						獲得レア素材[素材ID]++;
@@ -450,7 +448,7 @@ namespace SDX_ADE
 						獲得素材[素材ID]++;
 					}
 
-					Effect::素材[パーティID].emplace_back(&MIcon::アイコン[Material::data[素材ID].アイコン],a,it.隊列ID);
+					Effect::素材[パーティID].emplace_back( Material::data[素材ID].image,a,it.隊列ID);
 				}
 
 				獲得経験値 += it.経験値;
@@ -612,10 +610,10 @@ namespace SDX_ADE
 					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
 					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
 					EventLog::Add(0, Game::日付, LogDetailType::ボス討伐, 探索先->ID);
-					if (探索先->部屋[部屋ID].地図 < 0)
-					{
-						財宝獲得();
-					}
+					//if (探索先->部屋[部屋ID].地図 < 0)
+					//{
+					//	財宝獲得();
+					//}
 					break;
 				case RoomType::地図:
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
@@ -663,26 +661,26 @@ namespace SDX_ADE
 
 			void 地図発見()
 			{
-				if (探索先->部屋[部屋ID].地図 <= 0) { return; }
+				//if (探索先->部屋[部屋ID].地図 <= 0) { return; }
 
-				探索先->発見地図++;
+				//探索先->発見地図++;
 				発見物 = &MIcon::アイコン[IconType::地図];
 				獲得地図数++;
-				if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
+				/*if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
 				{
 					Dungeon::data[探索先->部屋[部屋ID].地図].is発見 = true;
 					MSound::効果音[SE::地図発見].Play();
 					Guild::P->総地図++;
 					Guild::P->クエスト進行(QuestType::ダンジョン発見, 探索先->ID);
 					EventLog::Add(0, Game::日付, LogDetailType::地図発見, 探索先->ID);
-				}
+				}*/
 
-				探索先->部屋[部屋ID].地図 = -1;
+				//探索先->部屋[部屋ID].地図 = -1;
 			}
 
 			void 財宝獲得()
 			{
-				探索先->発見財宝++;
+				//探索先->発見財宝++;
 				獲得石版数++;
 				発見物 = &MIcon::アイコン[IconType::宝箱];
 			}
@@ -966,23 +964,9 @@ namespace SDX_ADE
 		{
 			MSound::効果音[SE::クエスト完了].Play();
 
-			クエスト.達成度 = クエスト.条件数値;
 			クエスト.is完了 = true;
-			Guild::P->名声 += クエスト.報酬名誉;
-			Guild::P->資金 += クエスト.報酬金;
 
-			for (auto& it : クエスト.次依頼)
-			{
-				if (it >= 0)
-				{
-					Quest::data[it].is受注 = true;
-				}
-			}
 
-			if (クエスト.isメイン)
-			{
-				Game::isメインクエスト = true;
-			}
 		}
 
 		bool SaveLoad(File& ファイル, FileMode 読み書きモード)

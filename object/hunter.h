@@ -28,7 +28,7 @@ namespace SDX_ADE
 			this->名前 = 名前;
 
 			int job = (int)ジョブ;
-			Img = Job::data[job].Img;
+			Img = Job::data[job].ちびimage;
 
 			装備[0] = Job::data[job].初期装備[0];
 			装備[1] = Job::data[job].初期装備[1];
@@ -81,8 +81,8 @@ namespace SDX_ADE
 		std::string 名前;
 		Job* 職業;
 
-		std::array<bool, CV::最大Aスキル習得リスト> isAスキル習得;
-		std::array<bool, CV::最大Pスキル習得リスト> isPスキル習得;
+		std::array<bool, 100> isAスキル習得;
+		std::array<bool, 100> isPスキル習得;
 		int Pスキル習得予約ID = -1;//-1なら予約無し
 
 		//●Lvアップ時等更新ステータス
@@ -121,20 +121,6 @@ namespace SDX_ADE
 
 			レベルアップ判定();//2レベ以上上がった時用の再起呼び出し
 
-			//習得予約判定
-
-			if (Pスキル習得予約ID >= 0 && スキルポイント >= 職業->習得Pスキル[Pスキル習得予約ID]->必要SP)
-			{
-				スキルポイント -= 職業->習得Pスキル[Pスキル習得予約ID]->必要SP;
-				isPスキル習得[Pスキル習得予約ID] = true;
-				Pスキル習得予約ID = -1;
-				isスキル習得演出 = true;
-
-				if (Config::isスキル習得時停止 == true)
-				{
-					Game::is直前スキル自動習得 = true;
-				}
-			}
 		}
 
 		//パッシブ無しの基礎ステータス計算
@@ -157,17 +143,17 @@ namespace SDX_ADE
 
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				補正ステ[StatusType::HP] += 装備[a]->Getステ(StatusType::HP);
-				補正ステ[StatusType::力] += 装備[a]->Getステ(StatusType::力);
-				補正ステ[StatusType::技] += 装備[a]->Getステ(StatusType::技);
-				補正ステ[StatusType::知] += 装備[a]->Getステ(StatusType::知);
+				補正ステ[StatusType::HP] += 装備[a]->ステ[StatusType::HP];
+				補正ステ[StatusType::力] += 装備[a]->ステ[StatusType::力];
+				補正ステ[StatusType::技] += 装備[a]->ステ[StatusType::技];
+				補正ステ[StatusType::知] += 装備[a]->ステ[StatusType::知];
 
-				補正ステ[StatusType::命中] += 装備[a]->Getステ(StatusType::命中);
-				補正ステ[StatusType::回避] += 装備[a]->Getステ(StatusType::回避);
+				補正ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
+				補正ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
 
-				補正ステ[StatusType::物防] += 装備[a]->Getステ(StatusType::物防);
-				補正ステ[StatusType::魔防] += 装備[a]->Getステ(StatusType::魔防);
-				補正ステ[StatusType::会心] += 装備[a]->Getステ(StatusType::会心);
+				補正ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
+				補正ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
+				補正ステ[StatusType::会心] += 装備[a]->ステ[StatusType::会心];
 			}
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
@@ -179,20 +165,13 @@ namespace SDX_ADE
 			//PスキルSの更新
 			パッシブスキル.clear();
 			//習得済みパッシブ
-			for (int a = 0; a < CV::最大Pスキル習得リスト; a++)
-			{
-				if (isPスキル習得[a] == true )
-				{					
-					パッシブスキル.push_back( 職業->習得Pスキル[a] );
-				}
-			}
 
 			//装備品パッシブ
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
 				for ( auto& it : 装備[a]->Pスキル )
 				{
-					if (it != nullptr && it->id != 0)
+					if (it != nullptr && it->ID != 0)
 					{
 						パッシブスキル.push_back(it);
 					}

@@ -39,7 +39,8 @@ void LoadAndInitData()
 	Material::LoadData();
 	Management::LoadData();
 
-	Quest::BetaQuest();
+	Quest::LoadData();
+	Dungeon::LoadData();
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }

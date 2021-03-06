@@ -1,5 +1,8 @@
 ﻿パッチノート
 
+management、dungeon、questのdataはゲーム毎に初期化が必要
+他は起動時に一回初期化でOK
+
 W_Factoryの処理を修正、最大職人人数を設定
 ▲は未テスト
 

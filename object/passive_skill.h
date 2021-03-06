@@ -56,6 +56,7 @@ namespace SDX_ADE
 
 	enum class PSkillEffect
 	{
+		なし,
 		//●アクティブスキル、通常攻撃強化
 		＠スキル強化,
 		ダメージ増加,
@@ -77,6 +78,8 @@ namespace SDX_ADE
 		超過回復,//最大HPを超えた分バリアを貼る
 		バフ固定値,
 		バフ反映率,
+		バフ発動率,
+		バフ持続,
 		バフ延長,
 		デバフ延長,
 		バフ強化,//-1で解除、1で効果倍増
@@ -88,6 +91,7 @@ namespace SDX_ADE
 		異常追撃,
 		挑発追撃,
 		//●バフ、特殊ステータス増加
+		＠保持効果,
 		与ダメージバフ,
 		受ダメージバフ,
 		HP1で耐える,
@@ -121,7 +125,7 @@ namespace SDX_ADE
 		物防割合増加,
 		魔防割合増加,
 		経験値増加,
-		キーパッシブ,
+		＠キーパッシブ,
 	};
 
 	/*パッシブスキル*/
@@ -131,66 +135,95 @@ namespace SDX_ADE
 	public:
 		inline static std::vector<PassiveSkill> data;
 
-		PassiveSkill(int id , std::string 名前, std::string 説明 , SkillType 系統, ItemType 装備種, ASkillType Aスキル種)
-		{
-			this->id = id;
-			this->名前 = 名前;
-			this->説明 = 説明;
-			this->Img = &MIcon::スキル[系統];
+		PassiveSkill()
+		{}
 
-			this->装備種 = 装備種;//武器種条件
-			this->Aスキル種 = Aスキル種;//Aスキル条件
-		}
-
-		void SetName(int id,std::string 名前, std::string 説明, SkillType 系統, ItemType 装備種, ASkillType Aスキル種)
-		{
-			this->id = id;
-			this->名前 = 名前;
-			this->説明 = 説明;
-			this->Img = &MIcon::スキル[系統];
-
-			this->装備種 = 装備種;//武器種条件
-			this->Aスキル種 = Aスキル種;//Aスキル条件
-		}
-
-		void Set(int 必要SP, double 効果量, double 発動率,PSkillTime タイミング,PSkillIf 条件,PSkillTarget 対象,PSkillEffect 効果)
-		{
-			this->必要SP = 必要SP;
-			this->効果量 = 効果量;
-			this->発動率 = 発動率;
-
-			this->タイミング = タイミング;
-			this->条件 = 条件;
-			this->対象 = 対象;
-			this->効果 = 効果;
-		}
+		//保存しない変数
+		Image* Img;
 
 		//-基本情報
-		ID_PSkill id;
+		ID_PSkill ID;
 		std::string 名前;
 		std::string 説明;
-		Image* Img;
-		int 必要SP;
-		double 効果量;
+
+		int アイコンID;
 		bool isキースキル = false;
 
-		//-条件
-		ASkillType Aスキル種;//タグ-複数可
-		ItemType 装備種;
+		bool スキルタグ[(int)SkillType::COUNT];
 
-		PSkillTime タイミング;
-		double 発動率;
+		ID_PSkill 習得前提PスキルID;
+		int 習得前提PスキルLv;
+		int 習得必要Lv;
 
 		PSkillIf 条件;
-		double 条件値;
-		int 持続時間 = 0;//一時バフ系効果
+		int 条件値;
+		int 持続時間;
 
+		PSkillTime タイミング;
+		int 発動率;
 		PSkillTarget 対象;
-		PSkillEffect 効果;
+
+		PSkillEffect 効果種[2];
+		int 効果量[2];
+
+		int レベル補正種[2];
+		int レベル補正値[2][9];
 
 		static void LoadData()
 		{
+			File file_data("file/data/pskill.dat", FileMode::Read, true);
+			File file_csv("file/data/pskill.csv", FileMode::Read, false);
+			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
 
+			int data_count = 0;
+			file_data.Read(data_count);
+
+			for (int i = 0; i < data_count; i++)
+			{
+				int dummy;
+
+				data.emplace_back();
+				auto& it = data.back();
+
+				it.ID = i;
+				it.名前 = strs[i][0];
+				if (strs[i].size() == 2)
+				{
+					it.説明 = strs[i][1];
+				}
+
+				file_data.Read(it.アイコンID);
+				file_data.Read(it.isキースキル);
+
+				file_data.Read(it.スキルタグ, (int)SkillType::COUNT);
+				file_data.Read(it.習得前提PスキルID);
+				file_data.Read(it.習得前提PスキルLv);
+				file_data.Read(it.習得必要Lv);
+
+				file_data.Read(it.条件);
+				file_data.Read(it.条件値);
+				file_data.Read(it.持続時間);
+
+				file_data.Read(it.タイミング);
+				file_data.Read(it.発動率);
+				file_data.Read(it.対象);
+				file_data.Read(it.効果種[0]);
+				file_data.Read(it.効果量[0]);
+				file_data.Read(it.効果種[1]);
+				file_data.Read(it.効果量[1]);
+
+				file_data.Read(it.レベル補正種[0]);
+				for (int b = 0; b < 9; b++)
+				{
+					file_data.Read(it.レベル補正値[0][b]);
+				}
+
+				file_data.Read(it.レベル補正種[1]);
+				for (int b = 0; b < 9; b++)
+				{
+					file_data.Read(it.レベル補正値[1][b]);
+				}
+			}
 		}
 	};
 

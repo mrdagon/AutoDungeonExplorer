@@ -126,7 +126,7 @@ namespace SDX_ADE
 					break;
 				case LogDetailType::経営戦術使用:
 					//経営戦術名
-					MIcon::アイコン[Management::data[id].アイコン].DrawRotate({Lp(30),Lp(31) + yy }, 2, 0);
+					//MIcon::アイコン[Management::data[id].アイコン].DrawRotate({Lp(30),Lp(31) + yy }, 2, 0);
 					str = Management::data[id].名前;
 					str += TX::Log_投資;
 					break;
@@ -138,30 +138,30 @@ namespace SDX_ADE
 					break;
 				case LogDetailType::地図発見:
 					//ダンジョンアイコンと名前
-					Dungeon::data[id].Img->DrawRotate({Lp(30),Lp(31) + yy },1,0);
+					Dungeon::data[id].image->DrawRotate({Lp(30),Lp(31) + yy },1,0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_地図;
 					break;
 				case LogDetailType::ボス発見:
-					Dungeon::data[id].Img->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
+					Dungeon::data[id].image->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_ボス発見;
 					break;
 				case LogDetailType::ボス討伐:
-					Dungeon::data[id].Img->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
+					Dungeon::data[id].image->DrawRotate({ Lp(30),Lp(31) + yy }, 1, 0);
 					str = Dungeon::data[id].名前;
 					str += TX::Log_ボス討伐;
 					break;
 				case LogDetailType::新装備開発:
 					//装備品のアイコン
-					MIcon::アイテム[Item::data[id].見た目].DrawRotate({ Lp(30) , Lp(31) + yy }, 1, 0);
-					str = Item::data[id].名前;
+					//MIcon::アイテム[Item::data[id].見た目].DrawRotate({ Lp(30) , Lp(31) + yy }, 1, 0);
+					//str = Item::data[id].名前;
 					str += TX::Log_初製造;
 					break;
 				case LogDetailType::レア装備製造:
 					//装備アイコン
-					MIcon::アイテム[Item::data[id].見た目].DrawRotate({ Lp(30) , Lp(31) +yy},1,0);
-					str = Item::data[id].名前;
+					//MIcon::アイテム[Item::data[id].見た目].DrawRotate({ Lp(30) , Lp(31) +yy},1,0);
+					//str = Item::data[id].名前;
 					str += TX::Log_レア製造;
 					break;
 				case LogDetailType::技術Lv上昇:

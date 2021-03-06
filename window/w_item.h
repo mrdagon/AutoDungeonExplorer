@@ -25,11 +25,11 @@ namespace SDX_ADE
 				//外枠
 				MSystem::DrawWindow({ px,py }, w, h, 1);
 				//アイコン
-				MIcon::アイテム[Item::data[id].見た目].Draw({ px + Lp(11),py+Lp(12) });
+				//MIcon::アイテム[Item::data[id].見た目].Draw({ px + Lp(11),py+Lp(12) });
 				//在庫数
 				MFont::BMSize.DrawBold({ px + Lp(13) ,py+Lp(14) }, Color::White, Color::Black, { "" , zaiko }, true);
 				//ランク表示
-				MFont::BSSize.DrawBold({ px + Lp(17) ,py + Lp(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].Lv }, true);
+				//MFont::BSSize.DrawBold({ px + Lp(17) ,py + Lp(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].Lv }, true);
 				//new表示
 
 			}
@@ -38,14 +38,14 @@ namespace SDX_ADE
 				//掴む
 				if (Guild::P->装備所持数[id] > 0)
 				{
-					W_Drag::アイテム = &Item::data[id];
+					//W_Drag::アイテム = &Item::data[id];
 					MSound::効果音[SE::ドラッグ].Play();
 				}
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoItem(&Item::data[id], 座標);
+				//InfoItem(&Item::data[id], 座標);
 			}
 
 		};

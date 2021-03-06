@@ -137,9 +137,9 @@ namespace SDX_ADE
 			Guild::P->ギルメン控え.clear();
 			Guild::P->探索要員.reserve(1024);
 
-			Guild::P->最大パーティ数 = 3;
+			Guild::P->最大パーティ数 = 1;
 				
-			//ギルメン初期
+			//ギルメン初期化
 			for (int a = 0; a < 5; a++)
 			{
 				Guild::P->探索要員.emplace_back();
@@ -147,15 +147,8 @@ namespace SDX_ADE
 				Guild::P->探索パーティ[0].メンバー[a] = &Guild::P->探索要員[a];
 			}
 
-			//仮ダンジョン
-			Dungeon::data.clear();
-			Dungeon::data.reserve(100);
-			for (int a = 0; a < 100; a++)
-			{
-				Dungeon::Add(a, "名も無き迷宮", IconType::森 , 100, std::min(a / 10,4), a+1 , 1 , (a % 10 == 9));
-				Dungeon::data[a].探索率計算();
-			}
-			Dungeon::data[0].is発見 = true;
+			//ダンジョン初期化
+
 
 			for (int a = 0; a < CV::最大パーティ数; a++)
 			{

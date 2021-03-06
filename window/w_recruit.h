@@ -90,7 +90,7 @@ namespace SDX_ADE
 				//選択中は枠の色を変える			
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), (職業 == Guild::P->求人職業) ? (10) : (11) );
 				//職業見た目
-				job->Img[0][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
+				job->ちびimage[0][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
 				//職業名表示、職業番号表示、職業説明
 				MFont::BMSize.DrawBold({ px + Lp(40),py + Lp(41) }, Color::White, Color::Black, { job->名前 });
 			}
@@ -114,7 +114,7 @@ namespace SDX_ADE
 				//ジョブ名
 				MFont::BMSize.DrawBoldRotate({ px + Lp(42) ,py + Lp(43) }, 1, 0, Color::White, Color::Black, job->名前, false);
 				//ジョブ装備種
-				MIcon::アイテム[job->初期装備[0]->見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
+				//MIcon::アイテム[job->初期装備[0]->見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
 
 				//推奨隊列
 				MFont::BMSize.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, job->概説 , false);
@@ -125,7 +125,7 @@ namespace SDX_ADE
 				MFont::BMSize.DrawBold({ px + Lp(51),py + Lp(52) }, Color::White, Color::Black, { job->説明 });
 
 				//立ち絵
-				MJob::立ち絵[job->職種].DrawRotate({ px + Lp(56),py + Lp(57) }, 2, 0);
+				MJob::立ち絵[job->ID].DrawRotate({ px + Lp(56),py + Lp(57) }, 2, 0);
 			}
 		};
 

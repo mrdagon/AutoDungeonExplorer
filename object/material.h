@@ -14,32 +14,45 @@ namespace SDX_ADE
 	public:
 		static std::vector<Material> data;
 
-		Material(int ID, IconType アイコン, CraftType 製造部門, int Lv):
-			ID(ID),
-			アイコン(アイコン),
-			製造部門(製造部門),
-			Lv(Lv)
-		{
-		}
+		Material()
+		{}
 
-		int ID = 0;
+		Image* image;
+		ID_Material ID = 0;
 
 		std::string 名前 = "素材(仮)";
 		std::string 説明 = "説明(仮)";
-		IconType アイコン = IconType::資金;
-		CraftType 製造部門 = CraftType::木材;
 
+		CraftType 種類 = CraftType::木材;
+
+		int ランク = 0;
 		int 価格 = 10;
-		int Lv = 0;
 
 		static void LoadData()
 		{
-			Material::data.emplace_back(0, IconType::木材, CraftType::木材, 1);
-			Material::data.emplace_back(1, IconType::骨材, CraftType::石材, 1);
-			Material::data.emplace_back(2, IconType::鉄材, CraftType::鉄材, 1);
-			Material::data.emplace_back(3, IconType::皮材, CraftType::革材, 1);
-			Material::data.emplace_back(4, IconType::木材, CraftType::骨材, 2);
-			Material::data.emplace_back(5, IconType::骨材, CraftType::魔材, 2);
+			File file_data("file/data/quest.dat", FileMode::Read, true);
+			File file_csv("file/data/quest.csv", FileMode::Read, false);
+			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+
+			int data_count = 0;
+			file_data.Read(data_count);
+
+			for (int i = 0; i < data_count; i++)
+			{
+				int dummy;
+
+				data.emplace_back();
+				auto& it = data.back();
+
+				it.名前 = strs[i][0];
+				if (strs[i].size() == 2)
+				{
+					it.説明 = strs[i][1];
+				}
+
+				it.ID = i;
+			}
+
 		}
 
 	};

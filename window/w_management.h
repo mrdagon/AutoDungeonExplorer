@@ -77,10 +77,12 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				Color bc = Color::Black;
-				bool can使用 = 参照戦術->can使用 && (参照戦術->消費資金 <= Guild::P->資金);
-				bool isLv = (参照戦術->Lv <= Guild::P->投資Lv[参照戦術->系統]);
-				bool is選択中 = (Guild::P->選択戦術 == 参照戦術->MID);
+				bool can使用 = 参照戦術->is使用可 && (参照戦術->消費資金 <= Guild::P->資金);
+			
+				//bool isLv = (参照戦術->Lv <= Guild::P->投資Lv[参照戦術->系統]);
+				//bool is選択中 = (Guild::P->選択戦術 == 参照戦術->MID);
 
+				/*
 				int 枠No = 1;
 				int 凹凸 = 0;
 				if (参照戦術->is永続 && 参照戦術->使用回数 > 0)
@@ -112,20 +114,20 @@ namespace SDX_ADE
 				}
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(),枠No,凹凸);
-				MIcon::アイコン[参照戦術->アイコン].DrawRotate({px + (int)位置.GetW()/2 - 凹凸,py + (int)位置.GetH()/2 - 凹凸 },2,0);
-
+				//MIcon::アイコン[参照戦術->アイコン].DrawRotate({px + (int)位置.GetW()/2 - 凹凸,py + (int)位置.GetH()/2 - 凹凸 },2,0);
+				*/
 				クリック時間--;
 
 			}
 			void Click(double px, double py)
 			{
 				//お金足りてたら使用、不足してたら予約状態にする
-				if (!参照戦術->can使用)
+				if (!参照戦術->is使用可)
 				{
 					return;
 				}
 
-
+				/*
 				if (Guild::P->選択戦術 != 参照戦術->MID)
 				{
 					Guild::P->選択戦術 = 参照戦術->MID;
@@ -139,6 +141,7 @@ namespace SDX_ADE
 					Guild::P->選択戦術 = MSkillType::COUNT;
 					MSound::効果音[SE::投資解除].Play();
 				}
+				*/
 
 				クリック時間 = 5;
 			}
@@ -260,32 +263,6 @@ namespace SDX_ADE
 			}
 
 
-			for (auto& it : Management::data)
-			{
-				if ((int)it.系統 == 現在タブ)
-				{
-					if (it.Lv != r)
-					{
-						if (r != -1) { y += Lp(25); }
-						r = it.Lv;
-						gui_rank[r-1].位置 = { Lp(20) , y , Lp(26),Lp(27) };
-						y += Lp(28);
-						x = Lp(20);
-					}
-
-					if (x >= Lp(20) + Lp(24) * 6)
-					{
-						x = Lp(20);
-						y += Lp(25);
-					}
-
-					gui_skill[n].参照戦術 = &it;
-					gui_skill[n].位置 = { x , y , Lp(22),Lp(23) };
-					x += Lp(24);
-
-					n++;
-				}
-			}
 
 			戦術数 = n;
 			縦内部幅 = y + 50 + 固定縦;

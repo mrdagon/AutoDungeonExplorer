@@ -611,9 +611,9 @@ namespace SDX_ADE
 				if (it->タイミング != タイミング) { continue; }
 				if (Aスキル != nullptr)
 				{
-					if( it->Aスキル種 != Aスキル->種類) { continue; }
-					if ( it->装備種 != ItemType::すべて && it->装備種 != Aスキル->装備種) { continue; }
-					if (it->発動率 <= 0.0 || !Rand::Coin(it->発動率)) { continue; }
+					//if( it->Aスキル種 != Aスキル->種類) { continue; }
+					//if ( it->装備種 != ItemType::すべて && it->装備種 != Aスキル->装備種) { continue; }
+					//if (it->発動率 <= 0.0 || !Rand::Coin(it->発動率)) { continue; }
 				}
 				int num = (int)敵.size();
 
@@ -657,7 +657,7 @@ namespace SDX_ADE
 		void Pスキル処理(PassiveSkill* Pスキル,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
 		{
 			//とりあえずβのだけ実装
-			switch (Pスキル->効果)
+			switch (Pスキル->効果種[0])
 			{
 			//基礎限定効果
 			case PSkillEffect::HP増加:
@@ -687,31 +687,31 @@ namespace SDX_ADE
 			case PSkillEffect::スキルCT増減:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
-					クールダウン速度[a] *= 1.0 + Pスキル->効果量;
+					クールダウン速度[a] *= 1.0 + Pスキル->効果量[0];
 				}
 				break;
 			//基礎非戦闘
 			case PSkillEffect::採取増加:
-				素材収集量 += Pスキル->効果量;
+				素材収集量 += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::レア採取増加:
-				レア素材収集補正 += Pスキル->効果量;
+				レア素材収集補正 += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::剥取増加:
-				素材剥取量 += Pスキル->効果量;
+				素材剥取量 += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::レア剥取増加:
-				レア素材剥取補正 += Pスキル->効果量;
+				レア素材剥取補正 += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::戦闘後回復:
-				戦闘後回復 += Pスキル->効果量;
+				戦闘後回復 += Pスキル->効果量[0];
 				break;
 			//スキル使用時限定
 			case PSkillEffect::スキル威力増減:
-				Aスキル->反映率 *= 1.0 + Pスキル->効果量;
+				Aスキル->反映率 *= 1.0 + Pスキル->効果量[0];
 				break;
 			case PSkillEffect::スキル効果増減:
-				Aスキル->バフ効果補正 += Pスキル->効果量;
+				Aスキル->バフ効果補正 += Pスキル->効果量[0];
 				break;
 			//色んなタイミングで発動可能
 			case PSkillEffect::与ダメージバフ:
@@ -719,10 +719,10 @@ namespace SDX_ADE
 				{
 					Aスキル->バフ確率[BuffType::与ダメ増減] = 1.0;
 					Aスキル->バフ持続[BuffType::与ダメ増減] = Pスキル->持続時間;
-					Aスキル->バフ反映率[BuffType::与ダメ増減] = Pスキル->効果量;
+					Aスキル->バフ反映率[BuffType::与ダメ増減] = Pスキル->効果量[0];
 				} else {
 					//自己バフ
-					バフ使用(BuffType::与ダメ増減, Pスキル->効果量, Pスキル->持続時間);
+					バフ使用(BuffType::与ダメ増減, Pスキル->効果量[0], Pスキル->持続時間);
 				}
 				break;
 			case PSkillEffect::受ダメージバフ:
@@ -730,10 +730,10 @@ namespace SDX_ADE
 				{
 					Aスキル->バフ確率[BuffType::被ダメ軽減] = 1.0;
 					Aスキル->バフ持続[BuffType::被ダメ軽減] = Pスキル->持続時間;
-					Aスキル->バフ反映率[BuffType::被ダメ軽減] = Pスキル->効果量;
+					Aスキル->バフ反映率[BuffType::被ダメ軽減] = Pスキル->効果量[0];
 				} else {
 					//自己
-					バフ使用(BuffType::被ダメ軽減, Pスキル->効果量, Pスキル->持続時間);
+					バフ使用(BuffType::被ダメ軽減, Pスキル->効果量[0], Pスキル->持続時間);
 				}
 				break;
 			}

@@ -19,9 +19,9 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				参照->Img->DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
+				参照->image->DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
 				MFont::BSSize.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
-				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->Lv }, false);
+				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
 
 				//ボス
 				参照->ボスモンスター[0].Img[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
@@ -48,7 +48,7 @@ namespace SDX_ADE
 				if ( px > Lp(21) - 20 && px < Lp(21) + 20)
 				{
 					//ボスモンスターヘルプ
-					InfoMonster( &参照->ボスモンスター[0], 参照->Lv, true, 座標);
+					InfoMonster( &参照->ボスモンスター[0], 参照->ボスLv, true, 座標);
 					return;
 				}
 
@@ -57,7 +57,7 @@ namespace SDX_ADE
 					if (px > Lp(25) + Lp(26) * a - 20 && px < Lp(25) + Lp(26) * a + 20)
 					{
 						//ザコモンスターヘルプ
-						InfoMonster( &参照->雑魚モンスター[a],参照->Lv,false,座標);
+						InfoMonster( &参照->雑魚モンスター[a],参照->雑魚Lv,false,座標);
 						
 						return;
 					}
@@ -149,7 +149,7 @@ namespace SDX_ADE
 
 			for (auto& it : Dungeon::data)
 			{
-				if (it.is発見 && it.層 == 現在タブ)
+				if (it.is発見 == 現在タブ)
 				{
 					ダンジョン[n].参照 = &it;
 					ダンジョン[n].isヘルプ表示 = true;

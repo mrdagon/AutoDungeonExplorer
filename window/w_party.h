@@ -42,8 +42,8 @@ namespace SDX_ADE
 				}
 
 				//探索先アイコン、レベル
-				dun->Img->Draw({ px + Lp(12),py + Lp(13) });
-				MFont::BSSize.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->Lv });
+				dun->image->Draw({ px + Lp(12),py + Lp(13) });
+				MFont::BSSize.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->雑魚Lv });
 				//探索度ゲージと探索率
 				MSystem::DrawBar({ px + Lp(18) , py + Lp(19) }, Lp(20), Lp(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
 				MFont::BSSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
@@ -67,10 +67,10 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(23) - 9 }, Color::White, Color::Black, sボス状態, true);
 				//地図状態
 				MIcon::アイコン[IconType::地図].DrawRotate({ px + Lp(22),py + Lp(24) }, 1, 0);
-				MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
+				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
 				//財宝状態
 				MIcon::アイコン[IconType::宝箱].DrawRotate({ px + Lp(22),py + Lp(25) }, 1, 0);
-				MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(25) - 9 }, Color::White, Color::Black, { dun->発見財宝 , " / " , dun->最大財宝 }, true);
+				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(25) - 9 }, Color::White, Color::Black, { dun->発見財宝 , " / " , dun->最大財宝 }, true);
 
 
 				//探索指示-冒険中は三角を非表示
@@ -194,12 +194,12 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px + Lp(43) ,py + Lp(46) }, Lp(48), Lp(49), 0);
 				MSystem::DrawWindow({ px + Lp(44) ,py + Lp(46) }, Lp(48), Lp(49), 0);
 				MSystem::DrawWindow({ px + Lp(45) ,py + Lp(47) }, Lp(48), Lp(49), 0);
-				MIcon::アイテム[ギルメン->装備[0]->見た目].Draw({ px + Lp(43) + Lp(50) , py + Lp(46) + Lp(51) });
-				MIcon::アイテム[ギルメン->装備[1]->見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
-				MIcon::アイテム[ギルメン->装備[2]->見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
+				//MIcon::アイテム[ギルメン->装備[0]->見た目].Draw({ px + Lp(43) + Lp(50) , py + Lp(46) + Lp(51) });
+				//MIcon::アイテム[ギルメン->装備[1]->見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
+				//MIcon::アイテム[ギルメン->装備[2]->見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
 
-				MFont::BSSize.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->Lv });
-				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->Lv });
+				MFont::BSSize.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->ランク });
+				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->ランク });
 
 				//装備更新ボタン
 
@@ -532,7 +532,7 @@ namespace SDX_ADE
 				}
 				
 
-				auto img = it.種族->Img;
+				auto img = it.種族->image;
 				int 向き = 7;
 				double サイズ = 2;
 
@@ -726,9 +726,9 @@ namespace SDX_ADE
 
 					auto& it = Material::data[a];
 
-					MIcon::アイコン[it.アイコン].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 1, 0);
+					it.image->DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 1, 0);
 					//Lv表示
-					MFont::BSSize.DrawBold({ px + itemX(cnt) + Lp(34) ,py + itemY(cnt) + Lp(35) }, Color::White, Color::Black, { "Lv " , it.Lv });
+					MFont::BSSize.DrawBold({ px + itemX(cnt) + Lp(34) ,py + itemY(cnt) + Lp(35) }, Color::White, Color::Black, { "Lv " , it.ランク });
 
 					//素材数表示
 					MFont::BSSize.DrawBold({ px + itemX(cnt) + Lp(36) ,py + itemY(cnt) + Lp(37) }, Color::White, Color::Black, { "x", 所属->獲得素材[a] });

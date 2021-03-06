@@ -26,10 +26,9 @@ namespace SDX_ADE
 			Lv(コピー元.Lv),
 			経験値(コピー元.経験値)
 		{
-			Img = this->種族->Img;
+			Img = this->種族->image;
 			基礎ステータス計算();
 		}
-
 
 		Monster(ID_Monster 種族, int Lv, bool isボス)
 		{
@@ -38,7 +37,7 @@ namespace SDX_ADE
 			this->isボス = isボス;
 			経験値 = std::pow((double)Lv,1.5) * 10;
 
-			Img = this->種族->Img;
+			Img = this->種族->image;
 
 			//基礎ステータス
 			基礎ステータス計算();

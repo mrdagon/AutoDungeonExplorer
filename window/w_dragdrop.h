@@ -33,11 +33,11 @@ namespace SDX_ADE
 		{
 			if (ダンジョン != nullptr)
 			{
-				ダンジョン->Img->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+				ダンジョン->image->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
 			else if (アイテム != nullptr)
 			{
-				MIcon::アイテム[アイテム->見た目].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+				//アイテム->画像.DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
 			else if (探索メン != nullptr)
 			{
@@ -46,11 +46,11 @@ namespace SDX_ADE
 
 			else if (ギルメン装備.メンバー != nullptr)
 			{
-				MIcon::アイテム[ギルメン装備.メンバー->装備[ギルメン装備.部位]->見た目].DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+				//ギルメン装備.メンバー->装備[ギルメン装備.部位]->画像.DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}			
 			else if ( Aスキル != nullptr)
 			{
-				MSystem::DrawSkill(Aスキル->Img, { Input::mouse.x - 12 ,Input::mouse.y - 12 }, Color(200, 64, 64));
+				MSystem::DrawSkill(Aスキル->image, { Input::mouse.x - 12 ,Input::mouse.y - 12 }, Color(200, 64, 64));
 
 			}
 		}

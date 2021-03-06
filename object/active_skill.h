@@ -141,13 +141,14 @@ namespace SDX_ADE
 	public:
 		inline static std::vector<ActiveSkill> data;
 		//保存しない変数
-		Image* Img;//スキルアイコン
+		Image* image;//スキルアイコン
 
 		//変数
+		ID_ASkill ID;
 		std::string 名前;
 		std::string 説明;
 
-		ID_ASkill アイコンID;
+		int アイコンID;
 		EffectAnimeType 戦闘エフェクト = EffectAnimeType::斬;
 
 		int 習得Lv;
@@ -233,6 +234,8 @@ namespace SDX_ADE
 				{
 					it.説明 = strs[i][1];
 				}
+
+				it.ID = i;
 
 				file_data.Read(it.アイコンID);
 				file_data.Read(it.戦闘エフェクト);
