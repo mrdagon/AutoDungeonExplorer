@@ -51,7 +51,7 @@ namespace SDX_ADE
 		};
 	public:
 		std::vector<GUI_Tab> タブ;//レシピ9種 + 全て
-		GUI_Item アイテム[CV::装備種];
+		GUI_Item アイテム[100];
 		GUI_Frame 枠;
 
 		int 装備数 = 0;
@@ -138,12 +138,7 @@ namespace SDX_ADE
 		{
 			装備数 = 0;
 
-			for (int a = 0; a < CV::装備種; a++)
-			{
-
-			}
-
-			for (int a = 装備数; a < CV::装備種; a++)
+			for (int a = 装備数; a < 100; a++)
 			{
 				アイテム[a].isヘルプ表示 = false;
 			}

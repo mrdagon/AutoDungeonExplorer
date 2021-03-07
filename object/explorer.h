@@ -7,11 +7,11 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	/*戦闘員ベースクラス*/
-	class Hunter : public Fighter
+	/*探索者ベースクラス*/
+	class Explorer : public Battler
 	{
 	public:
-		Hunter()
+		Explorer()
 		{
 			気絶時SE = SE::味方気絶;
 			is味方 = true;
@@ -21,31 +21,29 @@ namespace SDX_ADE
 		{
 			this->ID = id;
 			this->Lv = Lv;
-			this->職業 = &Job::data[ジョブ];
-
-			所属 = -1;
-
+			this->職業 = &ExplorerClass::data[ジョブ];
 			this->名前 = 名前;
 
 			int job = (int)ジョブ;
-			Img = Job::data[job].ちびimage;
+			image = ExplorerClass::data[job].ちびimage;
 
-			装備[0] = Job::data[job].初期装備[0];
-			装備[1] = Job::data[job].初期装備[1];
-			装備[2] = Job::data[job].初期装備[2];
+			装備[0] = ExplorerClass::data[job].初期装備[0];
+			装備[1] = ExplorerClass::data[job].初期装備[1];
+			装備[2] = ExplorerClass::data[job].初期装備[2];
 
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			アクティブスキル[0] = Job::data[job].初期Aスキル[0];
-			アクティブスキル[1] = Job::data[job].初期Aスキル[1];
-			アクティブスキル[2] = Job::data[job].初期Aスキル[2];
-			アクティブスキル[3] = Job::data[job].初期Aスキル[3];
+			アクティブスキル[0] = ExplorerClass::data[job].初期Aスキル[0];
+			アクティブスキル[1] = ExplorerClass::data[job].初期Aスキル[1];
+			アクティブスキル[2] = ExplorerClass::data[job].初期Aスキル[2];
+			アクティブスキル[3] = ExplorerClass::data[job].初期Aスキル[3];
 
 			スキルリセット(0);
 
-			static std::vector<Fighter*> 仮メンバー;
+			static std::vector<Battler*> 仮メンバー;
 
+			//基礎ステータス/装備/常時パッシブによる補正効果
 			基礎ステータス計算();
 			基礎Pスキル補正(仮メンバー,仮メンバー);
 		}
@@ -54,16 +52,18 @@ namespace SDX_ADE
 
 		void スキルリセット(int 低下レベル)
 		{
-			for (auto& it : isAスキル習得)
+			for (auto& it : AスキルLv)
 			{
-				it = false;
+				it = 0;
 			}
-			for (auto& it : isPスキル習得)
+			for (auto& it : PスキルLv)
 			{
-				it = false;
+				it = 0;
 			}
-			isAスキル習得[0] = true;
-			isAスキル習得[1] = true;
+			for (auto& it : スキル習得予約)
+			{
+				it = 0;
+			}
 
 			経験値 = 0;
 			Lv = std::max(1,Lv - 低下レベル);
@@ -72,29 +72,31 @@ namespace SDX_ADE
 		}
 
 		//●人事関連
-		//所属あり、就活中、ニートの３パターン
-		int ID;//data配列内のID
-
-		int 所属;//-1なら無所属
+		int ID;//guildのvector配列内のindex
 
 		//●固定ステータス
 		std::string 名前;
-		Job* 職業;
-
-		std::array<bool, 100> isAスキル習得;
-		std::array<bool, 100> isPスキル習得;
-		int Pスキル習得予約ID = -1;//-1なら予約無し
+		ExplorerClass* 職業;
+		
+		//●スキル習得状況
+		std::array<int, CV::最大Aスキル種類> AスキルLv;
+		std::array<int, CV::最大Pスキル種類> PスキルLv;
+		int スキル習得予約[100];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
 		int Lv;
 		double 経験値 = 0;
-		int スキルポイント;
+		int スキルポイント;//余っているスキルポイント
 
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
-		//UI表示用
+		ActiveSkill* 装備Aスキル通常[CV::最大Aスキル数];
+		ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
+
 		int 探検前Lv;
 		int 探検前経験値;
+
+		//UI表示用
 		bool isレベルアップ演出;
 		bool isスキル習得演出;
 
@@ -158,8 +160,6 @@ namespace SDX_ADE
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				クールダウン速度[a] = 1;
-				合計クールダウン[a] = 0;
 			}
 
 			//PスキルSの更新

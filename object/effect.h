@@ -76,11 +76,11 @@ namespace SDX_ADE
 		bool is味方;
 		int 配置ID;
 
-		EffectAnimeType スキルエフェクト;
+		ImagePack* スキルエフェクト;
 		int フレーム番号 = 0;
 		int アニメ時間 = 0;
 
-		BattleEffect(EffectAnimeType スキルエフェクト, bool is味方, int 配置ID) :
+		BattleEffect(ImagePack* スキルエフェクト, bool is味方, int 配置ID) :
 			スキルエフェクト(スキルエフェクト),
 			is味方(is味方),
 			配置ID(配置ID)
@@ -95,7 +95,7 @@ namespace SDX_ADE
 				フレーム番号++;
 				アニメ時間 = 0;
 
-				if (フレーム番号 >= MEffect::エフェクト[スキルエフェクト].GetSize())
+				if (フレーム番号 >= スキルエフェクト->GetSize())
 				{
 					return true;
 				}
@@ -123,7 +123,7 @@ namespace SDX_ADE
 	private:
 		const int ポップ間隔 = 15;
 	public:
-		Image* Img;
+		Image* image;
 		int 隠れ時間;
 		int 配置ID;//敵ドロップの場合0以上にする
 
@@ -132,8 +132,8 @@ namespace SDX_ADE
 		const int 表示終了Y = -20;
 		const int 移動Y = -1;
 
-		MaterialEffect(Image* Img , int 隠れ時間 , int 配置ID = -1):
-			Img(Img),
+		MaterialEffect(Image* image , int 隠れ時間 , int 配置ID = -1):
+			image(image),
 			隠れ時間(隠れ時間 * ポップ間隔),
 			配置ID(配置ID)
 		{}
@@ -155,7 +155,7 @@ namespace SDX_ADE
 		MaterialEffect& operator=(const MaterialEffect& コピー元)
 		{
 			// 代入操作時に行う処理を記述
-			this->Img = コピー元.Img;
+			this->image = コピー元.image;
 			this->隠れ時間 = コピー元.隠れ時間;
 			this->座標Y = コピー元.座標Y;
 			this->配置ID = コピー元.配置ID;
@@ -168,9 +168,9 @@ namespace SDX_ADE
 	{
 	public:
 		//パーティ毎のエフェクト保持用vector
-		inline static std::vector<TextEffect> 文字[CV::最大パーティ数];
-		inline static std::vector<BattleEffect> アニメ[CV::最大パーティ数];
-		inline static std::vector<MaterialEffect> 素材[CV::最大パーティ数];
+		inline static std::vector<TextEffect> 文字[CV::上限パーティ数];
+		inline static std::vector<BattleEffect> アニメ[CV::上限パーティ数];
+		inline static std::vector<MaterialEffect> 素材[CV::上限パーティ数];
 
 		template <class T>
 		static void UpdateAndDelete(std::vector<T>& エフェクト)

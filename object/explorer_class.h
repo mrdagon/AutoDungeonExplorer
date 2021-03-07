@@ -8,13 +8,13 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*ギルメンのクラス*/
-	class Job
+	class ExplorerClass
 	{
 	private:
 	public:
-		inline static std::vector<Job> data;
+		inline static std::vector<ExplorerClass> data;
 
-		Job()
+		ExplorerClass()
 		{}
 		//
 		ImagePack* ちびimage;
@@ -52,8 +52,6 @@ namespace SDX_ADE
 
 			for (int i = 0; i < data_count; i++)
 			{
-				int dummy;
-
 				data.emplace_back();
 				auto& it = data.back();
 
@@ -61,7 +59,7 @@ namespace SDX_ADE
 				it.名前 = strs[i][0];
 				if (strs[i].size() == 2)
 				{
-					int first = strs[i][1].find('\t');
+					int first = (int)strs[i][1].find('\t');
 					//最初の行が概説
 					it.概説 = strs[i][1].substr(0,first);
 					//tabを改行に置き換え

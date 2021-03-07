@@ -15,15 +15,13 @@ namespace SDX_ADE
 		class GUI_MLv : public GUI_Object
 		{
 		public:
-			ManagementType 部門;
-
 			void Draw派生(double px, double py)
 			{
-				double rate = (double)Guild::P->投資経験値[部門] / Management::必要経験値[Guild::P->投資Lv[部門]];
+				double rate = (double)Guild::P->投資経験値 / Management::必要経験値[Guild::P->投資Lv];
 
 				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::SSize.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv[部門] });
+				MFont::SSize.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
 			}
 		};
 
@@ -46,11 +44,11 @@ namespace SDX_ADE
 					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
 					W_Drag::Over戦術 = nullptr;
 				}
-				else if (Guild::P->選択戦術 != MSkillType::COUNT )
+				else if ( true )
 				{
 					Color fc = {255,128,128};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[(int)Guild::P->選択戦術].消費資金 , " G"}, true);
+					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[0].消費資金 , " G"}, true);
 				}
 
 			}
@@ -194,10 +192,10 @@ namespace SDX_ADE
 				タブ[a].SetHelp(TX::Manage_タブヘルプ[a]);
 			}
 
-			gui_mlv[0].部門 = ManagementType::経営;
-			gui_mlv[1].部門 = ManagementType::人事;
-			gui_mlv[2].部門 = ManagementType::製造;
-			gui_mlv[3].部門 = ManagementType::探索;
+			//gui_mlv[0].部門 = ManagementType::経営;
+			//gui_mlv[1].部門 = ManagementType::人事;
+			//gui_mlv[2].部門 = ManagementType::製造;
+			//gui_mlv[3].部門 = ManagementType::探索;
 
 			gui_objects.push_back(&gui_gold);
 			for (int a = 0; a < 4; a++) { gui_objects.push_back(&タブ[a]); }

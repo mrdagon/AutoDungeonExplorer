@@ -14,18 +14,17 @@
 
 #include "item.h"
 
-#include "job.h"
+#include "explorer_class.h"
 
 #include "effect.h"
 
-#include "fighter.h"
+#include "battler.h"
 
 #include "monster.h"
 #include "dungeon.h"
 #include "event_log.h"
 
-#include "hunter.h"
-#include "crafter.h"
+#include "explorer.h"
 
 #include "quest.h"
 

@@ -92,7 +92,7 @@ namespace SDX_ADE
 			MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 		}
 
-		void InfoHunter(Hunter* it, Point 座標)
+		void InfoExplorer(Explorer* it, Point 座標)
 		{
 			help_csv_page = 11;
 
@@ -106,7 +106,7 @@ namespace SDX_ADE
 			座標.y += Lph(2);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5), Lph(6), 内スキン, 0, 枠透過率);
 
-			it->Img[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
+			it->image[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
 			MFont::BSSize.DrawBold({ 座標.x + Lph(9) , 座標.y + Lph(10) }, Color::White, Color::Black, { "Lv " , it->Lv });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(11) , 座標.y + Lph(12) }, Color::White, Color::Black, it->名前);
@@ -353,7 +353,7 @@ namespace SDX_ADE
 			{
 				const auto it = パーティ->メンバー[a];
 				if ( it == nullptr) { continue; }
-				it->Img[0][1]->DrawRotate({ 座標.x + Lph(5) + Lph(6)*a , 座標.y + Lph(7) }, 2, 0);
+				it->image[0][1]->DrawRotate({ 座標.x + Lph(5) + Lph(6)*a , 座標.y + Lph(7) }, 2, 0);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 0 }, Color::White, Color::Black, it->与ダメージログ,true);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 1 }, Color(255,80,80), Color::Black, it->受ダメージログ, true);
 				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 2 }, Color(128,255,128), Color::Black, it->回復ログ, true);
@@ -375,7 +375,7 @@ namespace SDX_ADE
 			座標.y += Lph(2);
 			MSystem::DrawWindow({ 座標.x + Lph(3),座標.y + Lph(4) }, Lph(5) - Lph(54), Lph(6), 内スキン, 0, 枠透過率);
 
-			it->Img[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
+			it->image[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
 			MFont::BSSize.DrawBold({ 座標.x + Lph(50) , 座標.y + Lph(51) }, Color::White, Color::Black, { "Lv " , Lv });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(52) , 座標.y + Lph(53) }, Color::White, Color::Black, it->種族->名前);

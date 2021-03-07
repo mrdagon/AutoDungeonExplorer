@@ -50,7 +50,7 @@ namespace SDX_ADE
 			guild->資金 -= 消費資金;
 			is使用済み = true;
 			//ログ
-			EventLog::Add(0, Game::日付, LogDetailType::経営戦術使用, ID);
+			EventLog::Add(0, Game::日付, LogType::経営);
 
 			if (is永続) { is使用可 = false; }
 
@@ -60,35 +60,11 @@ namespace SDX_ADE
 				MSound::効果音[SE::投資実行].Play();
 			}
 
-			switch( MSkillType(ID) )
-			{
-				case MSkillType::ビラ配り:
-					guild->集客力 += 5;
-					break;
-				case MSkillType::薄利多売:
-					break;
-				case MSkillType::新人発掘:
-					break;
-				case MSkillType::OJT:
-					guild->戦闘経験補正 += 0.1;
-					break;
-				case MSkillType::技術研究:
-					break;
-				case MSkillType::低コスト化:
-					guild->素材節約 += 0.1;
-					break;
-				case MSkillType::探索術:
-					guild->未開探索 += 0.05;
-					break;
-				case MSkillType::探索許可証:
-					if (guild->最大パーティ数 < CV::最大パーティ数){guild->最大パーティ数++;}
-					break;
-				case MSkillType::探索許可証2:
-					if (guild->最大パーティ数 < CV::最大パーティ数) { guild->最大パーティ数++; }
-					break;
-			}
-
-
+			//switch( ID )
+			//{
+			//	case MSkillType::ビラ配り:
+			//		break;
+			//}
 		}
 
 		bool Lv上昇判定()

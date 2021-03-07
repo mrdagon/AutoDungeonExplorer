@@ -312,22 +312,22 @@ namespace SDX_ADE
 	//戦闘エフェクト
 	namespace MEffect
 	{
-		EnumArray<ImagePack, EffectAnimeType> エフェクト;
+		ImagePack エフェクト[12];
 
 		static void Load()
 		{
-			エフェクト[EffectAnimeType::斬].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
-			エフェクト[EffectAnimeType::打].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
-			エフェクト[EffectAnimeType::突].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
-			エフェクト[EffectAnimeType::炎].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
-			エフェクト[EffectAnimeType::雷].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
-			エフェクト[EffectAnimeType::氷].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
-			エフェクト[EffectAnimeType::バフ].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
-			エフェクト[EffectAnimeType::デバフ].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
-			エフェクト[EffectAnimeType::回復].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
-			エフェクト[EffectAnimeType::異常].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
-			エフェクト[EffectAnimeType::爪].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
-			エフェクト[EffectAnimeType::牙].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
+			エフェクト[0].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
+			エフェクト[1].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
+			エフェクト[2].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
+			エフェクト[3].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
+			エフェクト[4].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
+			エフェクト[5].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
+			エフェクト[6].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
+			エフェクト[7].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
+			エフェクト[8].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
+			エフェクト[9].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
+			エフェクト[10].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
+			エフェクト[11].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
 		}
 	}
 

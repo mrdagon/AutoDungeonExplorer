@@ -120,16 +120,6 @@ namespace SDX_ADE
 				Guild::P->is素材発見[a] = true;
 			}
 
-			Guild::P->投資経験値[ManagementType::経営] = 0;
-			Guild::P->投資経験値[ManagementType::人事] = 0;
-			Guild::P->投資経験値[ManagementType::製造] = 0;
-			Guild::P->投資経験値[ManagementType::探索] = 0;
-
-			Guild::P->投資Lv[ManagementType::経営] = 1;
-			Guild::P->投資Lv[ManagementType::人事] = 1;
-			Guild::P->投資Lv[ManagementType::製造] = 1;
-			Guild::P->投資Lv[ManagementType::探索] = 1;
-
 			Guild::P->資金 = 100000;
 
 			//求人＆初期人材ダミー
@@ -150,7 +140,7 @@ namespace SDX_ADE
 			//ダンジョン初期化
 
 
-			for (int a = 0; a < CV::最大パーティ数; a++)
+			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				Guild::P->探索パーティ[a].探索先 = &Dungeon::data[0];
 				Guild::P->探索パーティ[a].基礎ステ再計算();
@@ -380,15 +370,7 @@ namespace SDX_ADE
 		//投資処理
 		void UseManagement()
 		{
-			if (Guild::P->選択戦術 == MSkillType::COUNT) { return; }
-
-			//お金足りてたら戦術実行
-
-			if (Guild::P->資金 >= Management::data[(int)Guild::P->選択戦術].消費資金)
-			{
-				Management::data[(int)Guild::P->選択戦術].Active(Guild::P);
-				Guild::P->選択戦術 = MSkillType::COUNT;
-			}
+			
 		}
 
 		//●セーブ処理

@@ -33,17 +33,16 @@ namespace SDX_ADE
 
 			Dungeon* 探索先 = nullptr;
 			Dungeon* 探索先予約 = nullptr;
-			OrderType 探索指示 = OrderType::探索;
+			OrderType 探索指示 = OrderType::なし;
 
 			std::vector<Monster> 魔物;
-			Hunter* メンバー[CV::パーティ人数];
+			Explorer* メンバー[CV::パーティ人数];
 
-			std::vector<Fighter*> 味方;
-			std::vector<Fighter*> 敵;
+			std::vector<Battler*> 味方;
+			std::vector<Battler*> 敵;
 
 			CraftType 発見素材種;
 			int 獲得素材[CV::最大素材種];
-			int 獲得レア素材[CV::最大素材種];
 
 			double 獲得経験値;
 			int 獲得石版数;
@@ -102,7 +101,6 @@ namespace SDX_ADE
 				//獲得素材数リセット
 				獲得経験値 = 0;
 				for (auto& it : 獲得素材) { it = 0; }
-				for (auto& it : 獲得レア素材) { it = 0; }
 				獲得石版数 = 0;
 				獲得地図数 = 0;
 				撃破ボス数 = 0;
@@ -124,13 +122,6 @@ namespace SDX_ADE
 						Guild::P->素材数[a] += 獲得素材[a];
 						Guild::P->資金 += Material::data[a].価格 * 獲得素材[a];
 						Guild::P->総素材 += 獲得素材[a];
-						Guild::P->is素材発見[a] = true;
-					}
-					if (獲得レア素材[a] > 0)
-					{
-						Guild::P->レア素材数[a] += 獲得レア素材[a];
-						Guild::P->資金 += Material::data[a].価格 * 獲得レア素材[a] * CV::レア素材値段倍率;
-						Guild::P->総素材 += 獲得レア素材[a];
 						Guild::P->is素材発見[a] = true;
 					}
 				}
@@ -236,15 +227,7 @@ namespace SDX_ADE
 				std::vector<int> room_deck;
 				room_deck.clear();
 
-				switch (探索指示)
-				{
-				case OrderType::探索:
-					Set部屋抽選リスト(room_deck, false);
-					break;
-				case OrderType::ボス://発見済みならボス戦へ
-					Set部屋抽選リスト(room_deck, true);
-					break;
-				}
+				Set部屋抽選リスト(room_deck, true);
 
 				//抽選
 				部屋ID = room_deck[Rand::Get((int)room_deck.size() - 1)];
@@ -402,7 +385,7 @@ namespace SDX_ADE
 
 				for (int a = 0; a < 素材数; a++)
 				{
-					int id = Rand::Get(CV::最大収集種 - 1);
+					int id = Rand::Get(2);
 
 					if (発見素材種 == CraftType::木材)
 					{
@@ -411,12 +394,7 @@ namespace SDX_ADE
 						//素材ID = 探索先->採掘素材[id];
 					}
 
-					if (Rand::Coin(レア素材確率))
-					{
-						獲得レア素材[素材ID] += 素材数;
-					}else {
-						獲得素材[素材ID] += 素材数;
-					}
+					獲得素材[素材ID] += 素材数;
 
 					Effect::素材[パーティID].emplace_back(Material::data[素材ID].image , a);
 				}
@@ -441,13 +419,8 @@ namespace SDX_ADE
 				{
 					if (Rand::Coin(0.5) && !it.isボス) { continue; }//とりあえず基本ドロップ率50%
 
-					if (Rand::Coin(レア率))
-					{
-						獲得レア素材[素材ID]++;
-					} else {
-						獲得素材[素材ID]++;
-					}
-
+					獲得素材[素材ID]++;
+					
 					Effect::素材[パーティID].emplace_back( Material::data[素材ID].image,a,it.隊列ID);
 				}
 
@@ -538,9 +511,9 @@ namespace SDX_ADE
 
 				for (auto& it : 魔物)
 				{
-					if (it.is死亡 == false && it.現在HP <= 0)
+					if (it.is気絶 == false && it.現在HP <= 0)
 					{
-						it.is死亡 = true;
+						it.is気絶 = true;
 						素材剥取処理(it);
 					}
 				}
@@ -609,7 +582,7 @@ namespace SDX_ADE
 					Guild::P->総討伐++;
 					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
 					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
-					EventLog::Add(0, Game::日付, LogDetailType::ボス討伐, 探索先->ID);
+					EventLog::Add(0, Game::日付, LogType::探索 );
 					//if (探索先->部屋[部屋ID].地図 < 0)
 					//{
 					//	財宝獲得();
@@ -732,7 +705,7 @@ namespace SDX_ADE
 				{
 					MSound::効果音[SE::ボス発見].Play();
 					探索先->isボス発見 = true;
-					EventLog::Add(0, Game::日付, LogDetailType::ボス発見, 探索先->ID);
+					EventLog::Add(0, Game::日付, LogType::探索);
 				}
 			}
 
@@ -748,22 +721,21 @@ namespace SDX_ADE
 		bool is素材発見[CV::最大素材種];
 
 		double 資金 = 123456789;
-		MSkillType 選択戦術 = MSkillType::COUNT;
 		int 名声 = 100;
 
 		//従業員一覧
-		std::vector<Hunter> 探索要員;
+		std::vector<Explorer> 探索要員;
 
 		//Party test;
-		Party 探索パーティ[CV::最大パーティ数];
-		std::vector<Hunter*> ギルメン控え;
+		Party 探索パーティ[CV::上限パーティ数];
+		std::vector<Explorer*> ギルメン控え;
 
 
 		int 最大パーティ数 = 3;
 
 		//パーティーと配属人員
-		EnumArray<int, ManagementType> 投資Lv;
-		EnumArray<double, ManagementType> 投資経験値;
+		int 投資Lv;
+		int 投資経験値;
 
 		int 集客力 = 100;//10で割った数値が一日の来客期待値
 
@@ -778,7 +750,7 @@ namespace SDX_ADE
 		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
 
 		//装備品
-		int 装備所持数[CV::装備種] = { 0 };
+		int 装備所持数[100] = { 0 };
 
 		EnumArray < bool, ItemType> is新開発タブ;
 
@@ -806,7 +778,7 @@ namespace SDX_ADE
 
 		Guild()
 		{
-			for (int a = 0; a < CV::最大パーティ数; a++)
+			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				探索パーティ[a].パーティID = a;
 			}
@@ -848,7 +820,7 @@ namespace SDX_ADE
 
 		}
 
-		void パーティ移動(Hunter* メンバー , int 並びID , Hunter* 移動先メンバー, int 移動先ID)
+		void パーティ移動(Explorer* メンバー , int 並びID , Explorer* 移動先メンバー, int 移動先ID)
 		{
 			//控え枠へドロップ
 			if (移動先メンバー == nullptr && 移動先ID == -100)
@@ -913,7 +885,7 @@ namespace SDX_ADE
 		void 探索開始()
 		{
 			//エフェクト初期化
-			for (int a = 0; a < CV::最大パーティ数; a++)
+			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				Effect::アニメ[a].clear();
 				Effect::素材[a].clear();
@@ -939,7 +911,7 @@ namespace SDX_ADE
 
 		void エフェクト更新()
 		{
-			for (int a = 0; a < CV::最大パーティ数; a++)
+			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				Effect::UpdateAndDelete(Effect::アニメ[a]);
 				Effect::UpdateAndDelete(Effect::素材[a]);

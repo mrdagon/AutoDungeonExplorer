@@ -85,11 +85,7 @@ namespace SDX_ADE
 				}
 
 				std::string siji;
-				switch (Guild::P->探索パーティ[パーティID].探索指示)
-				{
-				case OrderType::探索: siji = TX::Party_ボス回避; break;
-				case OrderType::ボス: siji = TX::Party_ボス討伐; break;
-				}
+				siji = TX::Party_ボス回避;
 
 				MFont::BSSize.DrawBold({ px + Lp(29) ,py + Lp(30) }, Color::White, Color::Black, siji, true);
 			}
@@ -168,7 +164,7 @@ namespace SDX_ADE
 		{
 		public:
 			W_Skilltree* スキルツリー;
-			Hunter* ギルメン;
+			Explorer* ギルメン;
 			Guild::Party* 所属;
 			W_Party* 親ウィンドウ;
 			int 並びID;//1パーティ目 0~4、22パーティ目5～9 ...
@@ -186,7 +182,7 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
 				//アイコン、Lv、Expゲージ
-				ギルメン->Img[0][1]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
+				ギルメン->image[0][1]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
 				MSystem::DrawBar({ px + Lp(39),py + Lp(40) }, Lp(41), Lp(42), ギルメン->経験値 / ギルメン->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);
 				MFont::BSSize.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
 
@@ -203,14 +199,14 @@ namespace SDX_ADE
 
 				//装備更新ボタン
 
-				if (ギルメン->Pスキル習得予約ID == -1)
-				{
-					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
-					MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル未予約);
-				} else {
+				//if (ギルメン->Pスキル習得予約ID == -1)
+				//{
+					//MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
+					//MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル未予約);
+				//} else {
 					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 3, -1);
 					MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル予約);
-				}
+				//}
 
 			}
 
@@ -368,7 +364,7 @@ namespace SDX_ADE
 				else
 				{
 					//ギルメン情報
-					InfoHunter(ギルメン, 座標);
+					InfoExplorer(ギルメン, 座標);
 				}
 			}
 		};
@@ -460,7 +456,7 @@ namespace SDX_ADE
 				}
 			}
 
-			void Drawギルメン(Hunter* it,double px, double py)
+			void Drawギルメン(Explorer* it,double px, double py)
 			{
 				bool is反転 = false;
 				int 向き = 0;
@@ -503,13 +499,13 @@ namespace SDX_ADE
 				}
 
 
-				it->Img[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
+				it->image[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
 				if (it->E光強さ > 0)
 				{
 					Screen::SetBlendMode(BlendMode::Add, int(it->E光強さ * 255));
-					it->Img[0][向き]->SetColor(it->E光色);
-					it->Img[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
-					it->Img[0][向き]->SetColor(Color::White);
+					it->image[0][向き]->SetColor(it->E光色);
+					it->image[0][向き]->DrawRotate({ px + (int)it->E座標,py }, サイズ, 角度);
+					it->image[0][向き]->SetColor(Color::White);
 					Screen::SetBlendMode();
 				}
 
@@ -585,14 +581,14 @@ namespace SDX_ADE
 						buf_y = py + Lp(2 + it.配置ID);
 					}
 
-					if (it.スキルエフェクト == EffectAnimeType::回復)
+					if (it.スキルエフェクト == 0)
 					{
 						Screen::SetBlendMode(BlendMode::Add);
-						MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
+						it.スキルエフェクト[0][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
 						Screen::SetBlendMode();
 					} else {
 
-						MEffect::エフェクト[it.スキルエフェクト][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
+						it.スキルエフェクト[0][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
 					}
 
 				}
@@ -648,7 +644,7 @@ namespace SDX_ADE
 						buf_y = py + Lp(2 + it.配置ID) + it.座標Y;
 					}
 
-					it.Img->DrawRotate({ buf_x , buf_y }, 1, 0);
+					it.image->DrawRotate({ buf_x , buf_y }, 1, 0);
 				}
 
 			}
@@ -677,7 +673,7 @@ namespace SDX_ADE
 					auto it = 所属->メンバー[a];
 					if ( it == nullptr) { continue; }
 					//キャラ
-					it->Img[0][1]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
+					it->image[0][1]->DrawRotate({ px + Lp(20) + Lp(21) * a , py + Lp(22) }, 2, 0);
 					//経験値バー-獲得分の表示
 					int バー幅 = Lp(23);
 					double 経験値割合 = it->経験値 / it->Get要求経験値();
@@ -797,7 +793,7 @@ namespace SDX_ADE
 		{
 		public:
 			int ID;
-			Hunter* ギルメン;
+			Explorer* ギルメン;
 
 			void Draw派生(double px, double py)
 			{
@@ -812,7 +808,7 @@ namespace SDX_ADE
 
 				//アイコン、Lv
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
-				ギルメン->Img[0][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
+				ギルメン->image[0][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
 			}
 
 			void Click(double px, double py)
@@ -878,7 +874,7 @@ namespace SDX_ADE
 				if (ギルメン == nullptr) { return; }
 
 				//ギルメン情報
-				InfoHunter(ギルメン, 座標);
+				InfoExplorer(ギルメン, 座標);
 			}
 		};
 
@@ -950,9 +946,9 @@ namespace SDX_ADE
 		//パーティ
 		W_Skilltree スキルツリー;
 
-		GUI_パーティ パーティ[CV::最大パーティ数];
-		GUI_探索先 探索先[CV::最大パーティ数];
-		GUI_パーティメンバー パーティメンバー[CV::最大パーティ数 * CV::パーティ人数];
+		GUI_パーティ パーティ[CV::上限パーティ数];
+		GUI_探索先 探索先[CV::上限パーティ数];
+		GUI_パーティメンバー パーティメンバー[CV::上限パーティ数 * CV::パーティ人数];
 		GUI_控え 控え[CV::最大控え人数];
 		GUI_控え枠 控え枠;
 		GUI_求人 求人;
@@ -1024,7 +1020,7 @@ namespace SDX_ADE
 			//オブジェクト初期化
 			int cnt = 0;
 
-			for (int a = 0; a < CV::最大パーティ数; a++)
+			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				パーティ[a].位置 = { Lp(0) , Lp(1) + (Lp(3) + Lp(4)) * a , Lp(2) , Lp(3) };
 				探索先[a].位置 = { Lp(10) , Lp(6) + (Lp(3) + Lp(4)) * a , Lp(11) , Lp(8) };

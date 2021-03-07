@@ -23,7 +23,7 @@ namespace SDX_ADE
 				//枠
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 				//キャラクター
-				it->Img[0][1]->DrawRotate({ px + Lp(40) , py + Lp(41) }, 2, 0);
+				it->image[0][1]->DrawRotate({ px + Lp(40) , py + Lp(41) }, 2, 0);
 				//名前
 				MFont::BMSize.DrawBold({ px + Lp(42) ,py + Lp(43) }, Color::White, Color::Black, it->名前, false);
 				//LV
@@ -50,7 +50,6 @@ namespace SDX_ADE
 
 				
 				親->ギルメン = Guild::P->探索パーティ[親->配置id / 5].メンバー[親->配置id % 5];
-				親->Pスキル仮習得ID = 親->ギルメン->Pスキル習得予約ID;
 
 				W_Drag::Aスキル = nullptr;
 			}
@@ -135,7 +134,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				auto it = 親->ギルメン->職業->習得Aスキル[id];
-				bool is習得 = 親->ギルメン->isAスキル習得[id];
+				bool is習得 = true;
 				int 凹み = 0;
 
 				if (it == nullptr) { return; }
@@ -157,10 +156,9 @@ namespace SDX_ADE
 				auto it = 親->ギルメン->職業->習得Aスキル[id];
 
 				//習得済みなら掴む
-				if (親->ギルメン->isAスキル習得[id]){
-					W_Drag::Aスキル = it;
-					return;
-				}
+				W_Drag::Aスキル = it;
+				return;
+
 
 				//未習得でポイント足りてるなら仮習得
 				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
@@ -183,7 +181,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				auto it = 親->ギルメン->職業->習得Pスキル[id];
-				bool is習得 = 親->ギルメン->isPスキル習得[id];
+				bool is習得 = true;
 				int 凹み = 0;
 
 				if (it == nullptr) { return; }
@@ -203,11 +201,9 @@ namespace SDX_ADE
 				auto it = 親->ギルメン->職業->習得Pスキル[id];
 
 				if (it == nullptr) { return; }
-				if (親->ギルメン->isPスキル習得[id]) { return; }
 
 
 				親->Pスキル仮習得ID = (親->Pスキル仮習得ID == id) ? (-1) : (id);
-				親->ギルメン->Pスキル習得予約ID = -1;
 			}
 
 			void Info派生(Point 座標) override
@@ -262,11 +258,7 @@ namespace SDX_ADE
 			{
 				std::string str = "";
 
-				if (親->ギルメン->Pスキル習得予約ID > 0)
-				{
-					str = "予約";
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 3, -1);
-				} else if (親->Pスキル仮習得ID >= 0 ) {
+				if (親->Pスキル仮習得ID >= 0 ) {
 
 					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
 				} else {
@@ -286,7 +278,7 @@ namespace SDX_ADE
 					auto ps = 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID];
 
 					//習得処理
-					親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
+					//親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
 					親->Pスキル仮習得ID = -1;
 				}
 			}
@@ -305,7 +297,7 @@ namespace SDX_ADE
 		std::array<GUI_Pスキル, 100> Pスキル;
 		//決定ボタン
 		//キャンセルボタン
-		Hunter* ギルメン;
+		Explorer* ギルメン;
 		int 配置id;;
 		int Pスキル仮習得ID = -1;
 

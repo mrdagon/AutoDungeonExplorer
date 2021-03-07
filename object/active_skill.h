@@ -10,127 +10,33 @@ namespace SDX_ADE
 	//参考
 	//http://tacoika.blog87.fc2.com/blog-entry-588.html
 
-	//スキル対象
-	enum class ASkillTarget
+
+	struct ASkill追加効果
 	{
-		自分,
-		隣接,
-		前列,
-		後列,
-		弱者,
-		前列範囲,
-		後列範囲,
-		敵前列,
-		敵後列,
-		敵弱者,
-		敵前列範囲,
-		敵後列範囲,
-		COUNT
+		ASkill追加効果(ASkillSubType 種類, int 値) :
+			種類(種類),
+			値(値)
+		{}
+
+		ASkillSubType 種類;
+		int 値;
 	};
-
-	//スキルタグ
-	enum class ASkillType
+	struct ASkill補助効果
 	{
-		//基本タグ
-		攻撃,
-		回復,
-		バフ,
-		デバフ,
-		//範囲
-		単体,
-		範囲,
-		暗殺,
+		BuffType 種類;
+		int 基礎値;
+		int 反映率;
+		int 確率;
+		int 持続;
 
-		物理,
-		魔法,
+		ASkill補助効果(BuffType 種類, int 基礎値, int 反映率, int 確率, int 持続) :
+			種類(種類),
+			基礎値(基礎値),
+			反映率(反映率),
+			確率(確率),
+			持続(持続)
+		{}
 
-		斬撃,
-		打撃,
-		射撃,
-		火炎,
-		氷雪,
-		雷撃,
-		//参照ステータス
-		STR,
-		INT,
-		DEX,
-		指定なし,
-		COUNT
-	};
-
-	//バフ・デバフ効果
-	enum class BuffType
-	{
-		なし,
-		＠バフ・デバフ,
-		与ダメ増減,//割合増減
-		被ダメ軽減,//割合増減
-		物防,//+数値
-		魔防,//+数値
-		Str,//+数値
-		Dex,//+数値
-		Int,//+数値
-		命中,//+数値
-		回避,//+数値
-		挑発,//ターゲットになる
-		隠密,//ターゲットから外れる
-		速度,//CT速度割合増減
-		かばわれ,//数値の隊列の味方にかばわれる、一回かばうと残り時間０
-		異常バリア,//状態異常を無効化する、一回無効化すると残り時間０
-		両方バリア,//物理/魔法両方に対するバリア
-		物理バリア,//物理ダメージを数値分吸収
-		魔法バリア,//魔法ダメージを数値分吸収
-		再生,//時間経過で回復
-		祝福,//回復効果低減 or 増加
-		復活,//気絶しても回復する
-		分身,//スキルのHit数が増加、攻撃を受けると回避して分身消滅
-
-		//デメリットのみのやつ
-		＠状態異常,
-		出血,//行動時ダメージ
-		猛毒,//一定時間毎にダメージ
-		スタン,//一定値CTが減少
-		麻痺,//物理スキルの速度低下、回避減少？
-		沈黙,//魔法スキルの速度低下
-		暗闇,//物理スキルの命中低下、回避減少
-		混乱,//攻撃対象が敵味方ランダムに
-		石化,//行動不能、回復が遅い、回避０
-		睡眠,//行動不能、ダメージで回復、回避０
-		呪い,//与えたダメージが自分に跳ね返ってくる
-		宣告,//時間経過で気絶
-		COUNT
-	};
-
-	//追加効果
-	enum class ASkillSubType
-	{
-		//実質bool値
-		なし,
-		必中,
-		隠れる無視,
-		挑発無視,
-		異常回復,
-		気絶回復,
-
-		//エディタ上は-100～100の整数、ゲーム上は-1.0～1.0のdouble
-		防御貫通,//1で完全無視
-		回避貫通,
-		超過回復,//最大HPを超えた分バリアを貼る
-		ダメージ幅,//1で0～2.0倍
-		バフ延長,//-1で解除、1で持続倍増
-		デバフ延長,//-1で解除、1で持続倍増
-		バフ強化,//-0.5で半減、1で倍増
-		デバフ強化,//-0.5で半減、1で倍増
-		先制,//1で戦闘開始時100%
-		吸収,//1で与えたダメージと同じだけ回復
-		コスト,//1で残りHPの100%消費
-		全力,//自分のHPが100%なら威力増加
-		窮地,//自分のHPが30%以下なら威力が増加
-		処刑,
-		挑発追撃,
-		異常追撃,
-		反撃,//削除予定
-		COUNT
 	};
 
 	/*アクティブスキル*/
@@ -148,7 +54,7 @@ namespace SDX_ADE
 		std::string 名前;
 		std::string 説明;
 
-		EffectAnimeType 戦闘エフェクト = EffectAnimeType::斬;
+		ImagePack* 戦闘エフェクト;
 
 		int 習得Lv;
 		int 習得前提スキルID;
@@ -173,36 +79,8 @@ namespace SDX_ADE
 
 		ID_ASkill 連続スキル;
 
-		struct 追加効果
-		{
-			追加効果(ASkillSubType 種類 , int 値):
-				種類(種類),
-				値(値)
-			{}
-
-			ASkillSubType 種類;
-			int 値;
-		};
-		struct 補助効果
-		{
-			BuffType 種類;
-			int 基礎値;
-			int 反映率;
-			int 確率;
-			int 持続;
-
-			補助効果( BuffType 種類,int 基礎値,int 反映率,int 確率,int 持続 ):
-				種類(種類),
-				基礎値(基礎値),
-				反映率(反映率),
-				確率(確率),
-				持続(持続)
-			{}
-
-		};
-
-		std::vector<追加効果> 追加効果;
-		std::vector<補助効果> 補助効果;
+		std::vector<ASkill追加効果> 追加効果;
+		std::vector<ASkill補助効果> 補助効果;
 
 		bool is自己バフ = false;//補助効果の対象が命中した相手でなく自分になる
 		
@@ -239,7 +117,8 @@ namespace SDX_ADE
 				file_data.Read( dummy );
 				it.image = &MIcon::Aスキル[dummy];
 
-				file_data.Read(it.戦闘エフェクト);
+				file_data.Read(dummy);
+				it.戦闘エフェクト = &MEffect::エフェクト[dummy];
 
 				file_data.Read(it.習得Lv);
 				file_data.Read(it.習得前提スキルID);
@@ -334,17 +213,15 @@ namespace SDX_ADE
 	class ASkillEffect
 	{
 	public:
-		const ActiveSkill* base;
+		//
+		//スキルタグ、is自己バフ、連続使用スキル
 
-		EffectAnimeType 戦闘エフェクト;
+		const ActiveSkill* base;
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
 
-		StatusType 依存ステータス;
 		FormationType 適正隊列;
-		ASkillType 種類;
-
 		DamageType 属性;
 
 		ItemType 装備種 = ItemType::すべて;
@@ -352,22 +229,14 @@ namespace SDX_ADE
 		int Hit数 = 1;//多段ヒット数
 		double 命中 = 1.0;
 
-		double 基礎効果 = 0;//固定ダメージ
+		double 基礎ダメージ = 0;//固定ダメージ
 		double 反映率 = 0;
 
 		double 会心率 = 0.05;
 		double 会心倍率 = 1.5;
 
-		//バフ効果
-		EnumArray<double, BuffType> バフ基礎値;
-		EnumArray<double, BuffType> バフ反映率;
-		EnumArray<double, BuffType> バフ確率;
-		EnumArray<int, BuffType> バフ持続;
-
-		//追加効果など
-		EnumArray<double, ASkillSubType> 追加効果;
-		bool is自己バフ = false;//バフ効果の対象が命中した相手でなく自分になる
-		double 減衰率 = 1.0;//2番目以降のターゲットへのダメージ倍率
+		std::vector<ASkill追加効果> 追加効果;
+		std::vector<ASkill補助効果> 補助効果;
 
 		//ASkillにないやつ
 		double バフ効果補正 = 1.0;

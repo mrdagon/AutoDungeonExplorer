@@ -8,12 +8,14 @@ Effect生成関数はASkillのメンバー関数にする？
 外部データ読み込み時のimage参照未実装
 外部データの画像参照ID設定がまだ
 
-event_log
-fighter
-monster
-guild
-hunter
-monster
+職業の初期装備代入
+
+○EventLog
+Battler
+Monster
+Guild
+Explorer
+
 クラスの見直し
 
 intと互換性のある特定の型でしかindexアクセス出来ないvectorいる？

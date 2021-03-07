@@ -44,7 +44,7 @@ namespace SDX_ADE
 				{
 					int no = データ.メインパーティ職業[a];
 					if (no < 0) { continue; }
-					Job::data[no].ちびimage[0][1]->DrawRotate({ px + Lp(60) + Lp(61) * a ,py + Lp(62) }, 2, 0);
+					ExplorerClass::data[no].ちびimage[0][1]->DrawRotate({ px + Lp(60) + Lp(61) * a ,py + Lp(62) }, 2, 0);
 				}
 
 				//xマーク

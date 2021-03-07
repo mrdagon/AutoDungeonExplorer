@@ -7,11 +7,11 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	/*従業員ベースクラス*/
-	class Fighter
+	/*味方とモンスターベースクラス*/
+	class Battler
 	{
 	private:
-		void Get生存リスト(std::vector<Fighter*>& 生存リスト, const std::vector<Fighter*>& 敵)
+		void Get生存リスト(std::vector<Battler*>& 生存リスト, const std::vector<Battler*>& 敵)
 		{
 			生存リスト.reserve(6);
 			生存リスト.clear();
@@ -21,7 +21,9 @@ namespace SDX_ADE
 			}
 		}
 	public:
-		ImagePack *Img;
+		inline static EnumArray<int, StatusType> ステ割合上昇;//基礎ステ割合上昇を最後に計算する用
+
+		ImagePack *image;
 		int パーティID;
 
 		//●固定、基礎ステータス
@@ -29,14 +31,17 @@ namespace SDX_ADE
 		std::vector<PassiveSkill*> パッシブスキル;//本人のパッシブ、装備、パーティパッシブを格納
 
 		//●基礎ステータス
-		EnumArray<int, StatusType> 基礎ステ;
+		EnumArray<int, StatusType> 基礎ステ;//Lv、装備補正、常時パッシブのステータス
 		//●装備とパッシブ補正後
-		EnumArray<int, StatusType> 補正ステ;
+		EnumArray<int, StatusType> 補正ステ;//各種バフ/デバフ効果後のステータス
+
 		int 現在HP = 0;
+		bool is気絶 = false;
 
 		//スキルクールダウン
-		double 合計クールダウン[CV::最大Aスキル数];
-		double クールダウン速度[CV::最大Aスキル数];
+		int 現在スキルスロット = 0;
+		int 現在クールダウン;
+		int 必要クールダウン[CV::最大Aスキル数];
 
 		SEType 気絶時SE = SE::敵気絶;
 
@@ -50,7 +55,7 @@ namespace SDX_ADE
 			int 持続 = 0;
 		};
 
-		EnumArray<Buff, BuffType> バフ;
+		EnumArray<Buff, BuffType> バフ;//一時的なバフとデバフ
 
 		//エフェクト用変数
 		double E速度 = 0;//前出たり、ノックバック速度
@@ -79,7 +84,7 @@ namespace SDX_ADE
 		//ギルメンは基礎ステ+装備
 		virtual void 基礎ステータス計算() = 0;
 
-		void 基礎Pスキル補正(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		void 基礎Pスキル補正(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
 		{
 			//味方と自分の基礎Pスキルによる補正ステ計算
 			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
@@ -251,17 +256,17 @@ namespace SDX_ADE
 			}
 		}
 
-		void エフェクトアニメ(EffectAnimeType アニメ)
+		void エフェクトアニメ(ImagePack* アニメ)
 		{
 			Effect::アニメ[パーティID].emplace_back(アニメ, is味方, 隊列ID);
 		}
 
-		void 戦闘開始(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		void 戦闘開始(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
 		{
 			//初期化
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				合計クールダウン[a] = Rand::Get(CV::初期CT乱数);
+
 			}
 
 			//バフ初期化
@@ -278,7 +283,6 @@ namespace SDX_ADE
 			//スキル発動チェック
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				合計クールダウン[a] += クールダウン速度[a];
 			}
 
 			//バフ持続などの処理
@@ -291,7 +295,7 @@ namespace SDX_ADE
 			}
 		}
 
-		bool Aスキル使用チェック(std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		bool Aスキル使用チェック(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
 		{
 			if (現在HP <= 0) { return false; }
 
@@ -305,7 +309,7 @@ namespace SDX_ADE
 			return false;
 		}
 
-		Fighter* is挑発敵(std::vector<Fighter*>& 敵 , int 範囲 ,bool is前)
+		Battler* is挑発敵(std::vector<Battler*>& 敵 , int 範囲 ,bool is前)
 		{
 			if (範囲 > (int)敵.size()) { 範囲 = (int)敵.size(); }
 
@@ -325,12 +329,11 @@ namespace SDX_ADE
 			return nullptr;
 		}
 
-		void 対象選択(const ASkillEffect &Aスキル, std::vector<Fighter*>& 対象, std::vector<Fighter*>&味方,std::vector<Fighter*> &敵)
+		void 対象選択(const ASkillEffect &Aスキル, std::vector<Battler*>& 対象, std::vector<Battler*>&味方,std::vector<Battler*> &敵)
 		{
 			//攻撃or回復対象を選択
-			static std::vector<Fighter*> 生存リスト;
-			Fighter* 暫定対象 = nullptr;
-			double 暫定数値;
+			static std::vector<Battler*> 生存リスト;
+			Battler* 暫定対象 = nullptr;
 			int max = 0;
 			/*
 			switch (Aスキル.対象)
@@ -462,7 +465,7 @@ namespace SDX_ADE
 			}
 		}
 
-		void Aスキル処理(const ActiveSkill* スキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void Aスキル処理(const ActiveSkill* スキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
 			//攻撃エフェクト
 			エフェクト移動(10, 2);
@@ -476,7 +479,7 @@ namespace SDX_ADE
 			//スキル受ける側のパッシブ補正
 
 			//対象選択
-			std::vector<Fighter*> 対象;
+			std::vector<Battler*> 対象;
 			対象.reserve(6);
 			対象.clear();
 
@@ -490,7 +493,7 @@ namespace SDX_ADE
 		}
 
 		/*攻撃オブジェクトを引数に取る、攻撃や回復を受けた側の処理*/
-		void スキル受け(ASkillEffect& Aスキル,Fighter* スキル使用者,std::vector<Fighter*>& 味方, std::vector<Fighter*>& 敵)
+		void スキル受け(ASkillEffect& Aスキル,Battler* スキル使用者,std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
 		{
 			int 合計ダメージ = 0;
 			bool is回避 = true;
@@ -498,7 +501,7 @@ namespace SDX_ADE
 			bool isデバフ = false;
 
 			//命中とかに関係無くエフェクト
-			エフェクトアニメ(Aスキル.戦闘エフェクト);
+			エフェクトアニメ(Aスキル.base->戦闘エフェクト);
 
 			//Hit数だけ命中判定
 			for (int a = 0; a < Hit数; a++)
@@ -507,17 +510,17 @@ namespace SDX_ADE
 				if ( !Rand::Coin(Aスキル.命中 - Get回避())) { continue; }
 				is回避 = false;
 
-				合計ダメージ += (int)(Aスキル.基礎効果 + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.依存ステータス));
+				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス));
 
 				for (int b = 0; b < (int)BuffType::COUNT; b++)
 				{
 					auto t = BuffType(b);
 
-					if (Aスキル.バフ確率[t] <= 0 || !Rand::Coin(Aスキル.バフ確率[t])) { continue; }
+					//if (Aスキル.バフ確率[t] <= 0 || !Rand::Coin(Aスキル.バフ確率[t])) { continue; }
 
-					バフ使用(t, Aスキル.バフ反映率[t] * Aスキル.バフ効果補正, int(Aスキル.バフ持続[t] * Aスキル.バフ持続補正));
-					isバフ = (Aスキル.バフ反映率[t] > 0);
-					isデバフ = (Aスキル.バフ反映率[t] < 0);
+					//バフ使用(t, Aスキル.バフ反映率[t] * Aスキル.バフ効果補正, int(Aスキル.バフ持続[t] * Aスキル.バフ持続補正));
+					//isバフ = (Aスキル.バフ反映率[t] > 0);
+					//isデバフ = (Aスキル.バフ反映率[t] < 0);
 
 					if (isバフ)
 					{
@@ -534,9 +537,9 @@ namespace SDX_ADE
 			//ダメージ、回復処理
 			if (合計ダメージ > 0)
 			{
-				switch (Aスキル.種類)
+				switch (Aスキル.base->属性)
 				{
-				case ASkillType::物理:
+				case DamageType::物理:
 					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::物理) + 50.0) * (1.0 - バフ[BuffType::被ダメ軽減].効果));
 					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
 					現在HP -= 合計ダメージ;
@@ -548,7 +551,7 @@ namespace SDX_ADE
 					//エフェクト移動(-5, 2);
 					エフェクトダメージ(合計ダメージ);
 					break;
-				case ASkillType::魔法:
+				case DamageType::魔法:
 					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::魔法) + 50.0) * (1.0 - バフ[BuffType::被ダメ軽減].効果));
 					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
 					現在HP -= 合計ダメージ;
@@ -560,7 +563,7 @@ namespace SDX_ADE
 					//エフェクト移動(-5, 2);
 					エフェクトダメージ(合計ダメージ);
 					break;
-				case ASkillType::回復:
+				case DamageType::回復:
 					if (合計ダメージ + 現在HP > 補正ステ[StatusType::HP]) { 合計ダメージ = 補正ステ[StatusType::HP] - 現在HP; }
 					現在HP += 合計ダメージ;
 					スキル使用者->回復ログ += 合計ダメージ;
@@ -595,7 +598,6 @@ namespace SDX_ADE
 			//クールダウンを初期化
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				合計クールダウン[a] = Rand::Get(CV::初期CT乱数);
 			}
 
 			//スタン付与
@@ -604,7 +606,7 @@ namespace SDX_ADE
 		}
 
 		//条件をチェックして、条件にあってるならPスキル処理を呼び出す
-		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
 			for (auto &it : パッシブスキル)
 			{
@@ -654,40 +656,39 @@ namespace SDX_ADE
 			}
 		}
 
-		void Pスキル処理(PassiveSkill* Pスキル,ASkillEffect* Aスキル, std::vector<Fighter*> &味方, std::vector<Fighter*> &敵)
+		void Pスキル処理(PassiveSkill* Pスキル,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
 			//とりあえずβのだけ実装
 			switch (Pスキル->効果種[0])
 			{
 			//基礎限定効果
 			case PSkillEffect::HP増加:
-				補正ステ[StatusType::HP] += (int)Pスキル->効果量;
+				補正ステ[StatusType::HP] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::STR増加:
-				補正ステ[StatusType::力] += (int)Pスキル->効果量;
+				補正ステ[StatusType::力] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::INT増加:
-				補正ステ[StatusType::知] += (int)Pスキル->効果量;
+				補正ステ[StatusType::知] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::DEX増加:
-				補正ステ[StatusType::技] += (int)Pスキル->効果量;
+				補正ステ[StatusType::技] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::物防増加:
-				補正ステ[StatusType::物防] += (int)Pスキル->効果量;
+				補正ステ[StatusType::物防] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::魔防増加:
-				補正ステ[StatusType::魔防] += (int)Pスキル->効果量;
+				補正ステ[StatusType::魔防] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::命中増加:
-				補正ステ[StatusType::命中] += (int)Pスキル->効果量;
+				補正ステ[StatusType::命中] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::回避増加:
-				補正ステ[StatusType::回避] += (int)Pスキル->効果量;
+				補正ステ[StatusType::回避] += Pスキル->効果量[0];
 				break;
 			case PSkillEffect::スキルCT増減:
 				for (int a = 0; a < CV::最大Aスキル数; a++)
 				{
-					クールダウン速度[a] *= 1.0 + Pスキル->効果量[0];
 				}
 				break;
 			//基礎非戦闘
@@ -717,9 +718,9 @@ namespace SDX_ADE
 			case PSkillEffect::与ダメージバフ:
 				if (Pスキル->対象 == PSkillTarget::スキル対象)
 				{
-					Aスキル->バフ確率[BuffType::与ダメ増減] = 1.0;
-					Aスキル->バフ持続[BuffType::与ダメ増減] = Pスキル->持続時間;
-					Aスキル->バフ反映率[BuffType::与ダメ増減] = Pスキル->効果量[0];
+					//Aスキル->バフ確率[BuffType::与ダメ増減] = 1.0;
+					//Aスキル->バフ持続[BuffType::与ダメ増減] = Pスキル->持続時間;
+					//Aスキル->バフ反映率[BuffType::与ダメ増減] = Pスキル->効果量[0];
 				} else {
 					//自己バフ
 					バフ使用(BuffType::与ダメ増減, Pスキル->効果量[0], Pスキル->持続時間);
@@ -728,9 +729,9 @@ namespace SDX_ADE
 			case PSkillEffect::受ダメージバフ:
 				if (Pスキル->対象 == PSkillTarget::スキル対象)
 				{
-					Aスキル->バフ確率[BuffType::被ダメ軽減] = 1.0;
-					Aスキル->バフ持続[BuffType::被ダメ軽減] = Pスキル->持続時間;
-					Aスキル->バフ反映率[BuffType::被ダメ軽減] = Pスキル->効果量[0];
+					//Aスキル->バフ確率[BuffType::被ダメ軽減] = 1.0;
+					//Aスキル->バフ持続[BuffType::被ダメ軽減] = Pスキル->持続時間;
+					//Aスキル->バフ反映率[BuffType::被ダメ軽減] = Pスキル->効果量[0];
 				} else {
 					//自己
 					バフ使用(BuffType::被ダメ軽減, Pスキル->効果量[0], Pスキル->持続時間);

@@ -15,7 +15,7 @@ namespace SDX_ADE
 
 		static Item* アイテム = nullptr;
 
-		Hunter* 探索メン = nullptr;
+		Explorer* 探索メン = nullptr;
 		int 並びID = 0;//パーティと製造部門での位置
 
 		ActiveSkill* Aスキル = nullptr;
@@ -23,7 +23,7 @@ namespace SDX_ADE
 		struct equipItem
 		{
 			int 部位 = 0;
-			Hunter* メンバー = nullptr;
+			Explorer* メンバー = nullptr;
 		} ギルメン装備;
 
 		//マウスオーバー中の物
@@ -41,7 +41,7 @@ namespace SDX_ADE
 			}
 			else if (探索メン != nullptr)
 			{
-				探索メン->Img[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
+				探索メン->image[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
 			}
 
 			else if (ギルメン装備.メンバー != nullptr)

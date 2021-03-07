@@ -35,7 +35,7 @@ void LoadAndInitData()
 	ActiveSkill::LoadData();
 	Item::LoadData();
 	MonsterClass::LoadData();
-	Job::LoadData();
+	ExplorerClass::LoadData();
 	Material::LoadData();
 	Management::LoadData();
 

@@ -46,8 +46,6 @@ namespace SDX_ADE
 
 			for (int i = 0; i < data_count; i++)
 			{
-				int dummy;
-
 				data.emplace_back();
 				auto& it = data.back();
 
@@ -113,7 +111,7 @@ namespace SDX_ADE
 
 			if (達成度 >= 条件数値)
 			{
-				EventLog::Add(0, Game::日付, LogDetailType::クエスト完了, id);
+				EventLog::Add(0, Game::日付, LogType::重要 );
 				return true;
 			}
 

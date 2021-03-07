@@ -8,17 +8,18 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*魔物*/
-	class Monster : public Fighter
+	class Monster : public Battler
 	{
 	private:
 	public:
 		//固定ステータス
 		MonsterClass* 種族;
 		int Lv = 0;
-		bool isボス = false;
 		double 経験値 = 0;
-		bool is死亡 = false;//素材獲得判定用
-		int 消滅中 = 255;
+
+		bool isボス = false;
+
+		int 消滅中 = 255;//死亡アニメーション用
 	
 		Monster(const Monster& コピー元):
 			種族(コピー元.種族),
@@ -26,7 +27,7 @@ namespace SDX_ADE
 			Lv(コピー元.Lv),
 			経験値(コピー元.経験値)
 		{
-			Img = this->種族->image;
+			image = this->種族->image;
 			基礎ステータス計算();
 		}
 
@@ -37,7 +38,7 @@ namespace SDX_ADE
 			this->isボス = isボス;
 			経験値 = std::pow((double)Lv,1.5) * 10;
 
-			Img = this->種族->image;
+			image = this->種族->image;
 
 			//基礎ステータス
 			基礎ステータス計算();
@@ -77,11 +78,8 @@ namespace SDX_ADE
 				this->アクティブスキル[a] = type->ASkill[a];
 				if (this->アクティブスキル[a] != nullptr)
 				{
-					クールダウン速度[a] = 1;
 				} else {
-					クールダウン速度[a] = 0;
 				}
-				合計クールダウン[a] = 0;
 
 			}
 			//とりあえずパッシブスキル無し

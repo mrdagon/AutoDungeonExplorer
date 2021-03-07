@@ -24,13 +24,13 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
 
 				//ボス
-				//参照->ボスモンスター[0].Img[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
+				//参照->ボスモンスター[0].image[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
 				MFont::BSSize.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
 
 				//ザコ
 				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
 				{
-					//参照->雑魚モンスター[a].Img[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
+					//参照->雑魚モンスター[a].image[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
 				}
 			}
 
@@ -149,13 +149,14 @@ namespace SDX_ADE
 
 			for (auto& it : Dungeon::data)
 			{
-				if (it.is発見 == 現在タブ)
-				{
-					ダンジョン[n].参照 = &it;
-					ダンジョン[n].isヘルプ表示 = true;
-					n++;
-					if (n == 50) { break; }
-				}
+				break;
+				//if (it.is発見 == 現在タブ)
+				//{
+				//	ダンジョン[n].参照 = &it;
+				//	ダンジョン[n].isヘルプ表示 = true;
+				//	n++;
+				//	if (n == 50) { break; }
+				//}
 			}
 		}
 

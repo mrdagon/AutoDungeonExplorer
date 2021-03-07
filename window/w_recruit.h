@@ -86,7 +86,7 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				auto job = &Job::data[職業];
+				auto job = &ExplorerClass::data[職業];
 				//選択中は枠の色を変える			
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), (職業 == Guild::P->求人職業) ? (10) : (11) );
 				//職業見た目
@@ -107,7 +107,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生(double px, double py)
 			{
-				auto job = &Job::data[Guild::P->求人職業];
+				auto job = &ExplorerClass::data[Guild::P->求人職業];
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 
@@ -223,8 +223,8 @@ namespace SDX_ADE
 			gui_objects.push_back(&採用);
 			gui_objects.push_back(&ランダム);
 
-			職業.reserve((int)Job::data.size());
-			for (int a = 0; a < (int)Job::data.size(); a++)
+			職業.reserve((int)ExplorerClass::data.size());
+			for (int a = 0; a < (int)ExplorerClass::data.size(); a++)
 			{
 				職業.emplace_back(a);
 				gui_objects.push_back(&職業[a]);

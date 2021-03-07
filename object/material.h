@@ -39,8 +39,6 @@ namespace SDX_ADE
 
 			for (int i = 0; i < data_count; i++)
 			{
-				int dummy;
-
 				data.emplace_back();
 				auto& it = data.back();
 
