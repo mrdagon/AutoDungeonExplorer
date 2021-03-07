@@ -26,7 +26,7 @@ namespace SDX_ADE
 		std::vector<PassiveSkill*> 習得Pスキル;
 
 		//
-		JobType ID;
+		ID_Job ID;
 
 		std::string 名前;
 		std::string 概説 = "説明文- 未設定";//説明の一行目
@@ -57,7 +57,7 @@ namespace SDX_ADE
 				data.emplace_back();
 				auto& it = data.back();
 
-				it.ID = (JobType)i;
+				it.ID = i;
 				it.名前 = strs[i][0];
 				if (strs[i].size() == 2)
 				{
@@ -71,6 +71,9 @@ namespace SDX_ADE
 						std::replace(it.説明.begin(), it.説明.end(), '\t', '\n');
 					}
 				}
+
+				it.立ち絵image = &MJob::立ち絵[i];
+				it.ちびimage = &MJob::ちび[i];
 
 				file_data.Read(it.武器種);
 				file_data.Read(it.防具種);

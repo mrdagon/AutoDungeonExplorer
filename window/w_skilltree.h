@@ -30,8 +30,8 @@ namespace SDX_ADE
 				MFont::BSSize.DrawBold({ px + Lp(44) ,py + Lp(45) }, Color::White, Color::Black, {"Lv " , it->Lv}, true);
 
 				//選択ボタン
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(60),py + Lp(62) },2,0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(61),py + Lp(62) },2,0, true);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(60),py + Lp(62) },2,0);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(61),py + Lp(62) },2,0, true);
 
 				//例外的に入力処理もここでやる
 			}
@@ -194,7 +194,7 @@ namespace SDX_ADE
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
 				//スキルアイコン
-				MSystem::DrawSkill( it->Img, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
+				MSystem::DrawSkill( it->image, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
 			}
 
 			void Click(double px, double py)

@@ -83,6 +83,8 @@ namespace SDX_ADE
 				it.ID = i;
 				file_data.Read(it.種類);
 
+				it.image = &MIcon::装備品[(int)it.種類];
+
 				file_data.Read(dummy);
 				if (dummy < 0) { dummy = 0; }
 				it.Pスキル[0] = &PassiveSkill::data[dummy];

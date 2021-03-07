@@ -338,15 +338,15 @@ namespace SDX_ADE
 				{
 				case 0:
 					発見素材種 = CraftType::木材;
-					発見物 = &MIcon::アイコン[IconType::探索_伐採];
+					発見物 = &MIcon::UI[IconType::探索_伐採];
 					break;
 				case 1:
 					発見素材種 = CraftType::木材;
-					発見物 = &MIcon::アイコン[IconType::探索_採掘];
+					発見物 = &MIcon::UI[IconType::探索_採掘];
 					break;
 				case 2:
 					発見素材種 = CraftType::木材;
-					発見物 = &MIcon::アイコン[IconType::探索_採掘];
+					発見物 = &MIcon::UI[IconType::探索_採掘];
 					break;
 				default:
 					break;
@@ -664,7 +664,7 @@ namespace SDX_ADE
 				//if (探索先->部屋[部屋ID].地図 <= 0) { return; }
 
 				//探索先->発見地図++;
-				発見物 = &MIcon::アイコン[IconType::地図];
+				発見物 = &MIcon::UI[IconType::地図];
 				獲得地図数++;
 				/*if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
 				{
@@ -682,7 +682,7 @@ namespace SDX_ADE
 			{
 				//探索先->発見財宝++;
 				獲得石版数++;
-				発見物 = &MIcon::アイコン[IconType::宝箱];
+				発見物 = &MIcon::UI[IconType::宝箱];
 			}
 
 			void 撤退開始()

@@ -33,10 +33,10 @@ namespace SDX_ADE
 				//MFont::BMSize.DrawBold({ px + Lp(7) ,py + Lp(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
 
 				//報酬、名誉
-				MIcon::アイコン[IconType::名声].Draw({ px + Lp(9), py + Lp(10) });
+				MIcon::UI[IconType::名声].Draw({ px + Lp(9), py + Lp(10) });
 				//MFont::BMSize.DrawBold({ px + Lp(11) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
 				//報酬、資金
-				MIcon::アイコン[IconType::資金].Draw({ px + Lp(13), py + Lp(10) });
+				MIcon::UI[IconType::資金].Draw({ px + Lp(13), py + Lp(10) });
 				//MFont::BMSize.DrawBold({ px + Lp(14) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
 
 			}

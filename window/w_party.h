@@ -35,8 +35,8 @@ namespace SDX_ADE
 				if (所属->探索状態 == ExplorerType::編成中 || 所属->探索状態 == ExplorerType::リザルト中)
 				{
 					MSystem::DrawWindow({ px + Lp(70) ,py + Lp(71) }, Lp(72), Lp(73), 0, 1);
-					MIcon::アイコン[IconType::三角].Draw({ px + Lp(74),py + Lp(76) });
-					MIcon::アイコン[IconType::三角].Draw({ px + Lp(75),py + Lp(76) }, true);
+					MIcon::UI[IconType::三角].Draw({ px + Lp(74),py + Lp(76) });
+					MIcon::UI[IconType::三角].Draw({ px + Lp(75),py + Lp(76) }, true);
 				} else {
 					MSystem::DrawWindow({ px + Lp(70) ,py + Lp(71) }, Lp(72), Lp(73), 1, 0);
 				}
@@ -48,7 +48,7 @@ namespace SDX_ADE
 				MSystem::DrawBar({ px + Lp(18) , py + Lp(19) }, Lp(20), Lp(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
 				MFont::BSSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
 				//ボス状態
-				MIcon::アイコン[IconType::ボス].DrawRotate({ px + Lp(22),py + Lp(23) }, 1, 0);
+				MIcon::UI[IconType::ボス].DrawRotate({ px + Lp(22),py + Lp(23) }, 1, 0);
 
 				std::string sボス状態;
 				if (dun->isボス生存 == false)
@@ -66,10 +66,10 @@ namespace SDX_ADE
 
 				MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(23) - 9 }, Color::White, Color::Black, sボス状態, true);
 				//地図状態
-				MIcon::アイコン[IconType::地図].DrawRotate({ px + Lp(22),py + Lp(24) }, 1, 0);
+				MIcon::UI[IconType::地図].DrawRotate({ px + Lp(22),py + Lp(24) }, 1, 0);
 				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
 				//財宝状態
-				MIcon::アイコン[IconType::宝箱].DrawRotate({ px + Lp(22),py + Lp(25) }, 1, 0);
+				MIcon::UI[IconType::宝箱].DrawRotate({ px + Lp(22),py + Lp(25) }, 1, 0);
 				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(25) - 9 }, Color::White, Color::Black, { dun->発見財宝 , " / " , dun->最大財宝 }, true);
 
 
@@ -77,8 +77,8 @@ namespace SDX_ADE
 				if (所属->探索状態 == ExplorerType::編成中 || 所属->探索状態 == ExplorerType::リザルト中)
 				{
 					MSystem::DrawWindow({ px + Lp(31) ,py + Lp(32) }, Lp(33), Lp(34), 0, 1);
-					MIcon::アイコン[IconType::三角].Draw({ px + Lp(26),py + Lp(28) });
-					MIcon::アイコン[IconType::三角].Draw({ px + Lp(27),py + Lp(28) }, true);
+					MIcon::UI[IconType::三角].Draw({ px + Lp(26),py + Lp(28) });
+					MIcon::UI[IconType::三角].Draw({ px + Lp(27),py + Lp(28) }, true);
 
 				} else {
 					MSystem::DrawWindow({ px + Lp(31) ,py + Lp(32) }, Lp(33), Lp(34), 1, 0);
@@ -703,19 +703,19 @@ namespace SDX_ADE
 				//ボス
 				for(int a = 0; a < 所属->撃破ボス数; a++)
 				{
-					MIcon::アイコン[IconType::ボス].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
+					MIcon::UI[IconType::ボス].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
 				}
 				//地図
 				for (int a = 0; a < 所属->獲得地図数; a++)
 				{
-					MIcon::アイコン[IconType::地図].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
+					MIcon::UI[IconType::地図].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
 				}
 				//宝箱
 				for (int a = 0; a < 所属->獲得石版数; a++)
 				{
-					MIcon::アイコン[IconType::宝箱].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
+					MIcon::UI[IconType::宝箱].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
 				}
 				//素材
@@ -898,7 +898,7 @@ namespace SDX_ADE
 				//アイコン、Lv
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
-				MIcon::アイコン[IconType::求人].DrawRotate({ px + 位置.GetW() / 2,py + 位置.GetH() / 2 }, 2, 0);
+				MIcon::UI[IconType::求人].DrawRotate({ px + 位置.GetW() / 2,py + 位置.GetH() / 2 }, 2, 0);
 
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
 			}
@@ -927,7 +927,7 @@ namespace SDX_ADE
 				//アイコン、Lv
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
-				MIcon::アイコン[IconType::ゴミ箱].DrawRotate({ px + 位置.GetW()/2,py + 位置.GetH() /2 } , 2, 0);
+				MIcon::UI[IconType::ゴミ箱].DrawRotate({ px + 位置.GetW()/2,py + 位置.GetH() /2 } , 2, 0);
 
 				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
 			}

@@ -75,7 +75,7 @@ namespace SDX_ADE
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				this->アクティブスキル[a] = type->ASkill[a];
-				if (this->アクティブスキル[a] != nullptr && this->アクティブスキル[a]->アイコンID > 0)
+				if (this->アクティブスキル[a] != nullptr)
 				{
 					クールダウン速度[a] = 1;
 				} else {

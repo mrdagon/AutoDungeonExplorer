@@ -101,6 +101,7 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+				it.image = &MIcon::ダンジョン[i/10];
 
 				file_data.Read(dummy);
 				it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);

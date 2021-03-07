@@ -65,6 +65,9 @@ namespace SDX_ADE
 				it.ID = i;
 
 				file_data.Read( dummyA );//画像ID
+
+				it.image = &MUnit::モンスター[dummyA];
+
 				file_data.Read(it.素材種);
 				file_data.Read(it.隊列);
 				file_data.Read(it.isボス);
@@ -83,8 +86,8 @@ namespace SDX_ADE
 
 				for (int b = 0; b < CV::最大敵Aスキル数; b++)
 				{
-					file_data.Read(dummyA);//画像ID
-					file_data.Read(dummyB);//画像ID
+					file_data.Read(dummyA);
+					file_data.Read(dummyB);//スキルLv
 					if (dummyA > 0)
 					{
 						it.ASkill.emplace_back(&ActiveSkill::data[dummyA]);
@@ -93,8 +96,8 @@ namespace SDX_ADE
 				for (int b = 0; b < CV::最大敵Pスキル数; b++)
 				{
 
-					file_data.Read(dummyA);//画像ID
-					file_data.Read(dummyB);//画像ID
+					file_data.Read(dummyA);
+					file_data.Read(dummyB);//スキルLv
 					if (dummyA > 0)
 					{
 						it.PSkill.emplace_back(&PassiveSkill::data[dummyA]);

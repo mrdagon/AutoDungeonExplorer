@@ -108,9 +108,9 @@ namespace SDX_ADE
 
 			if (スキルアイコン != SkillType::COUNT)
 			{
-				MIcon::スキル[スキルアイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 1, 0);
+				//MIcon::スキル[スキルアイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 1, 0);
 			} else {
-				MIcon::アイコン[アイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 2, 0);
+				MIcon::UI[アイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 2, 0);
 			}
 
 			px -= MFont::MSize.GetDrawStringWidth(文字)/2;

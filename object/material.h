@@ -51,6 +51,7 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+				it.image = &MIcon::素材[it.種類];
 
 				file_data.Read(it.種類);
 				file_data.Read(it.ランク);

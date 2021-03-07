@@ -123,6 +123,7 @@ namespace SDX_ADE
 				it.ID = i;
 
 				file_data.Read( dummy );//アイコンID
+				it.image = &MIcon::投資[dummy];
 
 				file_data.Read(it.ランク);
 				file_data.Read(it.消費資金);

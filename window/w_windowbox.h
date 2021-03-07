@@ -175,13 +175,13 @@ namespace SDX_ADE
 			MSystem::DrawWindow(座標, 横幅, タイトル枠高さ, タイトル枠No);
 			MSystem::DrawWindow({ 座標.x + 6,座標.y + 6 }, タイトル枠高さ - 12, タイトル枠高さ - 12, 11);
 			MFont::BMSize.DrawBold({ 座標.x + 34,座標.y + 3 }, Color::White,Color::Black,{ 名前 });
-			MIcon::アイコン[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
+			MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン
 			if (is閉じるボタン == true)
 			{
 				MSystem::DrawWindow({ 座標.x + 横幅 - 25,座標.y + 6 }, タイトル枠高さ - 12, タイトル枠高さ - 12, 11);
-				MIcon::アイコン[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
+				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
 			}
 
 			//メイン部分描画

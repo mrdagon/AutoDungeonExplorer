@@ -13,6 +13,9 @@ namespace SDX_ADE
 	public:
 		inline static std::vector<Quest> data;
 
+		Image* アイコンimage;
+		Image* 依頼人image;
+
 		QuestType 種類;
 		std::string 名前;
 		std::string 説明 = "クエストの説明文を表示するよ[実装中]";
@@ -55,6 +58,9 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+
+				it.アイコンimage = &MIcon::クエスト[it.種類];
+				it.依頼人image = MJob::ちび[0][0];
 
 				file_data.Read( it.種類 );//画像ID
 				file_data.Read( it.条件数値 );

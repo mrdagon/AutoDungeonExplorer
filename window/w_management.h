@@ -36,7 +36,7 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
 				//現在の資金
-				MIcon::アイコン[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
+				MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
 				MFont::BMSize.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
 				if (W_Drag::Over戦術 != nullptr)

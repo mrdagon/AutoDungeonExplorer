@@ -2,11 +2,12 @@
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
+#include <vector>
 
 namespace SDX_ADE
 {
 	using namespace SDX;
-	//グローバルなエフェクト
+	//探索中のエフェクト
 	//FigterとPartyに持たしても良さそう
 
 	//ダメージエフェクト-数値or回復or miss or Buffがポップ
@@ -163,27 +164,28 @@ namespace SDX_ADE
 		}
 	};
 	
-	namespace Effect
+	class Effect
 	{
+	public:
 		//パーティ毎のエフェクト保持用vector
-		std::vector<TextEffect> 文字[CV::最大パーティ数];
-		std::vector<BattleEffect> アニメ[CV::最大パーティ数];
-		std::vector<MaterialEffect> 素材[CV::最大パーティ数];
+		inline static std::vector<TextEffect> 文字[CV::最大パーティ数];
+		inline static std::vector<BattleEffect> アニメ[CV::最大パーティ数];
+		inline static std::vector<MaterialEffect> 素材[CV::最大パーティ数];
 
 		template <class T>
-		void UpdateAndDelete(std::vector<T> &エフェクト)
+		static void UpdateAndDelete(std::vector<T>& エフェクト)
 		{
 			if (エフェクト.size() == 0) { return; }
 
 			auto it_del = std::remove_if(エフェクト.begin(), エフェクト.end(),
 				[](T& it) ->bool { return it.Update(); });
-			
+
 			エフェクト.erase(it_del, エフェクト.end());
 		}
 
-		void SaveLoad(File& ファイル, FileMode 読み書きモード)
+		static void SaveLoad(File& ファイル, FileMode 読み書きモード)
 		{
-
+			//エフェクトは保存しない
 		}
-	}
+	};
 }

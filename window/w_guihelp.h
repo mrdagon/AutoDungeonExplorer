@@ -198,7 +198,7 @@ namespace SDX_ADE
 			MFont::BMSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, item->名前);
 
 			//販売価格、集客力
-			MIcon::アイコン[IconType::資金].Draw({ 座標.x + Lph(10),座標.y + Lph(11) });//販売価格
+			MIcon::UI[IconType::資金].Draw({ 座標.x + Lph(10),座標.y + Lph(11) });//販売価格
 
 			//MFont::BMSize.DrawBold({ 座標.x + Lph(12) , 座標.y + Lph(13) }, Color::White, Color::Black, { it->値段 , " G"}, true);
 
@@ -279,9 +279,9 @@ namespace SDX_ADE
 
 			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(36) }, Color::White, Color::Black, { it->発見地図 , " / " , it->最大地図 });
 			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(37) }, Color::White, Color::Black, { it->発見財宝 , " / " , it->最大財宝 });
-			MIcon::アイコン[IconType::地図].Draw({ 座標.x + Lph(16),座標.y + Lph(17) });
-			MIcon::アイコン[IconType::宝箱].Draw({ 座標.x + Lph(18),座標.y + Lph(19) });
-			MIcon::アイコン[IconType::ボス].Draw({ 座標.x + Lph(20),座標.y + Lph(21) });
+			MIcon::UI[IconType::地図].Draw({ 座標.x + Lph(16),座標.y + Lph(17) });
+			MIcon::UI[IconType::宝箱].Draw({ 座標.x + Lph(18),座標.y + Lph(19) });
+			MIcon::UI[IconType::ボス].Draw({ 座標.x + Lph(20),座標.y + Lph(21) });
 
 			//未発見だとボスアイコンを？マークにする
 
@@ -329,7 +329,7 @@ namespace SDX_ADE
 
 			MFont::MSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, { "Lv", it->ランク } , true);
 
-			MIcon::アイコン[IconType::資金].Draw({ 座標.x + Lph(10) , 座標.y + Lph(11) });
+			MIcon::UI[IconType::資金].Draw({ 座標.x + Lph(10) , 座標.y + Lph(11) });
 			MFont::BMSize.DrawBold({ 座標.x + Lph(12) ,座標.y + Lph(13) }, Color::White, Color::Black, { (long long)it->消費資金 , " G" }, true);
 		}
 
@@ -413,7 +413,7 @@ namespace SDX_ADE
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (it->アクティブスキル[a] == nullptr || it->アクティブスキル[a]->アイコンID <= 0) { continue; }
+				if (it->アクティブスキル[a] == nullptr ) { continue; }
 
 				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80 }, true);
 			}
@@ -476,7 +476,7 @@ namespace SDX_ADE
 
 			MSystem::DrawSkill(スキル->image, { 座標.x + Lph(25),座標.y + Lph(26) },Color(200,64,64 ), s);
 
-			MIcon::アイコン[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
+			MIcon::UI[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
 
 			MFont::BMSize.DrawBold({ 座標.x + Lph(29),座標.y + Lph(30) }, Color::White, Color::Black, スキル->名前);
 			MFont::BSSize.DrawBold({ 座標.x + Lph(31),座標.y + Lph(32) }, Color::White, Color::Black, { 1 });
@@ -500,9 +500,9 @@ namespace SDX_ADE
 
 			if ( is習得)
 			{
-				MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color(0, 141, 255));
+				MSystem::DrawSkill(スキル->image, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color(0, 141, 255));
 			}else {
-				MSystem::DrawSkill(スキル->Img, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color::Gray, s);
+				MSystem::DrawSkill(スキル->image, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color::Gray, s);
 			}
 
 			MFont::BMSize.DrawBold({ 座標.x + Lph(40) , 座標.y + Lph(41) }, Color::White, Color::Black, スキル->名前);//スキル名

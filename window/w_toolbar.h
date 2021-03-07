@@ -20,7 +20,7 @@ namespace SDX_ADE
 			void Draw派生(double px,double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
+				MIcon::UI[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
 				MFont::LSize.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 + 1 , TX::Tool_日付 }, true);
 			}
 		};
@@ -36,7 +36,7 @@ namespace SDX_ADE
 				else if (Game::is仕事中 == true) { 文字色 = {255,128,128}; }
 
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
+				MIcon::UI[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
 				MFont::LSize.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
 
 				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
@@ -53,7 +53,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
+				MIcon::UI[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
 			}
 		};
 
@@ -63,7 +63,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::アイコン[IconType::資金].DrawRotate({ px + 14,py + 14 }, 2, 0);
+				MIcon::UI[IconType::資金].DrawRotate({ px + 14,py + 14 }, 2, 0);
 
 				std::string str = "G";
 				double g = Guild::P->資金;
@@ -104,7 +104,7 @@ namespace SDX_ADE
 				} else {
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
-				MIcon::アイコン[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
+				MIcon::UI[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
 				MFont::BSSize.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
 			}
 
@@ -129,7 +129,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::ヘルプ].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::ヘルプ].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
 				MFont::BSSize.DrawBold({ px + Lp(24)-7,py + Lp(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
 
 			}
@@ -147,7 +147,7 @@ namespace SDX_ADE
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
 
-				MIcon::アイコン[IconType::停止].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::停止].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
 				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_停止);
 			}
 
@@ -163,9 +163,9 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::速度].DrawRotate({ px + Lp(22) + Lp(26),py + Lp(23) }, 2, 0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) - 25,py + Lp(23) }, 2, 0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) + 25,py + Lp(23) }, 2, 0,true);
+				MIcon::UI[IconType::速度].DrawRotate({ px + Lp(22) + Lp(26),py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) - 25,py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) + 25,py + Lp(23) }, 2, 0,true);
 
 				MFont::BSSize.DrawBold({ px + Lp(24)+Lp(26),py + Lp(25) }, Color::White, Color::Black, TX::Tool_速度);
 				MFont::MSize.DrawBold({ px + Lp(24) + Lp(26) + 5,py + Lp(25) - 20 }, Color::White, Color::Black, "x", true);
@@ -193,7 +193,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::設定].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::設定].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
 				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_設定);
 			}
 
@@ -216,7 +216,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::アイコン[IconType::終了].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
+				MIcon::UI[IconType::終了].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
 				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_タイトル);
 			}
 

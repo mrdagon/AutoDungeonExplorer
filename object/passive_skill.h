@@ -139,14 +139,13 @@ namespace SDX_ADE
 		{}
 
 		//保存しない変数
-		Image* Img;
+		Image* image;
 
 		//-基本情報
 		ID_PSkill ID;
 		std::string 名前;
 		std::string 説明;
 
-		int アイコンID;
 		bool isキースキル = false;
 
 		bool スキルタグ[(int)SkillType::COUNT];
@@ -192,7 +191,9 @@ namespace SDX_ADE
 					it.説明 = strs[i][1];
 				}
 
-				file_data.Read(it.アイコンID);
+				file_data.Read( dummy );
+				it.image = &MIcon::Pスキル[dummy];
+
 				file_data.Read(it.isキースキル);
 
 				file_data.Read(it.スキルタグ, (int)SkillType::COUNT);

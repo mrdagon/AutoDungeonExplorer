@@ -5,6 +5,8 @@
 #pragma once
 namespace SDX_ADE
 {
+	//シナリオの仕様変更で多分廃止
+
 	using namespace SDX;
 	//テキストウィンドウ１つと、顔と感情吹き出しで会話シーン作る
 	//Windowクラスは継承しない
@@ -18,7 +20,6 @@ namespace SDX_ADE
 			int id;
 			std::string 名前 = "???";
 			Point 座標;
-			EmoteType 感情 = EmoteType::COUNT;
 			double ジャンプH = 0;
 			double ジャンプ速度 = 10000;
 			int 向き = 1;
@@ -43,10 +44,6 @@ namespace SDX_ADE
 
 				if (isトーク中 == false) { return; }
 				//感情吹き出し表示
-				if (感情 != EmoteType::COUNT)
-				{
-					MIcon::エモート[感情].DrawRotate({x,y-60},4,0);
-				}
 
 				MSystem::吹き出し.DrawRotate({ 座標.x,座標.y - CSV::I[25][22] }, 2, 0);
 
@@ -63,7 +60,6 @@ namespace SDX_ADE
 			static Rect 座標;
 			int アクターID;
 			int 向き;
-			EmoteType 感情;
 			std::string テキスト;
 
 			//このページに進めた時の処理
@@ -72,10 +68,8 @@ namespace SDX_ADE
 				for (auto& it : アクター)
 				{
 					it.isトーク中 = false;
-					it.感情 = EmoteType::COUNT;
 				}
 
-				アクター[アクターID].感情 = 感情;
 				アクター[アクターID].ジャンプH = 0;
 				アクター[アクターID].ジャンプ速度 = CSV::I[25][20];
 				アクター[アクターID].isトーク中 = true;
@@ -88,7 +82,6 @@ namespace SDX_ADE
 				for (auto& it : アクター)
 				{
 					it.isトーク中 = false;
-					it.感情 = EmoteType::COUNT;
 				}
 
 				アクター[アクターID].isトーク中 = true;
@@ -141,7 +134,6 @@ namespace SDX_ADE
 				ページ.emplace_back();
 				ページ[a].アクターID = a % 3;
 				ページ[a].向き = a;
-				ページ[a].感情 = EmoteType(a);
 				ページ[a].テキスト = "ページ";
 				ページ[a].テキスト += std::to_string(a);
 				ページ[a].テキスト += "\nサンプル\nサンプル～\nサンプル～";

@@ -13,6 +13,7 @@ namespace SDX_ADE
 	{
 		
 		EnumArray<ImagePack, UnitImageType> ユニット;
+		ImagePack モンスター[100];
 
 		static void Load()
 		{
@@ -101,119 +102,132 @@ namespace SDX_ADE
 	//武器、防具、その他のアイコン
 	namespace MIcon
 	{
-		EnumArray<Image, ItemImageType> アイテム;
-		EnumArray<Image, IconType> アイコン;
-		EnumArray<Image, EmoteType> エモート;
-		EnumArray<Image, SkillType> スキル;
-		EnumArray<Image, ItemType> 装備種;
-		EnumArray<Image, StatusType> ステータス種;
+		//最大数は暫定
+		EnumArray<Image, IconType> UI;
+
+		EnumArray<Image, CraftType> 素材;
+		EnumArray<Image, QuestType> クエスト;
+
+		Image 装備品[100];
+		Image アクセサリ[100];
+
+		Image Aスキル[100];
+		Image Pスキル[100];
+		Image ダンジョン[10];
+
+		Image 投資[100];
+
+		
+
+		EnumArray<Image, ItemType> 装備種;//いらない？
+		EnumArray<Image, StatusType> ステータス種;//ステータスのアイコン？
 
 		static void LoadIcon()
 		{
 			//UI汎用
-			アイコン[IconType::閉じる].Load("file/icon/tojiru.png");
-			アイコン[IconType::資金].Load("file/icon/sikin.png");
-			アイコン[IconType::三角].Load("file/icon/sankaku.png");
-			アイコン[IconType::製造力].Load("file/icon/seizouryoku.png");
-			アイコン[IconType::製造力].Load("file/icon/kanryou.png");
-			アイコン[IconType::ランク].Load("file/icon/rank.png");
-			アイコン[IconType::ゴミ箱].Load("file/icon/dustbox.png");
+			UI[IconType::閉じる].Load("file/icon/tojiru.png");
+			UI[IconType::資金].Load("file/icon/sikin.png");
+			UI[IconType::三角].Load("file/icon/sankaku.png");
+			UI[IconType::製造力].Load("file/icon/seizouryoku.png");
+			UI[IconType::製造力].Load("file/icon/kanryou.png");
+			UI[IconType::ランク].Load("file/icon/rank.png");
+			UI[IconType::ゴミ箱].Load("file/icon/dustbox.png");
 			//各種ウィンドウアイコン
-			アイコン[IconType::装備].Load("file/icon/item.png");
-			アイコン[IconType::製造].Load("file/icon/seizou.png");
-			アイコン[IconType::迷宮].Load("file/icon/dungeon.png");
-			アイコン[IconType::編成].Load("file/icon/hensei.png");
-			アイコン[IconType::求人].Load("file/icon/kyuujin.png");
-			アイコン[IconType::戦略].Load("file/icon/senryaku.png");
-			アイコン[IconType::素材].Load("file/icon/sozai.png");
-			アイコン[IconType::依頼].Load("file/icon/irai.png");
-			アイコン[IconType::情報].Load("file/icon/jyouhou.png");
-			アイコン[IconType::ログ].Load("file/icon/log.png");
+			UI[IconType::装備].Load("file/icon/item.png");
+			UI[IconType::製造].Load("file/icon/seizou.png");
+			UI[IconType::迷宮].Load("file/icon/dungeon.png");
+			UI[IconType::編成].Load("file/icon/hensei.png");
+			UI[IconType::求人].Load("file/icon/kyuujin.png");
+			UI[IconType::戦略].Load("file/icon/senryaku.png");
+			UI[IconType::素材].Load("file/icon/sozai.png");
+			UI[IconType::依頼].Load("file/icon/irai.png");
+			UI[IconType::情報].Load("file/icon/jyouhou.png");
+			UI[IconType::ログ].Load("file/icon/log.png");
 
-			アイコン[IconType::全て].Load("file/icon/all.png");
-			アイコン[IconType::ボス].Load("file/icon/boss.png");
-			アイコン[IconType::地図].Load("file/icon/tizu.png");
-			アイコン[IconType::宝箱].Load("file/icon/takarabako.png");
-			アイコン[IconType::更新].Load("file/icon/kousin.png");
+			UI[IconType::全て].Load("file/icon/all.png");
+			UI[IconType::ボス].Load("file/icon/boss.png");
+			UI[IconType::地図].Load("file/icon/tizu.png");
+			UI[IconType::宝箱].Load("file/icon/takarabako.png");
+			UI[IconType::更新].Load("file/icon/kousin.png");
 
-			アイコン[IconType::再募集].Load("file/icon/saibosyuu.png");
+			UI[IconType::再募集].Load("file/icon/saibosyuu.png");
 				
-			アイコン[IconType::メインクエ].Load("file/icon/mainquest.png");//
-			アイコン[IconType::サブクエ].Load("file/icon/subquest.png");//
-			アイコン[IconType::名声].Load("file/icon/meisei.png");
+			UI[IconType::メインクエ].Load("file/icon/mainquest.png");//
+			UI[IconType::サブクエ].Load("file/icon/subquest.png");//
+			UI[IconType::名声].Load("file/icon/meisei.png");
 
-			アイコン[IconType::集客].Load("file/icon/raikyaku.png");
-			アイコン[IconType::開発].Load("file/icon/kaihatu.png");
-			アイコン[IconType::撤退].Load("file/icon/.png");//
+			UI[IconType::集客].Load("file/icon/raikyaku.png");
+			UI[IconType::開発].Load("file/icon/kaihatu.png");
+			UI[IconType::撤退].Load("file/icon/.png");//
 
-			アイコン[IconType::解像度].Load("file/icon/kaizoudo.png");
-			アイコン[IconType::BGM].Load("file/icon/bgm.png");
-			アイコン[IconType::効果音].Load("file/icon/koukaon.png");
+			UI[IconType::解像度].Load("file/icon/kaizoudo.png");
+			UI[IconType::BGM].Load("file/icon/bgm.png");
+			UI[IconType::効果音].Load("file/icon/koukaon.png");
 
-			アイコン[IconType::New].Load("file/icon/new.png");
+			UI[IconType::New].Load("file/icon/new.png");
 
 			//素材
-			アイコン[IconType::鉄材].Load("file/system/mat_001.png");
-			アイコン[IconType::木材].Load("file/system/mat_002.png");
-			アイコン[IconType::皮材].Load("file/system/mat_003.png");
-			アイコン[IconType::骨材].Load("file/system/mat_004.png");
+			UI[IconType::鉄材].Load("file/system/mat_001.png");
+			UI[IconType::木材].Load("file/system/mat_002.png");
+			UI[IconType::皮材].Load("file/system/mat_003.png");
+			UI[IconType::骨材].Load("file/system/mat_004.png");
 
 			//探索用
-			アイコン[IconType::探索_伐採].Load("file/system/dun00.png");
-			アイコン[IconType::探索_採掘].Load("file/system/dun01.png");
-			アイコン[IconType::探索_財宝].Load("file/system/dun02.png");
-			アイコン[IconType::探索_地図].Load("file/system/dun03.png");
-			アイコン[IconType::探索_石版].Load("file/system/dun04.png");
+			UI[IconType::探索_伐採].Load("file/system/dun00.png");
+			UI[IconType::探索_採掘].Load("file/system/dun01.png");
+			UI[IconType::探索_財宝].Load("file/system/dun02.png");
+			UI[IconType::探索_地図].Load("file/system/dun03.png");
+			UI[IconType::探索_石版].Load("file/system/dun04.png");
 
 			//上部分バー
-			アイコン[IconType::日付].Load("file/icon/hiduke.png");
-			アイコン[IconType::時間].Load("file/icon/jikan.png");
-			アイコン[IconType::人口].Load("file/icon/jinkou.png");
-			アイコン[IconType::ヘルプ].Load("file/icon/help.png");
-			アイコン[IconType::停止].Load("file/icon/teisi.png");
-			アイコン[IconType::速度].Load("file/icon/sokudo.png");
-			アイコン[IconType::設定].Load("file/icon/settei.png");
-			アイコン[IconType::終了].Load("file/icon/deguti.png");
+			UI[IconType::日付].Load("file/icon/hiduke.png");
+			UI[IconType::時間].Load("file/icon/jikan.png");
+			UI[IconType::人口].Load("file/icon/jinkou.png");
+			UI[IconType::ヘルプ].Load("file/icon/help.png");
+			UI[IconType::停止].Load("file/icon/teisi.png");
+			UI[IconType::速度].Load("file/icon/sokudo.png");
+			UI[IconType::設定].Load("file/icon/settei.png");
+			UI[IconType::終了].Load("file/icon/deguti.png");
 		}
 
 		static void LoadOther()
 		{
 			//武器-防具
-			アイテム[ItemImageType::大剣].Load("file/equip/wepon000.png");
-			アイテム[ItemImageType::剣盾].Load("file/equip/wepon001.png");
-			アイテム[ItemImageType::大盾].Load("file/equip/wepon002.png");
-			アイテム[ItemImageType::円盤].Load("file/equip/wepon003.png");
-			アイテム[ItemImageType::斧].Load("file/equip/wepon004.png");
-			アイテム[ItemImageType::刀].Load("file/equip/wepon005.png");
-			アイテム[ItemImageType::弓].Load("file/equip/wepon006.png");
-			アイテム[ItemImageType::神杖].Load("file/equip/wepon007.png");
-			アイテム[ItemImageType::錫杖].Load("file/equip/wepon008.png");
-			アイテム[ItemImageType::導杖].Load("file/equip/wepon009.png");
-			アイテム[ItemImageType::書物].Load("file/equip/wepon010.png");
-			アイテム[ItemImageType::水晶].Load("file/equip/wepon011.png");
+			装備品[(int)ItemType::大剣].Load("file/equip/wepon000.png");
+			装備品[(int)ItemType::剣盾].Load("file/equip/wepon001.png");
+			装備品[(int)ItemType::大盾].Load("file/equip/wepon002.png");
+			装備品[(int)ItemType::円盤].Load("file/equip/wepon003.png");
+			装備品[(int)ItemType::斧].Load("file/equip/wepon004.png");
+			装備品[(int)ItemType::刀].Load("file/equip/wepon005.png");
+			装備品[(int)ItemType::弓].Load("file/equip/wepon006.png");
+			装備品[(int)ItemType::神杖].Load("file/equip/wepon007.png");
+			装備品[(int)ItemType::錫杖].Load("file/equip/wepon008.png");
+			装備品[(int)ItemType::導杖].Load("file/equip/wepon009.png");
+			装備品[(int)ItemType::書物].Load("file/equip/wepon010.png");
+			装備品[(int)ItemType::水晶].Load("file/equip/wepon011.png");
 
-			アイテム[ItemImageType::重鎧].Load("file/equip/armor000.png");
-			アイテム[ItemImageType::軽鎧].Load("file/equip/armor001.png");
-			アイテム[ItemImageType::軽装].Load("file/equip/armor002.png");
-			アイテム[ItemImageType::外套].Load("file/equip/armor003.png");
+			装備品[(int)ItemType::重鎧].Load("file/equip/armor000.png");
+			装備品[(int)ItemType::軽鎧].Load("file/equip/armor001.png");
+			装備品[(int)ItemType::軽装].Load("file/equip/armor002.png");
+			装備品[(int)ItemType::外套].Load("file/equip/armor003.png");
 
-			アイテム[ItemImageType::アクセサリ].Load("file/accessory/boots_007.png");
+			アクセサリ[0].Load("file/accessory/boots_007.png");
 			//素材
 
-			アイコン[IconType::城].Load("file/system/move_00.png");
-			アイコン[IconType::森].Load("file/system/move_01.png");
-			アイコン[IconType::洞窟].Load("file/system/move_02.png");
-			アイコン[IconType::砂漠].Load("file/system/move_03.png");
-			アイコン[IconType::山].Load("file/system/move_04.png");
-			アイコン[IconType::滝].Load("file/system/move_05.png");
-			アイコン[IconType::塔].Load("file/system/move_06.png");
-			アイコン[IconType::廃墟].Load("file/system/move_07.png");
+			UI[IconType::城].Load("file/system/move_00.png");
+			UI[IconType::森].Load("file/system/move_01.png");
+			UI[IconType::洞窟].Load("file/system/move_02.png");
+			UI[IconType::砂漠].Load("file/system/move_03.png");
+			UI[IconType::山].Load("file/system/move_04.png");
+			UI[IconType::滝].Load("file/system/move_05.png");
+			UI[IconType::塔].Load("file/system/move_06.png");
+			UI[IconType::廃墟].Load("file/system/move_07.png");
 
 
-			スキル[SkillType::回復].Load("file/game_icons/healing.png");
-			スキル[SkillType::攻撃].Load("file/game_icons/saber-slash.png");
-			スキル[SkillType::バフ].Load("file/game_icons/embrassed-energy.png");
-			スキル[SkillType::デバフ].Load("file/game_icons/stoned-skull.png");
+			Aスキル[(int)SkillType::回復].Load("file/game_icons/healing.png");
+			Aスキル[(int)SkillType::攻撃].Load("file/game_icons/saber-slash.png");
+			Aスキル[(int)SkillType::バフ].Load("file/game_icons/embrassed-energy.png");
+			Aスキル[(int)SkillType::デバフ].Load("file/game_icons/stoned-skull.png");
 
 
 			装備種[ItemType::大剣].Load("file/game_icons/plain-dagger.png");
@@ -242,19 +256,6 @@ namespace SDX_ADE
 
 			static Image img_emote;
 			img_emote.Load("file/system/emo.png");
-
-			エモート[EmoteType::ビックリ].Copy(img_emote, { 0,0,14,18 });
-			エモート[EmoteType::音符].Copy(img_emote, { 14,0,14,18 });
-			エモート[EmoteType::困惑].Copy(img_emote, { 14 * 2,0,14,18 });
-			エモート[EmoteType::はてな].Copy(img_emote, { 14 * 3,0,14,18 });
-			エモート[EmoteType::汗].Copy(img_emote, { 14 * 4,0,14,18 });
-			エモート[EmoteType::眠り].Copy(img_emote, { 14 * 5,0,14,18 });
-			エモート[EmoteType::怒り].Copy(img_emote, { 0,18,14,18 });
-			エモート[EmoteType::ハート].Copy(img_emote, { 14,18,14,18 });
-			エモート[EmoteType::ドクロ].Copy(img_emote, { 14 * 2,18,14,18 });
-			エモート[EmoteType::３点].Copy(img_emote, { 14 * 3,18,14,18 });
-			エモート[EmoteType::２点].Copy(img_emote, { 14 * 4,18,14,18 });
-			エモート[EmoteType::１点].Copy(img_emote, { 14 * 5,18,14,18 });
 		}
 
 		static void Load()
@@ -333,36 +334,36 @@ namespace SDX_ADE
 	//職業立ち絵と歩行グラ
 	namespace MJob
 	{
-		EnumArray<Image, JobType> 立ち絵;
-		EnumArray<ImagePack, JobType> ちび;
+		Image 立ち絵[12];//画像数上限は暫定
+		ImagePack ちび[12];
 
 		static void Load()
 		{
-			立ち絵[JobType::ガーディアン].Load("file/job/BR97.png");
-			立ち絵[JobType::グラディエーター].Load("file/job/BR40.png");
-			立ち絵[JobType::パスファインダー].Load("file/job/BR223.png");
-			立ち絵[JobType::クレリック].Load("file/job/BR99.png");
-			立ち絵[JobType::ミスティック].Load("file/job/BR122.png");
-			立ち絵[JobType::オカルティスト].Load("file/job/BR42.png");
-			立ち絵[JobType::バーサーカー].Load("file/job/BR113.png");
-			立ち絵[JobType::スレイヤー].Load("file/job/BR16.zip");
-			立ち絵[JobType::アサシン].Load("file/job/BR200.png");
-			立ち絵[JobType::デッドアイ].Load("file/job/BR92.png");
-			立ち絵[JobType::エレメンタリスト].Load("file/job/BR207.png");
-			立ち絵[JobType::トリックスター].Load("file/job/BR44.png");
+			立ち絵[0].Load("file/job/BR97.png");
+			立ち絵[1].Load("file/job/BR40.png");
+			立ち絵[2].Load("file/job/BR223.png");
+			立ち絵[3].Load("file/job/BR99.png");
+			立ち絵[4].Load("file/job/BR122.png");
+			立ち絵[5].Load("file/job/BR42.png");
+			立ち絵[6].Load("file/job/BR113.png");
+			立ち絵[7].Load("file/job/BR16.zip");
+			立ち絵[8].Load("file/job/BR200.png");
+			立ち絵[9].Load("file/job/BR92.png");
+			立ち絵[10].Load("file/job/BR207.png");
+			立ち絵[11].Load("file/job/BR44.png");
 
-			ちび[JobType::ガーディアン].Load("file/job/chibi/BR97.png",9,3,6);
-			ちび[JobType::グラディエーター].Load("file/job/chibi/BR40.png", 9, 3,6);
-			ちび[JobType::パスファインダー].Load("file/job/chibi/BR223.png", 9, 3,6);
-			ちび[JobType::クレリック].Load("file/job/chibi/BR99.png", 9, 3,6);
-			ちび[JobType::ミスティック].Load("file/job/chibi/BR122.png", 9, 3,6);
-			ちび[JobType::オカルティスト].Load("file/job/chibi/BR42.png", 9, 3,6);
-			ちび[JobType::バーサーカー].Load("file/job/chibi/BR113.png", 9, 3,6);
-			ちび[JobType::スレイヤー].Load("file/job/chibi/BR16.png", 9, 3,6);
-			ちび[JobType::アサシン].Load("file/job/chibi/BR200.png", 9, 3,6);
-			ちび[JobType::デッドアイ].Load("file/job/chibi/BR92.png", 9, 3,6);
-			ちび[JobType::エレメンタリスト].Load("file/job/chibi/BR207.png", 9, 3,6);
-			ちび[JobType::トリックスター].Load("file/job/chibi/BR44.png", 9, 3,6);
+			ちび[0].Load("file/job/chibi/BR97.png",9,3,6);
+			ちび[1].Load("file/job/chibi/BR40.png", 9, 3,6);
+			ちび[2].Load("file/job/chibi/BR223.png", 9, 3,6);
+			ちび[3].Load("file/job/chibi/BR99.png", 9, 3,6);
+			ちび[4].Load("file/job/chibi/BR122.png", 9, 3,6);
+			ちび[5].Load("file/job/chibi/BR42.png", 9, 3,6);
+			ちび[6].Load("file/job/chibi/BR113.png", 9, 3,6);
+			ちび[7].Load("file/job/chibi/BR16.png", 9, 3,6);
+			ちび[8].Load("file/job/chibi/BR200.png", 9, 3,6);
+			ちび[9].Load("file/job/chibi/BR92.png", 9, 3,6);
+			ちび[10].Load("file/job/chibi/BR207.png", 9, 3,6);
+			ちび[11].Load("file/job/chibi/BR44.png", 9, 3,6);
 		}
 	}
 

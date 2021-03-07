@@ -52,8 +52,8 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px + Lp(25) ,py + Lp(26) }, Lp(27), Lp(28), 0, 1);
 
 
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(13),py + Lp(15) },2,0);
-				MIcon::アイコン[IconType::三角].DrawRotate({ px + Lp(14),py + Lp(15) },2,0,true);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(13),py + Lp(15) },2,0);
+				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(14),py + Lp(15) },2,0,true);
 
 
 				MFont::BMSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, 名前, false);

@@ -1,13 +1,22 @@
 ﻿パッチノート
-
+・リファクタリング メモ
 management、dungeon、questのdataはゲーム毎に初期化が必要
 他は起動時に一回初期化でOK
+
+Effect生成関数はASkillのメンバー関数にする？
 
 外部データ読み込み時のimage参照未実装
 外部データの画像参照ID設定がまだ
 
-W_Factoryの処理を修正、最大職人人数を設定
-▲は未テスト
+event_log
+fighter
+monster
+guild
+hunter
+monster
+クラスの見直し
+
+intと互換性のある特定の型でしかindexアクセス出来ないvectorいる？
 
 ・プログラムメモメモ
 ダンジョンの部屋の仕組み変える

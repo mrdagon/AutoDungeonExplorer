@@ -52,7 +52,7 @@ namespace SDX_ADE
 				}
 
 				//変更ボタンのアイコン
-				MIcon::アイコン[IconType::ログ].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
+				MIcon::UI[IconType::ログ].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
 
 				親->名前入力();
 			}
@@ -165,7 +165,7 @@ namespace SDX_ADE
 				//枠の描画
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), n, 1 - n * 2);
 				//ランダムのアイコン
-				MIcon::アイコン[IconType::再募集].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
+				MIcon::UI[IconType::再募集].DrawRotate({ px + Lp(36) , py + Lp(37) }, 2, 0);
 			}
 
 			void Click(double px, double py)
