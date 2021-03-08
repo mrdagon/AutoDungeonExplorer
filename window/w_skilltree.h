@@ -93,7 +93,7 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				auto it = 親->ギルメン->アクティブスキル[id];
+				auto it = 親->ギルメン->Aスキル[id];
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
 				//スキルアイコン
@@ -108,20 +108,20 @@ namespace SDX_ADE
 				
 				for (int a = 0; a < 4; a++)
 				{
-					if (親->ギルメン->アクティブスキル[a] == W_Drag::Aスキル)
+					if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
 					{
-						親->ギルメン->アクティブスキル[a] = 親->ギルメン->アクティブスキル[id];
-						親->ギルメン->アクティブスキル[id] = W_Drag::Aスキル;
+						親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
+						親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 						return;
 					}
 				}
 
-				親->ギルメン->アクティブスキル[id] = W_Drag::Aスキル;
+				親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 			}
 
 			void Info派生(Point 座標) override
 			{
-				InfoASkillSub(親->ギルメン->アクティブスキル[id], 座標, true);
+				InfoASkillSub(親->ギルメン->Aスキル[id], 座標, true);
 			}
 		};
 

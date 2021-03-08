@@ -105,7 +105,7 @@ namespace SDX_ADE
 
 			for (int a = 1; a <= 9; a++)
 			{
-				Guild::P->装備所持数[a] = 3;
+				Guild::P->アクセサリー所持数[a] = 3;
 			}
 
 			for (auto& it : Guild::P->is素材発見)
@@ -356,15 +356,6 @@ namespace SDX_ADE
 		{
 			Game::日付++;
 			Game::時間 = 0;
-
-			//記録追加
-			Guild::P->R団員.push_back(Guild::P->総人数);
-			Guild::P->R資金.push_back(Guild::P->資金);
-			Guild::P->R素材在庫.push_back(Guild::P->総素材);
-			Guild::P->R地図数.push_back(Guild::P->総地図);
-			Guild::P->R討伐数.push_back(Guild::P->総討伐);
-			Guild::P->R全滅数.push_back(Guild::P->総全滅);
-			Guild::P->R名声.push_back(Guild::P->名声);
 		}
 
 		//投資処理

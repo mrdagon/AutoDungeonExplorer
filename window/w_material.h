@@ -49,7 +49,7 @@ namespace SDX_ADE
 		};
 
 	public:
-		GUI_Mat_num GUI_素材数[CV::最大素材種];
+		GUI_Mat_num GUI_素材数[CV::素材系統];
 
 		void Init()
 		{
@@ -86,7 +86,7 @@ namespace SDX_ADE
 
 			縦内部幅 = 0;
 
-			for (int a = 0 ; a < CV::最大素材種; a++)
+			for (int a = 0 ; a < CV::素材系統; a++)
 			{
 				xx += Lp(1);
 

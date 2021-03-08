@@ -11,13 +11,12 @@ Effect生成関数はASkillのメンバー関数にする？
 職業の初期装備代入
 
 ○EventLog
-Battler
-Monster
-Guild
-Explorer
+○Battler
+○Monster
+○Explorer
+○Guild
 
-クラスの見直し
-
+APスキル処理の引数にLvを追加
 intと互換性のある特定の型でしかindexアクセス出来ないvectorいる？
 
 ・プログラムメモメモ

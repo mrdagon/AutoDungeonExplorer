@@ -34,10 +34,10 @@ namespace SDX_ADE
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			アクティブスキル[0] = ExplorerClass::data[job].初期Aスキル[0];
-			アクティブスキル[1] = ExplorerClass::data[job].初期Aスキル[1];
-			アクティブスキル[2] = ExplorerClass::data[job].初期Aスキル[2];
-			アクティブスキル[3] = ExplorerClass::data[job].初期Aスキル[3];
+			Aスキル[0] = ExplorerClass::data[job].初期Aスキル[0];
+			Aスキル[1] = ExplorerClass::data[job].初期Aスキル[1];
+			Aスキル[2] = ExplorerClass::data[job].初期Aスキル[2];
+			Aスキル[3] = ExplorerClass::data[job].初期Aスキル[3];
 
 			スキルリセット(0);
 
@@ -163,7 +163,7 @@ namespace SDX_ADE
 			}
 
 			//PスキルSの更新
-			パッシブスキル.clear();
+			Pスキル.clear();
 			//習得済みパッシブ
 
 			//装備品パッシブ
@@ -173,7 +173,7 @@ namespace SDX_ADE
 				{
 					if (it != nullptr && it->ID != 0)
 					{
-						パッシブスキル.push_back(it);
+						Pスキル.push_back(it);
 					}
 				}
 			}

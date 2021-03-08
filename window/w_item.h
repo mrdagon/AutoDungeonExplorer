@@ -20,7 +20,7 @@ namespace SDX_ADE
 			{
 				const int w = (int)位置.GetW();
 				const int h = (int)位置.GetH();
-				const int zaiko = Guild::P->装備所持数[id];
+				const int zaiko = Guild::P->アクセサリー所持数[id];
 
 				//外枠
 				MSystem::DrawWindow({ px,py }, w, h, 1);
@@ -36,7 +36,7 @@ namespace SDX_ADE
 			void Click(double px, double py)
 			{
 				//掴む
-				if (Guild::P->装備所持数[id] > 0)
+				if (Guild::P->アクセサリー所持数[id] > 0)
 				{
 					//W_Drag::アイテム = &Item::data[id];
 					MSound::効果音[SE::ドラッグ].Play();

@@ -34,10 +34,10 @@ namespace SDX_ADE
 		EnumArray<int, StatusType> ステ;
 
 		std::vector<ActiveSkill*> ASkill;//最大４個
-		int ASkillLv[CV::最大敵Pスキル数] = { 0 };//Pスキルの習得レベル
+		std::vector<int> ASkillLv;
 
-		std::vector <PassiveSkill*> PSkill;//覚えるPスキル
-		int PSkillLv[CV::最大敵Pスキル数] = { 0 };//Pスキルの習得レベル
+		std::vector<PassiveSkill*> PSkill;//覚えるPスキル
+		std::vector<int> PSkillLv;
 
 		static void LoadData()
 		{
@@ -101,6 +101,7 @@ namespace SDX_ADE
 					if (dummyA > 0)
 					{
 						it.PSkill.emplace_back(&PassiveSkill::data[dummyA]);
+						it.PSkillLv.emplace_back(dummyB);
 					}
 				}
 

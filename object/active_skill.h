@@ -235,7 +235,7 @@ namespace SDX_ADE
 		double 会心率 = 0.05;
 		double 会心倍率 = 1.5;
 
-		std::vector<ASkill追加効果> 追加効果;
+		EnumArray<int, ASkillSubType> 追加効果;
 		std::vector<ASkill補助効果> 補助効果;
 
 		//ASkillにないやつ

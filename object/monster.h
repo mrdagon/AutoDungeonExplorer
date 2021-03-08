@@ -75,8 +75,8 @@ namespace SDX_ADE
 			//とりあえずアクティブスキルは固定
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				this->アクティブスキル[a] = type->ASkill[a];
-				if (this->アクティブスキル[a] != nullptr)
+				this->Aスキル[a] = type->ASkill[a];
+				if (this->Aスキル[a] != nullptr)
 				{
 				} else {
 				}
@@ -84,7 +84,7 @@ namespace SDX_ADE
 			}
 			//とりあえずパッシブスキル無し
 
-			パッシブスキル.clear();
+			Pスキル.clear();
 		}
 	};
 }

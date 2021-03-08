@@ -156,7 +156,7 @@ namespace SDX_ADE
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80} , true);
+				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80} , true);
 			}
 
 			//Pスキル-アイコン、名前、説明
@@ -165,7 +165,7 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x + Lph(45),座標.y + Lph(46) }, Lph(47), Lph(48), 内スキン, 0, 枠透過率);
 			int sp = it->スキルポイント;
 
-			for (auto& itp : it->パッシブスキル)
+			for (auto& itp : it->Pスキル)
 			{
 				InfoPSkillSub(itp, { 座標.x , 座標.y },true,false);
 				座標.y += Lph(44);
@@ -413,9 +413,9 @@ namespace SDX_ADE
 			座標.y += Lph(33);
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (it->アクティブスキル[a] == nullptr ) { continue; }
+				if (it->Aスキル[a] == nullptr ) { continue; }
 
-				InfoASkillSub(it->アクティブスキル[a], { 座標.x , 座標.y + a * 80 }, true);
+				InfoASkillSub(it->Aスキル[a], { 座標.x , 座標.y + a * 80 }, true);
 			}
 
 			//Pスキル-アイコン、名前、説明

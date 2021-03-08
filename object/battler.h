@@ -26,15 +26,24 @@ namespace SDX_ADE
 		ImagePack *image;
 		int パーティID;
 
-		//●固定、基礎ステータス
-		ActiveSkill* アクティブスキル[CV::最大Aスキル数] = {nullptr};
-		std::vector<PassiveSkill*> パッシブスキル;//本人のパッシブ、装備、パーティパッシブを格納
-
 		//●基礎ステータス
+		ActiveSkill* Aスキル[CV::最大Aスキル数] = {nullptr};
+		int AスキルLv[CV::最大Aスキル数];
+
+		//Pスキルは発動タイミングでコンテナ分ける？
+		std::vector<PassiveSkill*> Pスキル;//本人のパッシブ、装備、パーティパッシブを格納
+		std::vector<int> PスキルLv;
+
 		EnumArray<int, StatusType> 基礎ステ;//Lv、装備補正、常時パッシブのステータス
 		//●装備とパッシブ補正後
 		EnumArray<int, StatusType> 補正ステ;//各種バフ/デバフ効果後のステータス
 
+		//特殊ステータス
+		int デバフ抵抗;
+		int 異常抵抗;
+		int 回復補正;
+
+		//現在の状態
 		int 現在HP = 0;
 		bool is気絶 = false;
 
@@ -57,7 +66,7 @@ namespace SDX_ADE
 
 		EnumArray<Buff, BuffType> バフ;//一時的なバフとデバフ
 
-		//エフェクト用変数
+		//アニメやエフェクト用変数
 		double E速度 = 0;//前出たり、ノックバック速度
 		int E反転残り = 0;
 		int E反転時間 = 0;
@@ -81,7 +90,8 @@ namespace SDX_ADE
 		//攻撃受け側の一時変数
 		int Hit数 = 0;
 
-		//ギルメンは基礎ステ+装備
+		//ギルメンは基礎ステLv補正+常時パッシブ+装備
+		//モンスター基礎ステLv補正+常時パッシブ
 		virtual void 基礎ステータス計算() = 0;
 
 		void 基礎Pスキル補正(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
@@ -302,7 +312,7 @@ namespace SDX_ADE
 			//スキル発動チェック
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				if (アクティブスキル[a] == nullptr) { continue; }
+				if (Aスキル[a] == nullptr) { continue; }
 
 			}
 
@@ -608,7 +618,7 @@ namespace SDX_ADE
 		//条件をチェックして、条件にあってるならPスキル処理を呼び出す
 		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
-			for (auto &it : パッシブスキル)
+			for (auto &it : Pスキル)
 			{
 				if (it->タイミング != タイミング) { continue; }
 				if (Aスキル != nullptr)

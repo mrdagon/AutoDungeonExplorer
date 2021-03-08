@@ -126,7 +126,6 @@ namespace SDX_ADE
 				if (W_Drag::ダンジョン == nullptr) { return; }
 				if (所属->探索状態 != ExplorerType::編成中 && 所属->探索状態 != ExplorerType::リザルト中)
 				{ 
-					所属->探索先予約 = W_Drag::ダンジョン;
 					MSound::効果音[SE::配置換え].Play();
 					return;
 				}
@@ -291,8 +290,8 @@ namespace SDX_ADE
 						return;
 					}
 
-					Guild::P->装備所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->装備所持数[W_Drag::アイテム->ID]--;
+					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
+					Guild::P->アクセサリー所持数[W_Drag::アイテム->ID]--;
 					ギルメン->装備[部位] = W_Drag::アイテム;
 
 					所属->基礎ステ再計算();
@@ -573,7 +572,7 @@ namespace SDX_ADE
 					{
 						buf_x = px + Lp(0) - Lp(1) * it.配置ID;
 						buf_y = py + Lp(2+it.配置ID);
-					} else if (所属->isボス戦) {
+					} else if (所属->isボス戦中) {
 						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
 						buf_y = py + Lp(2 + it.配置ID) + Lp(17);
 					} else {
@@ -601,7 +600,7 @@ namespace SDX_ADE
 						buf_x = px + Lp(0) - Lp(1) * it.配置ID;
 						buf_y = py + Lp(2 + it.配置ID) + it.座標Y;
 					}
-					else if (所属->isボス戦) {
+					else if (所属->isボス戦中) {
 						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
 						buf_y = py + Lp(2 + it.配置ID) + Lp(17) + it.座標Y;
 					}
@@ -636,7 +635,7 @@ namespace SDX_ADE
 					{
 						buf_x = Lp(14) + px;
 						buf_y = Lp(15) + py + it.座標Y;
-					} else if (所属->isボス戦) {
+					} else if (所属->isボス戦中) {
 						buf_x = px - Lp(0) + Lp(8) + Lp(1) * it.配置ID + Lp(16);
 						buf_y = py + Lp(2 + it.配置ID) + Lp(17) + it.座標Y;
 					} else {
@@ -697,26 +696,23 @@ namespace SDX_ADE
 				int cnt = 0;
 
 				//ボス
-				for(int a = 0; a < 所属->撃破ボス数; a++)
-				{
+				
 					MIcon::UI[IconType::ボス].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
-				}
+				
 				//地図
-				for (int a = 0; a < 所属->獲得地図数; a++)
-				{
+				
 					MIcon::UI[IconType::地図].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
-				}
+				
 				//宝箱
-				for (int a = 0; a < 所属->獲得石版数; a++)
-				{
+
 					MIcon::UI[IconType::宝箱].DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 2, 0);
 					cnt++;
-				}
+				
 				//素材
 
-				for (int a = 0; a < CV::最大素材種; a++)
+				for (int a = 0; a < CV::素材系統; a++)
 				{
 					if (所属->獲得素材[a] <= 0) { continue; }
 
@@ -744,7 +740,6 @@ namespace SDX_ADE
 			{
 				if (所属->探索状態 != ExplorerType::編成中 && 所属->探索状態 != ExplorerType::リザルト中)
 				{
-					所属->探索先予約 = W_Drag::ダンジョン;
 					MSound::効果音[SE::配置換え].Play();
 					return;
 				}
@@ -846,8 +841,8 @@ namespace SDX_ADE
 						部位 = 1;
 					}
 
-					Guild::P->装備所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->装備所持数[W_Drag::アイテム->ID]--;
+					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
+					Guild::P->アクセサリー所持数[W_Drag::アイテム->ID]--;
 					ギルメン->装備[部位] = W_Drag::アイテム;
 					ギルメン->基礎ステータス計算();
 					MSound::効果音[SE::装備変更].Play();

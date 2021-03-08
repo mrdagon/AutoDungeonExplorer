@@ -19,7 +19,7 @@ namespace SDX_ADE
 
 		public:
 			Party() :
-				isボス戦(false)
+				isボス戦中(false)
 			{
 				魔物.reserve(6);
 
@@ -32,27 +32,27 @@ namespace SDX_ADE
 			int パーティID;
 
 			Dungeon* 探索先 = nullptr;
-			Dungeon* 探索先予約 = nullptr;
 			OrderType 探索指示 = OrderType::なし;
 
-			std::vector<Monster> 魔物;
 			Explorer* メンバー[CV::パーティ人数];
+			std::vector<Monster> 魔物;//戦闘中の相手
 
 			std::vector<Battler*> 味方;
 			std::vector<Battler*> 敵;
 
 			CraftType 発見素材種;
-			int 獲得素材[CV::最大素材種];
-
 			double 獲得経験値;
-			int 獲得石版数;
-			int 獲得地図数;
-			int 撃破ボス数;
+			int 獲得素材[CV::最大素材種類];
+			int 獲得財宝[10];//最大で10個まで、-で地図、0は未発見
+
+			int isボス撃破;
+			int is発見階段;
+			int is発見地図;
 
 			ExplorerType 探索状態 = ExplorerType::編成中;
 			int 待ち時間 = 0;//移動、戦闘後、素材回収中などの待ち時間
 
-			bool isボス戦 = false;
+			bool isボス戦中 = false;
 
 			int 部屋ID = 0;
 
@@ -72,7 +72,7 @@ namespace SDX_ADE
 					if (メンバー[a] == nullptr) { continue; }
 
 					味方.push_back(メンバー[a]);
-					メンバー[a]->パッシブスキル.clear();
+					メンバー[a]->Pスキル.clear();
 				}
 
 				//パーティスキルや装備品スキル等の計算
@@ -101,9 +101,6 @@ namespace SDX_ADE
 				//獲得素材数リセット
 				獲得経験値 = 0;
 				for (auto& it : 獲得素材) { it = 0; }
-				獲得石版数 = 0;
-				獲得地図数 = 0;
-				撃破ボス数 = 0;
 
 				//パーティメンバーの体力回復、ステータス再計算等
 				基礎ステ再計算();
@@ -115,7 +112,7 @@ namespace SDX_ADE
 			void 探索終了()
 			{
 				//素材獲得
-				for (int a = 0; a < CV::最大素材種; a++)
+				for (int a = 0; a < CV::素材系統; a++)
 				{
 					if (獲得素材[a] > 0)
 					{
@@ -134,13 +131,6 @@ namespace SDX_ADE
 					メンバー[a]->経験値 += 獲得経験値 * Guild::P->戦闘経験補正;
 					メンバー[a]->レベルアップ判定();
 				}
-
-				if (探索先予約 != nullptr)
-				{
-					探索先 = 探索先予約;
-					探索先予約 = nullptr;
-				}
-
 			}
 
 			void 探索処理()
@@ -282,7 +272,7 @@ namespace SDX_ADE
 				{
 				case RoomType::ザコ:
 					探索状態 = ExplorerType::戦闘中;
-					isボス戦 = false;
+					isボス戦中 = false;
 					戦闘開始(5);
 					break;
 				case RoomType::素材:
@@ -291,17 +281,17 @@ namespace SDX_ADE
 					break;
 				case RoomType::財宝:
 					探索状態 = ExplorerType::戦闘中;
-					isボス戦 = false;
+					isボス戦中 = false;
 					戦闘開始(6);
 					break;
 				case RoomType::地図:
 					探索状態 = ExplorerType::戦闘中;
-					isボス戦 = false;
+					isボス戦中 = false;
 					戦闘開始(6);
 					break;
 				case RoomType::ボス:
 					探索状態 = ExplorerType::戦闘中;
-					isボス戦 = true;
+					isボス戦中 = true;
 					戦闘開始(1);
 					break;
 				}
@@ -434,7 +424,7 @@ namespace SDX_ADE
 				魔物.clear();
 
 				//敵の生成
-				if (isボス戦 == true)
+				if (isボス戦中 == true)
 				{
 					MMusic::BGM[BGMType::通常ボス].Play();
 					敵数 = 1;
@@ -578,7 +568,7 @@ namespace SDX_ADE
 					MMusic::BGM[BGMType::探検中].Play();
 					探索先->isボス生存 = false;
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
-					撃破ボス数++;
+					isボス撃破 = true;
 					Guild::P->総討伐++;
 					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
 					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
@@ -597,7 +587,7 @@ namespace SDX_ADE
 					break;
 				}
 
-				地図発見();
+				階段発見();
 				部屋探索完了();
 
 				//体力回復
@@ -632,13 +622,13 @@ namespace SDX_ADE
 				Guild::P->総全滅++;
 			}
 
-			void 地図発見()
+			void 階段発見()
 			{
 				//if (探索先->部屋[部屋ID].地図 <= 0) { return; }
 
 				//探索先->発見地図++;
 				発見物 = &MIcon::UI[IconType::地図];
-				獲得地図数++;
+
 				/*if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
 				{
 					Dungeon::data[探索先->部屋[部屋ID].地図].is発見 = true;
@@ -654,7 +644,6 @@ namespace SDX_ADE
 			void 財宝獲得()
 			{
 				//探索先->発見財宝++;
-				獲得石版数++;
 				発見物 = &MIcon::UI[IconType::宝箱];
 			}
 
@@ -716,9 +705,9 @@ namespace SDX_ADE
 
 		};
 
-		int 素材数[CV::最大素材種];
-		int レア素材数[CV::最大素材種];
-		bool is素材発見[CV::最大素材種];
+		int 素材数[CV::素材系統];
+		int レア素材数[CV::素材系統];
+		bool is素材発見[CV::素材系統];
 
 		double 資金 = 123456789;
 		int 名声 = 100;
@@ -730,14 +719,11 @@ namespace SDX_ADE
 		Party 探索パーティ[CV::上限パーティ数];
 		std::vector<Explorer*> ギルメン控え;
 
-
-		int 最大パーティ数 = 3;
+		int 最大パーティ数 = 1;
 
 		//パーティーと配属人員
 		int 投資Lv;
 		int 投資経験値;
-
-		int 集客力 = 100;//10で割った数値が一日の来客期待値
 
 		//キャラクリ関係
 		std::string 求人名前 = "ナナーシ";
@@ -745,34 +731,21 @@ namespace SDX_ADE
 
 		//経営戦術効果
 		double 戦闘経験補正 = 1.0;
-
 		double 素材節約 = 0.0;//確率で素材消費0
 		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
 
 		//装備品
-		int 装備所持数[100] = { 0 };
+		int アクセサリー所持数[100] = { 0 };
 
 		EnumArray < bool, ItemType> is新開発タブ;
 
 		//各種記録_Record
 		int 総石版 = 0;
-		int 総人数 = 0;
 
-		int 総素材 = 0;//探索後増加
-		int 総地図 = 0;//発見時増加
+		int 総素材 = 0;
+		int 総フロア = 0;//全探索フロア数
 		int 総討伐 = 0;//討伐時増加
 		int 総全滅 = 0;//全滅時増加
-
-		//日別記録
-		std::vector<int> R団員;
-		std::vector<double> R資金;
-		std::vector<int> R販売;
-		std::vector<int> R製造;
-		std::vector<int> R素材在庫;
-		std::vector<int> R地図数;
-		std::vector<int> R討伐数;
-		std::vector<int> R全滅数;
-		std::vector<int> R名声;
 
 		inline static Guild* P;//プレイヤーのギルド
 
@@ -804,16 +777,16 @@ namespace SDX_ADE
 			if (ID >= 0)
 			{
 				//探索パーティから除名
-				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[0]->ID]++;
-				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[1]->ID]++;
-				装備所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[2]->ID]++;
+				アクセサリー所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[0]->ID]++;
+				アクセサリー所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[1]->ID]++;
+				アクセサリー所持数[探索パーティ[ID / 5].メンバー[ID % 5]->装備[2]->ID]++;
 
 				探索パーティ[ID / 5].メンバー[ID % 5] = nullptr;
 			} else {
 				//控えから除名
-				装備所持数[ギルメン控え[-(ID + 1)]->装備[0]->ID]++;
-				装備所持数[ギルメン控え[-(ID + 1)]->装備[1]->ID]++;
-				装備所持数[ギルメン控え[-(ID + 1)]->装備[2]->ID]++;
+				アクセサリー所持数[ギルメン控え[-(ID + 1)]->装備[0]->ID]++;
+				アクセサリー所持数[ギルメン控え[-(ID + 1)]->装備[1]->ID]++;
+				アクセサリー所持数[ギルメン控え[-(ID + 1)]->装備[2]->ID]++;
 
 				ギルメン控え.erase(ギルメン控え.begin() -(ID+1));
 			}
