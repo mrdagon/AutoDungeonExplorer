@@ -12,7 +12,7 @@ namespace SDX_ADE
 	{
 	private:
 	public:
-		static std::vector<Material> data;
+		inline static std::vector<Material> data;
 
 		Material()
 		{}
@@ -55,11 +55,6 @@ namespace SDX_ADE
 				file_data.Read(it.ランク);
 				file_data.Read(it.価格);
 			}
-
 		}
-
 	};
-
-
-	std::vector<Material> Material::data;
 }

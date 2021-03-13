@@ -1,0 +1,5 @@
+tmxfile,C:\Users\Uemura\Documents\GitHub\SDXFramework\Sample\template.tmx
+class,
+scene,
+enum,
+prefix,

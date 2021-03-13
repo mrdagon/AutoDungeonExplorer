@@ -64,7 +64,7 @@ namespace SDX_ADE
 		COUNT
 	};
 
-	//バフ・デバフ効果
+	//バフ・デバフ・特殊状態効果
 	enum class BuffType
 	{
 		なし,
@@ -137,6 +137,24 @@ namespace SDX_ADE
 		異常追撃,
 		反撃,//削除予定
 		COUNT
+	};
+
+	//レベル補正種
+	enum class ASkillLvType
+	{
+		基礎ダメージ,
+		反映率,
+		命中,
+		会心率,
+		会心倍率,
+		クールタイム,
+		範囲,
+		Hit数,
+		追加効果,
+		バフ固定値,
+		バフ反映率,
+		バフ発動率,
+		バフ持続,
 	};
 
 	//◆Pスキル
@@ -254,6 +272,15 @@ namespace SDX_ADE
 		魔防割合増加,
 		経験値増加,
 		＠キーパッシブ,
+	};
+	
+	enum class PSkillLvType
+	{
+		条件値,
+		持続時間,
+		発動率,
+		効果値1,
+		効果値2
 	};
 
 	//◆画像、音声の管理用

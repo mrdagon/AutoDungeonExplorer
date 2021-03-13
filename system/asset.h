@@ -313,6 +313,7 @@ namespace SDX_ADE
 	namespace MEffect
 	{
 		ImagePack エフェクト[12];
+		int エフェクト種類[12];//0 通常、1加算、2減算
 
 		static void Load()
 		{

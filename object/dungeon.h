@@ -18,6 +18,7 @@ namespace SDX_ADE
 		{
 		public:
 			Room() {}
+			Room(RoomType 種類) { this->種類 = 種類; }
 
 			RoomType 種類;
 			bool is探索 = false;//探索し終わったかどうか
@@ -40,24 +41,25 @@ namespace SDX_ADE
 		bool isボス生存 = true;
 		bool isボス発見 = false;//朝に探索率が一定以上でボス発見フラグが立つ
 
-		int 発見財宝数;
+		int 発見財宝数 = 0;
 		int 最大財宝数;
-		bool is地図発見;
+		bool is地図発見[2] = {false,false};
 
-		std::vector< Item* > 財宝;
+		std::vector<Item*> 財宝;
 
-		std::vector< MonsterClass*> ボスモンスター;
-		std::vector < MonsterClass* > 雑魚モンスター;
+		std::vector<MonsterClass*> ボスモンスター;
+		std::vector<MonsterClass*> 雑魚モンスター;
 
-		double 探索率;
+		double 探索率 = 0;
 
-		bool is発見;//ダンジョン発見済みフラグ
-		bool is新規;//UI用
+		bool is発見 = false;//ダンジョン発見済みフラグ
+		bool is新規 = false;//UI用
 
-		bool isボス地図;
-
+		int ボス地図ID;//0ならボス地図なし
 		int ボス発見探索率;
-		int 地図発見探索率;
+
+		int 探索地図ID[2];//0なら地図なし
+		int 地図発見探索率[2];
 
 		/*暫定処理*/
 		void 探索率計算()
@@ -114,13 +116,10 @@ namespace SDX_ADE
 				}
 				file_data.Read(it.雑魚Lv);
 				
-				file_data.Read(dummy);
-				if (dummy > 0)
-				{
-					it.isボス地図 = true;
-				}
-				file_data.Read(dummy);//地図番号は無視
-				file_data.Read(dummy);
+				file_data.Read(it.ボス地図ID);
+
+				file_data.Read(it.探索地図ID[0]);//探索地図番号
+				file_data.Read(it.探索地図ID[1]);
 
 				for (int b = 0; b < 5; b++)
 				{
@@ -130,13 +129,25 @@ namespace SDX_ADE
 						it.財宝.emplace_back(&Item::accessory_data[dummy]);
 					}
 				}
+				it.最大財宝数 = it.財宝.size();
 
-				file_data.Read(dummy);
+				file_data.Read(dummy);//部屋数
 
 
 				file_data.Read(it.ボス発見探索率);
-				file_data.Read(it.地図発見探索率);
-				file_data.Read(dummy);//地図発見2は無視
+				file_data.Read(it.地図発見探索率[0]);
+				file_data.Read(it.地図発見探索率[1]);
+
+				//部屋の設定
+				for (int i = 0; i < dummy; i++)
+				{
+					it.部屋.emplace_back( i % 2==0 ? RoomType::ザコ : RoomType::素材 );
+				}
+
+				for (int i = 0; i < it.財宝.size(); i++)
+				{
+					it.部屋[i].種類 = RoomType::財宝;
+				}
 			}
 		}
 
@@ -146,7 +157,8 @@ namespace SDX_ADE
 			{
 				it.isボス生存 = true;
 				it.isボス発見 = false;
-				it.is地図発見 = false;
+				it.is地図発見[0] = false;
+				it.is地図発見[1] = false;
 				it.is新規 = false;
 				it.is発見 = false;
 				it.探索率 = 0;

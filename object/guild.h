@@ -43,20 +43,20 @@ namespace SDX_ADE
 			CraftType 発見素材種;
 			double 獲得経験値;
 			int 獲得素材[CV::最大素材種類];
-			int 獲得財宝[10];//最大で10個まで、-で地図、0は未発見
+			int 獲得財宝[10];//最大で10個まで、-は地図、0は未発見
 
-			int isボス撃破;
-			int is発見階段;
-			int is発見地図;
+			bool isボス撃破;
+			bool is発見階段;
+			bool is発見地図;
 
 			ExplorerType 探索状態 = ExplorerType::編成中;
 			int 待ち時間 = 0;//移動、戦闘後、素材回収中などの待ち時間
 
 			bool isボス戦中 = false;
 
-			int 部屋ID = 0;
+			int 部屋ID = 0;//探索,戦闘中の
 
-			//演出用
+			//★探索中演出用
 			int 移動量 = 0;
 			int 暗転 = 0;
 			Image* 発見物 = nullptr;//地図、宝箱、鉱脈、木
@@ -709,7 +709,7 @@ namespace SDX_ADE
 		int レア素材数[CV::素材系統];
 		bool is素材発見[CV::素材系統];
 
-		double 資金 = 123456789;
+		double 資金 = 1000;
 		int 名声 = 100;
 
 		//従業員一覧
@@ -722,11 +722,11 @@ namespace SDX_ADE
 		int 最大パーティ数 = 1;
 
 		//パーティーと配属人員
-		int 投資Lv;
-		int 投資経験値;
+		int 投資Lv = 0;
+		int 投資経験値 = 0;
 
 		//キャラクリ関係
-		std::string 求人名前 = "ナナーシ";
+		std::string 求人名前 = "名無し";
 		ID_Job 求人職業 = 0;
 
 		//経営戦術効果
@@ -754,6 +754,36 @@ namespace SDX_ADE
 			for (int a = 0; a < CV::上限パーティ数; a++)
 			{
 				探索パーティ[a].パーティID = a;
+			}
+		}
+
+		void Init()
+		{
+			Guild::P->探索要員.reserve(128);
+
+			for (int a = 1; a <= 9; a++)
+			{
+				アクセサリー所持数[a] = 3;
+			}
+
+			for (auto& it : is素材発見)
+			{
+				it = false;
+			}
+
+			//初期、探索者、テスト用
+			for (int a = 0; a < 5; a++)
+			{
+				探索要員.emplace_back();
+				探索要員.back().Make(a, a, 1, "ギルメン");
+				探索パーティ[0].メンバー[a] = &Guild::P->探索要員[a];
+			}
+
+			//パーティ初期化
+			for (int a = 0; a < CV::上限パーティ数; a++)
+			{
+				探索パーティ[a].探索先 = &Dungeon::data[0];
+				探索パーティ[a].基礎ステ再計算();
 			}
 		}
 

@@ -10,6 +10,11 @@ namespace SDX_ADE
 	class Recipe
 	{
 	public:
+		Recipe(ID_Material ID , int 必要数):
+			ID(ID),
+			必要数(必要数)
+		{}
+
 		ID_Material ID;
 		int 必要数;
 	};
@@ -33,7 +38,7 @@ namespace SDX_ADE
 		ItemType 種類;
 
 		PassiveSkill* Pスキル[1] = { nullptr };//最大１個まで
-		int PスキルLv = 0;
+		int PスキルLv[1] = { 0 };
 
 		//攻撃力等のステータス、追加されるスキル等
 		EnumArray<int, StatusType> ステ;
@@ -71,8 +76,8 @@ namespace SDX_ADE
 			{
 				int dummy;
 
-				accessory_data.emplace_back();
-				auto& it = accessory_data.back();
+				equip_data.emplace_back();
+				auto& it = equip_data.back();
 
 				it.名前 = strs[i][0];
 				if (strs[i].size() == 2)
@@ -103,6 +108,106 @@ namespace SDX_ADE
 				file_data.Read(it.ステ[StatusType::回避]);
 				file_data.Read(it.ステ[StatusType::会心]);
 
+
+				CraftType mct = CraftType::木材;
+				CraftType sct = CraftType::木材;
+				switch (it.種類)
+				{
+					//武器
+					case ItemType::大剣:mct = CraftType::鉄材; sct = CraftType::骨材;
+						break;
+					case ItemType::剣盾:mct = CraftType::木材; sct = CraftType::鉄材;
+						break;
+					case ItemType::大盾:mct = CraftType::鉄材; sct = CraftType::革材;
+						break;
+					case ItemType::円盤:mct = CraftType::骨材; sct = CraftType::石材;
+						break;
+					case ItemType::斧:mct = CraftType::鉄材; sct = CraftType::木材;
+						break;
+					case ItemType::刀:mct = CraftType::鉄材; sct = CraftType::石材;
+						break;
+					case ItemType::弓:mct = CraftType::木材; sct = CraftType::革材;
+						break;
+					case ItemType::神杖:mct = CraftType::魔材; sct = CraftType::骨材;
+						break;
+					case ItemType::錫杖:mct = CraftType::石材; sct = CraftType::骨材;
+						break;
+					case ItemType::導杖:mct = CraftType::魔材; sct = CraftType::木材;
+						break;
+					case ItemType::書物:mct = CraftType::木材; sct = CraftType::魔材;
+						break;
+					case ItemType::水晶:mct = CraftType::石材; sct = CraftType::魔材;
+						break;
+					//防具
+					case ItemType::重鎧:mct = CraftType::鉄材; sct = CraftType::石材;
+						break;
+					case ItemType::軽鎧:mct = CraftType::革材; sct = CraftType::鉄材;
+						break;
+					case ItemType::軽装:mct = CraftType::革材; sct = CraftType::石材;
+						break;
+					case ItemType::外套:mct = CraftType::革材; sct = CraftType::魔材;
+						break;
+				}
+
+				//メイン素材
+				if (it.ランク == 1)
+				{
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 2 && it2.種類 == mct)
+						{
+							it.レシピ.emplace_back( it2.ID, 3 );
+							break;
+						}
+					}
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 1 && it2.種類 == mct)
+						{
+							it.レシピ.emplace_back(it2.ID, 10);
+							break;
+						}
+					}
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 1 && it2.種類 == sct)
+						{
+							it.レシピ.emplace_back(it2.ID, 10);
+							break;
+						}
+					}
+				}
+				if (it.ランク == 2)
+				{
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 3 && it2.種類 == mct)
+						{
+							it.レシピ.emplace_back(it2.ID, 5);
+							break;
+						}
+					}
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 2 && it2.種類 == mct)
+						{
+							it.レシピ.emplace_back(it2.ID, 15);
+							break;
+						}
+					}
+					for (auto it2 : Material::data)
+					{
+						if (it2.ランク == 2 && it2.種類 == sct)
+						{
+							it.レシピ.emplace_back(it2.ID, 15);
+							break;
+						}
+					}
+				}
+				if (it.ランク == 3)
+				{
+					//強化不可
+				}
 			}
 		}
 
@@ -132,6 +237,7 @@ namespace SDX_ADE
 				it.ID = i;
 				file_data.Read( dummy);//画像ID
 				it.種類 = ItemType::アクセサリー;
+				it.image = &MIcon::装備品[(int)it.種類];
 
 				file_data.Read( dummy );
 				if (dummy < 0) { dummy = 0; }
@@ -151,6 +257,7 @@ namespace SDX_ADE
 				file_data.Read(it.ステ[StatusType::回避]);
 				file_data.Read(it.ステ[StatusType::会心]);
 
+				//アクセサリーはレシピ無し
 			}
 		}
 

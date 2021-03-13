@@ -23,6 +23,10 @@ namespace SDX_ADE
 	public:
 		inline static std::vector<EventLog> logs;
 
+		int 日付;
+		LogType 種類;
+		std::string テキスト;
+
 		static void Add(const char* テキスト, int 日付, LogType 種類 )
 		{
 			logs.emplace_back(テキスト, 日付 , 種類);
@@ -39,8 +43,5 @@ namespace SDX_ADE
 
 		}
 
-		int 日付;
-		LogType 種類;
-		std::string テキスト;
 	};
 }

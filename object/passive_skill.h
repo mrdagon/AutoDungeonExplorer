@@ -39,7 +39,7 @@ namespace SDX_ADE
 
 		PSkillIf 条件;
 		int 条件値;
-		int 持続時間;
+		int 持続時間;//一時バフ用
 
 		PSkillTime タイミング;
 		int 発動率;
@@ -48,8 +48,91 @@ namespace SDX_ADE
 		PSkillEffect 効果種[2];
 		int 効果量[2];
 
-		int レベル補正種[2];
-		int レベル補正値[2][9];
+		PSkillLvType レベル補正_種類[2];
+		int レベル補正_数値[2][9];
+
+		int Get条件値(int Lv)
+		{
+			int value = 条件値;
+			Lv -= 1;
+
+			if (Lv <= 0) { return value; }
+
+			for (int i = 0; i < 2; i++)
+			{
+				if (レベル補正_種類[i] == PSkillLvType::条件値)
+				{
+					value += レベル補正_数値[i][Lv];
+				}
+			}
+
+			return value;
+		}
+
+		int Get発動率(int Lv)
+		{
+			int value = 発動率;
+
+			Lv -= 1;
+
+			if (Lv <= 0) { return value; }
+
+			for (int i = 0; i < 2; i++)
+			{
+				if (レベル補正_種類[i] == PSkillLvType::発動率)
+				{
+					value += レベル補正_数値[i][Lv];
+				}
+			}
+
+			return value;
+		}
+
+		int Get効果値( int index , int Lv)
+		{
+			int value = 効果量[index];
+			Lv -= 1;
+			if (Lv <= 0) { return value; }
+
+			if (index == 0 )
+			{
+				for (int i = 0; i < 2; i++)
+				{
+					if (レベル補正_種類[i] == PSkillLvType::効果値1)
+					{
+						value += レベル補正_数値[i][Lv];
+					}
+				}
+			} else {
+				for (int i = 0; i < 2; i++)
+				{
+					if (レベル補正_種類[i] == PSkillLvType::効果値2)
+					{
+						value += レベル補正_数値[i][Lv];
+					}
+				}
+			}
+
+			return value;
+		}
+
+		int Get持続値(int Lv)
+		{
+			int value = 持続時間;
+			Lv -= 1;
+
+			if (Lv <= 0) { return value; }
+
+			for (int i = 0; i < 2; i++)
+			{
+				if (レベル補正_種類[i] == PSkillLvType::持続時間)
+				{
+					value += レベル補正_数値[i][Lv];
+				}
+			}
+
+			return value;
+		}
 
 		static void LoadData()
 		{
@@ -96,16 +179,17 @@ namespace SDX_ADE
 				file_data.Read(it.効果種[1]);
 				file_data.Read(it.効果量[1]);
 
-				file_data.Read(it.レベル補正種[0]);
+				file_data.Read(it.レベル補正_種類[0]);
+
 				for (int b = 0; b < 9; b++)
 				{
-					file_data.Read(it.レベル補正値[0][b]);
+					file_data.Read(it.レベル補正_数値[0][b]);
 				}
 
-				file_data.Read(it.レベル補正種[1]);
+				file_data.Read(it.レベル補正_種類[1]);
 				for (int b = 0; b < 9; b++)
 				{
-					file_data.Read(it.レベル補正値[1][b]);
+					file_data.Read(it.レベル補正_数値[1][b]);
 				}
 			}
 		}

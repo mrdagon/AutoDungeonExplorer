@@ -33,10 +33,10 @@ void LoadAndInitData()
 	//外部データ読込
 	PassiveSkill::LoadData();
 	ActiveSkill::LoadData();
+	Material::LoadData();
 	Item::LoadData();
 	MonsterClass::LoadData();
 	ExplorerClass::LoadData();
-	Material::LoadData();
 	Management::LoadData();
 
 	Quest::LoadData();

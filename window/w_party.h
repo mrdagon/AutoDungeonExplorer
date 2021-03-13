@@ -580,16 +580,7 @@ namespace SDX_ADE
 						buf_y = py + Lp(2 + it.配置ID);
 					}
 
-					if (it.スキルエフェクト == 0)
-					{
-						Screen::SetBlendMode(BlendMode::Add);
-						it.スキルエフェクト[0][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
-						Screen::SetBlendMode();
-					} else {
-
-						it.スキルエフェクト[0][it.フレーム番号]->DrawRotate({ buf_x,buf_y }, 0.4, 0);
-					}
-
+					it.Draw(buf_x, buf_y, 0.4);
 				}
 
 				//文字エフェクト

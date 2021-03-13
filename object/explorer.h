@@ -34,10 +34,13 @@ namespace SDX_ADE
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
-			Aスキル[0] = ExplorerClass::data[job].初期Aスキル[0];
-			Aスキル[1] = ExplorerClass::data[job].初期Aスキル[1];
-			Aスキル[2] = ExplorerClass::data[job].初期Aスキル[2];
-			Aスキル[3] = ExplorerClass::data[job].初期Aスキル[3];
+			for (int a = 0; a < CV::最大Aスキル数; a++)
+			{
+				Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
+				装備Aスキル通常[a] = ExplorerClass::data[job].初期Aスキル[a];
+				装備Aスキルボス[a] = ExplorerClass::data[job].初期Aスキル[a];
+			}
+
 
 			スキルリセット(0);
 
@@ -79,8 +82,8 @@ namespace SDX_ADE
 		ExplorerClass* 職業;
 		
 		//●スキル習得状況
-		std::array<int, CV::最大Aスキル種類> AスキルLv;
-		std::array<int, CV::最大Pスキル種類> PスキルLv;
+		std::array<int, CV::最大Aスキル種類> 習得AスキルLv;
+		std::array<int, CV::最大Pスキル種類> 習得PスキルLv;
 		int スキル習得予約[100];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
@@ -125,24 +128,27 @@ namespace SDX_ADE
 
 		}
 
-		//パッシブ無しの基礎ステータス計算
+		//基礎ステータス計算
+		//パーティパッシブがあるので、Pスキルは補正は別関数
 		void 基礎ステータス計算()
 		{
-			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (10 + Lv) / 10.0);
-			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (10 + Lv) / 10);
-			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (10 + Lv) / 10);
-			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (10 + Lv) / 10);
+			//とりあえずモンスターはLvで12%で成長、味方はLvで10%成長
+			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 10);
+			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (9 + Lv) / 10);
+			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (9 + Lv) / 10);
+			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (9 + Lv) / 10);
 
-			基礎ステ[StatusType::命中] = 職業->ステ[StatusType::命中];
-			基礎ステ[StatusType::回避] = 職業->ステ[StatusType::回避];
+			基礎ステ[StatusType::命中] = int(職業->ステ[StatusType::命中] * (49 + Lv) / 50);
+			基礎ステ[StatusType::回避] = int(職業->ステ[StatusType::回避] * (49 + Lv) / 50);
 
-			基礎ステ[StatusType::物防] = 職業->ステ[StatusType::物防];
-			基礎ステ[StatusType::魔防] = 職業->ステ[StatusType::魔防];
+			基礎ステ[StatusType::物防] = int(職業->ステ[StatusType::物防] * (29 + Lv) / 30);
+			基礎ステ[StatusType::魔防] = int(職業->ステ[StatusType::魔防] * (29 + Lv) / 30);
 
 			基礎ステ[StatusType::会心] = 職業->ステ[StatusType::会心];
 
-			Reset補正ステータス();
+			Reset一時補正ステータス();
 
+			//装備品補正
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
 				補正ステ[StatusType::HP] += 装備[a]->ステ[StatusType::HP];
@@ -158,27 +164,40 @@ namespace SDX_ADE
 				補正ステ[StatusType::会心] += 装備[a]->ステ[StatusType::会心];
 			}
 
+			//Aスキルセット
+			Aスキル数 = 4;
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
+				Aスキル[a] = 装備Aスキル通常[a];
+				AスキルLv[a] = 習得AスキルLv[Aスキル[a]->ID];
+				必要クールダウン[a] = Aスキル[a]->クールタイム;
 			}
 
 			//PスキルSの更新
 			Pスキル.clear();
-			//習得済みパッシブ
+			//習得済みパッシブをpush
+			for (int a = 0; a < CV::最大Pスキル種類; a++)
+			{
+				if (習得PスキルLv[a] > 0)
+				{
+					Pスキル.push_back( &PassiveSkill::data[a] );
+					PスキルLv.push_back(習得PスキルLv[a]);
+				}
+			}
 
 			//装備品パッシブ
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				for ( auto& it : 装備[a]->Pスキル )
+				for (int b = 0; b < 1; b++)
 				{
-					if (it != nullptr && it->ID != 0)
+					if (装備[a]->Pスキル[b] != nullptr && 装備[a]->Pスキル[b]->ID != 0)
 					{
-						Pスキル.push_back(it);
+						Pスキル.push_back(装備[a]->Pスキル[b]);
+						PスキルLv.push_back(装備[a]->PスキルLv[b]);
 					}
 				}
 			}
-			
-			//製造能力(仮)
+
 			現在HP = 補正ステ[StatusType::HP];
 
 			戦闘後回復 = Game::自動回復;
@@ -203,8 +222,7 @@ namespace SDX_ADE
 			探検前Lv = Lv;
 			探検前経験値 = (int)経験値;
 			isレベルアップ演出 = false;
-			isスキル習得演出 = false;
-		}
+			isスキル習得演出 = false;		}
 
 		void 探索終了()
 		{

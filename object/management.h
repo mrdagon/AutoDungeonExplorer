@@ -30,8 +30,8 @@ namespace SDX_ADE
 		Management()
 		{}
 
-		Image* image;
-		int ID;
+		Image* image = nullptr;
+		int ID = 0;
 		int ランク;//習得レベル
 
 		std::string 名前;
@@ -41,7 +41,7 @@ namespace SDX_ADE
 		bool is使用済み = false;
 		bool is使用可 = false;
 
-		bool is永続;//単発効果 or 永続効果
+		bool is永続 = false;//単発効果 or 永続効果
 
 		/*戦術実行効果*/
 		void Active(Guild* guild)
@@ -59,12 +59,6 @@ namespace SDX_ADE
 
 				MSound::効果音[SE::投資実行].Play();
 			}
-
-			//switch( ID )
-			//{
-			//	case MSkillType::ビラ配り:
-			//		break;
-			//}
 		}
 
 		bool Lv上昇判定()

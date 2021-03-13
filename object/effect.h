@@ -71,17 +71,20 @@ namespace SDX_ADE
 	{
 	private:
 		const int フレーム時間 = 4;
+		int 加算減産;
+		int フレーム番号 = 0;
+		int アニメ時間 = 0;
+
 	public:
 
 		bool is味方;
 		int 配置ID;
 
-		ImagePack* スキルエフェクト;
-		int フレーム番号 = 0;
-		int アニメ時間 = 0;
+		ImagePack& スキルエフェクト;
 
-		BattleEffect(ImagePack* スキルエフェクト, bool is味方, int 配置ID) :
-			スキルエフェクト(スキルエフェクト),
+		BattleEffect(int id, bool is味方, int 配置ID) :
+			スキルエフェクト(MEffect::エフェクト[id]),
+			加算減産(MEffect::エフェクト種類[id]),
 			is味方(is味方),
 			配置ID(配置ID)
 		{}
@@ -95,7 +98,7 @@ namespace SDX_ADE
 				フレーム番号++;
 				アニメ時間 = 0;
 
-				if (フレーム番号 >= スキルエフェクト->GetSize())
+				if (フレーム番号 >= スキルエフェクト.GetSize())
 				{
 					return true;
 				}
@@ -114,6 +117,14 @@ namespace SDX_ADE
 			this->配置ID = コピー元.配置ID;
 
 			return *this;
+		}
+
+		bool Draw(int x ,int y , double 拡大率)
+		{
+			if (加算減産 == 1 ) { Screen::SetBlendMode(BlendMode::Add); }
+			スキルエフェクト[フレーム番号]->DrawRotate({ x,y }, 拡大率, 0);
+			if (加算減産 != 0) { Screen::SetBlendMode(); }
+			return false;
 		}
 	};
 

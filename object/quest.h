@@ -57,9 +57,6 @@ namespace SDX_ADE
 
 				it.ID = i;
 
-				it.アイコンimage = &MIcon::クエスト[it.種類];
-				it.依頼人image = MJob::ちび[0][0];
-
 				file_data.Read( it.種類 );//画像ID
 				file_data.Read( it.条件数値 );
 				file_data.Read( it.開放フロア );
@@ -67,6 +64,8 @@ namespace SDX_ADE
 				file_data.Read( it.報酬ゴールド );
 				file_data.Read( it.報酬アクセサリ );
 
+				it.アイコンimage = &MIcon::クエスト[it.種類];
+				it.依頼人image = MJob::ちび[0][0];
 			}
 		}
 

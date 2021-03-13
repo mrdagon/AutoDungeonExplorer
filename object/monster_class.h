@@ -33,11 +33,11 @@ namespace SDX_ADE
 
 		EnumArray<int, StatusType> ステ;
 
-		std::vector<ActiveSkill*> ASkill;//最大４個
-		std::vector<int> ASkillLv;
+		std::vector<ActiveSkill*> Aスキル;//最大４個
+		std::vector<int> AスキルLv;
 
-		std::vector<PassiveSkill*> PSkill;//覚えるPスキル
-		std::vector<int> PSkillLv;
+		std::vector<PassiveSkill*> Pスキル;//覚えるPスキル
+		std::vector<int> PスキルLv;
 
 		static void LoadData()
 		{
@@ -88,21 +88,15 @@ namespace SDX_ADE
 				{
 					file_data.Read(dummyA);
 					file_data.Read(dummyB);//スキルLv
-					if (dummyA > 0)
-					{
-						it.ASkill.emplace_back(&ActiveSkill::data[dummyA]);
-					}
+					it.Aスキル.emplace_back(&ActiveSkill::data[dummyA]);	
 				}
 				for (int b = 0; b < CV::最大敵Pスキル数; b++)
 				{
 
 					file_data.Read(dummyA);
 					file_data.Read(dummyB);//スキルLv
-					if (dummyA > 0)
-					{
-						it.PSkill.emplace_back(&PassiveSkill::data[dummyA]);
-						it.PSkillLv.emplace_back(dummyB);
-					}
+					it.Pスキル.emplace_back(&PassiveSkill::data[dummyA]);
+					it.PスキルLv.emplace_back(dummyB);
 				}
 
 			}

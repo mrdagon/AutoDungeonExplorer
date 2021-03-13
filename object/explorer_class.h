@@ -107,6 +107,31 @@ namespace SDX_ADE
 						it.習得Pスキル.emplace_back(&PassiveSkill::data[i]);
 					}
 				}
+
+				//初期装備 - 同じ系統で一番indexが小さいものをとりあえず装備
+				for (int i = 0; i < Item::equip_data.size(); i++)
+				{
+					if (Item::equip_data[i].種類 == it.武器種)
+					{
+						it.初期装備[0] = &Item::equip_data[i];
+						break;
+					}
+				}
+				for (int i = 0; i < Item::equip_data.size(); i++)
+				{
+					if (Item::equip_data[i].種類 == it.防具種)
+					{
+						it.初期装備[1] = &Item::equip_data[i];
+						break;
+					}
+				}
+
+				it.初期装備[2] = &Item::accessory_data[0];//アクセサリーは無し
+
+				for (int i = 0; i < 4; i++)
+				{
+					it.初期Aスキル[i] = it.習得Aスキル[i];
+				}
 			}
 
 		}

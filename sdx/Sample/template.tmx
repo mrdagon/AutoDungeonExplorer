@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="30" tilewidth="16" tileheight="16" nextobjectid="60">
+ <tileset firstgid="1" name="Test" tilewidth="20" tileheight="20">
+  <tile id="0">
+   <image width="20" height="20" source="data/icon000.png"/>
+  </tile>
+  <tile id="1">
+   <image width="20" height="20" source="data/icon001.png"/>
+  </tile>
+  <tile id="2">
+   <image width="20" height="20" source="data/icon002.png"/>
+  </tile>
+  <tile id="3">
+   <image width="20" height="20" source="data/icon003.png"/>
+  </tile>
+  <tile id="4">
+   <image width="20" height="20" source="data/icon004.png"/>
+  </tile>
+  <tile id="5">
+   <image width="20" height="20" source="data/icon005.png"/>
+  </tile>
+  <tile id="6">
+   <image width="20" height="20" source="data/icon006.png"/>
+  </tile>
+  <tile id="7">
+   <image width="20" height="20" source="data/icon007.png"/>
+  </tile>
+  <tile id="8">
+   <image width="20" height="20" source="data/icon008.png"/>
+  </tile>
+  <tile id="9">
+   <image width="20" height="20" source="data/icon009.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="11" name="Enemy" tilewidth="120" tileheight="120">
+  <tile id="0">
+   <image width="120" height="120" source="data/pipo-enemy034.png"/>
+  </tile>
+  <tile id="1">
+   <image width="120" height="120" source="data/pipo-enemy035.png"/>
+  </tile>
+  <tile id="2">
+   <image width="120" height="120" source="data/pipo-enemy036.png"/>
+  </tile>
+  <tile id="3">
+   <image width="120" height="120" source="data/pipo-enemy037.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="15" name="hone" tilewidth="32" tileheight="32">
+  <image source="data/hone.png" width="96" height="128"/>
+ </tileset>
+ <objectgroup color="#00ffff" name="TEMPLATE" visible="0">
+  <object id="24" name="Image" type="Image" x="256.5" y="507" width="57" height="54">
+   <properties>
+    <property name="~Draw" value="imageS[@gID]-&gt;DrawRotate(@rect.GetCenter(),1,0);"/>
+   </properties>
+  </object>
+  <object id="16" name="Button" type="Rect" x="171.5" y="507" width="57" height="54">
+   <properties>
+    <property name="frameNo" value="int"/>
+    <property name="~Draw" value="frameS[@frameNo]-&gt;Draw(@rect);"/>
+   </properties>
+  </object>
+  <object id="2" name="Frame" type="Rect" x="89" y="509" width="57" height="54">
+   <properties>
+    <property name="frameNo" value="int"/>
+    <property name="~Draw" value="frameS[@frameNo]-&gt;Draw(@rect);"/>
+    <property name="~Update" value=""/>
+   </properties>
+  </object>
+  <object id="15" name="Text" type="Rect" x="9.5" y="509" width="57" height="54">
+   <properties>
+    <property name="fontNo" value="int"/>
+    <property name="text" value="std::string"/>
+    <property name="~Draw" value="fontS[@fontNo]-&gt;Draw(@rect.GetPoint(),Color::White,@text);"/>
+    <property name="~Final" value=""/>
+    <property name="~Init" value=""/>
+    <property name="~Update" value=""/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup color="#ffffff" draworder="index" name="TestScene">
+  <object id="29" name="外枠" type="Frame" x="14.5" y="54" width="601" height="299">
+   <properties>
+    <property name="frameNo" value="1"/>
+   </properties>
+  </object>
+  <object id="44" name="くま" type="Image" gid="14" x="151" y="181" width="120" height="120"/>
+  <object id="28" name="題字" type="Text" x="26.5" y="27" width="575" height="39">
+   <properties>
+    <property name="fontNo" value="0"/>
+    <property name="text" value="こんにちは"/>
+   </properties>
+  </object>
+  <object id="30" name="キャンセルボタン" type="Button" x="194.5" y="231" width="108" height="53">
+   <properties>
+    <property name="frameNo" value="0"/>
+   </properties>
+  </object>
+  <object id="31" name="OKボタン" type="Button" x="351.5" y="229" width="111" height="56">
+   <properties>
+    <property name="frameNo" value="0"/>
+   </properties>
+  </object>
+  <object id="41" name="ねずみ" type="Image" gid="11" x="291.245" y="179.244" width="120" height="120" rotation="-0.233186"/>
+  <object id="47" name="剣" type="Image" gid="3" x="483" y="395" width="20" height="20"/>
+  <object id="43" name="にわとり" type="Image" gid="13" x="469" y="478" width="120" height="120"/>
+  <object id="46" name="短剣" type="Image" gid="2" x="149" y="165" width="20" height="20"/>
+  <object id="53" name="がいこつC" type="Image" gid="23" x="284" y="180" width="32" height="32"/>
+  <object id="52" name="がいこつA" type="Image" gid="18" x="104" y="187" width="32" height="32"/>
+  <object id="50" name="がいこつB" type="Image" gid="16" x="207" y="237" width="32" height="32"/>
+  <object id="42" name="ひよこ" type="Image" gid="12" x="33.923" y="482.923" width="120" height="120"/>
+ </objectgroup>
+</map>

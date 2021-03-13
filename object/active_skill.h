@@ -10,17 +10,6 @@ namespace SDX_ADE
 	//参考
 	//http://tacoika.blog87.fc2.com/blog-entry-588.html
 
-
-	struct ASkill追加効果
-	{
-		ASkill追加効果(ASkillSubType 種類, int 値) :
-			種類(種類),
-			値(値)
-		{}
-
-		ASkillSubType 種類;
-		int 値;
-	};
 	struct ASkill補助効果
 	{
 		BuffType 種類;
@@ -54,7 +43,7 @@ namespace SDX_ADE
 		std::string 名前;
 		std::string 説明;
 
-		ImagePack* 戦闘エフェクト;
+		int 戦闘エフェクト;//IDで管理
 
 		int 習得Lv;
 		int 習得前提スキルID;
@@ -79,12 +68,12 @@ namespace SDX_ADE
 
 		ID_ASkill 連続スキル;
 
-		std::vector<ASkill追加効果> 追加効果;
+		EnumArray<int, ASkillSubType> 追加効果;
 		std::vector<ASkill補助効果> 補助効果;
 
 		bool is自己バフ = false;//補助効果の対象が命中した相手でなく自分になる
 		
-		int レベル補正_種類[2];
+		ASkillLvType レベル補正_種類[2];
 		int レベル補正_数値[2][9];
 
 		//関数
@@ -114,11 +103,11 @@ namespace SDX_ADE
 
 				it.ID = i;
 
-				file_data.Read( dummy );
+				file_data.Read( dummy );//アイコンID
 				it.image = &MIcon::Aスキル[dummy];
 
 				file_data.Read(dummy);
-				it.戦闘エフェクト = &MEffect::エフェクト[dummy];
+				it.戦闘エフェクト = dummy;
 
 				file_data.Read(it.習得Lv);
 				file_data.Read(it.習得前提スキルID);
@@ -151,11 +140,17 @@ namespace SDX_ADE
 					file_data.Read(tmp追加効果値[b]);
 				}
 
-				for (int b = 0; b < 5; b++)
+				for (int b = 0; b < 5 ; b++)
 				{
 					if ( tmp追加種類[b] != ASkillSubType::なし)
 					{
-						it.追加効果.emplace_back( tmp追加種類[b], tmp追加効果値[b]);
+						if (tmp追加効果値[b] == 0)
+						{
+							it.追加効果[tmp追加種類[b]] = -1;//Aスキルレベルで特性追加する場合用の処理
+						} else {
+							it.追加効果[tmp追加種類[b]] = tmp追加効果値[b];
+						}
+
 					}
 				}
 
@@ -192,7 +187,11 @@ namespace SDX_ADE
 				}
 
 				//スキル属性代入
-				it.属性 = DamageType::無属性;
+				if (it.スキルタグ[(int)SkillType::無属性] == true)
+				{
+					it.属性 = DamageType::無属性;
+				}
+				else
 				if ( it.スキルタグ[(int)SkillType::物理] == true)
 				{
 					it.属性 = DamageType::物理;
@@ -201,7 +200,14 @@ namespace SDX_ADE
 				{
 					it.属性 = DamageType::魔法;
 				}
-				
+				else if (it.スキルタグ[(int)SkillType::回復] == true)
+				{
+					it.属性 = DamageType::回復;
+				}
+				else
+				{
+					it.属性 = DamageType::補助;
+				}
 			}
 
 		}
@@ -213,41 +219,134 @@ namespace SDX_ADE
 	class ASkillEffect
 	{
 	public:
-		//
-		//スキルタグ、is自己バフ、連続使用スキル
-
+		//スキルタグ、is自己バフ、連続使用スキルなどはベースから変化しないのでこっちでは保持しない
 		const ActiveSkill* base;
+
+		int 基礎ダメージ = 0;//固定ダメージ
+		int 反映率 = 0;
+		int 命中 = 0;
+
+		int 会心率 = 0;
+		int 会心倍率 = 150;
+		//クールタイムは持たない
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
+		int Hit数;
 
+		StatusType 参照ステータス;
 		FormationType 適正隊列;
 		DamageType 属性;
 
-		ItemType 装備種 = ItemType::すべて;
-
-		int Hit数 = 1;//多段ヒット数
-		double 命中 = 1.0;
-
-		double 基礎ダメージ = 0;//固定ダメージ
-		double 反映率 = 0;
-
-		double 会心率 = 0.05;
-		double 会心倍率 = 1.5;
-
-		EnumArray<int, ASkillSubType> 追加効果;
+		EnumArray< int, ASkillSubType> 追加効果;
 		std::vector<ASkill補助効果> 補助効果;
 
-		//ASkillにないやつ
-		double バフ効果補正 = 1.0;
-		double バフ持続補正 = 1.0;
+		//+10%みたいなPスキル効果、最後に計算するタイプ
+		//あとから増やすかも
+		int ダメージ％増加 = 0;
 
-		ASkillEffect(const ActiveSkill* スキルベース):
+		//ベースAスキルとLvを元に一時計算用のデータを作成
+		ASkillEffect(const ActiveSkill* スキルベース , int Lv):
 			base(スキルベース)
 		{
+			基礎ダメージ = base->基礎ダメージ;
+			反映率 = base->反映率;
+			命中 = base->命中;
+
+			会心率 = base->会心率;
+			会心倍率 = base->会心倍率;
+
+			対象 = base->対象;
+			範囲 = base->範囲;
+			Hit数 = base->Hit数;
+
+			参照ステータス = base->参照ステータス;
+			適正隊列 = base->適正隊列;
+			属性 = base->属性;
+
+			for (int i = 0; i < base->追加効果.size(); i++)
+			{
+				追加効果[ASkillSubType(i)] = std::max( 0, base->追加効果[ASkillSubType(i)] );
+			}
+
+			for (int i = 0; i < base->補助効果.size(); i++)
+			{
+				補助効果.emplace_back(base->補助効果[i]);
+			}
+
+			Lv--;
+			if (Lv <= 0) { return; }
+
+			//レベル補正２スロット
+			for (int i = 0; i < 2; i++)
+			{
+				if (base->レベル補正_数値[i][Lv] == 0) { continue; }
+
+				switch ( base->レベル補正_種類[i])
+				{
+				case ASkillLvType::基礎ダメージ:
+					基礎ダメージ += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::反映率:
+					反映率 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::命中:
+					命中 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::会心率:
+					会心率 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::会心倍率:
+					会心倍率 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::クールタイム:
+					break;
+				case ASkillLvType::範囲:
+					範囲 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::Hit数:
+					Hit数 += base->レベル補正_数値[i][Lv];
+					break;
+				case ASkillLvType::追加効果:
+					for (int i = 0; i < base->追加効果.size(); i++)
+					{
+						ASkillSubType tp = ASkillSubType(i);
+
+						if (base->追加効果[tp] != 0)
+						{
+							追加効果[tp] += base->レベル補正_数値[i][Lv];
+						}
+					}
+					break;
+				case ASkillLvType::バフ固定値:
+					for (int i = 0; i < 補助効果.size(); i++)
+					{
+						補助効果[i].基礎値 += base->レベル補正_数値[i][Lv];
+					}
+					break;
+				case ASkillLvType::バフ反映率:
+					for (int i = 0; i < 補助効果.size(); i++)
+					{
+						補助効果[i].反映率 += base->レベル補正_数値[i][Lv];
+					}
+					break;
+				case ASkillLvType::バフ発動率:
+					for (int i = 0; i < 補助効果.size(); i++)
+					{
+						補助効果[i].確率 += base->レベル補正_数値[i][Lv];
+					}
+					break;
+				case ASkillLvType::バフ持続:
+					for (int i = 0; i < 補助効果.size(); i++)
+					{
+						補助効果[i].持続 += base->レベル補正_数値[i][Lv];
+					}
+					break;
+				default:
+					break;
+				}
+			}
 
 		}
-
-
 	};
 }

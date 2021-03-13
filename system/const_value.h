@@ -58,7 +58,7 @@ namespace SDX_ADE
 
 		constexpr int 装備部位数 = 3;
 
-		constexpr int ウィンドウ数 = 9;
+		constexpr int ウィンドウ数 = 7;
 
 		constexpr int 要求経験値 = 200;
 

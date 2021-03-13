@@ -38,8 +38,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			//ギルド初期化
-
-
 			Guild::P = &guild;
 
 			windows.clear();
@@ -94,57 +92,21 @@ namespace SDX_ADE
 		//デモ版用初期化処理
 		void BetaInit()
 		{
-			//仮データ作成
-
-			//とりあえずBGM鳴らす
+			//BGM鳴らす
 			auto test = MMusic::BGM[BGMType::準備中].Play(true);
-
-			tm time;//とりあえず乱数初期化
+			
+			//乱数初期化
+			tm time;
 			Time::GetDate(&time);
 			Rand::Reset(time.tm_hour * 3600 + time.tm_min * 60 + time.tm_sec);
 
-			for (int a = 1; a <= 9; a++)
-			{
-				Guild::P->アクセサリー所持数[a] = 3;
-			}
 
-			for (auto& it : Guild::P->is素材発見)
-			{
-				it = false;
-			}
-
-			for (int a = 0; a < 4; a++)
-			{
-				Guild::P->総素材 += 30;
-				Guild::P->素材数[a] = 30;
-				Guild::P->is素材発見[a] = true;
-			}
-
-			Guild::P->資金 = 100000;
-
-			//求人＆初期人材ダミー
-			Guild::P->探索要員.clear();
-			Guild::P->ギルメン控え.clear();
-			Guild::P->探索要員.reserve(1024);
-
-			Guild::P->最大パーティ数 = 1;
-				
-			//ギルメン初期化
-			for (int a = 0; a < 5; a++)
-			{
-				Guild::P->探索要員.emplace_back();
-				Guild::P->探索要員.back().Make(a, a, 1, "ギルメン");
-				Guild::P->探索パーティ[0].メンバー[a] = &Guild::P->探索要員[a];
-			}
+			Guild::P->Init();
 
 			//ダンジョン初期化
-
-
-			for (int a = 0; a < CV::上限パーティ数; a++)
-			{
-				Guild::P->探索パーティ[a].探索先 = &Dungeon::data[0];
-				Guild::P->探索パーティ[a].基礎ステ再計算();
-			}
+			Dungeon::ResetData();
+			Quest::ResetData();
+			Management::ResetData();
 
 			Game::is停止 = true;
 		}
