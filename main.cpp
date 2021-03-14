@@ -41,6 +41,7 @@ void LoadAndInitData()
 
 	Quest::LoadData();
 	Dungeon::LoadData();
+	UILayout::LoadData();
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }

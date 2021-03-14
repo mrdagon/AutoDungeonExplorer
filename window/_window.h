@@ -3,6 +3,14 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+#include "ui_layout.h"
+#include "ui_object.h"
+
+//windowはWindow
+//helpはヘルプ
+
+
+//旧レイアウトの実装
 #include "w_dragdrop.h"
 #include "w_guihelp.h"
 #include "w_guiobject.h"

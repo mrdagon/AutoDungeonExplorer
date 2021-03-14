@@ -280,20 +280,24 @@ namespace SDX_ADE
 		{
 			std::string f1 = "file/font/mplus-1m-Regular.ttf";
 			std::string f1b = "file/font/mplus-1m-Bold.ttf";
+			
+			f1b = "file/font/mplus-1m-Regular.ttf";
+			f1 = "file/font/PixelMplus12-Regular.ttf";
 
-			//f1 = "file/font/PixelMplus12-Regular.ttf";
+			//f1b = "file/font/PixelMplus12-Regular.ttf";
 			//f1b = "file/font/PixelMplus12-Bold.ttf";
 
 			//f1b = "file/font/PixelMplus12-Bold.ttf";
 			//f1 = "file/font/JF-Dot-k14.ttf";
 			//f1b = "file/font/JF-Dot-k14.ttf";
 			
-			SSize.Load(f1.c_str(), 14 , 2);
-			MSize.Load(f1.c_str(), 18 , 3);
-			LSize.Load(f1.c_str(), 24 , 4);
-			BSSize.Load(f1b.c_str(), 14 , 2);
-			BMSize.Load(f1b.c_str(), 18 , 3);
-			BLSize.Load(f1b.c_str(), 24 , 4);
+			//ドットフォントとエイリアスフォントの描画位置が近くなるよう、ドットの方はY座標に補正を入れる
+			SSize.Load(f1.c_str(), 12 , 2 , 2);
+			MSize.Load(f1.c_str(), 24 , 4 , 4);
+			LSize.Load(f1.c_str(), 36 , 6 , 6);
+			BSSize.Load(f1b.c_str(), 12 , 2);
+			BMSize.Load(f1b.c_str(), 24 , 4);
+			BLSize.Load(f1b.c_str(), 36 , 6);
 
 			//0を０(オー)にする
 			bool iszeroswap = true;

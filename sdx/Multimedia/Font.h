@@ -28,6 +28,8 @@ namespace SDX
         TTF_Font* handle = nullptr;//!<
         bool isBlendRender;
         int size = 0;//!<
+
+        int differenceHeight = 0;//!<
         int enterHeight = 0;//!<
 		mutable std::unordered_map<int, Image*> hash;//!<
 
@@ -180,7 +182,7 @@ namespace SDX
         /** フォントを作成する.*/
         /**	行間は0の場合、改行後の文字が上下くっつく。\n*/
         /** BMPフォント専用にしたい場合、SetSizeを使うと良い*/
-        bool Load(const char *フォント名, int 大きさ, int 行間 = 0, bool 高品質レンダリングフラグ = true )
+        bool Load(const char *フォント名, int 大きさ, int 行間 = 0 , int Y座標差分 = 0, bool 高品質レンダリングフラグ = true )
         {
             if (Loading::isLoading)
             {
@@ -193,6 +195,7 @@ namespace SDX
 
             this->size = 大きさ;
             this->enterHeight = 行間 + 大きさ;
+            this->differenceHeight = Y座標差分;
             isBlendRender = 高品質レンダリングフラグ;
 
 #ifndef OMIT_SDL2_TTF
@@ -618,7 +621,7 @@ namespace SDX
             Point 位置 = 座標;
             double x = 位置.x;
 
-
+            位置.y += differenceHeight;
 
             for (auto it : 描画する文字列.StringS)
             {
@@ -638,6 +641,8 @@ namespace SDX
         {
             Point 位置 = 座標;
             double x = 位置.x;
+
+            位置.y += differenceHeight;
 
             for (auto it : 描画する文字列.StringS)
             {
@@ -679,6 +684,7 @@ namespace SDX
 
             int X補正 = int(-GetDrawStringWidth(描画する文字列) * 拡大率 * 0.5);
             int Y補正 = int(-enterHeight * 拡大率 * (0.5*行数-0.5));
+            Y補正 += differenceHeight;
 
             for (auto it : 描画する文字列.StringS)
             {
@@ -697,6 +703,7 @@ namespace SDX
 
             int X補正 = int(-GetDrawStringWidth(描画する文字列) * 拡大率 * 0.5);
             int Y補正 = int(-enterHeight * 拡大率 * (0.5 * 行数 - 0.5));
+            Y補正 += differenceHeight;
 
             for (auto& it : 描画する文字列.StringS)
             {
@@ -716,7 +723,7 @@ namespace SDX
         bool DrawExtend(const Point &座標, double X拡大率, double Y拡大率, const Color &描画色, const VariadicStream &描画する文字列, bool 反転フラグ = false) const override
         {
             Point 位置 = 座標;
-
+            位置.y += differenceHeight;
             for (auto it : 描画する文字列.StringS)
             {
                 DrawUTFString(位置, X拡大率, Y拡大率, it, 描画色);

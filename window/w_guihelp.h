@@ -123,6 +123,9 @@ namespace SDX_ADE
 				//MIcon::アイテム[it->装備[a]->見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
 				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
 				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
+				MFont::SSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
+				MFont::MSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
+
 			}
 			
 			//各種ステータス

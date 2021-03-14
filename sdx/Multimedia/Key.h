@@ -42,5 +42,16 @@ namespace SDX
 				holdCount = 0;
 			}
 		}
+
+		bool IsPush(int 連打開始時間, int 連打間隔)
+		{
+			if (on == true) { return true; }
+			if (holdCount > 連打開始時間 && (holdCount - 連打開始時間) % 連打間隔)
+			{
+				return true;
+			}
+
+			return false;
+		}
 	};
 }
