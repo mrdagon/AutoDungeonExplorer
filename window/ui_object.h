@@ -55,18 +55,24 @@ namespace SDX_ADE
 	//枠オブジェクト
 	class UIFrame : I_UIObject
 	{
-
+	public:
+		int 枠ID;
 	};
 
 	//アイコンオブジェクト
 	class UIImage : I_UIObject
 	{
+	public:
+		Image* image;
 
 	};
 
 	//文字列オブジェクト
 	class UIString : I_UIObject
 	{
+	public:
+		std::string テキスト;
+
 
 	};
 
@@ -83,6 +89,7 @@ namespace SDX_ADE
 	{
 	public:
 		int lineID = 0;
+		int 枠ID = 0;
 
 	};
 
@@ -91,6 +98,7 @@ namespace SDX_ADE
 	{
 	public:
 		int lineID = 0;
+		Image* image;
 
 	};
 
@@ -99,13 +107,17 @@ namespace SDX_ADE
 	{
 	public:
 		int lineID = 0;
+		std::string テキスト;
 
 	};
 
-
-	class UITab
+	class UITab : I_UIObject
 	{
+	//タブ1枚に付き、1オブジェクト
 	public:
-
+		int tabID;
+		int& tabSelect参照;
+		Image* アイコン;
+		std::string テキスト;
 	};
 }

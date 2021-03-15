@@ -9,7 +9,8 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		constexpr bool isデバッグ = false;
+		constexpr bool isレイアウト = true;
+		constexpr bool isデバッグ = true;
 
 		//外部データ件数上限
 		constexpr int 最大Aスキル種類 = 200;

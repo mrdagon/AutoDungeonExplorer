@@ -248,10 +248,12 @@ namespace SDX_ADE
 			MFont::BMSize.DrawBoldRotate({ Window::GetWidth()/2 , Window::GetHeight() * Lp(1) / 100} , 1 , 0 , Color::White, Color::Black, "(C) 2020/8 (´･@･)", false);
 
 			//デバッグ用
-			if (CV::isデバッグ)
+			if (CV::isレイアウト)
 			{
-				CSVDraw();
-				CSVCheckInput();
+				UILayout::Draw();
+				UILayout::Input();
+				//CSVDraw();
+				//CSVCheckInput();
 			}
 		}
 

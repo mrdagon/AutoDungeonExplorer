@@ -43,6 +43,19 @@ void LoadAndInitData()
 	Dungeon::LoadData();
 	UILayout::LoadData();
 
+	UILayout::GetData("c1", 0);
+	UILayout::GetData("c2", 0);
+	UILayout::GetData("c3", 0);
+	UILayout::GetData("c4", 0);
+	UILayout::GetData("c5", 0);
+	UILayout::GetData("c6", 0);
+	UILayout::GetData("c7", 0);
+	UILayout::GetData("c8", 0);
+	UILayout::GetData("c9", 0);
+	UILayout::GetData("c10", 0);
+
+	UILayout::SaveData();
+
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }
 

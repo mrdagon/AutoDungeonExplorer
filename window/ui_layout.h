@@ -10,6 +10,33 @@ namespace SDX_ADE
 	enum UIPage
 	{
 		タイトル,
+		/*
+		コンフィグ,
+		メイン画面,//ツールバーのレイアウト
+		//Window
+		アイテム,
+		ダンジョン,
+		パーティ編成,
+		パーティ探索,
+		投資,
+		素材,
+		クエスト,
+		ログ,
+		//サブウィンドウ
+		求人,
+		スキルツリー,
+		//Help
+		Helpアイテム,//装備アクセサリー両方、強化コストヘルプも
+		Helpダンジョン,
+		Helpエクスプローラ,
+		Helpモンスター,
+		Help投資,
+		HelpAスキル,
+		HelpPスキル,
+		Helpクエスト,
+		Helpリザルト,//探索結果、探索中スコア
+		Help素材,
+		*/
 		COUNT
 	};
 	
@@ -27,6 +54,8 @@ namespace SDX_ADE
 		int w = 0, h = 0;
 		int 並べx = 0, 並べy = 0;//並べないやつは自由に使える？
 		int 画像ID = 0;
+
+		bool isLoaded = false;//使われているかどうかのフラグ
 
 		UILayout()
 		{}
@@ -54,12 +83,14 @@ namespace SDX_ADE
 			{
 				if (data[group][a].登録名 == key)
 				{
+					data[group][a].isLoaded = true;
 					return data[group][a];
 				}
 			}
 
 			//登録データが無い場合新規追加
 			data[group].emplace_back(key);
+			data[group].back().isLoaded = true;
 			return data[group].back();
 		}
 
@@ -138,14 +169,30 @@ namespace SDX_ADE
 		static void Draw()
 		{
 			//現在のページ番号と名前
+			MFont::MSize.DrawBold({ 10,25 }, Color::White, Color::Black, { "現在ページ：" ,  now_page , ":" , data_name[now_page] , " : Index " , now_index[now_page] , "/" , data[now_page].size() -1 });
+			
+			int now_page_max = data[now_page].size();
+			int p_no = now_index[now_page]/30;
 
 
 			//現在のページのアイテム
+			for (int a = 0; a < std::min(30, now_page_max - p_no * 30); a++)
+			{
+				Color color = Color::White;
 
+				if (now_index[now_page] == a + p_no * 30)
+				{
+					color = Color::Red;
+				}
+				MFont::MSize.DrawBold({ 10 , a * 20 + 110 }, color , Color::Black, { a + p_no * 30 , ":" });
+
+				MFont::MSize.DrawBold({ 110 , a * 20 + 110 }, Color::White, Color::Black, data[now_page][a + p_no * 30].登録名, true);
+			}
+
+			auto& it = data[now_page][now_index[now_page]];
 
 			//選択中のアイテムのパラメータ7種
-
-		
+			MFont::MSize.DrawBold({ 10,65 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),画像ID(" , it.画像ID , ")"});
 		
 		}
 
@@ -156,21 +203,21 @@ namespace SDX_ADE
 			const int 連打rp = 5;
 
 			//Numpadで選択オブジェクト変更
-			if (Input::key.Numpad2.IsPush(連打st,連打rp))
+			if (Input::key.Numpad8.IsPush(連打st,連打rp))
 			{
 				now_index[now_page]--;
 				if (now_index[now_page] < 0) { now_index[now_page] = data[now_page].size()-1; }
 			}
-			if (Input::key.Numpad8.IsPush(連打st, 連打rp))
+			if (Input::key.Numpad2.IsPush(連打st, 連打rp))
 			{
-				now_index[now_page]--;
+				now_index[now_page]++;
 				if (now_index[now_page] >= data[now_page].size()) { now_index[now_page] = 0; }
 			}
 
 			if (Input::key.Numpad4.IsPush(連打st, 連打rp))
 			{
 				now_page--;
-				if ( now_page < 0) { now_page = UIPage::COUNT; }
+				if ( now_page < 0) { now_page = UIPage::COUNT-1; }
 			}
 			if (Input::key.Numpad6.IsPush(連打st, 連打rp))
 			{
@@ -241,7 +288,7 @@ namespace SDX_ADE
 				}
 				else if (isCtrl)
 				{
-					it.並べx--;					
+					it.並べx++;					
 				}
 				else
 				{

@@ -670,8 +670,6 @@ namespace SDX_ADE
 		}
 	}
 
-
-
 	//全読み込み
 	static void LoadAsset()
 	{
