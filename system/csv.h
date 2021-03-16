@@ -173,9 +173,7 @@ namespace SDX_ADE
 
 	void CSVDraw()
 	{
-		//std::string str =  + System::textComposition;
-
-		MFont::LSize.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText);
+		MFont::LSize.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText + System::textComposition);
 		MFont::MSize.DrawBold({ 10,100 }, Color::White, Color::Black, CSV::page_name[CSV::page]);
 
 		MFont::MSize.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
@@ -238,7 +236,7 @@ namespace SDX_ADE
 		{
 			if (System::inputText.length() > 0)
 			{
-				System::inputText.pop_back();
+				System::inputText = "";
 			}
 		}
 		if (Input::key.Return.on )

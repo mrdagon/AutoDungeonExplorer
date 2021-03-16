@@ -33,7 +33,9 @@ namespace SDX_ADE
 
 		//ゲーム開始時の初期化処理
 		MainGame()
-		{}
+		{
+		
+		}
 
 		void Init()
 		{

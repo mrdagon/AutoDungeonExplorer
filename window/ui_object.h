@@ -6,31 +6,115 @@
 namespace SDX_ADE
 {
 	using namespace SDX;
-	class I_UIObject
+
+	//基本的なUIオブジェクトのベースクラス
+	class UIObject
 	{
+	private:
+		virtual void Draw派生()
+		{
+
+		}
+
 	public:
-		I_UIObject(UILayout& layout):
+		UIObject(UILayout& layout):
 			layout(layout)
 		{}
 
 		UILayout& layout;
-		UILayout* 親 = nullptr;
+		UIObject* 親 = nullptr;
 		bool is表示;
+		int lineID = 0;
 
-		void GetX();
-		void GetY();
+		int GetX()
+		{
+			if (lineID <= 0)
+			{
+				if (親 == nullptr)
+				{
+					return layout.x;
+				}
 
-		void GetW();
+				return 親->GetX() + layout.x;
+			}
 
-		void GetH();
+			if (親 == nullptr)
+			{
+				return layout.x + ( lineID % layout.改行値) * layout.並べx ;
+			}
 
+			return 親->GetX() + layout.x + (lineID % layout.改行値) * layout.並べx;
+		}
+		int GetY()
+		{
+			if (lineID <= 0)
+			{
+				if (親 == nullptr)
+				{
+					return layout.y;
+				}
+				return 親->GetY() + layout.y;
+			}
 
-		virtual void Draw();
+			if (親 == nullptr)
+			{
+				return layout.y + (lineID % layout.改行値) * layout.並べy;
+			}
 
-		//クリック、ドロップ、マウスオーバー判定を処理
-		//クリック or ドロップでtrue
+			return 親->GetY() + layout.y + (lineID % layout.改行値) * layout.並べy;
+		}
+
+		int GetW()
+		{
+			return layout.w;
+		}
+
+		int GetH()
+		{
+			return layout.h;
+		}
+
+		void Draw()
+		{
+			Draw派生();
+
+			//クリック判定のサイズを表示
+			Drawing::Rect({ GetX(),GetY(),GetW(),GetH() }, Color::Red, false);
+
+			//選択直後のオブジェクトはマークを付ける
+			if (layout.IsSelect() == true)
+			{
+				Drawing::Line({ GetX()-30,GetY() }, { GetX()+30,GetY() }, Color::Red, 3);
+				Drawing::Line({ GetX(),GetY()-30 }, { GetX(),GetY()-30 }, Color::Red, 3);
+			}
+		}
+
+		//クリック、ドロップ、マウスオーバー判定を処理 //クリック or ドロップでtrue
 		bool 操作チェック(double px, double py)
 		{
+			if ( is表示 == false) { return false; }
+
+			int posX = GetX();
+			int posY = GetY();
+
+			Rect pt = { posX + px, posY + py , GetW() , GetH() };
+
+			if (Input::mouse.GetPoint().Hit(&pt))
+			{
+				if (Input::mouse.Left.on == true)
+				{
+					Click(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+					return true;
+				}
+				else if (Input::mouse.Left.off == true)
+				{
+					Drop(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+					return true;
+				}
+
+				Over(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+			}
+
 			return false;
 		}
 
@@ -45,30 +129,24 @@ namespace SDX_ADE
 	};
 
 	
-	//基本的なUIオブジェクトのベースクラス
-	class UIObject : I_UIObject
-	{
-	public:
-
-	};
 
 	//枠オブジェクト
-	class UIFrame : I_UIObject
+	class UIFrame : UIObject
 	{
 	public:
-		int 枠ID;
 	};
 
 	//アイコンオブジェクト
-	class UIImage : I_UIObject
+	class UIImage : UIObject
 	{
 	public:
-		Image* image;
+		Font& font;
+		ImagePack& image;
 
 	};
 
 	//文字列オブジェクト
-	class UIString : I_UIObject
+	class UIString : UIObject
 	{
 	public:
 		std::string テキスト;
@@ -76,42 +154,7 @@ namespace SDX_ADE
 
 	};
 
-	//一定間隔で並べられるオブジェクト
-	class UIListObject : I_UIObject
-	{
-	public:
-		int lineID = 0;
-
-	};
-
-	//枠オブジェクト
-	class UIListFrame : I_UIObject
-	{
-	public:
-		int lineID = 0;
-		int 枠ID = 0;
-
-	};
-
-	//画像オブジェクト
-	class UIListImage : I_UIObject
-	{
-	public:
-		int lineID = 0;
-		Image* image;
-
-	};
-
-	//文字列オブジェクト
-	class UIListString : I_UIObject
-	{
-	public:
-		int lineID = 0;
-		std::string テキスト;
-
-	};
-
-	class UITab : I_UIObject
+	class UITab : UIObject
 	{
 	//タブ1枚に付き、1オブジェクト
 	public:
