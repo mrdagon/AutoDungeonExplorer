@@ -238,6 +238,8 @@ namespace SDX_ADE
 			//タイトル
 			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 }, 2, 0);
 
+
+
 			//MFont::BLSize.DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 } , 2, 0, Color::White, Color::Black, { "おーとだんじょんえくすぷろーら(仮)" });
 			//ボタン５つ表示
 			for (auto& it : ボタン)
@@ -246,6 +248,32 @@ namespace SDX_ADE
 			}
 			//作者名、著作権表記？
 			MFont::BMSize.DrawBoldRotate({ Window::GetWidth()/2 , Window::GetHeight() * Lp(1) / 100} , 1 , 0 , Color::White, Color::Black, "(C) 2020/8 (´･@･)", false);
+
+			for (int i = 0; i < 2; i++)
+			{
+				UISystem* ui = (i == 0) ? &UISystem::Green: &UISystem::Blue;
+
+				ui->DrawBack(200, 100 + i * 300, 200, 300);
+				ui->DrawGroup(400, 100 + i * 300, 200, 300);
+				ui->DrawButton凸(300, 120 + i * 300, 200, 50);
+				ui->DrawButton凹(300, 180 + i * 300, 200, 50);
+				ui->DrawFrame(300, 240 + i * 300, 200, 50);
+				ui->DrawRound(300, 300 + i * 300, 200, 50);
+
+				for (int b = 0; b < 4; b++)
+				{
+					MFont::MSize.Draw({ 350,130 + i * 300 + b * 60 }, ui->明字, "明");
+					MFont::MSize.Draw({ 400,130 + i * 300 + b * 60 }, ui->暗字, "暗");
+					MFont::MSize.Draw({ 450,130 + i * 300 + b * 60 }, ui->灰字, "灰");
+				}
+
+				MFont::MSize.Draw({ 220,130 + i * 300 }, ui->明字, "明");
+				MFont::MSize.Draw({ 230,160 + i * 300 }, ui->暗字, "暗");
+				MFont::MSize.Draw({ 240,190 + i * 300 }, ui->灰字, "灰");
+				MFont::MSize.Draw({ 520,130 + i * 300 }, ui->明字, "明");
+				MFont::MSize.Draw({ 530,160 + i * 300 }, ui->暗字, "暗");
+				MFont::MSize.Draw({ 540,190 + i * 300 }, ui->灰字, "灰");
+			}
 
 			//デバッグ用
 			if (CV::isレイアウト)

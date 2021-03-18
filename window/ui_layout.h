@@ -7,8 +7,6 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-#define ENUMTOSTR(var) #var
-
 	enum class UIPage
 	{
 		タイトル,
@@ -53,6 +51,8 @@ namespace SDX_ADE
 	class UILayout
 	{
 	private:
+		Color col;
+
 		inline static int now_page = 0;//選択中のページ
 		inline static int now_index[(int)UIPage::COUNT];//選択中のインデックス
 		inline static std::string data_name[(int)UIPage::COUNT];//ページ名

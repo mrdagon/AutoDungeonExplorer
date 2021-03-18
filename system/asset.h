@@ -473,6 +473,20 @@ namespace SDX_ADE
 	//後でライブラリに追加する候補の描画関数
 	namespace MSystem
 	{
+
+
+
+		//両端丸フラット
+
+		//凸ボタン
+
+		//凹ボタン
+
+		//角丸め四角
+
+		//
+
+
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
 		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0 , int 透過率 = 255)
 		{
@@ -669,6 +683,121 @@ namespace SDX_ADE
 			}
 		}
 	}
+
+	class UISystem
+	{
+	public:
+		static UISystem Green;
+		static UISystem Blue;
+
+		Color 影色;//ほぼ黒色
+		Color エッジ色;//濃色
+		Color 凹色;//やや暗い、凹みボタン、非選択タブ、タイトル色
+		Color グループ;//やや濃色
+		Color 凸色;//やや明るい
+		Color 背景色;//ほぼ白色
+		Color ハイライト;//明るい色
+
+		Color 暗字;
+		Color 灰字;
+		Color 明字;
+
+		UISystem()
+		{}
+
+		//縁有りで凸ったボタン
+		void DrawButton凸(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x,y,w,h-4 }, エッジ色);
+			Drawing::Rect({ x+1,y+1,w-2,h - 6 }, エッジ色);
+			Drawing::Rect({ x,y+h-4,w,4 }, 影色);
+			Drawing::Rect({ x+2,y+2,w-4,h-8 }, 凸色);
+			/*
+			Drawing::Rect({ x,y,w,h - 3 }, エッジ色);
+			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, エッジ色);
+			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
+			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, 凸色);
+			*/
+		}
+
+		//縁有りで凹んだボタン
+		void DrawButton凹(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x,y,w,h }, エッジ色 , false);
+			Drawing::Rect({ x+1,y+1,w-2,h-2 }, エッジ色, false);
+			Drawing::Rect({ x+2,y+2, w - 4, 4 }, 影色);
+			Drawing::Rect({ x+2,y+6,w-4,h-8 }, 凹色);
+		}
+
+		//背景色の四角を描画
+		void DrawBack(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x , y , w  , h }, 背景色);
+		}
+
+		//やや濃い縁を1dot丸めた四角を描画
+		void DrawGroup(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x  , y + 1 , w , h - 2 }, グループ);
+			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, グループ);
+			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, グループ);
+		}
+
+		//タイトル付きウィンドウを描画
+		void DrawWindow(int x, int y, int w, int h)
+		{
+
+		}
+
+		//タイトル無しウィンドウを描画
+		void DrawFrame(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x , y , w  , h }, 凹色);
+		}
+		
+		//両端が丸い明るい枠を描画
+		//hがwより小さいと変になる
+		void DrawRound(int x , int y , int w , int h)
+		{
+			int xa = x + h / 2;
+			int xb = x + w - h / 2;
+
+			Drawing::Circle({ (double)xa,(double)(y + h / 2), (double)h / 2 }, ハイライト);
+			Drawing::Circle({ (double)xb,(double)(y + h / 2), (double)h / 2 }, ハイライト);
+			Drawing::Rect({ xa , y , w - h , h}, ハイライト);
+		}
+
+		static void Load()
+		{
+			Green.影色 = { 0x424242 };//Gray 800
+			Green.エッジ色 = { 0x2E7D32 };//Green 800
+			Green.凹色 = { 0x43A047 };//Green 600
+			Green.グループ = { 0x66bb6a };//Green 400
+			Green.凸色 = { 0xa5d6a7 };//Green 200
+			Green.背景色 = { 0xc8e6c9 };//Green 100
+			Green.ハイライト = { 0xE8F5E9 };////Green 50
+
+			Green.明字 = { 0xEEEEEE };//Gray 200
+			Green.灰字 = { 0x9E9E9E };//Gray 500
+			Green.暗字 = { 0x424242 };//Gray 900
+
+			Blue.影色 = { 0x424242 };//Gray 800
+			Blue.エッジ色 = { 0x1565C0 };//Blue 800
+			Blue.凹色 = { 0x1E88E5 };//Blue 600
+			Blue.グループ = { 0x42A5F5 };//Blue 400
+			Blue.凸色 = { 0x90CAF9 };//Blue 200
+			Blue.背景色 = { 0xBBDEFB };//Blue 100
+			Blue.ハイライト = { 0xE3F2FD };////Blue 50
+
+			Blue.明字 = { 0xEEEEEE };//Gray 200
+			Blue.灰字 = { 0x9E9E9E };//Gray 500
+			Blue.暗字 = { 0x424242 };//Gray 900
+		}
+
+	};
+
+	UISystem UISystem::Green;
+	UISystem UISystem::Blue;
 
 	//全読み込み
 	static void LoadAsset()

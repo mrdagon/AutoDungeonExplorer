@@ -29,6 +29,7 @@ void LoadAndInitData()
 
 	//各種リソース読み込み
 	LoadAsset();
+	UISystem::Load();
 
 	//外部データ読込
 	PassiveSkill::LoadData();
@@ -42,6 +43,7 @@ void LoadAndInitData()
 	Quest::LoadData();
 	Dungeon::LoadData();
 	UILayout::LoadData();
+
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
 }

@@ -26,6 +26,14 @@ namespace SDX
 			SetColor(赤, 緑, 青, α値);
 		}
 
+		/** 16進数6桁から色に変換.*/
+		/** 0～16の6乗で指定する*/
+		Color(int RGB , int α値 = 255)
+		{
+			SetColor(RGB /65536 % 256, RGB / 256 % 256,  RGB % 256, α値);
+
+		}
+
 		/** 色の各要素を設定.*/
 		void SetColor(int 赤, int 緑, int 青, int α値 = 255)
 		{

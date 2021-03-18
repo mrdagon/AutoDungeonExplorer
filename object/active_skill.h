@@ -32,7 +32,6 @@ namespace SDX_ADE
 	//外部データから読み込む
 	class ActiveSkill
 	{
-
 	public:
 		inline static std::vector<ActiveSkill> data;
 		//保存しない変数
