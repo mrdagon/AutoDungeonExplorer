@@ -7,7 +7,7 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	class W_Dungeon : public WindowBox
+	class W_Dungeon : public UIWindow
 	{
 	private:
 		class GUI_Dun : public GUI_Object
@@ -20,12 +20,12 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 				参照->image->DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
-				MFont::BSSize.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
-				MFont::BSSize.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
+				MFont::SAlias.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
+				MFont::SAlias.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
 
 				//ボス
 				//参照->ボスモンスター[0].image[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
-				MFont::BSSize.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
+				MFont::SAlias.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
 
 				//ザコ
 				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
@@ -79,13 +79,11 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			タブ.clear();
 
 			種類 = WindowType::Dungeon;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::迷宮;
 			横幅 = 320;
@@ -110,54 +108,16 @@ namespace SDX_ADE
 			for (int a = 0; a < 50; a++)
 			{
 				ダンジョン[a].親ウィンドウ = this;
-				gui_objects.push_back(&ダンジョン[a]);
 			}
 
 			for (auto& it : タブ)
 			{
-				gui_objects.push_back(&it);
 			}
-
-			gui_objects.push_back(&枠);
-
-			SetCSVPage(1);
 		}
 
 		void GUI_Update()
 		{
-			枠.位置 = { Lp(5) , Lp(6) ,Lp(7) , Lp(8) };
-			枠.枠No = 12;
-
-			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[2].位置 = { Lp(0) + Lp(4) * 2,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[3].位置 = { Lp(0) + Lp(4) * 3,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[4].位置 = { Lp(0) + Lp(4) * 4,Lp(1) ,Lp(2) ,Lp(3) };
-
-			for (int a = 0; a < 50; a++)
-			{
-				ダンジョン[a].位置 = { Lp(9) ,Lp(10) + a * Lp(14) ,Lp(11),Lp(12) };
-			}
-
-			for (int a = 0; a < 50; a++)
-			{
-				ダンジョン[a].参照 = nullptr;
-				ダンジョン[a].isヘルプ表示 = false;
-			}
 			
-			int n = 0;
-
-			for (auto& it : Dungeon::data)
-			{
-				break;
-				//if (it.is発見 == 現在タブ)
-				//{
-				//	ダンジョン[n].参照 = &it;
-				//	ダンジョン[n].isヘルプ表示 = true;
-				//	n++;
-				//	if (n == 50) { break; }
-				//}
-			}
 		}
 
 		void 派生Draw()
@@ -173,7 +133,7 @@ namespace SDX_ADE
 			枠.Draw();
 
 			//スクロールする
-			描画範囲(true);
+			Reset描画範囲(true);
 			for (auto& it : ダンジョン)
 			{
 				if (it.参照 == nullptr) { break; }

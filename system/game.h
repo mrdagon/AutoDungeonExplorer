@@ -116,6 +116,11 @@ namespace SDX_ADE
 			return true;
 		}
 
+		static bool isFontDot = true;
+		static Font* SFont;
+		static Font* LFont;
+		static Font* MFont;
+
 		static void Update()
 		{
 			//音量と解像度設定反映

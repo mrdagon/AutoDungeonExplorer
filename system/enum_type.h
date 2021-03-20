@@ -11,6 +11,7 @@ namespace SDX_ADE
 	enum class GameType
 	{
 		ノーマル,
+		ハード,
 		デスマーチ,
 		COUNT
 	};

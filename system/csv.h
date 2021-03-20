@@ -173,31 +173,31 @@ namespace SDX_ADE
 
 	void CSVDraw()
 	{
-		MFont::LSize.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText + System::textComposition);
-		MFont::MSize.DrawBold({ 10,100 }, Color::White, Color::Black, CSV::page_name[CSV::page]);
+		MFont::LDot.DrawBold({ 10,75 }, Color::White,Color::Black, System::inputText + System::textComposition);
+		MFont::MDot.DrawBold({ 10,100 }, Color::White, Color::Black, CSV::page_name[CSV::page]);
 
-		MFont::MSize.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
+		MFont::MDot.DrawBold({ 110,75 }, Color::White, Color::Black, System::textComposition);
 
 		int p_no = CSV::line/30;//30ライン以上ある場合ずらす
 
 		if (CSV::input_mode == 0)
 		{
-			MFont::SSize.DrawBold({ 10,50 }, Color::White, Color::Black, "数値入力モード");
+			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, "数値入力モード");
 		} else {
-			MFont::SSize.DrawBold({ 10,50 }, Color::White, Color::Black, "メモ入力モード");
+			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, "メモ入力モード");
 		}
 
 		for (int a = 0; a < std::min(30,CSV::page_count[CSV::page]- p_no*30); a++)
 		{
 			if (CSV::line == a+ p_no *30)
 			{
-				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::Red, Color::Black, { a+ p_no * 30 , ":" });
+				MFont::MDot.DrawBold({ 10 , a * 20 + 120 }, Color::Red, Color::Black, { a+ p_no * 30 , ":" });
 			} else {
-				MFont::MSize.DrawBold({ 10 , a * 20 + 120 }, Color::White, Color::Black, { a + p_no * 30, ":" });
+				MFont::MDot.DrawBold({ 10 , a * 20 + 120 }, Color::White, Color::Black, { a + p_no * 30, ":" });
 			}
 
-			MFont::MSize.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, CSV::I[CSV::page][a+p_no*30], true);
-			MFont::MSize.DrawBold({ 130 , a * 20 + 120 }, Color::White, Color::Black, CSV::memo[CSV::page][a + p_no * 30], false);
+			MFont::MDot.DrawBold({ 110 , a * 20 + 120}, Color::White, Color::Black, CSV::I[CSV::page][a+p_no*30], true);
+			MFont::MDot.DrawBold({ 130 , a * 20 + 120 }, Color::White, Color::Black, CSV::memo[CSV::page][a + p_no * 30], false);
 		}
 
 		return;

@@ -7,7 +7,7 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 	/*上部ツールバー*/
-	class W_ToolBar : public WindowBox
+	class W_ToolBar : public UIWindow
 	{
 	private:
 		static const int 表示枠 = 11;
@@ -21,7 +21,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::UI[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
-				MFont::LSize.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 + 1 , TX::Tool_日付 }, true);
+				MFont::LDot.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 + 1 , TX::Tool_日付 }, true);
 			}
 		};
 		class G_時刻 : public GUI_Object
@@ -37,13 +37,13 @@ namespace SDX_ADE
 
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
 				MIcon::UI[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
-				MFont::LSize.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
+				MFont::LDot.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
 
 				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
 				{
-					MFont::LSize.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
+					MFont::LDot.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
 				} else {
-					MFont::LSize.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
+					MFont::LDot.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
 				}
 			}
 		};
@@ -85,15 +85,14 @@ namespace SDX_ADE
 					str = "," + str;
 				}
 
-				MFont::LSize.DrawBold({ px+位置.GetW()-5,py-3 }, Color::White, Color::Black, str,true);
+				MFont::LDot.DrawBold({ px+位置.GetW()-5,py-3 }, Color::White, Color::Black, str,true);
 
 			}
 		};
 		class G_ウィンドウ : public GUI_Object
 		{
 		public:
-			WindowBox* 対象ウィンドウ;
-
+			UIWindow* 対象ウィンドウ;
 
 			void Draw派生(double px, double py)
 			{
@@ -105,13 +104,13 @@ namespace SDX_ADE
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
 				MIcon::UI[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
-				MFont::BSSize.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, 対象ウィンドウ->略記);
+				MFont::SAlias.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, 対象ウィンドウ->省略名);
 			}
 
 			void Click(double px, double py)
 			{
 				対象ウィンドウ->is表示 = !対象ウィンドウ->is表示;
-				対象ウィンドウ->is最前面 = 対象ウィンドウ->is表示;
+				対象ウィンドウ->is最前面へ移動 = 対象ウィンドウ->is表示;
 
 				if (対象ウィンドウ->is表示)
 				{
@@ -130,7 +129,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::UI[IconType::ヘルプ].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + Lp(24)-7,py + Lp(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
+				MFont::SAlias.DrawBold({ px + Lp(24)-7,py + Lp(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
 
 			}
 		};
@@ -148,7 +147,7 @@ namespace SDX_ADE
 				}
 
 				MIcon::UI[IconType::停止].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_停止);
+				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_停止);
 			}
 
 			void Click(double px, double py)
@@ -167,9 +166,9 @@ namespace SDX_ADE
 				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) - 25,py + Lp(23) }, 2, 0);
 				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) + 25,py + Lp(23) }, 2, 0,true);
 
-				MFont::BSSize.DrawBold({ px + Lp(24)+Lp(26),py + Lp(25) }, Color::White, Color::Black, TX::Tool_速度);
-				MFont::MSize.DrawBold({ px + Lp(24) + Lp(26) + 5,py + Lp(25) - 20 }, Color::White, Color::Black, "x", true);
-				MFont::MSize.DrawBold({ px + Lp(24) + Lp(26) + 28,py + Lp(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
+				MFont::SAlias.DrawBold({ px + Lp(24)+Lp(26),py + Lp(25) }, Color::White, Color::Black, TX::Tool_速度);
+				MFont::MDot.DrawBold({ px + Lp(24) + Lp(26) + 5,py + Lp(25) - 20 }, Color::White, Color::Black, "x", true);
+				MFont::MDot.DrawBold({ px + Lp(24) + Lp(26) + 28,py + Lp(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
 
 			}
 
@@ -188,13 +187,13 @@ namespace SDX_ADE
 		class G_設定 : public GUI_Object
 		{
 		public:
-			WindowBox* 対象ウィンドウ;
+			UIWindow* 対象ウィンドウ;
 
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::UI[IconType::設定].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_設定);
+				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_設定);
 			}
 
 			void Click(double px, double py)
@@ -202,8 +201,8 @@ namespace SDX_ADE
 				//設定ウィンドウ開く
 				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
-				対象ウィンドウ->is最前面 = true;
-				対象ウィンドウ->ポップアップ呼び出し();
+				対象ウィンドウ->is最前面へ移動 = true;
+				対象ウィンドウ->Openポップアップ();
 			}
 
 		};
@@ -211,13 +210,13 @@ namespace SDX_ADE
 		class G_タイトル : public GUI_Object
 		{
 		public:
-			WindowBox* 対象ウィンドウ;
+			UIWindow* 対象ウィンドウ;
 
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				MIcon::UI[IconType::終了].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::BSSize.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_タイトル);
+				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_タイトル);
 			}
 
 			void Click(double px, double py)
@@ -225,8 +224,8 @@ namespace SDX_ADE
 				//確認ウィンドウを出す
 				MSound::効果音[SE::ボタンクリック].Play();
 				対象ウィンドウ->is表示 = true;
-				対象ウィンドウ->is最前面 = true;
-				int id = 対象ウィンドウ->ポップアップ呼び出し();
+				対象ウィンドウ->is最前面へ移動 = true;
+				int id = 対象ウィンドウ->Openポップアップ();
 
 				if (id == 1)//はい
 				{
@@ -248,16 +247,15 @@ namespace SDX_ADE
 
 		GUI_Frame 枠;
 
-		void SetWindow(std::vector<WindowBox*> &windows)
+		void SetWindow(std::vector<UIWindow*> &windows)
 		{
 			for (int a = 0; a < CV::ウィンドウ数; a++)
 			{
 				ウィンドウ[a].対象ウィンドウ = windows[a];
-				ウィンドウ[a].SetHelp(windows[a]->ヘルプメッセージ);
 			}
 		}
 
-		void SetConfig(WindowBox* config, WindowBox* title)
+		void SetConfig(UIWindow* config, UIWindow* title)
 		{
 			設定.対象ウィンドウ = config;
 			タイトル.対象ウィンドウ = title;
@@ -265,89 +263,24 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
-			gui_objects.push_back(&日付);
-			gui_objects.push_back(&時刻);
-			gui_objects.push_back(&人口);
-			gui_objects.push_back(&資金);
-			for (int a = 0; a < CV::ウィンドウ数; a++)
-			{
-				gui_objects.push_back(&ウィンドウ[a]);
-			}
-			gui_objects.push_back(&ヘルプ);
-			gui_objects.push_back(&停止);
-			gui_objects.push_back(&速度);
-			gui_objects.push_back(&設定);
-			gui_objects.push_back(&タイトル);
-
-			gui_objects.push_back(&枠);
-
-			SetCSVPage(2);
-
-			日付.SetHelp(TX::Tool_Help日付);
-			時刻.SetHelp(TX::Tool_Help時刻);
-			人口.SetHelp(TX::Tool_Help人口);
-			資金.SetHelp(TX::Tool_Help資金);
-			ヘルプ.SetHelp(TX::Tool_Helpヘルプ);
-			停止.SetHelp(TX::Tool_Help停止);
-			速度.SetHelp(TX::Tool_Help速度);
-			設定.SetHelp(TX::Tool_Help設定);
-			タイトル.SetHelp(TX::Tool_Helpタイトル);
-
-			GUI_Update();
 		}
 
 		void GUI_Update()
 		{
-			for (int a = 0; a < CV::ウィンドウ数; a++)
-			{
-				ウィンドウ[a].位置 = {Lp(0) +Lp(4)*a,Lp(1),Lp(2),Lp(3)};
-			}
-			日付.位置 = { Lp(5),Lp(6),Lp(7),Lp(8)};
-			時刻.位置 = { Lp(9),Lp(6),Lp(10),Lp(8) };
-			人口.位置 = { Window::GetWidth() - Lp(13),Lp(6),Lp(14),Lp(8) };
-			資金.位置 = { Window::GetWidth() - Lp(15),Lp(6),Lp(16),Lp(8) };
 
-			ヘルプ.位置 = { Window::GetWidth() - Lp(17),Lp(1),Lp(2) ,Lp(3) };
-			停止.位置 = { Window::GetWidth() - Lp(18),Lp(1),Lp(2),Lp(3) };
-			速度.位置 = { Window::GetWidth() - Lp(19),Lp(1),Lp(21),Lp(3) };
-			設定.位置 = { Window::GetWidth() - Lp(27),Lp(1),Lp(2),Lp(3) };
-			タイトル.位置 = { Window::GetWidth() - Lp(20),Lp(1),Lp(2),Lp(3) };
-
-			枠.位置 = { 0,0,Window::GetWidth(), WindowBox::ツールバー高さ };
-			枠.枠No = 7;
 		}
 
 		void Draw()
 		{
-			GUI_Update();
-			for (int a = (int)gui_objects.size() - 1; a>=0;a--)
-			{
-				gui_objects[a]->Draw();
-			}
 		}
 
 		bool 操作()
 		{
-			for (auto& it : gui_objects)
-			{
-				it->操作チェック(0,0);
-			}
 			return false;
 		}
 
 		bool CheckInfo()
 		{
-			for (auto& it : gui_objects)
-			{
-
-				if (it->位置.Hit(&Input::mouse.GetPoint()))
-				{
-					it->Info();
-					return true;
-				}
-			}
-
 			return false;
 		}
 	};

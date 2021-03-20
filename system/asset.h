@@ -268,48 +268,46 @@ namespace SDX_ADE
 	//文字データ
 	namespace MFont
 	{
-		Font SSize;
-		Font MSize;
-		Font LSize;
+		Font* S;
+		Font* M;
+		Font* L;
 
-		Font BSSize;
-		Font BMSize;
-		Font BLSize;
+		Font SDot;
+		Font MDot;
+		Font LDot;
+
+		Font SAlias;
+		Font MAlias;
+		Font LAlias;
 
 		static void Load()
 		{
-			std::string f1 = "file/font/mplus-1m-Regular.ttf";
-			std::string f1b = "file/font/mplus-1m-Bold.ttf";
-			
-			f1b = "file/font/mplus-1m-Regular.ttf";
-			f1 = "file/font/PixelMplus12-Regular.ttf";
+			std::string f1 = "file/font/PixelMplus12-Regular.ttf";
+			std::string f1b = "file/font/mplus-1m-Regular.ttf";
 
-			//f1b = "file/font/PixelMplus12-Regular.ttf";
-			//f1b = "file/font/PixelMplus12-Bold.ttf";
-
-			//f1b = "file/font/PixelMplus12-Bold.ttf";
-			//f1 = "file/font/JF-Dot-k14.ttf";
-			//f1b = "file/font/JF-Dot-k14.ttf";
-			
-			//ドットフォントとエイリアスフォントの描画位置が近くなるよう、ドットの方はY座標に補正を入れる
-			SSize.Load(f1.c_str(), 12 , 2 , 2);
-			MSize.Load(f1.c_str(), 24 , 4 , 4);
-			LSize.Load(f1.c_str(), 36 , 6 , 6);
-			BSSize.Load(f1b.c_str(), 12 , 2);
-			BMSize.Load(f1b.c_str(), 24 , 4);
-			BLSize.Load(f1b.c_str(), 36 , 6);
+			//ドットフォントとエイリアスフォントの描画位置が近くなるよう、Y座標に補正を入れる
+			SDot.Load(f1.c_str(), 12 , 2 );
+			MDot.Load(f1.c_str(), 24 , 4 );
+			LDot.Load(f1.c_str(), 36 , 6 );
+			SAlias.Load(f1b.c_str(), 12 , 2, 1);
+			MAlias.Load(f1b.c_str(), 24 , 4, 2);
+			LAlias.Load(f1b.c_str(), 36 , 6, 3);
 
 			//0を０(オー)にする
 			bool iszeroswap = true;
 			if (iszeroswap)
 			{
-				SSize.SetImage("0", SSize.GetImage("O"));
-				MSize.SetImage("0", MSize.GetImage("O"));
-				LSize.SetImage("0", LSize.GetImage("O"));
-				BSSize.SetImage("0", BSSize.GetImage("O"));
-				BMSize.SetImage("0", BMSize.GetImage("O"));
-				BLSize.SetImage("0", BLSize.GetImage("O"));
+				SDot.SetImage("0", SDot.GetImage("O"));
+				MDot.SetImage("0", MDot.GetImage("O"));
+				LDot.SetImage("0", LDot.GetImage("O"));
+				SAlias.SetImage("0", SAlias.GetImage("O"));
+				MAlias.SetImage("0", MAlias.GetImage("O"));
+				LAlias.SetImage("0", LAlias.GetImage("O"));
 			}
+
+			S = Config::isFontDot ? &SDot : &SAlias;
+			M = Config::isFontDot ? &MDot : &MAlias;
+			L = Config::isFontDot ? &LDot : &LAlias;
 		}
 	}
 
@@ -469,335 +467,6 @@ namespace SDX_ADE
 			タイトルロゴ.Load("file/title/titlelogo.png");
 		}
 	}
-
-	//後でライブラリに追加する候補の描画関数
-	namespace MSystem
-	{
-
-
-
-		//両端丸フラット
-
-		//凸ボタン
-
-		//凹ボタン
-
-		//角丸め四角
-
-		//
-
-
-		/*立体が＋なら飛び出す、マイナスならへこむ*/
-		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0 , int 透過率 = 255)
-		{
-			if (立体 != 0)
-			{
-				Drawing::Rect({ 座標.x,座標.y,横幅 ,縦幅 }, Color::Black);
-				if (立体 < 0)
-				{
-
-					座標.x -= 立体;
-					座標.y -= 立体;
-					横幅 += 立体;
-					縦幅 += 立体;
-
-				}
-				else {
-					横幅 -= 立体;
-					縦幅 -= 立体;
-					//Drawing::Rect({ 座標.x+立体,座標.y + 立体,横幅,縦幅 }, Color::Black);
-				}
-			}
-
-			if (透過率 < 255)
-			{
-				Screen::SetBlendMode(BlendMode::Alpha, 透過率);
-			}
-
-			ウィンドウ枠[枠No]->DrawPart(座標, { 0,0,10,10 });//左上
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y }, { 20, 0,10,10 });//右上
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x , 座標.y + 縦幅 - 10 }, { 0,20,10,10 });//左下
-			ウィンドウ枠[枠No]->DrawPart({ 座標.x + 横幅 - 10 , 座標.y + 縦幅 - 10 }, { 20,20,10,10 });//右下
-
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y             , 横幅 - 20 , 10 }, { 10,0,10,10 });//上
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 縦幅 - 10 , 横幅 - 20 , 10 }, { 10,20,10,10 });//下
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x      , 座標.y + 10        , 10 , 縦幅 - 20 }, { 0,10,10,10 });//左
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 横幅 - 10 , 座標.y + 10 , 10 , 縦幅 - 20 }, { 20,10,10,10 });//右
-
-			//内部
-			ウィンドウ枠[枠No]->DrawPartExtend({ 座標.x + 10 , 座標.y + 10 , 横幅 - 20 , 縦幅 - 20 }, { 10,10,10,10 });//右
-
-			if (透過率 < 255)
-			{
-				Screen::SetBlendMode(BlendMode::NoBlend);
-			}
-		}
-
-		static void DrawBox(const Point& 座標, const int 横幅, const int 縦幅, const Color& 色)
-		{
-			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 色);
-			Drawing::Rect(Rect(座標.x, 座標.y + 1, 横幅, 縦幅 - 2), 色);
-		}
-
-		static void DrawBoxBold(const Point& 座標, const int 横幅, const int 縦幅, const Color& 色, int 枠太さ, const Color& 枠色)
-		{
-			Drawing::Rect(Rect(座標.x + 1, 座標.y, 横幅 - 2, 縦幅), 枠色);
-			Drawing::Rect(Rect(座標.x, 座標.y + 1, 横幅, 縦幅 - 2), 枠色);
-			Drawing::Rect(Rect(座標.x + 1 + 枠太さ, 座標.y + 枠太さ, 横幅 - 2 - 枠太さ * 2, 縦幅 - 枠太さ * 2), 色);
-			Drawing::Rect(Rect(座標.x + 枠太さ, 座標.y + 1 + 枠太さ, 横幅 - 枠太さ * 2, 縦幅 - 2 - 枠太さ * 2), 色);
-		}
-
-		static void DrawBar(const Point& 座標, const int 横幅, const int 縦幅, double 割合, int 枠太さ, const Color& 色, const Color& 枠色, const Color& 中色, bool is左側)
-		{
-			割合 = std::max(0.0, 割合);
-			割合 = std::min(1.0, 割合);
-
-			DrawBoxBold(座標, 横幅, 縦幅, 中色, 枠太さ, 枠色);
-			int ww = int((横幅 - 枠太さ * 2) * 割合);
-			int hh = 縦幅 - 枠太さ * 2;
-
-			if (割合 <= 0.0 || ww < 1)
-			{
-				return;
-			}
-
-			if (is左側)
-			{
-				DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 色);
-			}
-			else {
-				DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 色);
-			}
-		}
-
-		//バー２色
-		static void DrawBarTwo(const Point& 座標, const int 横幅, const int 縦幅, double 前割合 , double 後割合, int 枠太さ, const Color& 前色 , const Color& 後色, const Color& 枠色, const Color& 中色, bool is左側)
-		{
-			前割合 = std::max(0.0, 前割合);
-			前割合 = std::min(1.0, 前割合);
-
-			後割合 = std::max(0.0, 後割合);
-			後割合 = std::min(1.0, 後割合);
-
-			DrawBoxBold(座標, 横幅, 縦幅, 中色, 枠太さ, 枠色);
-
-			int ww = int((横幅 - 枠太さ * 2) * 後割合);
-			int hh = 縦幅 - 枠太さ * 2;
-
-			if ( ww > 0 )
-			{
-				if (is左側)
-				{
-					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 後色);
-				} else {
-					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 後色);
-				}
-			}
-
-			ww = int((横幅 - 枠太さ * 2) * 前割合);
-
-			if (ww > 0)
-			{
-				if (is左側)
-				{
-					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 前色);
-				} else {
-					DrawBox({ 座標.x + 枠太さ,座標.y + 枠太さ }, ww, hh, 前色);
-				}
-			}
-		}
-
-
-		static void DrawSkill(Image* スキル種, const Point& 座標, Color 色, std::string messe = "")
-		{
-			Drawing::Rect({ 座標.x ,座標.y ,29,29 }, 色, true);
-			Drawing::Rect({ 座標.x + 1,座標.y + 1,27,27 }, Color::White, true);
-			Drawing::Rect({ 座標.x + 2,座標.y + 2 ,25,25 }, 色, true);
-
-			スキル種->Draw({ 座標.x + 2,座標.y + 2 });
-			MFont::BSSize.DrawBold({ 座標.x + 2 , 座標.y + 12 }, Color::White, Color::Black, messe);
-		}
-
-		static void DrawCircleBar(Rect 座標, double ゲージ率, Color 表色, Color 裏色, double 太さ, double 裏太さ)
-		{
-			Point p1, p2, p3, p4, p5;
-			p1.SetPos(座標.x, 座標.y);
-			p2.SetPos(座標.x + 座標.GetW(), 座標.y);
-			p3.SetPos(座標.x + 座標.GetW(), 座標.y + 座標.GetH());
-			p4.SetPos(座標.x, 座標.y + 座標.GetH());
-			p5 = p1;
-
-			//裏色
-			Drawing::Line(p1, p2, 裏色, (int)裏太さ);
-			Drawing::Line(p2, p3, 裏色, (int)裏太さ);
-			Drawing::Line(p3, p4, 裏色, (int)裏太さ);
-			Drawing::Line(p4, p1, 裏色, (int)裏太さ);
-
-			Drawing::Circle({ p1.x, p1.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
-
-			//表
-			if (ゲージ率 == 0) { return; }
-
-			if (ゲージ率 < 0.25)
-			{
-				p2.x = 座標.x + 座標.GetW() * ゲージ率 * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-			}
-			else if (ゲージ率 < 0.5)
-			{
-				p3.y = 座標.y + 座標.GetH() * (ゲージ率 - 0.25) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-			}
-			else if (ゲージ率 < 0.75)
-			{
-				p4.x = 座標.x + 座標.GetW() - 座標.GetW() * (ゲージ率 - 0.5) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Line(p3, p4, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
-			}
-			else
-			{
-				p5.y = 座標.y + 座標.GetH() - 座標.GetH() * (ゲージ率 - 0.75) * 4;
-				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Line(p3, p4, 表色, (int)太さ);
-				Drawing::Line(p4, p5, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
-			}
-		}
-	}
-
-	class UISystem
-	{
-	public:
-		static UISystem Green;
-		static UISystem Blue;
-
-		Color 影色;//ほぼ黒色
-		Color エッジ色;//濃色
-		Color 凹色;//やや暗い、凹みボタン、非選択タブ、タイトル色
-		Color グループ;//やや濃色
-		Color 凸色;//やや明るい
-		Color 背景色;//ほぼ白色
-		Color ハイライト;//明るい色
-
-		Color 暗字;
-		Color 灰字;
-		Color 明字;
-
-		UISystem()
-		{}
-
-		//縁有りで凸ったボタン
-		void DrawButton凸(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x,y,w,h-4 }, エッジ色);
-			Drawing::Rect({ x+1,y+1,w-2,h - 6 }, エッジ色);
-			Drawing::Rect({ x,y+h-4,w,4 }, 影色);
-			Drawing::Rect({ x+2,y+2,w-4,h-8 }, 凸色);
-			/*
-			Drawing::Rect({ x,y,w,h - 3 }, エッジ色);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, エッジ色);
-			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, 凸色);
-			*/
-		}
-
-		//縁有りで凹んだボタン
-		void DrawButton凹(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x,y,w,h }, エッジ色 , false);
-			Drawing::Rect({ x+1,y+1,w-2,h-2 }, エッジ色, false);
-			Drawing::Rect({ x+2,y+2, w - 4, 4 }, 影色);
-			Drawing::Rect({ x+2,y+6,w-4,h-8 }, 凹色);
-		}
-
-		//背景色の四角を描画
-		void DrawBack(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x , y , w  , h }, 背景色);
-		}
-
-		//やや濃い縁を1dot丸めた四角を描画
-		void DrawGroup(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x  , y + 1 , w , h - 2 }, グループ);
-			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, グループ);
-			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, グループ);
-		}
-
-		//タイトル付きウィンドウを描画
-		void DrawWindow(int x, int y, int w, int h)
-		{
-
-		}
-
-		//タイトル無しウィンドウを描画
-		void DrawFrame(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x , y , w  , h }, 凹色);
-		}
-		
-		//両端が丸い明るい枠を描画
-		//hがwより小さいと変になる
-		void DrawRound(int x , int y , int w , int h)
-		{
-			int xa = x + h / 2;
-			int xb = x + w - h / 2;
-
-			Drawing::Circle({ (double)xa,(double)(y + h / 2), (double)h / 2 }, ハイライト);
-			Drawing::Circle({ (double)xb,(double)(y + h / 2), (double)h / 2 }, ハイライト);
-			Drawing::Rect({ xa , y , w - h , h}, ハイライト);
-		}
-
-		static void Load()
-		{
-			Green.影色 = { 0x424242 };//Gray 800
-			Green.エッジ色 = { 0x2E7D32 };//Green 800
-			Green.凹色 = { 0x43A047 };//Green 600
-			Green.グループ = { 0x66bb6a };//Green 400
-			Green.凸色 = { 0xa5d6a7 };//Green 200
-			Green.背景色 = { 0xc8e6c9 };//Green 100
-			Green.ハイライト = { 0xE8F5E9 };////Green 50
-
-			Green.明字 = { 0xEEEEEE };//Gray 200
-			Green.灰字 = { 0x9E9E9E };//Gray 500
-			Green.暗字 = { 0x424242 };//Gray 900
-
-			Blue.影色 = { 0x424242 };//Gray 800
-			Blue.エッジ色 = { 0x1565C0 };//Blue 800
-			Blue.凹色 = { 0x1E88E5 };//Blue 600
-			Blue.グループ = { 0x42A5F5 };//Blue 400
-			Blue.凸色 = { 0x90CAF9 };//Blue 200
-			Blue.背景色 = { 0xBBDEFB };//Blue 100
-			Blue.ハイライト = { 0xE3F2FD };////Blue 50
-
-			Blue.明字 = { 0xEEEEEE };//Gray 200
-			Blue.灰字 = { 0x9E9E9E };//Gray 500
-			Blue.暗字 = { 0x424242 };//Gray 900
-		}
-
-	};
-
-	UISystem UISystem::Green;
-	UISystem UISystem::Blue;
 
 	//全読み込み
 	static void LoadAsset()

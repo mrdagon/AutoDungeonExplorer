@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*ギルドの情報*/
-	class W_Config : public WindowBox
+	class W_Config : public UIWindow
 	{
 		enum class ConfigType
 		{
@@ -56,7 +56,7 @@ namespace SDX_ADE
 				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(14),py + Lp(15) },2,0,true);
 
 
-				MFont::BMSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, 名前, false);
+				MFont::MAlias.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, 名前, false);
 
 				switch (type)
 				{
@@ -96,7 +96,7 @@ namespace SDX_ADE
 					break;
 				}
 
-				MFont::BMSize.DrawBold({ px + Lp(18) + MFont::BMSize.GetDrawStringWidth(設定値)/2 ,py + Lp(19) }, Color::White, Color::Black, { 設定値 }, true);
+				MFont::MAlias.DrawBold({ px + Lp(18) + MFont::MAlias.GetDrawStringWidth(設定値)/2 ,py + Lp(19) }, Color::White, Color::Black, { 設定値 }, true);
 			}
 
 			void Click(double px, double py)
@@ -169,10 +169,10 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_決定 ) / 2;
+				int dif_x = MFont::MAlias.GetDrawStringWidth( TX::Config_決定 ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0 , 1);
-				MFont::BMSize.DrawBold({ px + Lp(20) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_決定 , false);
+				MFont::MAlias.DrawBold({ px + Lp(20) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_決定 , false);
 			}
 
 			void Click(double px, double py)
@@ -217,10 +217,10 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BMSize.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
+				int dif_x = MFont::MAlias.GetDrawStringWidth( TX::Config_キャンセル ) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0, 1);
-				MFont::BMSize.DrawBold({ px + Lp(21) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
+				MFont::MAlias.DrawBold({ px + Lp(21) - dif_x ,py + Lp(22) }, Color::White, Color::Black, TX::Config_キャンセル, false);
 			}
 
 			void Click(double px, double py)
@@ -267,12 +267,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Config;
 
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::情報;
 			横幅 = 320;
@@ -310,49 +308,12 @@ namespace SDX_ADE
 			超加速.Set(TX::Config_超加速.c_str(), IconType::時間, ConfigType::超加速, this);
 			ヘルプ詳細.Set(TX::Config_ヘルプ詳細.c_str(), IconType::ヘルプ, ConfigType::ヘルプ詳細, this);
 
-
-			gui_objects.push_back(&BGM音量);
-			gui_objects.push_back(&SE音量);
-			gui_objects.push_back(&解像度);
-			gui_objects.push_back(&ウィンドウモード);
-			gui_objects.push_back(&装備更新);
-			gui_objects.push_back(&ボス戦等速);
-			gui_objects.push_back(&夜間加速);
-			gui_objects.push_back(&スキル習得停止);
-			gui_objects.push_back(&超加速);
-			gui_objects.push_back(&ヘルプ詳細);
-			
-			gui_objects.push_back(&確定);
-			gui_objects.push_back(&キャンセル);
-
 			確定.base = this;
 			キャンセル.base = this;
-
-			SetCSVPage(16);
 		}
 
 		void GUI_Update()
 		{
-			縦幅 = Lp(29);
-			横幅 = Lp(30);
-
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
-
-			ウィンドウモード.位置 = { Lp(0),Lp(1) ,Lp(4),Lp(5) };
-			解像度.位置 = { Lp(0),Lp(1) + Lp(2) * 1 ,Lp(4),Lp(5) };
-			BGM音量.位置 = { Lp(0),Lp(1) + Lp(2) * 2,Lp(4),Lp(5) };
-			SE音量.位置 = { Lp(0),Lp(1) + Lp(2) * 3,Lp(4),Lp(5) };
-
-			装備更新.位置 = { Lp(0),Lp(3) + Lp(2) * 4 ,Lp(4),Lp(5) };
-			ボス戦等速.位置 = { Lp(0),Lp(3) + Lp(2) * 5 ,Lp(4),Lp(5) };
-			夜間加速.位置 = { Lp(0),Lp(3) + Lp(2) * 6 ,Lp(4),Lp(5) };
-			スキル習得停止.位置 = { Lp(0),Lp(3) + Lp(2) * 7 ,Lp(4),Lp(5) };
-			超加速.位置 = { Lp(0),Lp(3) + Lp(2) * 8 ,Lp(4),Lp(5) };
-			ヘルプ詳細.位置 = { Lp(0),Lp(3) + Lp(2) * 9 ,Lp(4),Lp(5) };
-
-			確定.位置 = { Lp(6),Lp(8),Lp(9),Lp(10) };
-			キャンセル.位置 = { Lp(7),Lp(8) , Lp(9),Lp(10) };
 		}
 	};
 }

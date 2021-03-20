@@ -17,11 +17,10 @@ namespace SDX_ADE
 		W_Credit Win_Credit;
 		W_Config Win_Config;
 
-		W_Scenario Win_Scenario;
-		
-		class GUI_ボタン : public GUI_Object
+		class GUI_ボタン : public UIButton
 		{
 		public:
+
 			enum class MenuType
 			{
 				はじめから,
@@ -35,17 +34,6 @@ namespace SDX_ADE
 
 			MainMenu* 親;
 			MenuType id;
-			std::string 文字;
-			bool isOver = false;
-
-			void Draw派生(double px, double py)
-			{
-				Screen::SetBlendMode(BlendMode::Alpha, 128);
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 10, 0);
-				Screen::SetBlendMode();
-				MFont::BLSize.DrawBoldRotate({ px + 位置.GetW() / 2 ,py + 位置.GetH() / 2 }, 1 , 0 , isOver ? Color::Aqua : Color::White, Color::Black, 文字, false);
-				isOver = false;
-			}
 
 			void Click(double px, double py)
 			{
@@ -56,7 +44,7 @@ namespace SDX_ADE
 				case MenuType::はじめから:
 					親->Win_NewGame.Init();
 
-					if (親->Win_NewGame.ポップアップ呼び出し() == 1)
+					if (親->Win_NewGame.Openポップアップ() == 1)
 					{
 						親->セーブ = nullptr;
 						親->難易度 = 親->Win_NewGame.選択中難易度;
@@ -67,7 +55,7 @@ namespace SDX_ADE
 				case MenuType::つづきから:
 					親->Win_Conitnue.Init();
 
-					if (親->Win_Conitnue.ポップアップ呼び出し() == 1)
+					if (親->Win_Conitnue.Openポップアップ() == 1)
 					{
 						親->セーブ = 親->Win_Conitnue.GetSave();
 						親->難易度 = GameType::COUNT;
@@ -77,31 +65,24 @@ namespace SDX_ADE
 					break;
 				case MenuType::せってい:
 					親->Win_Config.Init();
-					親->Win_Config.ポップアップ呼び出し();
+					親->Win_Config.Openポップアップ();
 					break;
 				case MenuType::クレジット:
 					親->Win_Credit.Init();
-					親->Win_Credit.ポップアップ呼び出し();
+					親->Win_Credit.Openポップアップ();
 					break;
 				case MenuType::アンケート:
-					親->Win_Scenario.Init(0);
-					親->Win_Scenario.ポップアップ呼び出し();
+					ShellExecute(NULL, L"open", TX::アンケURL , NULL, L"", SW_SHOW);
 					break;
 				case MenuType::おしまい:
 					Game::isゲーム終了 = true;
 					break;
 				}
 			}
-
-			void Over(double px, double py)
-			{
-				isOver = true;
-			}
 		};
 
 		std::array<GUI_ボタン, 6> ボタン;
 	public:
-		const int csv_page = 24;
 		bool isゲーム開始;
 
 		GameType 難易度;
@@ -115,37 +96,32 @@ namespace SDX_ADE
 			for (auto& it : ボタン)
 			{
 				it.親 = this;
-				it.csv_page = 24;
+				it.UIデザイン = &UIDesign::Brown;
 			}
-			ボタン[0].文字 = "はじめから";
+
+			ボタン[0].テキスト = "始めから";
 			ボタン[0].id = GUI_ボタン::MenuType::はじめから;
+			ボタン[0].SetUI(UILayout::Data(UIタイトル::ボタン), 0);
 
-			ボタン[1].文字 = "つづきから";
+			ボタン[1].テキスト = "続きから";
 			ボタン[1].id = GUI_ボタン::MenuType::つづきから;
+			ボタン[1].SetUI(UILayout::Data(UIタイトル::ボタン), 1);
 
-			ボタン[2].文字 = "せってい";
+			ボタン[2].テキスト = "設定";
 			ボタン[2].id = GUI_ボタン::MenuType::せってい;
+			ボタン[2].SetUI(UILayout::Data(UIタイトル::ボタン), 2);
 
-			ボタン[3].文字 = "くれじっと";
+			ボタン[3].テキスト = "クレジット";
 			ボタン[3].id = GUI_ボタン::MenuType::クレジット;
+			ボタン[3].SetUI(UILayout::Data(UIタイトル::ボタン), 3);
 
-			ボタン[4].文字 = "あんけーと";
+			ボタン[4].テキスト = "アンケート";
 			ボタン[4].id = GUI_ボタン::MenuType::アンケート;
+			ボタン[4].SetUI(UILayout::Data(UIタイトル::ボタン), 4);
 
-			ボタン[5].文字 = "しゅうりょう";
+			ボタン[5].テキスト = "終了";
 			ボタン[5].id = GUI_ボタン::MenuType::おしまい;
-		}
-
-		void GUI_Init()
-		{
-			int a = 0, w = 0;
-			for (auto& it : ボタン)
-			{
-				//it.文字
-				w = MFont::BLSize.GetDrawStringWidth(it.文字) + Lp(8);
-				it.位置 = { Window::GetWidth() / 2  - w / 2 , Window::GetHeight() * (Lp(5) + a * Lp(6))/100 , w , Lp(7) };
-				a++;
-			}
+			ボタン[5].SetUI(UILayout::Data(UIタイトル::ボタン), 5);
 		}
 
 		//メインループ処理
@@ -161,7 +137,6 @@ namespace SDX_ADE
 				frame++;
 
 				//座標初期化
-				GUI_Init();
 				Input();
 				Draw();
 
@@ -171,7 +146,10 @@ namespace SDX_ADE
 					if (Time::GetNowCount() - time > frame * 50 / 3.0) { break; }
 				}
 
-				if (isゲーム開始 || Game::isゲーム終了 ) { break; }
+				if (isゲーム開始 || Game::isゲーム終了 )
+				{
+					break;
+				}
 			}
 		}
 
@@ -182,15 +160,90 @@ namespace SDX_ADE
 			//ボタンクリックとマウスオーバー判定
 			for (auto& it : ボタン)
 			{
-				if (it.位置.Hit(&pt))
-				{
-					it.Over(pt.x, pt.y);
-					if (Input::mouse.Left.on) { it.Click(pt.x, pt.y); }
-				}
+				it.操作チェック( 0 , 0);//座標補正無し
 			}
+
+			//スクショ撮影
+			if (Input::key.F10.on == true)
+			{
+				keybd_event(VK_LWIN, 0, 0, 0);
+				keybd_event(VK_LMENU, 0, 0, 0);
+				keybd_event(VK_SNAPSHOT, 0, 0, 0);
+
+				keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0);
+				keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
+				keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
+			}
+
 		}
 
 		void Draw()
+		{
+			Draw背景();
+
+			//タイトル
+			static UILayout& 題字 = UILayout::Data(UIタイトル::題字);
+			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * 題字.y / 100 }, 2, 0);
+
+			//画面中央になるように計算、画像IDをY代わりに使用
+			UILayout::Data(UIタイトル::ボタン).y = Window::GetHeight() * UILayout::Data(UIタイトル::ボタン).画像ID / 100;
+			UILayout::Data(UIタイトル::ボタン).x = Window::GetWidth() / 2 - UILayout::Data(UIタイトル::ボタン).w / 2;
+
+			for (auto& it : ボタン)
+			{			
+				it.Draw();
+			}
+
+			//作者名、著作権表記
+			static UILayout& ライセンス = UILayout::Data(UIタイトル::ライセンス);
+
+			MFont::M->DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
+
+			/*
+			UI関数テスト
+			for (int i = 0; i < 2; i++)
+			{
+				UISystem* ui = (i == 0) ? &UISystem::Green: &UISystem::Blue;
+
+				ui->DrawBack(200, 100 + i * 300, 200, 300);
+				ui->DrawGroup(400, 100 + i * 300, 600, 300);
+
+				ui->DrawButton凸(300, 120 + i * 300, 200, 50);
+				ui->DrawButton凹(300, 180 + i * 300, 200, 50);
+				ui->DrawButton(300, 240 + i * 300, 200, 50);
+				ui->DrawRound(300, 300 + i * 300, 200, 50);
+
+				ui->DrawTitle(700, 140 + i * 300, 200, 30);
+				ui->DrawWindow(700, 170 + i * 300, 200, 120);
+
+				ui->DrawGauge(500, 120 + i * 300, 200, 30 , 0.5);
+				ui->DrawRound(500, 160 + i * 300, 30, 60);
+
+				for (int b = 0; b < 4; b++)
+				{
+					MFont::MSize.Draw({ 350,130 + i * 300 + b * 60 }, ui->明字, "明");
+					MFont::MSize.Draw({ 400,130 + i * 300 + b * 60 }, ui->暗字, "暗");
+					MFont::MSize.Draw({ 450,130 + i * 300 + b * 60 }, ui->灰字, "灰");
+				}
+
+				MFont::MSize.Draw({ 220,130 + i * 300 }, ui->明字, "明");
+				MFont::MSize.Draw({ 230,160 + i * 300 }, ui->暗字, "暗");
+				MFont::MSize.Draw({ 240,190 + i * 300 }, ui->灰字, "灰");
+				MFont::MSize.Draw({ 520,130 + i * 300 }, ui->明字, "明");
+				MFont::MSize.Draw({ 530,160 + i * 300 }, ui->暗字, "暗");
+				MFont::MSize.Draw({ 540,190 + i * 300 }, ui->灰字, "灰");
+			}
+			*/
+
+			//デバッグ用
+			if (CV::isレイアウト)
+			{
+				UILayout::Draw();
+				UILayout::Input();
+			}
+		}
+
+		void Draw背景()
 		{
 			const int back_w = 384;
 			const int back_h = 240;
@@ -210,84 +263,26 @@ namespace SDX_ADE
 			int x差分 = w余り / 2;
 			int y差分 = h余り / 2;
 
-			//RGB 116,112,41
-			//RGB  75, 57,22
-
-
 			static int scr_x = 0;
+
+			scr_x--;
+			if (scr_x <= -幅) { scr_x = 0; }
 
 			//背景描画
 			if (y差分 > 0)
 			{
 				Drawing::Rect({ 0,0,Window::GetWidth() , y差分 }, Color(107, 93, 80), true);
-				Drawing::Rect({ 0,Window::GetHeight()-y差分,Window::GetWidth() , y差分 }, Color(58, 50, 43), true);
+				Drawing::Rect({ 0,Window::GetHeight() - y差分,Window::GetWidth() , y差分 }, Color(58, 50, 43), true);
 			}
 
 			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x - 幅   ,y差分,幅,高 });
 			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x        ,y差分,幅,高 });
 			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x + 幅   ,y差分,幅,高 });
-			MSystem::タイトル背景.DrawExtend({ x差分 +scr_x + 幅 * 2,y差分,幅,高 });
+			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x + 幅 * 2,y差分,幅,高 });
 
 			MSystem::タイトル前景.DrawExtend({ x差分 - 幅,y差分,幅,高 });
 			MSystem::タイトル前景.DrawExtend({ x差分     ,y差分,幅,高 });
 			MSystem::タイトル前景.DrawExtend({ x差分 + 幅,y差分,幅,高 });
-
-			scr_x--;
-			if (scr_x <= -幅) { scr_x = 0; }
-
-			//タイトル
-			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 }, 2, 0);
-
-
-
-			//MFont::BLSize.DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * Lp(0) / 100 } , 2, 0, Color::White, Color::Black, { "おーとだんじょんえくすぷろーら(仮)" });
-			//ボタン５つ表示
-			for (auto& it : ボタン)
-			{
-				it.Draw();
-			}
-			//作者名、著作権表記？
-			MFont::BMSize.DrawBoldRotate({ Window::GetWidth()/2 , Window::GetHeight() * Lp(1) / 100} , 1 , 0 , Color::White, Color::Black, "(C) 2020/8 (´･@･)", false);
-
-			for (int i = 0; i < 2; i++)
-			{
-				UISystem* ui = (i == 0) ? &UISystem::Green: &UISystem::Blue;
-
-				ui->DrawBack(200, 100 + i * 300, 200, 300);
-				ui->DrawGroup(400, 100 + i * 300, 200, 300);
-				ui->DrawButton凸(300, 120 + i * 300, 200, 50);
-				ui->DrawButton凹(300, 180 + i * 300, 200, 50);
-				ui->DrawFrame(300, 240 + i * 300, 200, 50);
-				ui->DrawRound(300, 300 + i * 300, 200, 50);
-
-				for (int b = 0; b < 4; b++)
-				{
-					MFont::MSize.Draw({ 350,130 + i * 300 + b * 60 }, ui->明字, "明");
-					MFont::MSize.Draw({ 400,130 + i * 300 + b * 60 }, ui->暗字, "暗");
-					MFont::MSize.Draw({ 450,130 + i * 300 + b * 60 }, ui->灰字, "灰");
-				}
-
-				MFont::MSize.Draw({ 220,130 + i * 300 }, ui->明字, "明");
-				MFont::MSize.Draw({ 230,160 + i * 300 }, ui->暗字, "暗");
-				MFont::MSize.Draw({ 240,190 + i * 300 }, ui->灰字, "灰");
-				MFont::MSize.Draw({ 520,130 + i * 300 }, ui->明字, "明");
-				MFont::MSize.Draw({ 530,160 + i * 300 }, ui->暗字, "暗");
-				MFont::MSize.Draw({ 540,190 + i * 300 }, ui->灰字, "灰");
-			}
-
-			//デバッグ用
-			if (CV::isレイアウト)
-			{
-				UILayout::Draw();
-				UILayout::Input();
-				//CSVDraw();
-				//CSVCheckInput();
-			}
-		}
-
-		inline int Lp(int no)
-		{
-			return CSV::I[csv_page][no];
 		}
 	};
 }

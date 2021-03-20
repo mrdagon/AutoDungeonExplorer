@@ -29,7 +29,7 @@ void LoadAndInitData()
 
 	//各種リソース読み込み
 	LoadAsset();
-	UISystem::Load();
+	UIDesign::Load();
 
 	//外部データ読込
 	PassiveSkill::LoadData();
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 
 	int text_x = 100;
 
-	UILayout::GetData(UIタイトル::題字);
+	UILayout::Data(UIタイトル::題字);
 
 	while (System::ProcessMessage())
 	{
@@ -88,6 +88,8 @@ int main(int argc, char* argv[])
 	}
 
 	Config::SaveLoad(FileMode::Write);
+
+	UILayout::SaveData();
 
 	System::End();//ライブラリの終了処理
 	return 0;

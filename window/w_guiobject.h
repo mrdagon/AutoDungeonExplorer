@@ -113,8 +113,8 @@ namespace SDX_ADE
 				MIcon::UI[アイコン].DrawRotate({ px + 位置.GetW() / 2 , py + (位置.GetH() - 10) / 2 + アイコンオフセット }, 2, 0);
 			}
 
-			px -= MFont::MSize.GetDrawStringWidth(文字)/2;
-			MFont::BMSize.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
+			px -= MFont::MDot.GetDrawStringWidth(文字)/2;
+			MFont::MAlias.DrawBold({ px + 位置.GetW() / 2 ,py + (位置.GetH()-10) / 2 + 文字オフセット}, Color::White, Color::Black, 文字);
 		}
 
 		void Click(double px, double py)
@@ -137,7 +137,7 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 枠No);
 			if (text != "")
 			{
-				MFont::BSSize.DrawBold({ px + 6 ,py + 0}, Color::White, Color::Black, text , false);
+				MFont::SAlias.DrawBold({ px + 6 ,py + 0}, Color::White, Color::Black, text , false);
 			}
 		}
 	};

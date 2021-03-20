@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*イベントログウィンドウ*/
-	class W_EventLog : public WindowBox
+	class W_EventLog : public UIWindow
 	{
 	public:
 		std::vector<GUI_Tab> タブ;
@@ -18,12 +18,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			タブ.clear();
 			種類 = WindowType::EventLog;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::ログ;
 			横幅 = 330;
@@ -54,21 +52,11 @@ namespace SDX_ADE
 
 			for (int a = 0; a < 6; a++)
 			{
-				gui_objects.push_back(&タブ[a]);
 			}
-
-			SetCSVPage(4);
-
 		}
 
 		void GUI_Update()
 		{
-			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[2].位置 = { Lp(0) + Lp(4)*2,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[3].位置 = { Lp(0) + Lp(4)*3,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[4].位置 = { Lp(0) + Lp(4)*4,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[5].位置 = { Lp(0) + Lp(4)*5,Lp(1) ,Lp(2) ,Lp(3) };
 		}
 
 		void 派生Draw()
@@ -80,9 +68,7 @@ namespace SDX_ADE
 				it.Draw();
 			}
 
-			MSystem::DrawWindow({ Lp(0), Lp(5) }, Lp(6), Lp(7),12);
-
-			描画範囲(true);//以下非固定
+			Reset描画範囲(true);//以下非固定
 
 			int yy = 5;
 			int scr_max = 0;
@@ -96,14 +82,14 @@ namespace SDX_ADE
 				if (EventLog::logs[a].日付 != day)
 				{
 					//日付
-					MSystem::DrawWindow({ Lp(10),Lp(11) + yy }, Lp(12), Lp(13), Lp(26));
-					MFont::BSSize.DrawBold({ Lp(14),Lp(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1, TX::Log_日付 },true);
-					yy += Lp(16);					
+					//MSystem::DrawWindow({ Lp(10),Lp(11) + yy }, Lp(12), Lp(13), Lp(26));
+					//MFont::BSSize.DrawBold({ Lp(14),Lp(15) + yy }, Color::White, Color::Black, { EventLog::logs[a].日付 + 1, TX::Log_日付 },true);
+					//yy += Lp(16);					
 				}
 				day = EventLog::logs[a].日付;
 
 				//メッセージ
-				MSystem::DrawWindow({ Lp(17),Lp(18) + yy }, Lp(19), Lp(20), Lp(26));
+				//MSystem::DrawWindow({ Lp(17),Lp(18) + yy }, Lp(19), Lp(20), Lp(26));
 				
 				std::string str;
 
@@ -115,8 +101,8 @@ namespace SDX_ADE
 					break;
 				}
 
-				MFont::BMSize.DrawBold({ Lp(23) + Lp(32) ,Lp(24) + yy }, Color::White, Color::Black, str);
-				yy += Lp(25);
+				//MFont::BMSize.DrawBold({ Lp(23) + Lp(32) ,Lp(24) + yy }, Color::White, Color::Black, str);
+				//yy += Lp(25);
 			}
 			scr_max = yy;
 

@@ -63,7 +63,7 @@ namespace SDX_ADE
 		void SetHelp(std::string メッセージ, int 高さ = 0)
 		{
 			ヘルプメッセージ = メッセージ;
-			ヘルプ横幅 = MFont::MSize.GetDrawStringWidth(ヘルプメッセージ) + 20;
+			ヘルプ横幅 = MFont::MDot.GetDrawStringWidth(ヘルプメッセージ) + 20;
 
 			if (高さ == 0)
 			{
@@ -89,7 +89,7 @@ namespace SDX_ADE
 
 			Info座標補正(座標);
 			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン,0, 枠透過率);
-			MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+			MFont::MDot.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 		}
 
 		void InfoExplorer(Explorer* it, Point 座標)
@@ -108,8 +108,8 @@ namespace SDX_ADE
 
 			it->image[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(9) , 座標.y + Lph(10) }, Color::White, Color::Black, { "Lv " , it->Lv });
-			MFont::BMSize.DrawBold({ 座標.x + Lph(11) , 座標.y + Lph(12) }, Color::White, Color::Black, it->名前);
+			MFont::SAlias.DrawBold({ 座標.x + Lph(9) , 座標.y + Lph(10) }, Color::White, Color::Black, { "Lv " , it->Lv });
+			MFont::MAlias.DrawBold({ 座標.x + Lph(11) , 座標.y + Lph(12) }, Color::White, Color::Black, it->名前);
 
 			MSystem::DrawBar({ 座標.x + Lph(13) , 座標.y + Lph(14) }, Lph(15), Lph(16), it->経験値 / it->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);//経験値
 
@@ -121,10 +121,10 @@ namespace SDX_ADE
 			for (int a = 0; a < 2; a++)
 			{
 				//MIcon::アイテム[it->装備[a]->見た目].Draw({ 座標.x + Lph(19),座標.y + Lph(20) + Lph(21) * a });//装備
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
-				MFont::BMSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
-				MFont::SSize.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
-				MFont::MSize.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
+				MFont::SAlias.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
+				MFont::MAlias.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
+				MFont::SDot.DrawBold({ 座標.x + Lph(22) , 座標.y + Lph(23) + Lph(21) * a }, Color::White, Color::Black, { "Lv" , it->装備[a]->ランク });
+				MFont::MDot.DrawBold({ 座標.x + Lph(24) , 座標.y + Lph(25) + Lph(21) * a }, Color::White, Color::Black, it->装備[a]->名前);
 
 			}
 			
@@ -132,7 +132,7 @@ namespace SDX_ADE
 			for (int a = 0; a < 8; a++)
 			{
 				//ステータス名
-				MFont::BMSize.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
+				MFont::MAlias.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
 
 				//基礎ステータス
 				int na, nb;
@@ -148,10 +148,10 @@ namespace SDX_ADE
 					case 7: na = it->基礎ステ[StatusType::回避]; nb = it->補正ステ[StatusType::回避]; break;
 				}
 
-				MFont::BMSize.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na , true);
+				MFont::MAlias.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na , true);
 
 				//装備＆パッシブ補正値
-				if (nb - na > 0) { MFont::BMSize.DrawBold({ 座標.x + Lph(49) , 座標.y + Lph(30) + Lph(31) * a }, Color(128,255,128), Color::Black, { "+",nb - na }, true); }
+				if (nb - na > 0) { MFont::MAlias.DrawBold({ 座標.x + Lph(49) , 座標.y + Lph(30) + Lph(31) * a }, Color(128,255,128), Color::Black, { "+",nb - na }, true); }
 			}
 
 			//Aスキル-アイコン、名前、説明
@@ -195,10 +195,10 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x + Lph(2),座標.y + Lph(3) }, Lph(0)-10, Lph(5), 内スキン, 0, 枠透過率);
 
 			//MIcon::アイテム[item->見た目].Draw({ 座標.x + Lph(6),座標.y + Lph(7) });
-			MFont::BSSize.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , item->ランク });
+			MFont::SAlias.DrawBold({ 座標.x + Lph(38) ,座標.y + Lph(39) }, Color::White, Color::Black, {"Lv" , item->ランク });
 
 
-			MFont::BMSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, item->名前);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, item->名前);
 
 			//販売価格、集客力
 			MIcon::UI[IconType::資金].Draw({ 座標.x + Lph(10),座標.y + Lph(11) });//販売価格
@@ -230,7 +230,7 @@ namespace SDX_ADE
 
 				if (num <= 0) { continue; }
 
-				MFont::BSSize.DrawBold({ 座標.x + Lph(16) + now_x,座標.y + Lph(17) }, Color::White, Color::Black, { ステ名 , "+" , num });
+				MFont::SAlias.DrawBold({ 座標.x + Lph(16) + now_x,座標.y + Lph(17) }, Color::White, Color::Black, { ステ名 , "+" , num });
 				
 				now_x += Lph(20);
 			}
@@ -270,15 +270,15 @@ namespace SDX_ADE
 			//アイコン
 			it->image->Draw({ 座標.x + Lph(2),座標.y + Lph(3) });
 			//エリアレベル
-			MFont::BSSize.DrawBold({ 座標.x + Lph(6),座標.y + Lph(7) }, Color::White, Color::Black, {"Lv" ,it->雑魚Lv });
+			MFont::SAlias.DrawBold({ 座標.x + Lph(6),座標.y + Lph(7) }, Color::White, Color::Black, {"Lv" ,it->雑魚Lv });
 
 			//名前
-			MFont::BMSize.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, { "第一層\n" , it->名前 });
+			MFont::MAlias.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, { "第一層\n" , it->名前 });
 			
 
 			//探索率、財宝次ダンジョン等イベント発見状態、特産品
 			MSystem::DrawBar({ 座標.x + Lph(8),座標.y + Lph(9) }, Lph(10), Lph(11), it->探索率, 1, Color::Blue, Color::White, Color::White, true);
-			MFont::BMSize.DrawBold({ 座標.x + Lph(14),座標.y + Lph(15) }, Color::White, Color::Black, { it->探索率*100, "%" },true);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(14),座標.y + Lph(15) }, Color::White, Color::Black, { it->探索率*100, "%" },true);
 
 			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(36) }, Color::White, Color::Black, { it->発見地図 , " / " , it->最大地図 });
 			//MFont::BSSize.DrawBold({ 座標.x + Lph(34),座標.y + Lph(37) }, Color::White, Color::Black, { it->発見財宝 , " / " , it->最大財宝 });
@@ -289,11 +289,11 @@ namespace SDX_ADE
 			//未発見だとボスアイコンを？マークにする
 
 			if(it->isボス生存 == false){
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_討伐 });
+				MFont::SAlias.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_討伐 });
 			} else if(it->isボス発見 == true){
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_発見 });
+				MFont::SAlias.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_発見 });
 			} else {
-				MFont::BSSize.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_捜索 });
+				MFont::SAlias.DrawBold({ 座標.x + Lph(22),座標.y + Lph(23) }, Color::White, Color::Black, { TX::Dungeon_捜索 });
 			}
 
 			//it->ボスモンスター[0]->image[0][1]->DrawRotate({ 座標.x + Lph(24),座標.y + Lph(25) }, 3, 0);
@@ -304,8 +304,8 @@ namespace SDX_ADE
 			//}
 			//Lph 28 29未使用
 			
-			MFont::BSSize.DrawBold({ 座標.x + Lph(30),座標.y + Lph(31) }, Color::White, Color::Black, "Boss");
-			MFont::BSSize.DrawBold({ 座標.x + Lph(32),座標.y + Lph(33) }, Color::White, Color::Black, "Monster");
+			MFont::SAlias.DrawBold({ 座標.x + Lph(30),座標.y + Lph(31) }, Color::White, Color::Black, "Boss");
+			MFont::SAlias.DrawBold({ 座標.x + Lph(32),座標.y + Lph(33) }, Color::White, Color::Black, "Monster");
 		}
 
 		void InfoManagement(Management* it, Point 座標)
@@ -325,15 +325,15 @@ namespace SDX_ADE
 			MSystem::DrawWindow({ 座標.x + Lph(14) , 座標.y + Lph(16) }, Lph(17), Lph(19), 内スキン, 0, 枠透過率);
 
 			//名前、説明文、アイコン、Lv、必要資金、(使用回数)
-			MFont::MSize.DrawBold({ 座標.x + Lph(2),座標.y + Lph(3) }, Color::White, Color::Black, it->名前);
-			MFont::MSize.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, it->説明);
+			MFont::MDot.DrawBold({ 座標.x + Lph(2),座標.y + Lph(3) }, Color::White, Color::Black, it->名前);
+			MFont::MDot.DrawBold({ 座標.x + Lph(4),座標.y + Lph(5) }, Color::White, Color::Black, it->説明);
 
 			//MIcon::アイコン[it->アイコン].DrawRotate({ 座標.x + Lph(6) , 座標.y + Lph(7) }, 2, 0);
 
-			MFont::MSize.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, { "Lv", it->ランク } , true);
+			MFont::MDot.DrawBold({ 座標.x + Lph(8),座標.y + Lph(9) }, Color::White, Color::Black, { "Lv", it->ランク } , true);
 
 			MIcon::UI[IconType::資金].Draw({ 座標.x + Lph(10) , 座標.y + Lph(11) });
-			MFont::BMSize.DrawBold({ 座標.x + Lph(12) ,座標.y + Lph(13) }, Color::White, Color::Black, { (long long)it->消費資金 , " G" }, true);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(12) ,座標.y + Lph(13) }, Color::White, Color::Black, { (long long)it->消費資金 , " G" }, true);
 		}
 
 		void InfoResult(Guild::Party* パーティ,Point 座標)
@@ -346,9 +346,9 @@ namespace SDX_ADE
 			Info座標補正(座標);
 
 			MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 枠スキン, 0, 枠透過率);
-			MFont::BSSize.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) }, Color::White, Color::Black, "与えたダメージ");
-			MFont::BSSize.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) + Lph(4) }, Color::White, Color::Black, "受けたダメージ");
-			MFont::BSSize.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) + Lph(4)*2 }, Color::White, Color::Black, "味方を回復");
+			MFont::SAlias.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) }, Color::White, Color::Black, "与えたダメージ");
+			MFont::SAlias.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) + Lph(4) }, Color::White, Color::Black, "受けたダメージ");
+			MFont::SAlias.DrawBold({ 座標.x + Lph(2) , 座標.y + Lph(3) + Lph(4)*2 }, Color::White, Color::Black, "味方を回復");
 			//項目名
 
 			//パーティメンバー
@@ -357,9 +357,9 @@ namespace SDX_ADE
 				const auto it = パーティ->メンバー[a];
 				if ( it == nullptr) { continue; }
 				it->image[0][1]->DrawRotate({ 座標.x + Lph(5) + Lph(6)*a , 座標.y + Lph(7) }, 2, 0);
-				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 0 }, Color::White, Color::Black, it->与ダメージログ,true);
-				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 1 }, Color(255,80,80), Color::Black, it->受ダメージログ, true);
-				MFont::BSSize.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 2 }, Color(128,255,128), Color::Black, it->回復ログ, true);
+				MFont::SAlias.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 0 }, Color::White, Color::Black, it->与ダメージログ,true);
+				MFont::SAlias.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 1 }, Color(255,80,80), Color::Black, it->受ダメージログ, true);
+				MFont::SAlias.DrawBold({ 座標.x + Lph(8) + Lph(6) * a , 座標.y + Lph(3) + Lph(4) * 2 }, Color(128,255,128), Color::Black, it->回復ログ, true);
 			}
 		}
 
@@ -380,8 +380,8 @@ namespace SDX_ADE
 
 			it->image[0][1]->DrawRotate({ 座標.x + Lph(7) ,座標.y + Lph(8) }, 2, 0);
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(50) , 座標.y + Lph(51) }, Color::White, Color::Black, { "Lv " , Lv });
-			MFont::BMSize.DrawBold({ 座標.x + Lph(52) , 座標.y + Lph(53) }, Color::White, Color::Black, it->種族->名前);
+			MFont::SAlias.DrawBold({ 座標.x + Lph(50) , 座標.y + Lph(51) }, Color::White, Color::Black, { "Lv " , Lv });
+			MFont::MAlias.DrawBold({ 座標.x + Lph(52) , 座標.y + Lph(53) }, Color::White, Color::Black, it->種族->名前);
 
 			//素材、レア素材
 			座標.y += Lph(17);
@@ -402,13 +402,13 @@ namespace SDX_ADE
 			for (int a = 0; a < (int)StatusType::COUNT; a++)
 			{
 				//ステータス名
-				MFont::BMSize.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
+				MFont::MAlias.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
 
 				//基礎ステータス
 				int na = it->補正ステ[StatusType(a)];
 
 				//補正後のみ表示
-				MFont::BMSize.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na, true);
+				MFont::MAlias.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na, true);
 			}
 
 			//Aスキル-アイコン、名前、説明
@@ -454,13 +454,13 @@ namespace SDX_ADE
 			//素材アイコン_Lph_所持数
 			it->image->DrawRotate({ 座標.x + Lph(2), 座標.y + Lph(3) }, 1, 0);
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->ランク }, true);
+			MFont::SAlias.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->ランク }, true);
 
 			//所持数
-			MFont::BMSize.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->ID] },true);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->ID] },true);
 
 			//素材名
-			MFont::BMSize.DrawBold({ 座標.x + Lph(10) , 座標.y + Lph(11) }, Color::White, Color::Black, it->名前, true);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(10) , 座標.y + Lph(11) }, Color::White, Color::Black, it->名前, true);
 
 			//製造出来るアイテムと確率
 		}
@@ -481,10 +481,10 @@ namespace SDX_ADE
 
 			MIcon::UI[IconType::時間].Draw({ 座標.x + Lph(27),座標.y + Lph(28)});//クールダウンor必殺
 
-			MFont::BMSize.DrawBold({ 座標.x + Lph(29),座標.y + Lph(30) }, Color::White, Color::Black, スキル->名前);
-			MFont::BSSize.DrawBold({ 座標.x + Lph(31),座標.y + Lph(32) }, Color::White, Color::Black, { 1 });
-			if ( スキル->命中 < 2.0 ) { MFont::BSSize.DrawBold({ 座標.x + Lph(36),座標.y + Lph(37) }, Color::White, Color::Black, { "命中 " , (int)(スキル->命中*100) , "%" }); }
-			MFont::BSSize.DrawBold({ 座標.x + Lph(33),座標.y + Lph(34) }, Color::White, Color::Black, スキル->説明);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(29),座標.y + Lph(30) }, Color::White, Color::Black, スキル->名前);
+			MFont::SAlias.DrawBold({ 座標.x + Lph(31),座標.y + Lph(32) }, Color::White, Color::Black, { 1 });
+			if ( スキル->命中 < 2.0 ) { MFont::SAlias.DrawBold({ 座標.x + Lph(36),座標.y + Lph(37) }, Color::White, Color::Black, { "命中 " , (int)(スキル->命中*100) , "%" }); }
+			MFont::SAlias.DrawBold({ 座標.x + Lph(33),座標.y + Lph(34) }, Color::White, Color::Black, スキル->説明);
 
 			help_csv_page = page_buf;
 		}
@@ -508,9 +508,9 @@ namespace SDX_ADE
 				MSystem::DrawSkill(スキル->image, { 座標.x + Lph(36), 座標.y + Lph(37) }, Color::Gray, s);
 			}
 
-			MFont::BMSize.DrawBold({ 座標.x + Lph(40) , 座標.y + Lph(41) }, Color::White, Color::Black, スキル->名前);//スキル名
+			MFont::MAlias.DrawBold({ 座標.x + Lph(40) , 座標.y + Lph(41) }, Color::White, Color::Black, スキル->名前);//スキル名
 
-			MFont::BSSize.DrawBold({ 座標.x + Lph(42) , 座標.y + Lph(43) }, Color::White, Color::Black, スキル->説明);//説明文
+			MFont::SAlias.DrawBold({ 座標.x + Lph(42) , 座標.y + Lph(43) }, Color::White, Color::Black, スキル->説明);//説明文
 
 			help_csv_page = page_buf;
 		}

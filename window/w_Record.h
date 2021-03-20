@@ -11,7 +11,7 @@ namespace SDX_BSC
 
 	//ギルド情報と統合したのでボツ
 	/*決算ログ*/
-	class W_SettleLog : public WindowBox
+	class W_SettleLog : public UIWindow
 	{
 	private:
 		class GUI_日付 : public GUI_Object
@@ -109,7 +109,7 @@ namespace SDX_BSC
 		{
 			種類 = WindowType::Record;
 			名前 = "記録";
-			略記 = "記録";
+			省略名 = "記録";
 			アイコン = IconType::サブクエ;
 			横幅 = 330;
 			縦幅 = 125;

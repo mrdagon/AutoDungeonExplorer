@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*待遇変更ウィンドウ*/
-	class W_Skilltree : public WindowBox
+	class W_Skilltree : public UIWindow
 	{
 	private:
 		class GUI_編集中ギルメン : public GUI_Object
@@ -25,9 +25,9 @@ namespace SDX_ADE
 				//キャラクター
 				it->image[0][1]->DrawRotate({ px + Lp(40) , py + Lp(41) }, 2, 0);
 				//名前
-				MFont::BMSize.DrawBold({ px + Lp(42) ,py + Lp(43) }, Color::White, Color::Black, it->名前, false);
+				MFont::MAlias.DrawBold({ px + Lp(42) ,py + Lp(43) }, Color::White, Color::Black, it->名前, false);
 				//LV
-				MFont::BSSize.DrawBold({ px + Lp(44) ,py + Lp(45) }, Color::White, Color::Black, {"Lv " , it->Lv}, true);
+				MFont::SAlias.DrawBold({ px + Lp(44) ,py + Lp(45) }, Color::White, Color::Black, {"Lv " , it->Lv}, true);
 
 				//選択ボタン
 				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(60),py + Lp(62) },2,0);
@@ -69,7 +69,7 @@ namespace SDX_ADE
 				auto it = 親->ギルメン;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				MFont::BMSize.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, { "SkillPoint " , it->スキルポイント }, false);
+				MFont::MAlias.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, { "SkillPoint " , it->スキルポイント }, false);
 			}
 		};
 
@@ -81,7 +81,7 @@ namespace SDX_ADE
 			void Draw派生(double px, double py)
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				MFont::BSSize.DrawBold({ px + Lp(48) ,py + Lp(49) }, Color::White, Color::Black, (isアクティブ枠) ? ("ActiveSkill") : ("PassiveSkill"), false);
+				MFont::SAlias.DrawBold({ px + Lp(48) ,py + Lp(49) }, Color::White, Color::Black, (isアクティブ枠) ? ("ActiveSkill") : ("PassiveSkill"), false);
 			}
 		};
 
@@ -99,7 +99,7 @@ namespace SDX_ADE
 				//スキルアイコン
 				MSystem::DrawSkill(it->image, { px + Lp(64) , py + Lp(65) }, Color(200, 64, 64));
 				//習得に必要なポイントorレベル
-				MFont::BSSize.DrawBold({ px + Lp(66) ,py + Lp(67) }, Color::White, Color::Black, {"Slot ",id+1}, true);
+				MFont::SAlias.DrawBold({ px + Lp(66) ,py + Lp(67) }, Color::White, Color::Black, {"Slot ",id+1}, true);
 			}
 
 			void Drop(double px, double py)
@@ -148,7 +148,7 @@ namespace SDX_ADE
 				//スキルアイコン
 				MSystem::DrawSkill( it->image , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
 				//習得に必要なポイントorレベル
-				if (!is習得) { MFont::BSSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , 1 }, true); }
+				if (!is習得) { MFont::SAlias.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , 1 }, true); }
 			}
 
 			void Click(double px, double py)
@@ -227,7 +227,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
 
-				MFont::BMSize.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color::White, Color::Black, "再教育", false);
+				MFont::MAlias.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color::White, Color::Black, "再教育", false);
 			}
 
 			void Click(double px, double py)
@@ -237,7 +237,7 @@ namespace SDX_ADE
 				確認ウィンドウ.Init();
 				確認ウィンドウ.文章.text = "スキルをリセットする？\n(レベルが５下がる)";
 
-				int res = 確認ウィンドウ.ポップアップ呼び出し();
+				int res = 確認ウィンドウ.Openポップアップ();
 
 				//はい ならレベル下げてスキルリセット
 				if (res == 1)
@@ -267,7 +267,7 @@ namespace SDX_ADE
 				}
 
 
-				MFont::BMSize.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, str, false);
+				MFont::MAlias.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, str, false);
 			}
 
 			void Click(double px, double py)
@@ -303,11 +303,9 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Skilltree;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 			アイコン = IconType::ランク;
 			横幅 = 230;
 			縦幅 = 125;
@@ -326,79 +324,23 @@ namespace SDX_ADE
 
 			int a = 0;
 
-
-			gui_objects.push_back(&編集中ギルメン);
-			gui_objects.push_back(&スキルポイント);
-
 			for (auto& it : NowAスキル)
 			{
-				gui_objects.push_back(&it);
 				it.親 = this;
 				it.id = a;
 				a++;
 			}
-			gui_objects.push_back(&再教育);
-			gui_objects.push_back(&習得);
 
 			for (int a = 0; a < Aスキル.size(); a++)
 			{
 				Aスキル[a].id = a;
 				Aスキル[a].親 = this;
-				gui_objects.push_back(&Aスキル[a]);
 			}
 			for (int a = 0; a < Pスキル.size(); a++)
 			{
 				Pスキル[a].id = a;
 				Pスキル[a].親 = this;
-				gui_objects.push_back(&Pスキル[a]);
 			}
-
-			gui_objects.push_back(&Aスキル枠);
-			gui_objects.push_back(&Pスキル枠);
-
-			SetCSVPage(23);
-
-			GUI_Update();
 		}
-
-		void GUI_Update()
-		{
-			横幅 = Lp(0);
-			縦幅 = Lp(1);
-			最大縦 = 縦幅;
-			縦内部幅 = 縦幅;
-
-			編集中ギルメン.位置 = {Lp(2),Lp(3),Lp(4),Lp(5) };
-			スキルポイント.位置 = { Lp(6),Lp(7),Lp(8),Lp(9) };
-			Aスキル枠.位置 = { Lp(10),Lp(11),Lp(13),Lp(14) };
-			Pスキル枠.位置 = { Lp(10),Lp(12),Lp(13),Lp(15) };
-
-
-			for (int a = 0; a < CV::最大Aスキル数; a++)
-			{
-				NowAスキル[a].位置 = { Lp(10) + Lp(16) + Lp(36) * a , Lp(11) + Lp(18) ,Lp(35),Lp(20) };
-			}
-
-			for (int a = 0; a < Aスキル.size(); a++)
-			{
-				Aスキル[a].位置 = { Lp(10) + Lp(21) + Lp(22)*a,Lp(11) + Lp(23),Lp(19),Lp(20) };
-			}
-			for (int a = 0; a < CV::最大キースキル習得リスト; a++)
-			{
-				Pスキル[a].位置 = { Lp(10) + Lp(24) + Lp(38) * a, Lp(12) + Lp(34) ,Lp(37),Lp(20) };
-			}
-			for (int a = 0; a < Pスキル.size() - CV::最大キースキル習得リスト; a++)
-			{
-				Pスキル[a+ CV::最大キースキル習得リスト].位置 = { Lp(10) + Lp(24) + Lp(26)* (a % Lp(27)) ,Lp(12) + Lp(25) + Lp(26) * (a / Lp(27)) ,Lp(19),Lp(20) };
-			}
-
-
-			再教育.位置 = { Lp(28),Lp(29),Lp(30),Lp(31) };
-			習得.位置 = { Lp(32),Lp(29),Lp(33),Lp(31) };
-
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
-		}
-
 	};
 }

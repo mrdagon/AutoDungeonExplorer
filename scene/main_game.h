@@ -14,7 +14,7 @@ namespace SDX_ADE
 
 	public:
 		//各種変数
-		std::vector<WindowBox*> windows;
+		std::vector<UIWindow*> windows;
 
 		W_ToolBar ToolBar;
 
@@ -151,14 +151,16 @@ namespace SDX_ADE
 				Game::is停止 = !Game::is停止;
 			}
 
+			UIObject::now_help = nullptr;
+
 			ToolBar.操作();
 
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{
-				if (windows[a]->操作() == true)
+				if (windows[a]->Input() == true)
 				{
-					//操作したのは最後に持っていく
-					if (windows[a]->前面Check())
+					//操作したのは一番最後にして、手前に表示されるようにする
+					if (windows[a]->Check最前面へ移動())
 					{
 						windows.push_back(windows[a]);
 						windows.erase(windows.begin() + a);
@@ -222,27 +224,11 @@ namespace SDX_ADE
 
 			ToolBar.Draw();
 
-			bool isH = ToolBar.CheckInfo();
-			if (Input::mouse.y < WindowBox::ツールバー高さ)
-			{
-				isH = true;
-			}
+			UIObject::now_help = nullptr;
 
-			for (int a = (int)windows.size() - 1; a >= 0; a--)
+			if (UIObject::now_help != nullptr && Game::isヘルプ == true)
 			{
-				if (windows[a]->is表示 == false) { continue; };
-				if (windows[a]->CheckInfo())
-				{
-					isH = true;
-					break;
-				}
-			}
-
-			if (isH == false && Game::isヘルプ == true)
-			{
-				static GUI_Help no_help;
-				no_help.SetHelp("",40);
-				no_help.Info();
+				UIObject::now_help->Draw();
 			}
 
 			W_Drag::Draw();
@@ -381,7 +367,7 @@ namespace SDX_ADE
 				return false;
 			}
 
-			std::vector<WindowBox*> wins;
+			std::vector<UIWindow*> wins;
 
 			wins.push_back(&Win_Item);
 			wins.push_back(&Win_Dungeon);

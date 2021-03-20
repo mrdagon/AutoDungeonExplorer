@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*アイテムウィンドウ*/
-	class W_Item: public WindowBox
+	class W_Item: public UIWindow
 	{
 	private:
 		class GUI_Item : public GUI_Object
@@ -27,7 +27,7 @@ namespace SDX_ADE
 				//アイコン
 				//MIcon::アイテム[Item::data[id].見た目].Draw({ px + Lp(11),py+Lp(12) });
 				//在庫数
-				MFont::BMSize.DrawBold({ px + Lp(13) ,py+Lp(14) }, Color::White, Color::Black, { "" , zaiko }, true);
+				MFont::MAlias.DrawBold({ px + Lp(13) ,py+Lp(14) }, Color::White, Color::Black, { "" , zaiko }, true);
 				//ランク表示
 				//MFont::BSSize.DrawBold({ px + Lp(17) ,py + Lp(18) }, Color::White, Color::Black, { "Lv" , Item::data[id].Lv }, true);
 				//new表示
@@ -59,12 +59,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			タブ.clear();
 			種類 = WindowType::Item;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::装備;
 			横幅 = 371;
@@ -94,44 +92,15 @@ namespace SDX_ADE
 			for (auto&it : タブ)
 			{
 				it.アイコンオフセット = 5;
-				gui_objects.push_back(&it);
 			}
 
 			for (auto&it : アイテム)
 			{
-				gui_objects.push_back(&it);			
 			}
-
-			gui_objects.push_back(&枠);
-
-
-			SetCSVPage(7);
 		}
 
 		void GUI_Update()
 		{
-			for (int a = 0; a < (int)タブ.size() ; a++)
-			{
-				if (a == 0)
-				{
-					タブ[a].位置 = { Lp(0) ,Lp(1) ,Lp(2) + 3,Lp(3) };
-				} else {
-					タブ[a].位置 = { Lp(0) + Lp(4) * a + 3,Lp(1) ,Lp(2) ,Lp(3) };
-				}
-			}
-
-			枠.位置 = { Lp(0), Lp(1) + 35, 333, 700 };
-			枠.枠No = 12;
-
-			int cnt = 0;
-			const int per_line = 8;
-			for (auto&it : アイテム)
-			{
-				it.位置 = { Lp(5) + Lp(9) *(cnt%per_line),Lp(6) + Lp(10) * (cnt /per_line),Lp(7),Lp(8) };
-				cnt++;
-			}
-
-			Tub_Change();
 		}
 
 		void Tub_Change()
@@ -156,7 +125,7 @@ namespace SDX_ADE
 			枠.Draw();
 			
 			//スクロールする
-			描画範囲(true);
+			Reset描画範囲(true);
 			for (int a=0;a<装備数;a++)
 			{
 				アイテム[a].Draw();

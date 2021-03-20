@@ -7,7 +7,7 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 	/*素材とアイテムウィンドウ*/
-	class W_Material: public WindowBox
+	class W_Material: public UIWindow
 	{
 	private:
 		/*素材と数とランク*/
@@ -33,11 +33,11 @@ namespace SDX_ADE
 				素材種->image->DrawRotate({ px + Lp(6), py + Lp(7) }, 1, 0);
 
 				//Lv
-				MFont::BSSize.DrawBold({ px + Lp(10) ,py + Lp(11) }, Color::White, Color::Black, { "Lv" , 素材種->ランク }, true);
+				MFont::SAlias.DrawBold({ px + Lp(10) ,py + Lp(11) }, Color::White, Color::Black, { "Lv" , 素材種->ランク }, true);
 
 				//所持数
-				MFont::BSSize.DrawBold({ px + Lp(12) ,py + Lp(13) }, Color::White, Color::Black, "x", true);
-				MFont::BMSize.DrawBold({ px + Lp(14)  ,py + Lp(15) }, Color::White, Color::Black, Guild::P->素材数[素材種->ID],true);
+				MFont::SAlias.DrawBold({ px + Lp(12) ,py + Lp(13) }, Color::White, Color::Black, "x", true);
+				MFont::MAlias.DrawBold({ px + Lp(14)  ,py + Lp(15) }, Color::White, Color::Black, Guild::P->素材数[素材種->ID],true);
 			}
 
 			void Info派生(Point 座標) override
@@ -53,11 +53,9 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Material;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::素材;
 			横幅 = 250;
@@ -69,44 +67,7 @@ namespace SDX_ADE
 
 			for (auto& it : GUI_素材数)
 			{
-				gui_objects.push_back(&it);
 			}
-
-			SetCSVPage(3);
-
-			GUI_Update();
-		}
-
-
-		void GUI_Update()
-		{
-			int xx = -Lp(1);
-			int yy = -Lp(3);
-			int cnt = 0;
-
-			縦内部幅 = 0;
-
-			for (int a = 0 ; a < CV::素材系統; a++)
-			{
-				xx += Lp(1);
-
-				if (a % 4 == 0)
-				{
-					yy += Lp(3);
-					xx = 0;
-				}
-
-				if (Guild::P->is素材発見[a] == false) 
-				{ 
-					GUI_素材数[a].is表示 = false;
-					continue; 				
-				}
-				GUI_素材数[a].Set({ Lp(0) + xx , Lp(2) + yy, Lp(4), Lp(5) }, a );
-				GUI_素材数[a].is表示 = true;
-			}
-
-			縦内部幅 = std::max((int)縦内部幅, yy+20);
-			yy = 0;
 		}
 	};
 }

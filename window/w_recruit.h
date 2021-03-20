@@ -11,7 +11,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*求人ウィンドウ*/
-	class W_Recruit: public WindowBox
+	class W_Recruit: public UIWindow
 	{
 	private:	
 		class GUI_名前変更 :public GUI_Object
@@ -41,14 +41,14 @@ namespace SDX_ADE
 					
 					str = 親->conv.to_bytes(wstr);
 
-					int W変換中文字 = MFont::BMSize.GetDrawStringWidth(System::textComposition);
+					int W変換中文字 = MFont::MAlias.GetDrawStringWidth(System::textComposition);
 					auto sstr = 親->conv.to_bytes(親->入力中文字.substr(0, 親->挿入位置));
-					int X変換中文字 = MFont::BMSize.GetDrawStringWidth(sstr.c_str());
+					int X変換中文字 = MFont::MAlias.GetDrawStringWidth(sstr.c_str());
 
 					Drawing::Rect({ px + Lp(34) + X変換中文字 , py + Lp(35) , W変換中文字 , 20 }, Color::Red);
-					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { str.c_str() });
+					MFont::MAlias.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { str.c_str() });
 				}else{
-					MFont::BMSize.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { Guild::P->求人名前 });
+					MFont::MAlias.DrawBold({ px + Lp(34),py + Lp(35) }, Color::White, Color::Black, { Guild::P->求人名前 });
 				}
 
 				//変更ボタンのアイコン
@@ -92,7 +92,7 @@ namespace SDX_ADE
 				//職業見た目
 				job->ちびimage[0][1]->DrawRotate({ px + Lp(38) ,py + Lp(39) }, 2, 0);
 				//職業名表示、職業番号表示、職業説明
-				MFont::BMSize.DrawBold({ px + Lp(40),py + Lp(41) }, Color::White, Color::Black, { job->名前 });
+				MFont::MAlias.DrawBold({ px + Lp(40),py + Lp(41) }, Color::White, Color::Black, { job->名前 });
 			}
 
 			void Click(double px, double py)
@@ -112,17 +112,17 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 
 				//ジョブ名
-				MFont::BMSize.DrawBoldRotate({ px + Lp(42) ,py + Lp(43) }, 1, 0, Color::White, Color::Black, job->名前, false);
+				MFont::MAlias.DrawBoldRotate({ px + Lp(42) ,py + Lp(43) }, 1, 0, Color::White, Color::Black, job->名前, false);
 				//ジョブ装備種
 				//MIcon::アイテム[job->初期装備[0]->見た目].DrawRotate({px + Lp(44) ,py + Lp(45) },1,0);
 
 				//推奨隊列
-				MFont::BMSize.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, job->概説 , false);
+				MFont::MAlias.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, job->概説 , false);
 				//区切り線
 				Drawing::Line({ px + Lp(48), py + +Lp(50) }, { px + Lp(49), py + +Lp(50) }, Color::White, 1);
 
 				//ジョブ説明
-				MFont::BMSize.DrawBold({ px + Lp(51),py + Lp(52) }, Color::White, Color::Black, { job->説明 });
+				MFont::MAlias.DrawBold({ px + Lp(51),py + Lp(52) }, Color::White, Color::Black, { job->説明 });
 
 				//立ち絵
 				MJob::立ち絵[job->ID].DrawRotate({ px + Lp(56),py + Lp(57) }, 2, 0);
@@ -139,7 +139,7 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 0 , 1);
 
 				//採用の文字
-				MFont::BMSize.DrawBoldRotate({ px + Lp(53),py + Lp(54) }, 1, 0, Color::White, Color::Black, { TX::Recruit_採用 });
+				MFont::MAlias.DrawBoldRotate({ px + Lp(53),py + Lp(54) }, 1, 0, Color::White, Color::Black, { TX::Recruit_採用 });
 			}
 
 			void Click(double px, double py)
@@ -201,11 +201,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Recruit;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
+
 			アイコン = IconType::求人;
 			横幅 = 280;
 			縦幅 = 125;
@@ -219,46 +218,18 @@ namespace SDX_ADE
 			ランダム.親 = this;
 			採用.親 = this;
 
-			gui_objects.push_back(&名前変更);
-			gui_objects.push_back(&採用);
-			gui_objects.push_back(&ランダム);
-
 			職業.reserve((int)ExplorerClass::data.size());
 			for (int a = 0; a < (int)ExplorerClass::data.size(); a++)
 			{
 				職業.emplace_back(a);
-				gui_objects.push_back(&職業[a]);
 			}
 
-			gui_objects.push_back(&職業枠);
-			gui_objects.push_back(&職業説明枠);
 			職業枠.text = "Job";
-
-			SetCSVPage(6);
 		}
 
 		void GUI_Update()
 		{
-			横幅 = Lp(0);
-			縦幅 = Lp(1);
-			最小縦 = Lp(1);
-			最大縦 = Lp(1);
-			縦内部幅 = Lp(1);
 
-			名前変更.位置 = { Lp(2), Lp(3) , Lp(4) , Lp(5) };
-			採用.位置 = { Lp(6), Lp(7) , Lp(8) , Lp(9) };
-			ランダム.位置 = { Lp(10), Lp(11) , Lp(12) , Lp(12) };
-			職業枠.位置 = { Lp(13), Lp(14) , Lp(15) , Lp(16) };
-
-			for (int a = 0; a < (int)職業.size(); a++)
-			{
-				職業[a].位置 = { Lp(17), Lp(18) + Lp(19)*a , Lp(20) , Lp(21) };
-			}
-
-			職業説明枠.位置 = { Lp(22), Lp(23) , Lp(24) , Lp(25) };
-
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 		}
 
 		void 名前確定()

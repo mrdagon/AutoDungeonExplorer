@@ -5,7 +5,7 @@
 #pragma once
 namespace SDX_ADE
 {
-	//シナリオの仕様変更で多分廃止
+	//シナリオの仕様変更で廃止予定
 
 	using namespace SDX;
 	//テキストウィンドウ１つと、顔と感情吹き出しで会話シーン作る
@@ -49,7 +49,7 @@ namespace SDX_ADE
 
 				//名前
 				MSystem::DrawWindow({ 名前枠.x,名前枠.y }, (int)名前枠.GetW(), (int)名前枠.GetH(), 0, 1);
-				MFont::BSSize.DrawBoldRotate({ 名前枠.x + 名前枠.GetW() / 2,名前枠.y + 名前枠.GetH() / 2 }, 1, 0, Color::White, Color::Black, { 名前 }, true);
+				MFont::SAlias.DrawBoldRotate({ 名前枠.x + 名前枠.GetW() / 2,名前枠.y + 名前枠.GetH() / 2 }, 1, 0, Color::White, Color::Black, { 名前 }, true);
 
 			}
 		};
@@ -91,7 +91,7 @@ namespace SDX_ADE
 			{
 				//枠と文章
 				MSystem::DrawWindow({ 座標.x,座標.y }, (int)座標.GetW(), (int)座標.GetH(), 1, 1);
-				MFont::BLSize.DrawBoldRotate({ 座標.x + CSV::I[25][23],座標.y + CSV::I[25][24] }, 1, 0, Color::White, Color::Black, { テキスト }, true);
+				MFont::LAlias.DrawBoldRotate({ 座標.x + CSV::I[25][23],座標.y + CSV::I[25][24] }, 1, 0, Color::White, Color::Black, { テキスト }, true);
 			}
 
 		};
@@ -106,7 +106,7 @@ namespace SDX_ADE
 			void Draw()
 			{
 				MSystem::DrawWindow({ 座標.x,座標.y }, (int)座標.GetW(), (int)座標.GetH(), 0 , 1);
-				MFont::BLSize.DrawBoldRotate({ 座標.x + 座標.GetW() / 2,座標.y + 座標.GetH() /2 },1,0, Color::White, Color::Black, { テキスト }, true);
+				MFont::LAlias.DrawBoldRotate({ 座標.x + 座標.GetW() / 2,座標.y + 座標.GetH() /2 },1,0, Color::White, Color::Black, { テキスト }, true);
 			}
 		};
 

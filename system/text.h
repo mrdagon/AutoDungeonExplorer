@@ -19,7 +19,7 @@ namespace SDX_ADE
 		EnumArray<std::string, WindowType> Window_略記;
 		EnumArray<std::string, WindowType> Window_ヘルプ;
 
-		std::string タイトル = "だいじぇすと　ダンジョン　 0.1 β";
+		std::string タイトル = "だいじぇすと　ダンジョン　 0.2β";
 		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
 
 		////Save data

@@ -3,8 +3,10 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+#include "ui_help.h"
 #include "ui_layout.h"
 #include "ui_object.h"
+#include "ui_window.h"
 
 //windowはWindow
 //helpはヘルプ
@@ -14,7 +16,6 @@
 #include "w_dragdrop.h"
 #include "w_guihelp.h"
 #include "w_guiobject.h"
-#include "w_windowbox.h"//継承元
 #include "w_popup.h"
 
 //ゲーム画面用ウィンドウ
@@ -29,7 +30,6 @@
 #include "w_management.h"
 #include "w_quest.h"
 #include "w_recruit.h"
-#include "w_windowbox.h"
 #include "w_party.h"
 #include "w_config.h"
 

@@ -9,6 +9,7 @@ namespace SDX_ADE
 
 	enum class UIPage
 	{
+		基本,
 		タイトル,
 		/*
 		コンフィグ,
@@ -40,14 +41,15 @@ namespace SDX_ADE
 		COUNT
 	};
 
-	//ページ毎のオブジェクトの列挙型
-	enum class UIタイトル
+	//ページ毎のオブジェクトの列挙型、共通で使うパラメータ	
+	enum class UI基本
 	{
 		題字,
 		COUNT,
-		PAGE = (int)UIPage::タイトル
+		PAGE = (int)UIPage::基本
 	};
-	
+
+
 	class UILayout
 	{
 	private:
@@ -89,7 +91,7 @@ namespace SDX_ADE
 			h(h),
 			並べx(並べx),
 			並べy(並べy),
-			改行値(改行値),
+			改行値(std::max(1,改行値)),
 			画像ID(画像ID)
 		{}
 
@@ -100,16 +102,15 @@ namespace SDX_ADE
 		}
 
 		template< class TUIEnum>
-		static UILayout& GetData( TUIEnum key )
+		static UILayout& Data( TUIEnum key )
 		{
 			int no = (int)key;
 
 			//デバッグ時のみサイズ足りてなかったら拡大する
-			if (data[(int)TUIEnum::PAGE].size() < no)
+			if (data[(int)TUIEnum::PAGE].size() <= no)
 			{
 				data[(int)TUIEnum::PAGE].resize(no);
 			}
-
 
 			return data[(int)TUIEnum::PAGE][no];
 		}
@@ -121,11 +122,13 @@ namespace SDX_ADE
 			auto csv = file.GetCsvToString2();
 			file.Close();
 
+			now_page = std::stoi(csv[0][0]);
+
 			//全てのページを読み込み
 			for (int a = 0; a < (int)UIPage::COUNT; a++)
 			{
-				data_name[a] = csv[a][0];
-				now_index[a] = std::stoi(csv[a][1]);
+				data_name[a] = csv[a+1][0];
+				now_index[a] = std::stoi(csv[a+1][1]);
 
 				std::string file_name = "file/layout/";
 				file_name += data_name[a];
@@ -159,7 +162,9 @@ namespace SDX_ADE
 		{
 			//ページ名と選択index
 			File file("file/layout/index.csv", FileMode::Write, false);
-		
+
+			file.AddLine({ now_page , ",now_page" ,  });
+
 			//各ページの情報
 			for (int a = 0; a < (int)UIPage::COUNT; a++)
 			{
@@ -194,14 +199,14 @@ namespace SDX_ADE
 		{
 			//入力中ラベル名
 			std::string str = "ラベル：";
-			MFont::MSize.DrawBold({ 10,5 }, Color::White, Color::Black, str + System::inputText + System::textComposition);
+			MFont::MDot.DrawBold({ 10,5 }, Color::White, Color::Black, str + System::inputText + System::textComposition);
 
 			//現在のページ番号と名前
-			MFont::MSize.DrawBold({ 10,30 }, Color::White, Color::Black, { "現在ページ：" ,  now_page , ":" , data_name[now_page] , " : Index " , now_index[now_page] , "/" , data[now_page].size() -1 });
+			MFont::MDot.DrawBold({ 10,30 }, Color::White, Color::Black, { "現在ページ：" ,  now_page , ":" , data_name[now_page] , " : Index " , now_index[now_page] , "/" , data[now_page].size() -1 });
 			
 			//選択中のアイテムのパラメータ7種
 			auto& it = data[now_page][now_index[now_page]];
-			MFont::MSize.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),画像ID(" , it.画像ID , ")" });
+			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),画像ID(" , it.画像ID , ")" });
 
 			int now_page_max = data[now_page].size();
 			int p_no = now_index[now_page]/30;
@@ -216,9 +221,9 @@ namespace SDX_ADE
 				{
 					color = Color::Red;
 				}
-				MFont::MSize.DrawBold({ 10 , a * 21 + 85 }, color , Color::Black, { a + p_no * 30 , ":" });
+				MFont::MDot.DrawBold({ 10 , a * 21 + 85 }, color , Color::Black, { a + p_no * 30 , ":" });
 
-				MFont::MSize.DrawBold({ 60 , a * 21 + 85 }, Color::White, Color::Black, data[now_page][a + p_no * 30].登録名 );
+				MFont::MDot.DrawBold({ 60 , a * 21 + 85 }, color , Color::Black, data[now_page][a + p_no * 30].登録名 );
 			}
 
 
@@ -281,6 +286,7 @@ namespace SDX_ADE
 				{
 					it.y++;
 				}
+				return;
 			}
 			if (Input::key.Up.IsPush(連打st, 連打rp))
 			{
@@ -297,6 +303,7 @@ namespace SDX_ADE
 				{
 					it.y--;
 				}
+				return;
 			}
 
 			if (Input::key.Left.IsPush(連打st, 連打rp))

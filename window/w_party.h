@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*パーティウィンドウ*/
-	class W_Party: public WindowBox
+	class W_Party: public UIWindow
 	{
 	private:
 
@@ -43,10 +43,10 @@ namespace SDX_ADE
 
 				//探索先アイコン、レベル
 				dun->image->Draw({ px + Lp(12),py + Lp(13) });
-				MFont::BSSize.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->雑魚Lv });
+				MFont::SAlias.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->雑魚Lv });
 				//探索度ゲージと探索率
 				MSystem::DrawBar({ px + Lp(18) , py + Lp(19) }, Lp(20), Lp(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
-				MFont::BSSize.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
+				MFont::SAlias.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
 				//ボス状態
 				MIcon::UI[IconType::ボス].DrawRotate({ px + Lp(22),py + Lp(23) }, 1, 0);
 
@@ -64,7 +64,7 @@ namespace SDX_ADE
 					sボス状態 = TX::Dungeon_捜索;
 				}
 
-				MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(23) - 9 }, Color::White, Color::Black, sボス状態, true);
+				MFont::SAlias.DrawBold({ px + Lp(22) + 50 ,py + Lp(23) - 9 }, Color::White, Color::Black, sボス状態, true);
 				//地図状態
 				MIcon::UI[IconType::地図].DrawRotate({ px + Lp(22),py + Lp(24) }, 1, 0);
 				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
@@ -87,7 +87,7 @@ namespace SDX_ADE
 				std::string siji;
 				siji = TX::Party_ボス回避;
 
-				MFont::BSSize.DrawBold({ px + Lp(29) ,py + Lp(30) }, Color::White, Color::Black, siji, true);
+				MFont::SAlias.DrawBold({ px + Lp(29) ,py + Lp(30) }, Color::White, Color::Black, siji, true);
 			}
 
 			void Click(double px, double py)
@@ -148,7 +148,7 @@ namespace SDX_ADE
 					SetHelp( TX::Party_探索方針);
 					Info座標補正(座標);
 					MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
-					MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+					MFont::MDot.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 				}
 				else 
 				{
@@ -183,7 +183,7 @@ namespace SDX_ADE
 				//アイコン、Lv、Expゲージ
 				ギルメン->image[0][1]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
 				MSystem::DrawBar({ px + Lp(39),py + Lp(40) }, Lp(41), Lp(42), ギルメン->経験値 / ギルメン->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);
-				MFont::BSSize.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
+				MFont::SAlias.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
 
 				//装備品 x 3と更新ボタン、自動更新設定、装備ランク
 				MSystem::DrawWindow({ px + Lp(43) ,py + Lp(46) }, Lp(48), Lp(49), 0);
@@ -193,8 +193,8 @@ namespace SDX_ADE
 				//MIcon::アイテム[ギルメン->装備[1]->見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
 				//MIcon::アイテム[ギルメン->装備[2]->見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
 
-				MFont::BSSize.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->ランク });
-				MFont::BSSize.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->ランク });
+				MFont::SAlias.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->ランク });
+				MFont::SAlias.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->ランク });
 
 				//装備更新ボタン
 
@@ -204,7 +204,7 @@ namespace SDX_ADE
 					//MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル未予約);
 				//} else {
 					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 3, -1);
-					MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル予約);
+					MFont::SAlias.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル予約);
 				//}
 
 			}
@@ -244,7 +244,7 @@ namespace SDX_ADE
 					スキルツリー->ギルメン = ギルメン;
 					スキルツリー->配置id = 並びID;
 					スキルツリー->Init();
-					スキルツリー->ポップアップ呼び出し();
+					スキルツリー->Openポップアップ();
 					所属->基礎ステ再計算();
 
 					return;
@@ -603,13 +603,13 @@ namespace SDX_ADE
 					switch (it.種類)
 					{
 						case TextEffect::TextType::ダメージ:
-							MFont::BMSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.ダメージ色, Color::Black, it.ダメージ量);
+							MFont::MAlias.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.ダメージ色, Color::Black, it.ダメージ量);
 							break;
 						case TextEffect::TextType::回復:
-							MFont::BMSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.回復色, Color::Black, it.ダメージ量);
+							MFont::MAlias.DrawBoldRotate({ buf_x,buf_y }, 1, 0, it.回復色, Color::Black, it.ダメージ量);
 							break;
 						case TextEffect::TextType::回避:
-							MFont::BSSize.DrawBoldRotate({ buf_x,buf_y }, 1, 0, Color::White, Color::Black, "miss");
+							MFont::SAlias.DrawBoldRotate({ buf_x,buf_y }, 1, 0, Color::White, Color::Black, "miss");
 							break;
 					}
 
@@ -679,9 +679,9 @@ namespace SDX_ADE
 					//LvUPとスキル習得の文字
 					if (it->isスキル習得演出)
 					{
-						MFont::BSSize.DrawBold({ px + Lp(27) + Lp(21) * a  , py + Lp(28) }, Color::White, Color::Black, "New Skill");
+						MFont::SAlias.DrawBold({ px + Lp(27) + Lp(21) * a  , py + Lp(28) }, Color::White, Color::Black, "New Skill");
 					} else if (it->isレベルアップ演出) {
-						MFont::BSSize.DrawBold({ px + Lp(27) + Lp(21) * a  , py + Lp(28) }, Color::White, Color::Black, "  Lv UP");
+						MFont::SAlias.DrawBold({ px + Lp(27) + Lp(21) * a  , py + Lp(28) }, Color::White, Color::Black, "  Lv UP");
 					}
 				}
 				int cnt = 0;
@@ -711,10 +711,10 @@ namespace SDX_ADE
 
 					it.image->DrawRotate({ px + itemX(cnt) ,py + itemY(cnt) }, 1, 0);
 					//Lv表示
-					MFont::BSSize.DrawBold({ px + itemX(cnt) + Lp(34) ,py + itemY(cnt) + Lp(35) }, Color::White, Color::Black, { "Lv " , it.ランク });
+					MFont::SAlias.DrawBold({ px + itemX(cnt) + Lp(34) ,py + itemY(cnt) + Lp(35) }, Color::White, Color::Black, { "Lv " , it.ランク });
 
 					//素材数表示
-					MFont::BSSize.DrawBold({ px + itemX(cnt) + Lp(36) ,py + itemY(cnt) + Lp(37) }, Color::White, Color::Black, { "x", 所属->獲得素材[a] });
+					MFont::SAlias.DrawBold({ px + itemX(cnt) + Lp(36) ,py + itemY(cnt) + Lp(37) }, Color::White, Color::Black, { "x", 所属->獲得素材[a] });
 					cnt++;					
 				}
 			}
@@ -752,7 +752,7 @@ namespace SDX_ADE
 				SetHelp("ダンジョンドラッグ＆ドロップで探索先変更\nギルメンドラッグ＆ドロップで編成変更\n方針ボタンで探索方針変更");
 				Info座標補正(座標);
 				MSystem::DrawWindow({ 座標.x , 座標.y }, ヘルプ横幅, ヘルプ縦幅, 4);
-				MFont::MSize.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
+				MFont::MDot.DrawBold({ 座標.x + 10,座標.y + 10 }, Color::White, Color::Black, ヘルプメッセージ);
 			}
 		};
 
@@ -793,7 +793,7 @@ namespace SDX_ADE
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
 
 				//アイコン、Lv
-				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
+				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
 				ギルメン->image[0][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
 			}
 
@@ -882,13 +882,13 @@ namespace SDX_ADE
 
 				MIcon::UI[IconType::求人].DrawRotate({ px + 位置.GetW() / 2,py + 位置.GetH() / 2 }, 2, 0);
 
-				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
+				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
 			}
 
 			void Click(double px, double py)
 			{
 				//ギルメン掴む
-				int result = 求人ウィンドウ.ポップアップ呼び出し();
+				int result = 求人ウィンドウ.Openポップアップ();
 			}
 		};
 
@@ -911,7 +911,7 @@ namespace SDX_ADE
 
 				MIcon::UI[IconType::ゴミ箱].DrawRotate({ px + 位置.GetW()/2,py + 位置.GetH() /2 } , 2, 0);
 
-				MFont::BSSize.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
+				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
 			}
 
 			void Drop(double px, double py)
@@ -919,7 +919,7 @@ namespace SDX_ADE
 				if (W_Drag::探索メン == nullptr) { return; }
 				W_Drag::探索メン = nullptr;
 
-				int result = 確認ウィンドウ.ポップアップ呼び出し();
+				int result = 確認ウィンドウ.Openポップアップ();
 
 				if (result == 1)
 				{
@@ -942,11 +942,9 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Party;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::編成;
 			横幅 = 550;
@@ -956,13 +954,10 @@ namespace SDX_ADE
 			縦内部幅 = 800;//120 x ランク数
 			スクロール位置 = 0;
 
-			csv_page = 8;
-
 			スキルツリー.Init();
 
 			for (int a = 0; a < Guild::P->最大パーティ数 * CV::パーティ人数; a++)
 			{
-				gui_objects.push_back(&パーティメンバー[a]);
 				パーティメンバー[a].親ウィンドウ = this;
 				パーティメンバー[a].所属 = &Guild::P->探索パーティ[a/5];
 				パーティメンバー[a].並びID = a;
@@ -972,90 +967,27 @@ namespace SDX_ADE
 
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
 			{
-				gui_objects.push_back(&探索先[a]);
 				探索先[a].csv_page = 8;
 			}
 
 			//パーティだけCSVページ分ける
 			for (int a = 0; a < Guild::P->最大パーティ数; a++)
 			{
-				gui_objects.push_back(&パーティ[a]);
 				パーティ[a].csv_page = 22;
 			}
 
 			for (int a = 0; a < CV::最大控え人数; a++)
 			{
-				gui_objects.push_back(&控え[a]);
 				控え[a].ID = a;
 				控え[a].csv_page = 8;
 			}
-			gui_objects.push_back(&除名);
+
 			除名.csv_page = 8;
 
-			gui_objects.push_back(&求人);
 			求人.csv_page = 8;
 
-			gui_objects.push_back(&控え枠);
 			控え枠.csv_page = 8;
-
-			GUI_Update();
 		}
 
-		void GUI_Update()
-		{
-			//オブジェクト初期化
-			int cnt = 0;
-
-			for (int a = 0; a < CV::上限パーティ数; a++)
-			{
-				パーティ[a].位置 = { Lp(0) , Lp(1) + (Lp(3) + Lp(4)) * a , Lp(2) , Lp(3) };
-				探索先[a].位置 = { Lp(10) , Lp(6) + (Lp(3) + Lp(4)) * a , Lp(11) , Lp(8) };
-
-				パーティ[a].Init(a, this);
-				探索先[a].Init(a, this);
-
-				for (int b = 0; b < CV::パーティ人数; b++)
-				{
-					int no = a * CV::パーティ人数 + b;
-					パーティメンバー[no].ギルメン = Guild::P->探索パーティ[a].メンバー[b];
-					パーティメンバー[no].位置 = { Lp(5) - (Lp(7) + Lp(9)) * b , Lp(6) + (Lp(3) + Lp(4)) * a , Lp(7) , Lp(8) };
-
-					if (a < Guild::P->最大パーティ数 && パーティメンバー[no].所属->探索状態 == ExplorerType::編成中)
-					{
-						パーティメンバー[no].is表示 = true;
-					}
-					else {
-						パーティメンバー[no].is表示 = false;
-					}
-				}
-			}
-
-			for (int a = 0; a < CV::最大控え人数; a++)
-			{
-				if (a < Guild::P->ギルメン控え.size())
-				{
-					控え[a].ギルメン = Guild::P->ギルメン控え[a];
-					控え[a].位置 = { Lp(77) + Lp(81) * (a % Lp(83) ) , Lp(82) * (a / Lp(83)) + Lp(78) + Guild::P->最大パーティ数 * Lp(62) , Lp(79) , Lp(80) };
-					控え[a].is表示 = true;
-				} else {
-					控え[a].ギルメン = nullptr;
-					控え[a].is表示 = false;
-				}
-			}
-			if (Guild::P->ギルメン控え.size() < CV::最大控え人数)
-			{
-				const int n = (int)Guild::P->ギルメン控え.size();
-				求人.位置 = { Lp(77) + Lp(81) * (n % Lp(83)) , Lp(82) * (n / Lp(83)) + Lp(78) + Guild::P->最大パーティ数 * Lp(62) , Lp(79) , Lp(80) };
-				求人.is表示 = true;
-			} else {
-				求人.is表示 = false;
-			}
-
-
-			const int n = CV::最大控え人数;
-			除名.位置 = { Lp(77) + Lp(81) * (n % Lp(83)) , Lp(82) * (n / Lp(83)) + Lp(78) + Guild::P->最大パーティ数 * Lp(62) , Lp(79) , Lp(80) };
-
-			控え枠.位置 = { Lp(0) , Lp(61) + Guild::P->最大パーティ数 * Lp(62) , Lp(2) , Lp(63) };
-		}
 	};
 }

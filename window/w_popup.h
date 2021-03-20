@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*汎用２択ポップアップウィンドウ用*/
-	class W_Popup : public WindowBox
+	class W_Popup : public UIWindow
 	{
 	private:
 		class GUI_文字 : public GUI_Object
@@ -21,7 +21,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12, 0);
 
-				MFont::BMSize.DrawBold({ px + Lp(9) ,py + Lp(10) }, Color::White, Color::Black, { text }, true);
+				MFont::MAlias.DrawBold({ px + Lp(9) ,py + Lp(10) }, Color::White, Color::Black, { text }, true);
 			}
 		};
 
@@ -34,16 +34,16 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				int dif_x = MFont::BMSize.GetDrawStringWidth(文字) / 2;
+				int dif_x = MFont::MAlias.GetDrawStringWidth(文字) / 2;
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,1);
-				MFont::BMSize.DrawBold({ px + Lp(11) - dif_x ,py + Lp(12) }, Color::White, Color::Black, 文字, false);
+				MFont::MAlias.DrawBold({ px + Lp(11) - dif_x ,py + Lp(12) }, Color::White, Color::Black, 文字, false);
 			}
 
 			void Click(double px, double py)
 			{
 				base->is表示 = false;
-				base->ポップアップ戻り値 = id;
+				base->ポップアップリザルト = id;
 			}
 
 		};
@@ -57,11 +57,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Config;
 
-			名前 = "確認";
-			略記 = "確認";
+			タイトル名 = "確認";
+			省略名 = "確認";
 			アイコン = IconType::情報;
 			横幅 = 280;
 			縦幅 = 170;
@@ -84,21 +83,12 @@ namespace SDX_ADE
 			確定.id = 1;
 			キャンセル.id = 0;
 
-			gui_objects.push_back(&文章);
-			gui_objects.push_back(&確定);
-			gui_objects.push_back(&キャンセル);
-
-			SetCSVPage(20);
 		}
 
 		void GUI_Update()
 		{
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
-
-			文章.位置 = { Lp(0),Lp(1) ,Lp(2),Lp(3) };
-			確定.位置 = { Lp(4),Lp(6),Lp(7),Lp(8) };
-			キャンセル.位置 = { Lp(5),Lp(6) , Lp(7),Lp(8) };
 		}
 	};
 }

@@ -8,7 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*依頼ウィンドウ*/
-	class W_Quest : public WindowBox
+	class W_Quest : public UIWindow
 	{
 	private:
 		class GUI_依頼 : public GUI_Object
@@ -24,10 +24,10 @@ namespace SDX_ADE
 
 				//Main or Subをアイコン？文字？
 
-				MFont::BSSize.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Quest" });
+				MFont::SAlias.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Quest" });
 
 				//クエスト名
-				MFont::BLSize.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
+				MFont::LAlias.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
 
 				//達成条件と達成率＿complete表示
 				//MFont::BMSize.DrawBold({ px + Lp(7) ,py + Lp(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
@@ -49,12 +49,10 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			依頼.clear();
 			種類 = WindowType::Quest;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::依頼;
 			横幅 = 330;
@@ -73,33 +71,22 @@ namespace SDX_ADE
 
 			for (int a = 0; a < (int)依頼.size(); a++)
 			{
-				gui_objects.push_back(&依頼[a]);
 			}
-
-			SetCSVPage(15);
 		}
 
 		void GUI_Update()
 		{
 
-			for (int a= 0 ; a < (int)Quest::data.size() ; a++ )
-			{
-				//未受注依頼は表示しない、完了依頼は後ろに回す
-
-				依頼[a].位置 = { Lp(0) , Lp(1) + (Lp(3) + Lp(4)) * a , Lp(2) , Lp(3) };
-			}
-
-			縦内部幅 = double(Lp(0)*2 + (Lp(3) + Lp(4)) * Quest::data.size());
 		}
 
 		void 派生Draw()
 		{
-			GUI_Update();
+			//GUI_Update();
 
-			for (auto& it : gui_objects)
-			{
-				it->Draw();
-			}
+			//for (auto& it : gui_objects)
+			//{
+			//	it->Draw();
+			//}
 		}
 
 		bool 派生操作()

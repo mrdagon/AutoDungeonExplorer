@@ -9,7 +9,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*経営戦略ウィンドウ*/
-	class W_Management : public WindowBox
+	class W_Management : public UIWindow
 	{
 	private:
 		class GUI_MLv : public GUI_Object
@@ -21,7 +21,7 @@ namespace SDX_ADE
 
 				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::SSize.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
+				MFont::SDot.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
 			}
 		};
 
@@ -35,20 +35,20 @@ namespace SDX_ADE
 
 				//現在の資金
 				MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
-				MFont::BMSize.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
+				MFont::MAlias.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
 				if (W_Drag::Over戦術 != nullptr)
 				{
 					Color fc = { 255,128,128 };
 					if (W_Drag::Over戦術->消費資金 <= Guild::P->資金) { fc = Color(128,255,128); }
-					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
+					MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
 					W_Drag::Over戦術 = nullptr;
 				}
 				else if ( true )
 				{
 					Color fc = {255,128,128};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::BMSize.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[0].消費資金 , " G"}, true);
+					MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[0].消費資金 , " G"}, true);
 				}
 
 			}
@@ -62,7 +62,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
-				MFont::BMSize.DrawBold({ px + Lp(41),py + Lp(42) }, Color::White, Color::Black, { "Lv " , ランク });
+				MFont::MAlias.DrawBold({ px + Lp(41),py + Lp(42) }, Color::White, Color::Black, { "Lv " , ランク });
 
 			}
 		};
@@ -167,11 +167,9 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			gui_objects.clear();
 			種類 = WindowType::Management;
-			名前 = TX::Window_名前[種類];
-			略記 = TX::Window_略記[種類];
-			SetHelp(TX::Window_ヘルプ[種類]);
+			タイトル名 = TX::Window_名前[種類];
+			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::戦略;
 			横幅 = 320;
@@ -192,20 +190,6 @@ namespace SDX_ADE
 				タブ[a].SetHelp(TX::Manage_タブヘルプ[a]);
 			}
 
-			//gui_mlv[0].部門 = ManagementType::経営;
-			//gui_mlv[1].部門 = ManagementType::人事;
-			//gui_mlv[2].部門 = ManagementType::製造;
-			//gui_mlv[3].部門 = ManagementType::探索;
-
-			gui_objects.push_back(&gui_gold);
-			for (int a = 0; a < 4; a++) { gui_objects.push_back(&タブ[a]); }
-			for (int a = 0; a < 4; a++) { gui_objects.push_back(&gui_mlv[a]); }
-			for (int a = 0; a < 10; a++) { gui_objects.push_back(&gui_rank[a]); }
-			for (int a = 0; a < 100; a++) { gui_objects.push_back(&gui_skill[a]); }
-			gui_objects.push_back(&枠);
-
-			SetCSVPage(0);
-
 			gui_gold.SetHelp( TX::Manage_お金 );
 
 			gui_gold.isヘルプ表示 = true;
@@ -222,32 +206,12 @@ namespace SDX_ADE
 
 		void GUI_Update()
 		{
-			タブ[0].位置 = { Lp(0) ,         Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[1].位置 = { Lp(0) + Lp(4)  ,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[2].位置 = { Lp(0) + Lp(4) * 2,Lp(1) ,Lp(2) ,Lp(3) };
-			タブ[3].位置 = { Lp(0) + Lp(4) * 3,Lp(1) ,Lp(2) ,Lp(3) };
-
-			for (auto& it : タブ)
-			{
-				it.文字オフセット = -18;
-			}
-
-			枠.位置 = { Lp(0),Lp(1) + 45 , 282, 700 };
-			枠.枠No = 12;
-
-			gui_gold.位置 = { Lp(5),Lp(9),Lp(7),Lp(10) };
-			gui_mlv[0].位置 = { Lp(5),Lp(11),Lp(12),Lp(13) };
-			gui_mlv[1].位置 = { Lp(5)+Lp(14),Lp(11),Lp(12),Lp(13) };
-			gui_mlv[2].位置 = { Lp(5) + Lp(14)*2,Lp(11),Lp(12),Lp(13) };
-			gui_mlv[3].位置 = { Lp(5) + Lp(14)*3,Lp(11),Lp(12),Lp(13) };
 		}
 
 		void Tub_Change()
 		{
 			int n = 0;
 			int r = -1;
-			int x = Lp(20);
-			int y = Lp(21);
 
 			for (int a = 0; a < 10; a++)
 			{
@@ -263,7 +227,6 @@ namespace SDX_ADE
 
 
 			戦術数 = n;
-			縦内部幅 = y + 50 + 固定縦;
 		}
 
 		void 派生Draw()
@@ -286,7 +249,7 @@ namespace SDX_ADE
 			}
 
 			//スクロールする
-			描画範囲(true);
+			Reset描画範囲(true);
 
 			for (auto &it : gui_rank)
 			{

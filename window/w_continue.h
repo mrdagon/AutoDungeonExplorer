@@ -7,8 +7,33 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+	enum class UIタイトル
+	{
+		題字,
+		ボタン,
+		ライセンス,
+
+		始めから_ウィンドウ,
+		始めから_ボタン,
+		始めから_説明枠,
+		始めから_開始ボタン,
+
+		続きから_ウィンドウ,
+		続きから_セーブデータ枠,
+		続きから_階層,
+		続きから_日数,
+		続きから_難易度,
+		続きから_パーティ,
+		続きから_削除,
+
+		クレジット_ウィンドウ,
+
+		COUNT,
+		PAGE = (int)UIPage::タイトル
+	};
+
 	/*セーブデータ選択ポップアップウィンドウ*/
-	class W_Continue : public WindowBox
+	class W_Continue : public UIWindow
 	{
 	private:
 
@@ -31,13 +56,13 @@ namespace SDX_ADE
 				//セーブスロット番号
 				//MFont::BMSize.DrawBold({ px + Lp(50) ,py + Lp(51) }, Color::White, Color::Black, { データ.id / 10 , データ.id % 10 }, false);
 				//日数
-				MFont::BMSize.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { データ.日数 , TX::Tool_日付 }, true);
+				MFont::MAlias.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { データ.日数 , TX::Tool_日付 }, true);
 				//到達フロア
-				MFont::BMSize.DrawBold({ px + Lp(54) ,py + Lp(55) }, Color::White, Color::Black, { データ.最深フロア , " 階" }, true);				
+				MFont::MAlias.DrawBold({ px + Lp(54) ,py + Lp(55) }, Color::White, Color::Black, { データ.最深フロア , " 階" }, true);				
 				//難易度
-				MFont::BMSize.DrawBold({ px + Lp(56) ,py + Lp(57) }, Color::White, Color::Black, { "Normal" }, true);
+				MFont::MAlias.DrawBold({ px + Lp(56) ,py + Lp(57) }, Color::White, Color::Black, { "Normal" }, true);
 				//クリア済み
-				MFont::BMSize.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color(128,128,255), Color::Black, { "Clear" }, false);
+				MFont::MAlias.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color(128,128,255), Color::Black, { "Clear" }, false);
 
 				//第一パーティ
 				for (int a = 0; a < CV::パーティ人数; a++)
@@ -58,11 +83,11 @@ namespace SDX_ADE
 				{
 
 					親->確認ウィンドウ.文章.text = "データを削除しますか？";
-					int 戻り値 = 親->確認ウィンドウ.ポップアップ呼び出し();
+					int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
 					if (戻り値 == 1)
 					{
 						親->確認ウィンドウ.文章.text = "本当に削除しますか？";
-						int 戻り値 = 親->確認ウィンドウ.ポップアップ呼び出し();
+						int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
 						if (戻り値 == 1)
 						{
 							親->DeleteSave(データ.id);
@@ -73,7 +98,7 @@ namespace SDX_ADE
 
 				//確認無しで再開
 				親->is表示 = false;
-				親->ポップアップ戻り値 = 1;
+				親->ポップアップリザルト = 1;
 				親->選択スロット = データ.id;
 			}
 		};
@@ -87,8 +112,8 @@ namespace SDX_ADE
 		{
 			種類 = WindowType::Config;
 
-			名前 = "記録を選ぶ";
-			略記 = "記録";
+			タイトル名 = "記録を選ぶ";
+			省略名 = "記録";
 			アイコン = IconType::情報;
 			横幅 = 280;
 			縦幅 = 170;
@@ -97,7 +122,7 @@ namespace SDX_ADE
 			縦内部幅 = 170;
 			スクロール位置 = 0;
 			isスクロールバー表示 = true;
-			ポップアップ戻り値 = 0;
+			ポップアップリザルト = 0;
 
 			//
 			確認ウィンドウ.Init();
@@ -127,7 +152,6 @@ namespace SDX_ADE
 			std::vector<std::string> ファイル名;
 			SaveData::Getセーブデータinフォルダ(ファイル名);
 
-			gui_objects.clear();
 			セーブスロット.clear();
 			int a = 0;
 			for (auto& it : ファイル名)
@@ -140,26 +164,15 @@ namespace SDX_ADE
 
 			for (auto& it : セーブスロット)
 			{
-				gui_objects.push_back(&it);
 			}
-
-			SetCSVPage(24);
 		}
 
 		void GUI_Update()
 		{
-			横幅 = Lp(40);
-			縦幅 = Lp(41);
-
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 
 			int a = 0;
-			for (auto& it : セーブスロット)
-			{
-				it.位置 = { Lp(42) , Lp(43) + Lp(44) * a , 横幅 - Lp(45) , Lp(46) };
-				a++;
-			}
 		}
 	};
 }
