@@ -10,47 +10,26 @@ namespace SDX_ADE
 	/*汎用２択ポップアップウィンドウ用*/
 	class W_Credit : public UIWindow
 	{
-	private:
-		class GUI_文字 : public GUI_Object
-		{
-		public:
-			std::string text;
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 10, 0);
-				MFont::MAlias.DrawBold({ px + Lp(35) ,py + Lp(35) }, Color::White, Color::Black, { text }, false);
-			}
-		};
-
 	public:
 
-		GUI_文字 文章;
+		UITextFrame 文章;
 
 		void Init()
 		{
-			種類 = WindowType::Config;
+			Set(WindowType::Config, &UIDesign::Brown, IconType::情報);
+			SetPos(UIタイトル::クレジット_ウィンドウ, true , true);
 
-			タイトル名 = "クレジット";
-			省略名 = "クレジット";
-			アイコン = IconType::情報;
-			横幅 = 280;
-			縦幅 = 170;
-			最小縦 = 170;
-			最大縦 = 170;
-			縦内部幅 = 170;
-			スクロール位置 = 0;
+			縦内部幅 = std::max(縦幅, UILayout::Data(UIタイトル::クレジット_説明枠).h + 16);
 
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+			文章.SetUI("付属テキストの内容を表示\nあああああ\nああ\nあ", &UIDesign::Brown, UIタイトル::クレジット_説明枠);
 
-			文章.text = "付属ドキュメントに書いてます（仮）\n";
+			AddItem(文章);
 		}
 
-		void GUI_Update()
+		void Update()
 		{
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+			SetPos(UIタイトル::クレジット_ウィンドウ, true , true);
+			縦内部幅 = std::max(縦幅, UILayout::Data(UIタイトル::クレジット_説明枠).h + 16);
 		}
 	};
 }

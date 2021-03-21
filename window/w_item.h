@@ -61,8 +61,6 @@ namespace SDX_ADE
 		{
 			タブ.clear();
 			種類 = WindowType::Item;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::装備;
 			横幅 = 371;

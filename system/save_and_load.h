@@ -35,7 +35,7 @@ namespace SDX_ADE
 
 		static bool Getセーブデータinフォルダ(std::vector<std::string>&ファイル名)
 		{
-			//フォルダ内のセーブデータファイルをチェックして
+			//フォルダ内のセーブデータファイルをチェック
 			const std::string save_folder = "./file/save";
 
 			for (const std::filesystem::directory_entry& it : std::filesystem::directory_iterator( save_folder)) {

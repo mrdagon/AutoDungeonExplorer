@@ -202,8 +202,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			種類 = WindowType::Recruit;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::求人;
 			横幅 = 280;

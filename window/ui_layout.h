@@ -44,7 +44,10 @@ namespace SDX_ADE
 	//ページ毎のオブジェクトの列挙型、共通で使うパラメータ	
 	enum class UI基本
 	{
-		題字,
+		ポップアップ_ウィンドウ,
+		ポップアップ_説明,
+		ポップアップ_はい,
+		ポップアップ_いいえ,
 		COUNT,
 		PAGE = (int)UIPage::基本
 	};
@@ -74,7 +77,9 @@ namespace SDX_ADE
 		int w = 0, h = 0;
 		int 並べx = 0, 並べy = 0;//並べないやつは自由に使える？
 		int 改行値 = 1;//並べ時に何個で改行するか、たまにしか変更しないのでウォッチを使う
+
 		int 画像ID = 0;
+		int フォントID = 0;//0～2
 
 		UILayout()
 		{}
@@ -83,7 +88,7 @@ namespace SDX_ADE
 			登録名(登録名)
 		{}
 
-		UILayout( std::string 登録名 , int x, int y, int w, int h, int 並べx, int 並べy, int 改行値, int 画像ID ):
+		UILayout( std::string 登録名 , int x, int y, int w, int h, int 並べx, int 並べy, int 改行値, int 画像ID , int フォントID):
 			登録名(登録名),
 			x(x),
 			y(y),
@@ -92,7 +97,8 @@ namespace SDX_ADE
 			並べx(並べx),
 			並べy(並べy),
 			改行値(std::max(1,改行値)),
-			画像ID(画像ID)
+			画像ID(画像ID),
+			フォントID(フォントID)
 		{}
 
 		//60フレーム以内に選択されているオブジェクトかどうか
@@ -151,7 +157,8 @@ namespace SDX_ADE
 						std::stoi(csv2[b][5]),
 						std::stoi(csv2[b][6]),
 						std::stoi(csv2[b][7]),
-						std::stoi(csv2[b][8])
+						std::stoi(csv2[b][8]),
+						std::stoi(csv2[b][9])
 					);
 				}
 			}
@@ -186,7 +193,8 @@ namespace SDX_ADE
 									it.並べx , ",",
 									it.並べy , ",",
 									it.改行値 , ",",
-									it.画像ID							
+									it.画像ID , ",",
+									it.フォントID
 						});
 
 				}
@@ -206,7 +214,7 @@ namespace SDX_ADE
 			
 			//選択中のアイテムのパラメータ7種
 			auto& it = data[now_page][now_index[now_page]];
-			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),画像ID(" , it.画像ID , ")" });
+			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),ID(画像 " , it.画像ID , ",フォント " , it.フォントID , ")" });
 
 			int now_page_max = data[now_page].size();
 			int p_no = now_index[now_page]/30;
@@ -274,68 +282,78 @@ namespace SDX_ADE
 
 			if (Input::key.Down.IsPush(連打st, 連打rp))
 			{
+				int n = (Input::key.Down.holdCount > 300) ? 1 : 5;
+
 				if (isShft)
 				{
-					it.h++;
+					it.h += n;
 				}
 				else if (isCtrl)
 				{
-					it.並べy++;
+					it.並べy += n;
 				}
 				else
 				{
-					it.y++;
+					it.y += n;
 				}
 				return;
 			}
 			if (Input::key.Up.IsPush(連打st, 連打rp))
 			{
+				int n = (Input::key.Up.holdCount < 300) ? 1 : 5;
+
 				if (isShft)
 				{
-					it.h--;
+					it.h -= n;
 					if (it.h < 0) { it.h = 0; }
 				}
 				else if (isCtrl)
 				{
-					it.並べy--;
+					it.並べy -= n;
 				}
 				else
 				{
-					it.y--;
+					it.y -= n;
 				}
 				return;
 			}
 
 			if (Input::key.Left.IsPush(連打st, 連打rp))
 			{
+				int n = (Input::key.Left.holdCount < 300) ? 1 : 5;
+
 				if (isShft)
 				{
-					it.w--;
+					it.w -= n;
 					if (it.w < 0) { it.w = 0; }
 				}
 				else if (isCtrl)
 				{
-					it.並べx--;
+					it.並べx -= n;
 				}
 				else
 				{
-					it.x--;
+					it.x -= n;
 				}
+				return;
 			}
 			if (Input::key.Right.IsPush(連打st, 連打rp))
 			{
+				int n = (Input::key.Right.holdCount < 300) ? 1 : 5;
+
 				if (isShft)
 				{
-					it.w++;
+					it.w += n;
 				}
 				else if (isCtrl)
 				{
-					it.並べx++;					
+					it.並べx += n;					
 				}
 				else
 				{
-					it.x++;
+					it.x += n;
 				}
+				return;
 			}
 
 			//PageUP,PageDownで画像ID
@@ -347,6 +365,13 @@ namespace SDX_ADE
 			{
 				it.画像ID--;
 				if (it.画像ID < 0) { it.画像ID = 0; }
+			}
+
+			//PageUP,PageDownで画像ID
+			if (Input::key.NUMPADEnter.IsPush(連打st, 連打rp) == true)
+			{
+				it.フォントID++;
+				if (it.フォントID > 2) { it.フォントID = 0; }
 			}
 
 			//直接入力

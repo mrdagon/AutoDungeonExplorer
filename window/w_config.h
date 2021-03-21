@@ -269,9 +269,6 @@ namespace SDX_ADE
 		{
 			種類 = WindowType::Config;
 
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
-
 			アイコン = IconType::情報;
 			横幅 = 320;
 			縦幅 = 170;

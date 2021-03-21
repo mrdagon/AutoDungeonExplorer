@@ -235,7 +235,7 @@ namespace SDX_ADE
 				//ポップアップでスキルリセットするか確認してするなら
 				確認ウィンドウ.is表示 = true;
 				確認ウィンドウ.Init();
-				確認ウィンドウ.文章.text = "スキルをリセットする？\n(レベルが５下がる)";
+				確認ウィンドウ.文章.テキスト = "スキルをリセットする？\n(レベルが５下がる)";
 
 				int res = 確認ウィンドウ.Openポップアップ();
 
@@ -304,8 +304,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			種類 = WindowType::Skilltree;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 			アイコン = IconType::ランク;
 			横幅 = 230;
 			縦幅 = 125;

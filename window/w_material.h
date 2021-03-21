@@ -54,8 +54,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			種類 = WindowType::Material;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::素材;
 			横幅 = 250;

@@ -27,7 +27,7 @@ namespace SDX_ADE
 		続きから_削除,
 
 		クレジット_ウィンドウ,
-
+		クレジット_説明枠,
 		COUNT,
 		PAGE = (int)UIPage::タイトル
 	};
@@ -36,8 +36,35 @@ namespace SDX_ADE
 	class W_Continue : public UIWindow
 	{
 	private:
+		class UIセーブ削除 : public UIObject
+		{
+		public:
+			W_Continue* 親;
+			int データID = 0;
 
-		class GUI_セーブスロット : public GUI_Object
+			void Draw派生()
+			{
+				DrawUI(UIType::グループ明 , &UIDesign::Brown );
+				MFont::M->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0, Color::Red, "X");
+			}
+
+
+			void Click(double px, double py)
+			{
+				//ポップアップ呼び出して、はいを選んだら削除
+
+				//xマーク-クリックで確認してから削除
+
+				親->確認ウィンドウ.文章.テキスト = "データを削除しますか？";
+				int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
+				if (戻り値 == 1)
+				{
+					親->DeleteSaveData(データID);
+				}
+			}
+		};
+
+		class GUI_セーブスロット : public UIObject
 		{
 		private:
 
@@ -45,61 +72,72 @@ namespace SDX_ADE
 			W_Continue* 親;
 			SaveData データ;
 
+			UIセーブ削除 削除;
+			UITextFrame 日数;
+			UITextFrame フロア;
+			UITextFrame 難易度;
+			UIObject パーティ;
+
 			GUI_セーブスロット(int id,std::string& ファイル名):
 				データ(id,ファイル名)
 			{}
 
-			void Draw派生(double px, double py)
+			void Init(W_Continue* 親 , std::string name , int id)
 			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0, 1);
+				データ.ファイル名 = name;
+				SetUI(UIタイトル::続きから_セーブデータ枠 , id );
 
-				//セーブスロット番号
-				//MFont::BMSize.DrawBold({ px + Lp(50) ,py + Lp(51) }, Color::White, Color::Black, { データ.id / 10 , データ.id % 10 }, false);
-				//日数
-				MFont::MAlias.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { データ.日数 , TX::Tool_日付 }, true);
-				//到達フロア
-				MFont::MAlias.DrawBold({ px + Lp(54) ,py + Lp(55) }, Color::White, Color::Black, { データ.最深フロア , " 階" }, true);				
-				//難易度
-				MFont::MAlias.DrawBold({ px + Lp(56) ,py + Lp(57) }, Color::White, Color::Black, { "Normal" }, true);
-				//クリア済み
-				MFont::MAlias.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color(128,128,255), Color::Black, { "Clear" }, false);
+				日数.SetUI("日数", &UIDesign::Brown, UIタイトル::続きから_日数, 0, this);
+				フロア.SetUI("フロア", &UIDesign::Brown, UIタイトル::続きから_階層, 0, this);
+				難易度.SetUI("難易度", &UIDesign::Brown, UIタイトル::続きから_難易度, 0, this);
+				パーティ.SetUI( UIタイトル::続きから_パーティ, 0, this);
+				削除.SetUI( UIタイトル::続きから_削除, 0, this);
 
-				//第一パーティ
+				//個オブジェクトを親に追加
+				削除.データID = id;
+				削除.親 = 親;
+				this->親 = 親;
+			}
+
+			void Draw派生() override
+			{
+				//全体枠
+				UIDesign::Brown.Draw(UIType::フレーム, GetX(), GetY(), GetW(), GetH());
+
+				//枠＋文字
+				日数.Draw();
+				フロア.Draw();
+				難易度.Draw();
+				削除.Draw();
+
+				//パーティ
+				パーティ.DrawUI(UIType::グループ明, &UIDesign::Brown);
 				for (int a = 0; a < CV::パーティ人数; a++)
 				{
 					int no = データ.メインパーティ職業[a];
 					if (no < 0) { continue; }
-					ExplorerClass::data[no].ちびimage[0][1]->DrawRotate({ px + Lp(60) + Lp(61) * a ,py + Lp(62) }, 2, 0);
+					ExplorerClass::data[no].ちびimage[0][1]->DrawRotate({ パーティ.GetX() + a * パーティ.layout->並べx + 30 , パーティ.GetY() }, 2, 0);
 				}
 
-				//xマーク
-				MIcon::UI[IconType::閉じる].DrawRotate({ px + Lp(63) ,py + Lp(64) }, 1 ,0);
+				//xマークは親に追加
+			}
+
+			bool Check派生(double px, double py) override
+			{
+				return 削除.CheckInput(px, py);
 			}
 
 			void Click(double px, double py)
 			{
-				//xマーク-クリックで確認してから削除
-				if (Point(px, py).Hit(&Rect(Lp(63)-Lp(65), Lp(64)- Lp(65), Lp(65)*2, Lp(65)*2)) == true)
+				//再開するか確認
+				親->確認ウィンドウ.文章.テキスト = "この記録から再開しますか？";
+				int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
+				if (戻り値 == 1)
 				{
-
-					親->確認ウィンドウ.文章.text = "データを削除しますか？";
-					int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
-					if (戻り値 == 1)
-					{
-						親->確認ウィンドウ.文章.text = "本当に削除しますか？";
-						int 戻り値 = 親->確認ウィンドウ.Openポップアップ();
-						if (戻り値 == 1)
-						{
-							親->DeleteSave(データ.id);
-						}
-					}
-					return;
+					親->is表示 = false;
+					親->ポップアップリザルト = 1;
+					親->選択スロット = データ.id;
 				}
-
-				//確認無しで再開
-				親->is表示 = false;
-				親->ポップアップリザルト = 1;
-				親->選択スロット = データ.id;
 			}
 		};
 
@@ -110,25 +148,24 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			種類 = WindowType::Config;
-
-			タイトル名 = "記録を選ぶ";
-			省略名 = "記録";
-			アイコン = IconType::情報;
-			横幅 = 280;
-			縦幅 = 170;
-			最小縦 = 170;
-			最大縦 = 170;
-			縦内部幅 = 170;
-			スクロール位置 = 0;
-			isスクロールバー表示 = true;
-			ポップアップリザルト = 0;
-
-			//
-			確認ウィンドウ.Init();
-
 			//セーブデータの取得
-			UpdateSave();
+			UpdateSaveData();
+
+			//共通初期化
+			Set(WindowType::Continue, &UIDesign::Brown, IconType::情報);
+			SetPos(UIタイトル::続きから_ウィンドウ , true , true);
+			縦内部幅 = 170 + UILayout::Data(UIタイトル::続きから_ウィンドウ).並べy * セーブスロット.size();
+			
+			スクロール位置 = 0;
+
+			//ポップアップ初期化
+			確認ウィンドウ.Init();			
+		}
+
+		void Update()
+		{
+			SetPos(UIタイトル::続きから_ウィンドウ, true , true);
+			縦内部幅 = 170 + UILayout::Data(UIタイトル::続きから_ウィンドウ).並べy * セーブスロット.size();
 		}
 
 		SaveData* GetSave()
@@ -136,43 +173,38 @@ namespace SDX_ADE
 			return &セーブスロット[選択スロット].データ;
 		}
 
-		void DeleteSave(int id)
+		void DeleteSaveData(int id)
 		{
 			//削除して再取得
 			std::string filename = "file/save/";
 			filename += セーブスロット[id].データ.ファイル名;
-
 			std::remove( filename.c_str() );
 
-			UpdateSave();
+			UpdateSaveData();
 		}
 
-		void UpdateSave()
+		void UpdateSaveData()
 		{
 			std::vector<std::string> ファイル名;
 			SaveData::Getセーブデータinフォルダ(ファイル名);
 
+			ui_objects.clear();
 			セーブスロット.clear();
+
 			int a = 0;
 			for (auto& it : ファイル名)
 			{
 				セーブスロット.emplace_back(a, it);
-				セーブスロット[a].親 = this;
 				a++;
 			}
 
-
-			for (auto& it : セーブスロット)
+			a = 0;
+			for (auto& it : ファイル名)
 			{
+				セーブスロット[a].Init(this, it, a);
+				this->ui_objects.push_back(&セーブスロット[a]);//削除ボタンはクリック可なので親に追加
+				a++;
 			}
-		}
-
-		void GUI_Update()
-		{
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
-
-			int a = 0;
 		}
 	};
 }

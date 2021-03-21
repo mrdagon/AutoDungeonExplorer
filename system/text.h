@@ -26,6 +26,8 @@ namespace SDX_ADE
 		const std::string Save_コンフィグファイル名 = "config.sav";
 		const std::string Save_システムファイル名 = "system.sav";
 
+		std::string 難易度[3] = { "ノーマル" , "ハードコア" , "デスマーチ" };
+
 		////Config Window
 		std::string Config_決定 = "決定";
 		std::string Config_キャンセル = "キャンセル";
@@ -175,6 +177,29 @@ namespace SDX_ADE
 			Window_略記[WindowType::Skilltree] = "技術";
 			Window_ヘルプ[WindowType::Skilltree] = "スキルの習得と確認";
 
+			Window_名前[WindowType::Recruit] = "探索者の登録";
+			Window_略記[WindowType::Recruit] = "登録";
+			Window_ヘルプ[WindowType::Recruit] = "";
+
+			Window_名前[WindowType::Skilltree] = "アクティブスキル／パッシブスキル";
+			Window_略記[WindowType::Skilltree] = "スキル";
+			Window_ヘルプ[WindowType::Skilltree] = "";
+
+			Window_名前[WindowType::Config] = "設定変更";
+			Window_略記[WindowType::Config] = "設定";
+			Window_ヘルプ[WindowType::Config] = "";
+
+			Window_名前[WindowType::Newgame] = "難易度選択";
+			Window_略記[WindowType::Newgame] = "";
+			Window_ヘルプ[WindowType::Newgame] = "";
+
+			Window_名前[WindowType::Continue] = "記録を選択して下さい";
+			Window_略記[WindowType::Continue] = "";
+			Window_ヘルプ[WindowType::Continue] = "";
+
+			Window_名前[WindowType::Credit] = "クレジット";
+			Window_略記[WindowType::Credit] = "";
+			Window_ヘルプ[WindowType::Credit] = "";
 			return true;
 		}
 

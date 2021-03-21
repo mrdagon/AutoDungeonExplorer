@@ -213,7 +213,8 @@ namespace SDX_ADE
 		凸ボタン,
 		凹ボタン,
 		背景,
-		グループ,
+		グループ暗,
+		グループ明,
 		タイトル,
 		ウィンドウ,
 		フレーム,
@@ -282,7 +283,8 @@ namespace SDX_ADE
 				case UIType::凸ボタン: DrawButton凸(x, y, w, h); break;
 				case UIType::凹ボタン: DrawButton凹(x, y, w, h); break;
 				case UIType::背景: DrawBack(x, y, w, h); break;
-				case UIType::グループ: DrawGroup(x, y, w, h); break;
+				case UIType::グループ暗: DrawDarkBack(x, y, w, h); break;
+				case UIType::グループ明: DrawLightBack(x, y, w, h); break;
 				case UIType::タイトル: DrawTitle(x, y, w, h); break;
 				case UIType::ウィンドウ: DrawWindow(x, y, w, h); break;
 				case UIType::フレーム: DrawFrame(x, y, w, h); break;
@@ -349,14 +351,23 @@ namespace SDX_ADE
 		}
 
 		//やや濃い縁を1dot丸めた四角を描画
-		void DrawGroup(int x, int y, int w, int h)
+		void DrawDarkBack(int x, int y, int w, int h)
 		{
 			Drawing::Rect({ x  , y + 1 , w , h - 2 }, グループ);
 			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, グループ);
 			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, グループ);
 		}
 
-		//ウィンドウタイトル
+		//やや濃い縁を1dot丸めた四角を描画
+		void DrawLightBack(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x  , y + 1 , w , h - 2 }, 背景色);
+			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, 背景色);
+			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, 背景色);
+		}
+
+
+		//ウィンドウのタイトル部
 		void DrawTitle(int x, int y, int w, int h)
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色, false);
@@ -365,7 +376,8 @@ namespace SDX_ADE
 			//Drawing::Line({ x + w - 2 , y + 1 },{ x + w - 2, y + h - 2}, 凹色);
 
 		}
-		//タイトル付きウィンドウを描画
+
+		//タイトル下のウィンドウ部分
 		void DrawWindow(int x, int y, int w, int h)
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色, false);

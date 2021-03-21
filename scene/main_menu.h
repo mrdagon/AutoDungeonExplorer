@@ -96,32 +96,25 @@ namespace SDX_ADE
 			for (auto& it : ボタン)
 			{
 				it.親 = this;
-				it.UIデザイン = &UIDesign::Brown;
 			}
 
-			ボタン[0].テキスト = "始めから";
 			ボタン[0].id = GUI_ボタン::MenuType::はじめから;
-			ボタン[0].SetUI(UILayout::Data(UIタイトル::ボタン), 0);
+			ボタン[0].SetUI( "始めから", &UIDesign::Brown, UIタイトル::ボタン, 0);
 
-			ボタン[1].テキスト = "続きから";
 			ボタン[1].id = GUI_ボタン::MenuType::つづきから;
-			ボタン[1].SetUI(UILayout::Data(UIタイトル::ボタン), 1);
+			ボタン[1].SetUI("続きから", &UIDesign::Brown, UIタイトル::ボタン, 1);
 
-			ボタン[2].テキスト = "設定";
 			ボタン[2].id = GUI_ボタン::MenuType::せってい;
-			ボタン[2].SetUI(UILayout::Data(UIタイトル::ボタン), 2);
+			ボタン[2].SetUI("設定", &UIDesign::Brown, UIタイトル::ボタン, 2);
 
-			ボタン[3].テキスト = "クレジット";
 			ボタン[3].id = GUI_ボタン::MenuType::クレジット;
-			ボタン[3].SetUI(UILayout::Data(UIタイトル::ボタン), 3);
+			ボタン[3].SetUI("クレジット", &UIDesign::Brown, UIタイトル::ボタン , 3);
 
-			ボタン[4].テキスト = "アンケート";
 			ボタン[4].id = GUI_ボタン::MenuType::アンケート;
-			ボタン[4].SetUI(UILayout::Data(UIタイトル::ボタン), 4);
+			ボタン[4].SetUI("アンケート", &UIDesign::Brown, UIタイトル::ボタン , 4);
 
-			ボタン[5].テキスト = "終了";
 			ボタン[5].id = GUI_ボタン::MenuType::おしまい;
-			ボタン[5].SetUI(UILayout::Data(UIタイトル::ボタン), 5);
+			ボタン[5].SetUI("終了", &UIDesign::Brown, UIタイトル::ボタン , 5);
 		}
 
 		//メインループ処理
@@ -160,7 +153,7 @@ namespace SDX_ADE
 			//ボタンクリックとマウスオーバー判定
 			for (auto& it : ボタン)
 			{
-				it.操作チェック( 0 , 0);//座標補正無し
+				it.CheckInput( 0 , 0);//座標補正無し
 			}
 
 			//スクショ撮影
@@ -186,7 +179,7 @@ namespace SDX_ADE
 			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * 題字.y / 100 }, 2, 0);
 
 			//画面中央になるように計算、画像IDをY代わりに使用
-			UILayout::Data(UIタイトル::ボタン).y = Window::GetHeight() * UILayout::Data(UIタイトル::ボタン).画像ID / 100;
+			UILayout::Data(UIタイトル::ボタン).y = Window::GetHeight() * 40 / 100;//UILayout::Data(UIタイトル::ボタン).画像IDでテスト
 			UILayout::Data(UIタイトル::ボタン).x = Window::GetWidth() / 2 - UILayout::Data(UIタイトル::ボタン).w / 2;
 
 			for (auto& it : ボタン)
@@ -198,42 +191,6 @@ namespace SDX_ADE
 			static UILayout& ライセンス = UILayout::Data(UIタイトル::ライセンス);
 
 			MFont::M->DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
-
-			/*
-			UI関数テスト
-			for (int i = 0; i < 2; i++)
-			{
-				UISystem* ui = (i == 0) ? &UISystem::Green: &UISystem::Blue;
-
-				ui->DrawBack(200, 100 + i * 300, 200, 300);
-				ui->DrawGroup(400, 100 + i * 300, 600, 300);
-
-				ui->DrawButton凸(300, 120 + i * 300, 200, 50);
-				ui->DrawButton凹(300, 180 + i * 300, 200, 50);
-				ui->DrawButton(300, 240 + i * 300, 200, 50);
-				ui->DrawRound(300, 300 + i * 300, 200, 50);
-
-				ui->DrawTitle(700, 140 + i * 300, 200, 30);
-				ui->DrawWindow(700, 170 + i * 300, 200, 120);
-
-				ui->DrawGauge(500, 120 + i * 300, 200, 30 , 0.5);
-				ui->DrawRound(500, 160 + i * 300, 30, 60);
-
-				for (int b = 0; b < 4; b++)
-				{
-					MFont::MSize.Draw({ 350,130 + i * 300 + b * 60 }, ui->明字, "明");
-					MFont::MSize.Draw({ 400,130 + i * 300 + b * 60 }, ui->暗字, "暗");
-					MFont::MSize.Draw({ 450,130 + i * 300 + b * 60 }, ui->灰字, "灰");
-				}
-
-				MFont::MSize.Draw({ 220,130 + i * 300 }, ui->明字, "明");
-				MFont::MSize.Draw({ 230,160 + i * 300 }, ui->暗字, "暗");
-				MFont::MSize.Draw({ 240,190 + i * 300 }, ui->灰字, "灰");
-				MFont::MSize.Draw({ 520,130 + i * 300 }, ui->明字, "明");
-				MFont::MSize.Draw({ 530,160 + i * 300 }, ui->暗字, "暗");
-				MFont::MSize.Draw({ 540,190 + i * 300 }, ui->灰字, "灰");
-			}
-			*/
 
 			//デバッグ用
 			if (CV::isレイアウト)

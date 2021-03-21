@@ -51,8 +51,6 @@ namespace SDX_ADE
 		{
 			依頼.clear();
 			種類 = WindowType::Quest;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::依頼;
 			横幅 = 330;

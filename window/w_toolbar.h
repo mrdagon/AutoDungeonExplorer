@@ -104,7 +104,7 @@ namespace SDX_ADE
 					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
 				}
 				MIcon::UI[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
-				MFont::SAlias.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, 対象ウィンドウ->省略名);
+				MFont::SAlias.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Window_略記[対象ウィンドウ->種類]);
 			}
 
 			void Click(double px, double py)

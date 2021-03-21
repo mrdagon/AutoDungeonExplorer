@@ -168,8 +168,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			種類 = WindowType::Management;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::戦略;
 			横幅 = 320;

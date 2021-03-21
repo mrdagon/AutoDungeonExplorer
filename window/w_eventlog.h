@@ -20,8 +20,6 @@ namespace SDX_ADE
 		{
 			タブ.clear();
 			種類 = WindowType::EventLog;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::ログ;
 			横幅 = 330;

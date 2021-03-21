@@ -16,8 +16,8 @@ namespace SDX_ADE
 		static const int タイトル枠高さ = 30;
 		static const int ツールバー高さ = 90;
 
-		IUIDesign* デザイン = &UIDesign::Green;
 		WindowType 種類;
+		IUIDesign* デザイン = &UIDesign::Green;
 
 		//描画および操作可能なオブジェクト
 		std::vector<UIObject*> ui_objects;//スクロールするオブジェクト
@@ -28,8 +28,6 @@ namespace SDX_ADE
 
 		//状態
 		bool is表示 = true;//
-		std::string タイトル名 = "未設定";
-		std::string 省略名 = "????";
 		IconType アイコン = IconType::閉じる;
 
 		//座標
@@ -61,8 +59,34 @@ namespace SDX_ADE
 		/*各種初期化*/
 		virtual void Init() = 0;
 
-
 		virtual void Update(){}
+
+		//基本情報を代入
+		void Set(WindowType 種類 , IUIDesign* デザイン , IconType アイコン)
+		{
+			this->種類 = 種類;
+			this->デザイン = デザイン;
+			this->アイコン = アイコン;
+		}
+
+		template<class TUIEnum>
+		void SetPos(TUIEnum type , bool isSetCenter , bool isスクロールバー)
+		{
+			横幅 = UILayout::Data(type).w;
+			縦幅 = UILayout::Data(type).h;
+
+			if (isSetCenter)
+			{
+				座標.x = Window::GetWidth() / 2 - 横幅 / 2;
+				座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+			}
+
+			最小縦 = 縦幅;
+			最大縦 = 縦幅;
+			縦内部幅 = 縦幅;
+
+			isスクロールバー表示 = isスクロールバー;
+		}
 
 		/*描画処理と操作処理*/
 		void Draw()
@@ -102,7 +126,7 @@ namespace SDX_ADE
 			//ウィンドウアイコン			
 			デザイン->Draw(UIType::背景, 座標.x + 6, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 			
-			MFont::M->Draw({ 座標.x + 34,座標.y + 1 }, Color::White ,{ タイトル名 });
+			MFont::M->Draw({ 座標.x + 34,座標.y + 1 }, Color::White ,{ TX::Window_名前[種類] });
 			//MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン/ヘルプボタン
@@ -368,13 +392,13 @@ namespace SDX_ADE
 			for (auto& it : 固定objects)
 			{
 				//クリックとドロップのチェック
-				if (it->操作チェック(座標.x, 座標.y + タイトル枠高さ)) { return true; };
+				if (it->CheckInput(座標.x, 座標.y + タイトル枠高さ)) { return true; };
 			}
 
 			for (auto& it : ui_objects)
 			{
 				//クリックとドロップのチェック
-				if (it->操作チェック(相対座標.x, 相対座標.y)) { return true; };
+				if (it->CheckInput(相対座標.x, 相対座標.y)) { return true; };
 			}
 
 			return false;
@@ -467,6 +491,16 @@ namespace SDX_ADE
 			img.Release();
 
 			return ポップアップリザルト;
+		}
+
+		void AddItem( UIObject& object , bool is固定 = false)
+		{
+			if (is固定 == true)
+			{
+				固定objects.push_back(&object);
+			} else {
+				ui_objects.push_back(&object);
+			}
 		}
 	};
 

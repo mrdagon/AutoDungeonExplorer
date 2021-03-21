@@ -16,6 +16,11 @@ namespace SDX_ADE
 
 		}
 
+		virtual bool Check派生(double px, double py)
+		{
+			return false;
+		}
+
 	public:
 		inline static UIHelp* now_help = nullptr;
 
@@ -27,17 +32,13 @@ namespace SDX_ADE
 		bool isOver = false;
 		int lineID = 0;
 
-		void SetUI(UILayout& レイアウト, int 整列ID, UIObject* 親object = nullptr)
-		{
-			layout = &レイアウト;
-			lineID = 整列ID;
-			親 = 親object;
-		}
 
 		template<class T>
-		void SetLayout(T key)
+		void SetUI(T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
-			layout = &UILayout::Data(key);
+			layout = &UILayout::Data(レイアウト);
+			lineID = 整列ID;
+			親 = 親object;
 		}
 
 		int GetX()
@@ -134,11 +135,15 @@ namespace SDX_ADE
 		}
 
 		//クリック、ドロップ、マウスオーバー判定を処理 //クリック or ドロップでtrue
-		bool 操作チェック(double px, double py)
+		bool CheckInput(double px, double py)
 		{
 			isOver = false;
-
 			if ( is表示 == false || is表示オンリー == true ) { return false; }
+
+			if (Check派生(px, py) == true)
+			{
+				return false;
+			}
 
 			int posX = GetX();
 			int posY = GetY();
@@ -176,8 +181,6 @@ namespace SDX_ADE
 
 		/*マウスオーバー時の処理*/
 		virtual void Over(double px, double py){}
-
-
 	};
 
 	//よく使うUIObjectの基本形
@@ -191,28 +194,60 @@ namespace SDX_ADE
 		IUIDesign* UIデザイン;
 		bool is押下 = false;//押し下げ状態フラグ
 
+		//
+		std::function<void(double, double)> clickEvent = [](double x, double y) {};
+
 		//クリック時の処理はオーバーライド
 		//ラムダ式でも良さそう
+
+		template<class T>
+		void SetUI( std::string 初期テキスト , IUIDesign* デザイン , T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		{
+			テキスト = 初期テキスト;
+			UIデザイン = デザイン;
+			layout = &UILayout::Data(レイアウト);
+			lineID = 整列ID;
+			親 = 親object;
+		}
 
 		void Draw派生()
 		{
 			//凸ボタン、マウスオーバー時は平
+			int yd = 0;
+
 			if (is押下 == true)
 			{
 				DrawUI(UIType::凹ボタン, UIデザイン);
-				MFont::M->DrawRotate({ GetCenterX() , GetCenterY()+2 }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				yd = 2;
 			}
 			else if (isOver)
 			{
 				DrawUI( UIType::平ボタン, UIデザイン);
-				MFont::M->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
 			}
 			else
 			{
 				DrawUI( UIType::凸ボタン, UIデザイン);
-				MFont::M->DrawRotate({ GetCenterX() , GetCenterY()-2 }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				yd = -2;
 			}
 
+			switch (layout->フォントID)
+			{
+			case 0:
+				MFont::S->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				break;
+			case 1:
+				MFont::M->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				break;
+			default:
+				MFont::L->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				break;
+			}
+
+		}
+
+		void Click(double px, double py)
+		{
+			clickEvent(px,py);
 		}
 	};
 
@@ -223,10 +258,47 @@ namespace SDX_ADE
 		std::string テキスト;
 		IUIDesign* UIデザイン;
 
+		template<class T>
+		void SetUI(std::string 初期テキスト, IUIDesign* デザイン, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		{
+			テキスト = 初期テキスト;
+			UIデザイン = デザイン;
+			layout = &UILayout::Data(レイアウト);
+			lineID = 整列ID;
+			親 = 親object;
+		}
+
+
 		void Draw派生()
 		{
-			DrawUI( UIType::背景, UIデザイン);
-			MFont::M->Draw({ GetX() + 4 , GetY() + 4 },UIDesign::Brown.暗字, テキスト );
+			switch (layout->画像ID)
+			{
+			case 0:
+				DrawUI(UIType::背景, UIデザイン);
+				break;
+				break;
+			case 1:
+				DrawUI(UIType::グループ明, UIデザイン);
+				break;
+				break;
+			default:
+				DrawUI(UIType::グループ暗, UIデザイン);
+				break;
+			}
+
+
+			switch (layout->フォントID)
+			{
+			case 0:
+				MFont::S->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				break;
+			case 1:
+				MFont::M->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				break;
+			default:
+				MFont::L->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				break;
+			}
 		}
 	};
 

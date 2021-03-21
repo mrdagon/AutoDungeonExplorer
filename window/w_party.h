@@ -900,8 +900,7 @@ namespace SDX_ADE
 			GUI_除名()
 			{
 				確認ウィンドウ.Init();
-				確認ウィンドウ.GUI_Update();
-				確認ウィンドウ.文章.text = "除名しますか？";
+				確認ウィンドウ.文章.テキスト = "除名しますか？";
 			}
 
 			void Draw派生(double px, double py)
@@ -943,8 +942,6 @@ namespace SDX_ADE
 		void Init()
 		{
 			種類 = WindowType::Party;
-			タイトル名 = TX::Window_名前[種類];
-			省略名 = TX::Window_略記[種類];
 
 			アイコン = IconType::編成;
 			横幅 = 550;

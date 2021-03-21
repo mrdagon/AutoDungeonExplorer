@@ -7,86 +7,57 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	/*汎用２択ポップアップウィンドウ用*/
+	/*汎用２択ポップアップウィンドウ*/
 	class W_Popup : public UIWindow
 	{
-	private:
-		class GUI_文字 : public GUI_Object
-		{
-		public:
-			std::string text;
-
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12, 0);
-
-				MFont::MAlias.DrawBold({ px + Lp(9) ,py + Lp(10) }, Color::White, Color::Black, { text }, true);
-			}
-		};
-
-		class GUI_ボタン : public GUI_Object
-		{
-		public:
-			int id;
-			W_Popup* base;
-			std::string 文字;
-
-			void Draw派生(double px, double py)
-			{
-				int dif_x = MFont::MAlias.GetDrawStringWidth(文字) / 2;
-
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,1);
-				MFont::MAlias.DrawBold({ px + Lp(11) - dif_x ,py + Lp(12) }, Color::White, Color::Black, 文字, false);
-			}
-
-			void Click(double px, double py)
-			{
-				base->is表示 = false;
-				base->ポップアップリザルト = id;
-			}
-
-		};
-
 	public:
 
-		GUI_文字 文章;
+		UITextFrame 文章;
 
-		GUI_ボタン 確定;
-		GUI_ボタン キャンセル;
+		UIButton 確定;
+		UIButton キャンセル;
 
 		void Init()
 		{
-			種類 = WindowType::Config;
+			Set(WindowType::Config, &UIDesign::Brown, IconType::情報);
 
-			タイトル名 = "確認";
-			省略名 = "確認";
-			アイコン = IconType::情報;
-			横幅 = 280;
-			縦幅 = 170;
+			横幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).w;
+			縦幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).h;
+			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
+			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 			最小縦 = 170;
 			最大縦 = 170;
 			縦内部幅 = 170;
 			スクロール位置 = 0;
+
 			is閉じるボタン = false;
 			isスクロールバー表示 = false;
 
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+			文章.SetUI("テキスト未設定", &UIDesign::Brown, UI基本::ポップアップ_説明);
+			確定.SetUI("はい", &UIDesign::Brown, UI基本::ポップアップ_はい);
+			キャンセル.SetUI("いいえ", &UIDesign::Brown, UI基本::ポップアップ_いいえ);
 
-			文章.text = "ゲームを終了しますか？";
-			確定.文字 = "はい";
-			キャンセル.文字 = "いいえ";
+			確定.clickEvent = [&](double x, double y)
+			{
+				is表示 = false;
+				ポップアップリザルト = 1;
+			};
 
-			確定.base = this;
-			キャンセル.base = this;
-			確定.id = 1;
-			キャンセル.id = 0;
+			キャンセル.clickEvent = [&](double x, double y)
+			{
+				is表示 = false;
+				ポップアップリザルト = 0;
+			};
 
+			ui_objects.push_back(&文章);
+			ui_objects.push_back(&確定);
+			ui_objects.push_back(&キャンセル);
 		}
 
-		void GUI_Update()
+		void Update()
 		{
+			横幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).w;
+			縦幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).h;
 			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
 			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
 		}
