@@ -9,35 +9,26 @@ namespace SDX_ADE
 
 	enum class UIPage
 	{
-		基本,
-		タイトル,
-		/*
-		コンフィグ,
-		メイン画面,//ツールバーのレイアウト
-		//Window
-		アイテム,
-		ダンジョン,
-		パーティ編成,
-		パーティ探索,
-		投資,
-		素材,
-		クエスト,
-		ログ,
-		//サブウィンドウ
-		求人,
-		スキルツリー,
-		//Help
-		Helpアイテム,//装備アクセサリー両方、強化コストヘルプも
-		Helpダンジョン,
-		Helpエクスプローラ,
-		Helpモンスター,
-		Help投資,
-		HelpAスキル,
-		HelpPスキル,
-		Helpクエスト,
-		Helpリザルト,//探索結果、探索中スコア
-		Help素材,
-		*/
+		基本,//common
+		タイトル,//title
+		コンフィグ,//config
+		メイン画面,//main
+		//●Window
+		アイテム,//item
+		ダンジョン,//dungeon
+		パーティ編成,//party_town
+		パーティ探索,//party_dungeon
+		投資,//invest
+		素材,//material
+		クエスト,//quest
+		ログ,//log
+		//●サブウィンドウ
+		求人,//recruit
+		スキルツリー,//skill
+		//●ヘルプ専用
+		Helpエクスプローラ,//h_explorer
+		Helpモンスター,//h_monster
+		Helpスキル,//h_skill
 		COUNT
 	};
 
@@ -282,7 +273,7 @@ namespace SDX_ADE
 
 			if (Input::key.Down.IsPush(連打st, 連打rp))
 			{
-				int n = (Input::key.Down.holdCount > 300) ? 1 : 5;
+				int n = (Input::key.Down.holdCount < 120) ? 1 : 5;
 
 				if (isShft)
 				{
@@ -300,7 +291,7 @@ namespace SDX_ADE
 			}
 			if (Input::key.Up.IsPush(連打st, 連打rp))
 			{
-				int n = (Input::key.Up.holdCount < 300) ? 1 : 5;
+				int n = (Input::key.Up.holdCount < 120) ? 1 : 5;
 
 				if (isShft)
 				{
@@ -320,7 +311,7 @@ namespace SDX_ADE
 
 			if (Input::key.Left.IsPush(連打st, 連打rp))
 			{
-				int n = (Input::key.Left.holdCount < 300) ? 1 : 5;
+				int n = (Input::key.Left.holdCount < 120) ? 1 : 5;
 
 				if (isShft)
 				{
@@ -339,7 +330,7 @@ namespace SDX_ADE
 			}
 			if (Input::key.Right.IsPush(連打st, 連打rp))
 			{
-				int n = (Input::key.Right.holdCount < 300) ? 1 : 5;
+				int n = (Input::key.Right.holdCount < 120) ? 1 : 5;
 
 				if (isShft)
 				{

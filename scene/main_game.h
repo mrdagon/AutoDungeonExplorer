@@ -253,7 +253,7 @@ namespace SDX_ADE
 
 			加速度 = Game::ゲームスピード;
 
-			if ((Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) && Config::is夜間加速) { 加速度 = Game::ゲームスピード * 4; }
+			if ((Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) && Config::is夜加速) { 加速度 = Game::ゲームスピード * 4; }
 
 			for (int a = 0; a < 加速度; a++)
 			{

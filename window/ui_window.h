@@ -85,6 +85,7 @@ namespace SDX_ADE
 			最大縦 = 縦幅;
 			縦内部幅 = 縦幅;
 
+			スクロール位置 = 0;
 			isスクロールバー表示 = isスクロールバー;
 		}
 
@@ -446,10 +447,6 @@ namespace SDX_ADE
 				Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
 			}
 
-			//描画倍率を取得
-			int full_rate = 1;
-			if (Config::ウィンドウモード == Config::WindowmodeType::二倍フルスクリーン) { full_rate = 2; }
-			if (Config::ウィンドウモード == Config::WindowmodeType::四倍フルスクリーン) { full_rate = 4; }
 
 			//現在の画面を記憶
 			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth() , Window::GetHeight() );
@@ -457,7 +454,7 @@ namespace SDX_ADE
 			while (System::Update(true,false))
 			{
 				//img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
-				img.DrawPartExtend({ 0,0 , Window::GetWidth() , Window::GetHeight() }, { 0,0 , Window::GetWidth() * full_rate , Window::GetHeight() * full_rate });
+				img.DrawPartExtend({ 0,0 , Window::GetWidth() , Window::GetHeight() }, { 0,0 , Window::GetWidth() * Config::解像度X倍 , Window::GetHeight() * Config::解像度X倍 });
 
 				Update();
 				Draw();

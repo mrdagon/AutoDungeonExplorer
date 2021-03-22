@@ -7,9 +7,9 @@
 #include "enum_type.h"
 #include "text.h"
 
+#include "asset.h"
 #include "game.h"
 #include "init_data.h"
-#include "asset.h"
 #include "csv.h"
 #include "save_and_load.h"
 #include "sound.h"

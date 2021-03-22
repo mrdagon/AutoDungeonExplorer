@@ -52,35 +52,23 @@ namespace SDX_ADE
 	namespace Config
 	{
 		//コンフィグ項目
+		static bool isウィンドウ = true;
 		static int BGM設定 = 1, SE設定 = 1;
+		static int 解像度設定 = 9;
+		static int 解像度X倍 = 1;
+
+		static bool isボス戦時等速 = true;
+		static bool is夜加速 = true;
+		static bool is超加速 = false;
+		static bool isドットフォント = true;
+
+		//設定値から計算するやつ
 		static double BGM音量;//設定値の２乗/100になる
 		static double SE音量;//
-
-		static int 解像度設定 = 9;
 		static int 解像度W = 1600, 解像度H = 900;
 
-		enum class WindowmodeType
-		{
-			ウィンドウ,
-			等倍フルスクリーン,
-			二倍フルスクリーン,
-			四倍フルスクリーン,
-			COUNT
-		};
-
-		static WindowmodeType ウィンドウモード = WindowmodeType::ウィンドウ;
-
-		static bool is装備自動更新 = true;
-		static bool isボス戦時等速 = true;
-		static bool is夜間加速 = true;
-
-		static bool isスキル習得時停止 = false;
-
-		static bool is超加速モード = false;
 		static int ゲーム速度変更倍率 = 2;
 		static int 最大ゲーム倍速 = 16;
-
-		static bool isヘルプ詳細 = false;
 
 		static bool SaveLoad(FileMode 保存or読み込み)
 		{
@@ -95,77 +83,35 @@ namespace SDX_ADE
 			{
 				return false;
 			}
-
+			file.ReadWrite(Config::isウィンドウ);
 			file.ReadWrite(Config::BGM設定);
 			file.ReadWrite(Config::SE設定);
 			file.ReadWrite(Config::解像度設定);
+			file.ReadWrite(Config::解像度X倍);
 
-			file.ReadWrite(Config::isスキル習得時停止);
-			file.ReadWrite(Config::isヘルプ詳細);
 			file.ReadWrite(Config::isボス戦時等速);
-
-			file.ReadWrite(Config::ウィンドウモード);
-
-			file.ReadWrite(Config::is夜間加速);
-			file.ReadWrite(Config::is装備自動更新);
-			file.ReadWrite(Config::is超加速モード);
-
-			file.ReadWrite(Config::ゲーム速度変更倍率);
-			file.ReadWrite(Config::最大ゲーム倍速);
+			file.ReadWrite(Config::is夜加速);
+			file.ReadWrite(Config::is超加速);
+			file.ReadWrite(Config::isドットフォント);
 
 			return true;
 		}
 
-		static bool isFontDot = true;
-		static Font* SFont;
-		static Font* LFont;
-		static Font* MFont;
-
 		static void Update()
 		{
 			//音量と解像度設定反映
-			int full_rate = 0;
 
-			switch (Config::ウィンドウモード)
+			if (isウィンドウ)
 			{
-			case Config::WindowmodeType::ウィンドウ:
-				Config::解像度W = std::min(Config::解像度設定 * 160, Game::最大解像度W);
-				Config::解像度H = std::min(Config::解像度設定 * 90, Game::最大解像度H);
+				Config::解像度W = std::min(Config::解像度設定 * 160, Game::最大解像度W) / 解像度X倍;
+				Config::解像度H = std::min(Config::解像度設定 * 90, Game::最大解像度H) / 解像度X倍;
 				Window::SetSize(Config::解像度W, Config::解像度H);
 				Window::SetFullscreen(Config::解像度W == Game::最大解像度W && Config::解像度H == Game::最大解像度H);
-				break;
-			case Config::WindowmodeType::等倍フルスクリーン:
-				full_rate = 1;
-				break;
-			case Config::WindowmodeType::二倍フルスクリーン:
-				if (Game::最大解像度H >= 1080) {
-					full_rate = 2;
-				}
-				else {
-					full_rate = 1;
-					Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
-				}
-				break;
-			case Config::WindowmodeType::四倍フルスクリーン:
-				if (Game::最大解像度H >= 2160)
-				{
-					full_rate = 4;
-				}
-				else if (Game::最大解像度H >= 1080) {
-					full_rate = 2;
-					Config::ウィンドウモード = Config::WindowmodeType::二倍フルスクリーン;
-				}
-				else {
-					full_rate = 1;
-					Config::ウィンドウモード = Config::WindowmodeType::等倍フルスクリーン;
-				}
-				break;
 			}
-
-			if (full_rate > 0)
+			else
 			{
-				Config::解像度W = Game::最大解像度W / full_rate;
-				Config::解像度H = Game::最大解像度H / full_rate;
+				Config::解像度W = Game::最大解像度W / 解像度X倍;
+				Config::解像度H = Game::最大解像度H / 解像度X倍;
 				Window::SetSize(Config::解像度W, Config::解像度H);
 				Window::SetFullscreen(true);
 			}
@@ -175,6 +121,38 @@ namespace SDX_ADE
 
 			Sound::SetMainVolume(Config::SE音量);
 			Music::SetMainVolume(Config::BGM音量);
+
+			if (Config::is超加速 == true)
+			{
+				Config::ゲーム速度変更倍率 = 4;
+				Config::最大ゲーム倍速 = 64;
+				Game::ゲームスピード = 1;
+			} else {
+				Config::ゲーム速度変更倍率 = 2;
+				Config::最大ゲーム倍速 = 16;
+				Game::ゲームスピード = 1;
+			}
+
+			if (isドットフォント)
+			{
+				MFont::S = &MFont::SDot;
+				MFont::M = &MFont::MDot;
+				MFont::L = &MFont::LDot;
+			} else {
+				MFont::S = &MFont::SAlias;
+				MFont::M = &MFont::MAlias;
+				MFont::L = &MFont::LAlias;
+			}
+
+			if (Config::is超加速 == true)
+			{
+				Config::ゲーム速度変更倍率 = 4;
+				Config::最大ゲーム倍速 = 64;
+			} else {
+				Config::ゲーム速度変更倍率 = 2;
+				Config::最大ゲーム倍速 = 16;
+			}
+			
 		}
 
 	}

@@ -304,10 +304,6 @@ namespace SDX_ADE
 				MAlias.SetImage("0", MAlias.GetImage("O"));
 				LAlias.SetImage("0", LAlias.GetImage("O"));
 			}
-
-			S = Config::isFontDot ? &SDot : &SAlias;
-			M = Config::isFontDot ? &MDot : &MAlias;
-			L = Config::isFontDot ? &LDot : &LAlias;
 		}
 	}
 
