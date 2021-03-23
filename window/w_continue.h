@@ -49,7 +49,7 @@ namespace SDX_ADE
 			}
 
 
-			void Click(double px, double py)
+			void Click()
 			{
 				//ポップアップ呼び出して、はいを選んだら削除
 
@@ -127,7 +127,7 @@ namespace SDX_ADE
 				return 削除.CheckInput(px, py);
 			}
 
-			void Click(double px, double py)
+			void Click()
 			{
 				//再開するか確認
 				親->確認ウィンドウ.文章.テキスト = "この記録から再開しますか？";

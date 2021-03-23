@@ -106,7 +106,7 @@ namespace SDX_ADE
 			//デバッグ時のみサイズ足りてなかったら拡大する
 			if (data[(int)TUIEnum::PAGE].size() <= no)
 			{
-				data[(int)TUIEnum::PAGE].resize(no);
+				data[(int)TUIEnum::PAGE].resize(no+1);
 			}
 
 			return data[(int)TUIEnum::PAGE][no];

@@ -156,31 +156,31 @@ namespace SDX_ADE
 
 				if (Input::mouse.Left.on == true)
 				{
-					Click(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+					Click();
 					return true;
 				}
 				else if (Input::mouse.Left.off == true)
 				{
-					Drop(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+					Drop();
 					return true;
 				}
 
 				//マウスオーバー中の物のヘルプ
 				now_help = help;
-				Over(Input::mouse.x - posX - px, Input::mouse.y - posY - py);
+				Over();
 			}
 
 			return false;
 		}
 
 		/*クリック操作*/
-		virtual void Click(double px, double py){}
+		virtual void Click(){}
 
 		/*ドロップ操作*/
-		virtual void Drop(double px, double py){}
+		virtual void Drop(){}
 
 		/*マウスオーバー時の処理*/
-		virtual void Over(double px, double py){}
+		virtual void Over(){}
 	};
 
 	//よく使うUIObjectの基本形
@@ -195,7 +195,7 @@ namespace SDX_ADE
 		bool is押下 = false;//押し下げ状態フラグ
 
 		//
-		std::function<void(double, double)> clickEvent = [](double x, double y) {};
+		std::function<void()> clickEvent = [](){};
 
 		//クリック時の処理はオーバーライド
 		//ラムダ式でも良さそう
@@ -245,9 +245,62 @@ namespace SDX_ADE
 
 		}
 
-		void Click(double px, double py)
+		void Click()
 		{
-			clickEvent(px,py);
+			clickEvent();
+		}
+	};
+
+	//画像付きボタン
+	class UIImageButton : public UIObject
+	{
+	public:
+		Image* 画像;
+		IUIDesign* UIデザイン;
+		bool is押下 = false;//押し下げ状態フラグ
+
+		//
+		std::function<void()> clickEvent = [](){};
+
+		//クリック時の処理はオーバーライド
+		//ラムダ式でも良さそう
+
+		template<class T>
+		void SetUI(Image* 画像, IUIDesign* デザイン, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		{
+			this->画像 = 画像;
+			UIデザイン = デザイン;
+			layout = &UILayout::Data(レイアウト);
+			lineID = 整列ID;
+			親 = 親object;
+		}
+
+		void Draw派生()
+		{
+			//凸ボタン、マウスオーバー時は平
+			int yd = 0;
+
+			if (is押下 == true)
+			{
+				DrawUI(UIType::凹ボタン, UIデザイン);
+				yd = 2;
+			}
+			else if (isOver)
+			{
+				DrawUI(UIType::平ボタン, UIデザイン);
+			}
+			else
+			{
+				DrawUI(UIType::凸ボタン, UIデザイン);
+				yd = -2;
+			}
+
+			画像->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0);
+		}
+
+		void Click()
+		{
+			clickEvent();
 		}
 	};
 

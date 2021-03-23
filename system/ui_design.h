@@ -275,8 +275,15 @@ namespace SDX_ADE
 		Color 灰字;
 		Color 明字;
 
+		template<class TLayout>
+		void Draw(UIType type, TLayout &it )
+		{
+			Draw( type, it.x, it.y, it.w, it.h);			
+		}
+
 		void Draw(UIType type , int x, int y, int w, int h)
 		{
+
 			switch ( type )
 			{
 				case UIType::平ボタン: DrawButton(x,y,w,h); break;

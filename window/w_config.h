@@ -39,12 +39,6 @@ namespace SDX_ADE
 		};
 
 	private:
-		//UIImageButtonを追加
-		class UI増減ボタン : public UIObject
-		{
-		public:
-		};
-
 		class UI設定 : public UIObject
 		{
 		public:
@@ -53,8 +47,8 @@ namespace SDX_ADE
 			IconType アイコン;
 			std::string 名前;
 			std::string 設定値;
-			UI増減ボタン 増加;
-			UI増減ボタン 減少;
+			UIImageButton 増加ボタン;
+			UIImageButton 減少ボタン;
 
 			W_Config* 親;
 
@@ -64,22 +58,30 @@ namespace SDX_ADE
 				this->名前 = 名前;
 				this->アイコン = アイコン;
 				this->type = 種類;
+
+				増加ボタン.SetUI(&MIcon::UI[IconType::三角], &UIDesign::Brown, UIコンフィグ::設定増減, 1);
+				減少ボタン.SetUI(&MIcon::UI[IconType::三角], &UIDesign::Brown, UIコンフィグ::設定増減, 0);
 			}
 
 			bool Check派生(double px,double py) override
 			{
-				if (増加.CheckInput(px, py) == true) { return true; }
-				if (減少.CheckInput(px, py) == true) { return true; }
+				if (増加ボタン.CheckInput(px, py) == true) { return true; }
+				if (減少ボタン.CheckInput(px, py) == true) { return true; }
 
 				return false;
 			}
 
 			void Draw派生()
 			{
-				//MSystem::DrawWindow({ px ,py }, (int)位置.GetW() , (int)位置.GetH(), 12);
-				//MIcon::アイコン[アイコン].DrawRotate({px+Lp(11),py+Lp(12)},2,0);//アイコン表示削除
+				auto posA = UILayout::Data(UIコンフィグ::設定アイコン);
+				auto posB = UILayout::Data(UIコンフィグ::設定項目名);
+				auto posC = UILayout::Data(UIコンフィグ::設定数値);
 
-				//MFont::MAlias.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, 名前, false);
+				UIDesign::Brown.Draw(UIType::グループ明, UILayout::Data(UIコンフィグ::設定ボタン));
+
+				MIcon::UI[アイコン].DrawRotate({ posA.x , posB.x },2,0);//アイコン表示削除
+
+				MFont::MAlias.DrawRotate({ posB.x , posB.x } , 1 , 0, Color::Black, 名前, false);
 
 				switch (type)
 				{
@@ -118,51 +120,12 @@ namespace SDX_ADE
 					break;
 				}
 
-				//MFont::MAlias.DrawBold({ px + Lp(18) + MFont::MAlias.GetDrawStringWidth(設定値)/2 ,py + Lp(19) }, Color::White, Color::Black, { 設定値 }, true);
+				MFont::MAlias.DrawRotate({ posC.x , posC.y } , 1 , 0 , Color::Black, { 設定値 }, true);
 
-
-				増加.Draw();
-				減少.Draw();
+				増加ボタン.Draw();
+				減少ボタン.Draw();
 			}
 
-			void Click(double px, double py)
-			{
-				int n = 0;
-
-				if (n == 0) { return; }
-
-				int buf = 0;
-				switch (type)
-				{
-				case ConfigType::BGM音量:
-					親->仮_BGM設定 += n;
-					if (親->仮_BGM設定 < 0) { 親->仮_BGM設定 = 0; }
-					if (親->仮_BGM設定 > 10) { 親->仮_BGM設定 = 10; }
-					break;
-				case ConfigType::SE音量:
-					親->仮_SE設定 += n;
-					if (親->仮_SE設定 < 0) { 親->仮_SE設定 = 0; }
-					if (親->仮_SE設定 > 10) { 親->仮_SE設定 = 10; }
-					break;
-				case ConfigType::解像度:
-					親->仮_解像度 += n;
-					if (親->仮_解像度 < 8) { 親->仮_解像度 = 8; }
-					if (親->仮_解像度 > 20) { 親->仮_解像度 = 20; }
-					break;
-				case ConfigType::ウィンドウモード:
-					親->仮_ウィンドウモード = !親->仮_ウィンドウモード;
-					break;
-				case ConfigType::ボス戦等速:
-					親->仮_ボス戦等速 = !親->仮_ボス戦等速;
-					break;
-				case ConfigType::夜加速:
-					親->仮_夜加速 = !親->仮_夜加速;
-					break;
-				case ConfigType::超加速:
-					親->仮_超加速 = !親->仮_超加速;
-					break;
-				}
-			}
 		};
 
 		class GUI_キャンセル : public GUI_Object
@@ -217,6 +180,11 @@ namespace SDX_ADE
 			SetPos(UIコンフィグ::ウィンドウ, true, false);
 			is閉じるボタン = false;
 
+			//レイアウト値
+			確定.SetUI("決定", &UIDesign::Brown, UIコンフィグ::決定_キャンセル, 0);
+			キャンセル.SetUI("キャンセル", &UIDesign::Brown, UIコンフィグ::決定_キャンセル, 1);
+
+
 			//仮数値に現在の設定を代入
 			仮_BGM設定 = Config::BGM設定;
 			仮_SE設定 = Config::SE設定;
@@ -230,10 +198,10 @@ namespace SDX_ADE
 			仮_フォント種 = Config::isドットフォント;
 
 			//設定値、代入
+			ウィンドウモード.Set(TX::Config_ウィンドウモード.c_str(), IconType::解像度, ConfigType::ウィンドウモード, this);
 			BGM音量.Set( TX::Config_音楽.c_str() , IconType::BGM, ConfigType::BGM音量 , this);
 			SE音量.Set( TX::Config_効果音.c_str() , IconType::効果音, ConfigType::SE音量, this);
 			解像度.Set( TX::Config_解像度.c_str() , IconType::解像度, ConfigType::解像度 , this);
-			ウィンドウモード.Set(TX::Config_ウィンドウモード.c_str(), IconType::解像度, ConfigType::ウィンドウモード, this);
 			解像度X倍.Set(TX::Config_音楽.c_str(), IconType::BGM, ConfigType::BGM音量, this);
 
 			ボス戦等速.Set(TX::Config_ボス戦速度.c_str(), IconType::ボス, ConfigType::ボス戦等速, this);
@@ -241,7 +209,17 @@ namespace SDX_ADE
 			超加速.Set(TX::Config_超加速.c_str(), IconType::時間, ConfigType::超加速, this);
 			フォント種.Set(TX::Config_ヘルプ詳細.c_str(), IconType::ヘルプ, ConfigType::フォント, this);
 
-			確定.clickEvent = [&](double x, double y){
+			ウィンドウモード.SetUI(UIコンフィグ::設定ボタン, 0);
+			BGM音量.SetUI(UIコンフィグ::設定ボタン, 1);
+			SE音量.SetUI(UIコンフィグ::設定ボタン, 2);
+			解像度.SetUI(UIコンフィグ::設定ボタン, 3);
+			解像度X倍.SetUI(UIコンフィグ::設定ボタン, 4);
+			ボス戦等速.SetUI(UIコンフィグ::設定ボタン, 5);
+			夜加速.SetUI(UIコンフィグ::設定ボタン, 6);
+			超加速.SetUI(UIコンフィグ::設定ボタン, 7);
+			フォント種.SetUI(UIコンフィグ::設定ボタン, 8);
+
+			確定.clickEvent = [&](){
 				is表示 = false;
 
 				Config::BGM設定 = 仮_BGM設定;
@@ -257,19 +235,123 @@ namespace SDX_ADE
 
 				MSound::効果音[SE::決定].Play();
 			};
-			キャンセル.clickEvent = [&](double x, double y) {
+			キャンセル.clickEvent = [&](){
 				//設定変更反映せず終了
 				is表示 = false;
-
-				//仮_BGM設定 = Config::BGM設定;
-				//仮_SE設定 = Config::SE設定;
-				//仮_解像度 = Config::解像度設定;
-
+				Config::Update();
 				MSound::効果音[SE::キャンセル].Play();
+			};
+
+			ウィンドウモード.増加ボタン.clickEvent = [&]()
+			{
+				仮_ウィンドウモード = !仮_ウィンドウモード;
+			};
+			ウィンドウモード.減少ボタン.clickEvent = [&]()
+			{
+				仮_ウィンドウモード = !仮_ウィンドウモード;
+			};
+
+			BGM音量.増加ボタン.clickEvent = [&]()
+			{
+				仮_BGM設定 += 1;
+				if (仮_BGM設定 > 10) { 仮_BGM設定 = 10; }
+			};
+			BGM音量.減少ボタン.clickEvent = [&]()
+			{
+				仮_BGM設定 -= 1;
+				if (仮_BGM設定 < 0) { 仮_BGM設定 = 0; }
+			};
+
+			SE音量.増加ボタン.clickEvent = [&]()
+			{
+				仮_SE設定 += 1;
+				if ( 仮_SE設定 > 10) { 仮_SE設定 = 10; }
+			};
+			SE音量.減少ボタン.clickEvent = [&]()
+			{
+				仮_SE設定 -= 1;
+				if ( 仮_SE設定 < 0) { 仮_SE設定 = 0; }
+			};
+
+			解像度.増加ボタン.clickEvent = [&]()
+			{
+				仮_解像度 += 1;
+				if (仮_解像度 < 8) { 仮_解像度 = 8; }
+			};
+			解像度.減少ボタン.clickEvent = [&]()
+			{
+				仮_解像度 -= 1;
+				if (仮_解像度 > 20) { 仮_解像度 = 20; }
+			};
+
+			解像度X倍.増加ボタン.clickEvent = [&]()
+			{
+				仮_解像度X倍 += 1;
+				if (仮_解像度X倍 < 1) { 仮_解像度 = 1; }
+			};
+			解像度X倍.減少ボタン.clickEvent = [&]()
+			{
+				仮_解像度X倍 -= 1;
+				if (仮_解像度X倍 > 4) { 仮_解像度 = 4; }
+			};
+
+
+			ボス戦等速.増加ボタン.clickEvent = [&]()
+			{
+				仮_ボス戦等速 = !仮_ボス戦等速;
+			};
+			ボス戦等速.減少ボタン.clickEvent = [&]()
+			{
+				仮_ボス戦等速 = !仮_ボス戦等速;
+			};
+
+			夜加速.増加ボタン.clickEvent = [&]()
+			{
+				仮_夜加速 = !仮_夜加速;
+			};
+			夜加速.減少ボタン.clickEvent = [&]()
+			{
+				仮_夜加速 = !仮_夜加速;
+			};
+
+			超加速.増加ボタン.clickEvent = [&]()
+			{
+				仮_超加速 = !仮_超加速;
+			};
+			超加速.減少ボタン.clickEvent = [&]()
+			{
+				仮_超加速 = !仮_超加速;
+			};
+
+			フォント種.増加ボタン.clickEvent = [&]()
+			{
+				仮_フォント種 = !仮_フォント種;
+			};
+			フォント種.減少ボタン.clickEvent = [&]()
+			{
+				仮_フォント種 = !仮_フォント種;
 			};
 
 			//オブジェクトを登録
 			AddItem(BGM音量);
+			AddItem(ウィンドウモード);
+			AddItem(BGM音量);
+			AddItem(SE音量);
+			AddItem(解像度);
+			AddItem(解像度X倍);
+
+			AddItem(ボス戦等速);
+			AddItem(夜加速);
+			AddItem(超加速);
+			AddItem(フォント種);
+
+			AddItem(確定);
+			AddItem(キャンセル);
+		}
+
+		void Update()
+		{
+			SetPos(UIコンフィグ::ウィンドウ, true, false);
 		}
 	};
 }

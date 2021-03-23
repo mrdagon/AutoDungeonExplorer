@@ -37,13 +37,13 @@ namespace SDX_ADE
 			確定.SetUI("はい", &UIDesign::Brown, UI基本::ポップアップ_はい);
 			キャンセル.SetUI("いいえ", &UIDesign::Brown, UI基本::ポップアップ_いいえ);
 
-			確定.clickEvent = [&](double x, double y)
+			確定.clickEvent = [&]()
 			{
 				is表示 = false;
 				ポップアップリザルト = 1;
 			};
 
-			キャンセル.clickEvent = [&](double x, double y)
+			キャンセル.clickEvent = [&]()
 			{
 				is表示 = false;
 				ポップアップリザルト = 0;

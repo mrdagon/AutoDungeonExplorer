@@ -18,13 +18,13 @@ namespace SDX_ADE
 			W_Newgame* 親;
 			GameType 難易度;
 
-			void Click(double px, double py)
+			void Click() override
 			{
 				親->is表示 = false;
 				親->ポップアップリザルト = 1;
 			}
 
-			void Over(double px, double py)
+			void Over() override
 			{
 				親->マウスオーバー中難易度 = 難易度;
 			}

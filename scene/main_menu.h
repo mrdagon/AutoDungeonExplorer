@@ -17,71 +17,7 @@ namespace SDX_ADE
 		W_Credit Win_Credit;
 		W_Config Win_Config;
 
-		class GUI_ボタン : public UIButton
-		{
-		public:
-
-			enum class MenuType
-			{
-				はじめから,
-				つづきから,
-				せってい,
-				クレジット,
-				アンケート,
-				おしまい,
-				COUNT
-			};
-
-			MainMenu* 親;
-			MenuType id;
-
-			void Click(double px, double py)
-			{
-				int 戻り値 = 0;
-
-				switch (id)
-				{
-				case MenuType::はじめから:
-					親->Win_NewGame.Init();
-
-					if (親->Win_NewGame.Openポップアップ() == 1)
-					{
-						親->セーブ = nullptr;
-						親->難易度 = 親->Win_NewGame.選択中難易度;
-						親->isゲーム開始 = true;
-					}
-
-					break;
-				case MenuType::つづきから:
-					親->Win_Conitnue.Init();
-
-					if (親->Win_Conitnue.Openポップアップ() == 1)
-					{
-						親->セーブ = 親->Win_Conitnue.GetSave();
-						親->難易度 = GameType::COUNT;
-						親->isゲーム開始 = true;
-					}
-
-					break;
-				case MenuType::せってい:
-					親->Win_Config.Init();
-					親->Win_Config.Openポップアップ();
-					break;
-				case MenuType::クレジット:
-					親->Win_Credit.Init();
-					親->Win_Credit.Openポップアップ();
-					break;
-				case MenuType::アンケート:
-					ShellExecute(NULL, L"open", TX::アンケURL , NULL, L"", SW_SHOW);
-					break;
-				case MenuType::おしまい:
-					Game::isゲーム終了 = true;
-					break;
-				}
-			}
-		};
-
-		std::array<GUI_ボタン, 6> ボタン;
+		std::array<UIButton, 6> ボタン;
 	public:
 		bool isゲーム開始;
 
@@ -93,28 +29,58 @@ namespace SDX_ADE
 		{
 			isゲーム開始 = false;
 
-			for (auto& it : ボタン)
-			{
-				it.親 = this;
-			}
-
-			ボタン[0].id = GUI_ボタン::MenuType::はじめから;
 			ボタン[0].SetUI( "始めから", &UIDesign::Brown, UIタイトル::ボタン, 0);
-
-			ボタン[1].id = GUI_ボタン::MenuType::つづきから;
 			ボタン[1].SetUI("続きから", &UIDesign::Brown, UIタイトル::ボタン, 1);
-
-			ボタン[2].id = GUI_ボタン::MenuType::せってい;
 			ボタン[2].SetUI("設定", &UIDesign::Brown, UIタイトル::ボタン, 2);
-
-			ボタン[3].id = GUI_ボタン::MenuType::クレジット;
 			ボタン[3].SetUI("クレジット", &UIDesign::Brown, UIタイトル::ボタン , 3);
-
-			ボタン[4].id = GUI_ボタン::MenuType::アンケート;
 			ボタン[4].SetUI("アンケート", &UIDesign::Brown, UIタイトル::ボタン , 4);
-
-			ボタン[5].id = GUI_ボタン::MenuType::おしまい;
 			ボタン[5].SetUI("終了", &UIDesign::Brown, UIタイトル::ボタン , 5);
+
+			ボタン[0].clickEvent = [&]()
+			{
+				Win_NewGame.Init();
+
+				if (Win_NewGame.Openポップアップ() == 1)
+				{
+					セーブ = nullptr;
+					難易度 = Win_NewGame.選択中難易度;
+					isゲーム開始 = true;
+				}
+			};
+
+			ボタン[1].clickEvent = [&]()
+			{
+				Win_Conitnue.Init();
+
+				if ( Win_Conitnue.Openポップアップ() == 1)
+				{
+					セーブ = Win_Conitnue.GetSave();
+					難易度 = GameType::COUNT;
+					isゲーム開始 = true;
+				}
+			};
+
+			ボタン[2].clickEvent = [&]()
+			{
+				Win_Config.Init();
+				Win_Config.Openポップアップ();
+			};
+
+			ボタン[3].clickEvent = [&]()
+			{
+				Win_Credit.Init();
+				Win_Credit.Openポップアップ();
+			};
+
+			ボタン[4].clickEvent = [&]()
+			{
+				ShellExecute(NULL, L"open", TX::アンケURL, NULL, L"", SW_SHOW);
+			};
+
+			ボタン[5].clickEvent = [&]()
+			{
+				Game::isゲーム終了 = true;
+			};
 		}
 
 		//メインループ処理
