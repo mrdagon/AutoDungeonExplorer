@@ -39,7 +39,7 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			Set(WindowType::Newgame, &UIDesign::Brown, IconType::情報);
+			Set(WindowType::Newgame, IconType::情報);
 			SetPos(UIタイトル::始めから_ウィンドウ,true,false);
 
 			int a = 0;
@@ -47,12 +47,12 @@ namespace SDX_ADE
 			{
 				it.親 = this;
 				it.難易度 = GameType(a);
-				it.SetUI(TX::難易度[a], &UIDesign::Brown ,UIタイトル::始めから_ボタン, a);
+				it.SetUI(TX::難易度[a],UIタイトル::始めから_ボタン, DesignType::セット1, a);
 				ui_objects.push_back(&it);
 				a++;
 			}
 
-			説明.SetUI("ここに難易度の説明が出ます\n※β版ではどの難易度も同じです", &UIDesign::Brown, UIタイトル::始めから_説明枠);
+			説明.SetUI("ここに難易度の説明が出ます\n※β版ではどの難易度も同じです", UIタイトル::始めから_説明枠);
 			ui_objects.push_back(&説明);
 
 			選択中難易度 = GameType::COUNT;

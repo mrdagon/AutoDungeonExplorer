@@ -17,7 +17,7 @@ namespace SDX_ADE
 		static const int ツールバー高さ = 90;
 
 		WindowType 種類;
-		IUIDesign* デザイン = &UIDesign::Green;
+		DesignType デザイン;
 
 		//描画および操作可能なオブジェクト
 		std::vector<UIObject*> ui_objects;//スクロールするオブジェクト
@@ -62,7 +62,7 @@ namespace SDX_ADE
 		virtual void Update(){}
 
 		//基本情報を代入
-		void Set(WindowType 種類 , IUIDesign* デザイン , IconType アイコン)
+		void Set(WindowType 種類 , IconType アイコン, DesignType デザイン = DesignType::セット1)
 		{
 			this->種類 = 種類;
 			this->デザイン = デザイン;
@@ -77,8 +77,8 @@ namespace SDX_ADE
 
 			if (isSetCenter)
 			{
-				座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-				座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+				座標.x = Config::解像度W / 2 - 横幅 / 2;
+				座標.y = Config::解像度H / 2 - 縦幅 / 2;
 			}
 
 			最小縦 = 縦幅;
@@ -122,10 +122,10 @@ namespace SDX_ADE
 		void 共通Draw()
 		{
 			//タイトル部分
-			デザイン->Draw(UIType::タイトル, 座標.x, 座標.y, 横幅, タイトル枠高さ);
+			UIDesign::data[デザイン]->Draw(UIType::タイトル, 座標.x, 座標.y, 横幅, タイトル枠高さ);
 
 			//ウィンドウアイコン			
-			デザイン->Draw(UIType::背景, 座標.x + 6, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+			UIDesign::data[デザイン]->Draw(UIType::背景, 座標.x + 6, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 			
 			MFont::M->Draw({ 座標.x + 34,座標.y + 1 }, Color::White ,{ TX::Window_名前[種類] });
 			//MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
@@ -133,12 +133,12 @@ namespace SDX_ADE
 			//閉じるボタン/ヘルプボタン
 			if (is閉じるボタン == true)
 			{
-				デザイン->Draw(UIType::背景, 座標.x + 横幅 - 25, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+				UIDesign::data[デザイン]->Draw(UIType::背景, 座標.x + 横幅 - 25, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 				//MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
 			}
 
 			//メイン部分描画
-			デザイン->Draw(UIType::ウィンドウ, 座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅);
+			UIDesign::data[デザイン]->Draw(UIType::ウィンドウ, 座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅);
 
 			//ウィンドウスクロール部分
 			//スクロール最大高さ = 縦幅-8-8
@@ -444,7 +444,7 @@ namespace SDX_ADE
 			//ポップアップからのポップアップ呼び出し以外は裏を暗くする
 			if (is多重呼び出し == false)
 			{
-				Drawing::Rect({ 0,0,Window::GetWidth(),Window::GetHeight() }, Color(0, 0, 0, 128));
+				Drawing::Rect({ 0,0,Config::解像度W , Config::解像度H }, Color(0, 0, 0, 128));
 			}
 
 
@@ -454,7 +454,7 @@ namespace SDX_ADE
 			while (System::Update(true,false))
 			{
 				//img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
-				img.DrawPartExtend({ 0,0 , Window::GetWidth() , Window::GetHeight() }, { 0,0 , Window::GetWidth() * Config::解像度X倍 , Window::GetHeight() * Config::解像度X倍 });
+				img.DrawPartExtend({ 0,0 , Config::解像度W , Config::解像度H }, { 0,0 , Window::GetWidth() , Window::GetHeight() });
 
 				Update();
 				Draw();

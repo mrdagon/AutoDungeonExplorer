@@ -25,6 +25,8 @@ void LoadAndInitData()
 
 	Config::SaveLoad(FileMode::Read);
 	System::Initialise( TX::タイトル.c_str() , Config::解像度W, Config::解像度H);//ライブラリの初期化
+	static Camera camera({ 0,0 }, 1);
+	SDX::Camera::Set(&camera);
 	Config::Update();
 
 	//各種リソース読み込み
@@ -53,8 +55,7 @@ int main(int argc, char* argv[])
 	CSVInit();
 	LoadAndInitData();
 
-	Camera camera({0,0},1);
-	SDX::Camera::Set(&camera);
+
 
 	static MainGame game;//読み込み終わってからコンストラクタ呼ぶ
 	static MainMenu menu;

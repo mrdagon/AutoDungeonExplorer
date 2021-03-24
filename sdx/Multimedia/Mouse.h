@@ -122,6 +122,11 @@ namespace SDX
 		/** カーソル位置を取得.*/
 		Point GetPoint()
 		{
+			if (Camera::Get() != nullptr)
+			{
+				return { x / Camera::Get()->zoom ,y / Camera::Get()->zoom };
+			}
+
 			return {x,y};
 		}
 

@@ -19,7 +19,7 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			Set(WindowType::Config, &UIDesign::Brown, IconType::情報);
+			Set(WindowType::Config, IconType::情報);
 
 			横幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).w;
 			縦幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).h;
@@ -33,9 +33,9 @@ namespace SDX_ADE
 			is閉じるボタン = false;
 			isスクロールバー表示 = false;
 
-			文章.SetUI("テキスト未設定", &UIDesign::Brown, UI基本::ポップアップ_説明);
-			確定.SetUI("はい", &UIDesign::Brown, UI基本::ポップアップ_はい);
-			キャンセル.SetUI("いいえ", &UIDesign::Brown, UI基本::ポップアップ_いいえ);
+			文章.SetUI("テキスト未設定", UI基本::ポップアップ_説明);
+			確定.SetUI("はい", UI基本::ポップアップ_はい);
+			キャンセル.SetUI("いいえ", UI基本::ポップアップ_いいえ);
 
 			確定.clickEvent = [&]()
 			{

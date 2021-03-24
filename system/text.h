@@ -31,25 +31,23 @@ namespace SDX_ADE
 		////Config Window
 		std::string Config_決定 = "決定";
 		std::string Config_キャンセル = "キャンセル";
+		std::string Config_ウィンドウモード = "画面モード";
+		std::string Config_解像度 = "解像度";
+		std::string Config_解像度X倍 = "4Kモード";
+
 		std::string Config_音楽 = "音楽";
 		std::string Config_効果音 = "効果音";
-		std::string Config_解像度 = "解像度";
-		std::string Config_ウィンドウモード = "画面モード";
-		std::string Config_装備更新 = "自動装備更新";
+
 		std::string Config_ボス戦速度 = "ボス戦時";
 		std::string Config_夜間加速 = "夜の時間";
-		std::string Config_スキル習得停止 = "スキル習得時";
 		std::string Config_超加速 = "速度上限";
-		std::string Config_ヘルプ詳細 = "スキル詳細";
+		std::string Config_フォント種 = "フォント";
 
-		std::string Config_ウィンドウモード設定[4] = { "ウィンドウ" , "等倍フル" , "２倍フル"  , "４倍フル" };
-
-		std::string Config_装備更新_設定[2] = { "ON" , "OFF" };
+		std::string Config_ウィンドウモード設定[2] = { "ウィンドウ" , "フルスクリーン" };
 		std::string Config_ボス戦速度_設定[2] = { "等速" , "そのまま" , };
 		std::string Config_夜間加速_設定[2] = { "４倍速" , "そのまま" };
-		std::string Config_スキル習得停止_設定[2] = { "停止する" , "停止しない" };
 		std::string Config_超加速_設定[2] = { "64倍速" , "16倍速" };
-		std::string Config_ヘルプ詳細_設定[2] = { "表示する" , "表示しない" };
+		std::string Config_フォント設定[2] = { "ドット" , "なめらか" };
 
 		////Dungeon Window
 		std::string Dungeon_タブ名[5] = { "I層","II層","III層","IV層","V層" };

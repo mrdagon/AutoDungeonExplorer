@@ -29,12 +29,12 @@ namespace SDX_ADE
 		{
 			isゲーム開始 = false;
 
-			ボタン[0].SetUI( "始めから", &UIDesign::Brown, UIタイトル::ボタン, 0);
-			ボタン[1].SetUI("続きから", &UIDesign::Brown, UIタイトル::ボタン, 1);
-			ボタン[2].SetUI("設定", &UIDesign::Brown, UIタイトル::ボタン, 2);
-			ボタン[3].SetUI("クレジット", &UIDesign::Brown, UIタイトル::ボタン , 3);
-			ボタン[4].SetUI("アンケート", &UIDesign::Brown, UIタイトル::ボタン , 4);
-			ボタン[5].SetUI("終了", &UIDesign::Brown, UIタイトル::ボタン , 5);
+			ボタン[0].SetUI( "始めから", UIタイトル::ボタン, DesignType::セット1, 0);
+			ボタン[1].SetUI("続きから", UIタイトル::ボタン, DesignType::セット1, 1);
+			ボタン[2].SetUI("設定", UIタイトル::ボタン, DesignType::セット1, 2);
+			ボタン[3].SetUI("クレジット", UIタイトル::ボタン, DesignType::セット1, 3);
+			ボタン[4].SetUI("アンケート", UIタイトル::ボタン, DesignType::セット1, 4);
+			ボタン[5].SetUI("終了", UIタイトル::ボタン, DesignType::セット1, 5);
 
 			ボタン[0].clickEvent = [&]()
 			{
@@ -142,11 +142,11 @@ namespace SDX_ADE
 
 			//タイトル
 			static UILayout& 題字 = UILayout::Data(UIタイトル::題字);
-			MSystem::タイトルロゴ.DrawRotate({ Window::GetWidth() / 2 , Window::GetHeight() * 題字.y / 100 }, 2, 0);
+			MSystem::タイトルロゴ.DrawRotate({ Config::解像度W / 2 , Config::解像度H * 題字.y / 100 }, 2, 0);
 
 			//画面中央になるように計算、画像IDをY代わりに使用
-			UILayout::Data(UIタイトル::ボタン).y = Window::GetHeight() * 40 / 100;//UILayout::Data(UIタイトル::ボタン).画像IDでテスト
-			UILayout::Data(UIタイトル::ボタン).x = Window::GetWidth() / 2 - UILayout::Data(UIタイトル::ボタン).w / 2;
+			UILayout::Data(UIタイトル::ボタン).y = Config::解像度H * 40 / 100;//UILayout::Data(UIタイトル::ボタン).画像IDでテスト
+			UILayout::Data(UIタイトル::ボタン).x = Config::解像度W / 2 - UILayout::Data(UIタイトル::ボタン).w / 2;
 
 			for (auto& it : ボタン)
 			{			
@@ -156,7 +156,7 @@ namespace SDX_ADE
 			//作者名、著作権表記
 			static UILayout& ライセンス = UILayout::Data(UIタイトル::ライセンス);
 
-			MFont::M->DrawBoldRotate({ Window::GetWidth() / 2 , Window::GetHeight() * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
+			MFont::M->DrawBoldRotate({ Config::解像度W / 2 , Config::解像度H * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
 
 			//デバッグ用
 			if (CV::isレイアウト)
@@ -171,8 +171,8 @@ namespace SDX_ADE
 			const int back_w = 384;
 			const int back_h = 240;
 
-			int b倍率 = Window::GetHeight() / back_h;
-			int h余り = Window::GetHeight() % back_h;
+			int b倍率 = Config::解像度H / back_h;
+			int h余り = Config::解像度H % back_h;
 
 			if (h余り > back_h / 2)
 			{
@@ -182,7 +182,7 @@ namespace SDX_ADE
 			int 幅 = back_w * b倍率;
 			int 高 = back_h * b倍率;
 
-			int w余り = Window::GetWidth() - back_w * b倍率;
+			int w余り = Config::解像度W - back_w * b倍率;
 			int x差分 = w余り / 2;
 			int y差分 = h余り / 2;
 
@@ -194,8 +194,8 @@ namespace SDX_ADE
 			//背景描画
 			if (y差分 > 0)
 			{
-				Drawing::Rect({ 0,0,Window::GetWidth() , y差分 }, Color(107, 93, 80), true);
-				Drawing::Rect({ 0,Window::GetHeight() - y差分,Window::GetWidth() , y差分 }, Color(58, 50, 43), true);
+				Drawing::Rect({ 0,0,Config::解像度W , y差分 }, Color(107, 93, 80), true);
+				Drawing::Rect({ 0,Config::解像度H - y差分,Config::解像度W , y差分 }, Color(58, 50, 43), true);
 			}
 
 			MSystem::タイトル背景.DrawExtend({ x差分 + scr_x - 幅   ,y差分,幅,高 });

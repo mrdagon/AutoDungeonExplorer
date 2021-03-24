@@ -191,7 +191,7 @@ namespace SDX_ADE
 	{
 	public:
 		std::string テキスト;
-		IUIDesign* UIデザイン;
+		DesignType UIデザイン;
 		bool is押下 = false;//押し下げ状態フラグ
 
 		//
@@ -201,7 +201,7 @@ namespace SDX_ADE
 		//ラムダ式でも良さそう
 
 		template<class T>
-		void SetUI( std::string 初期テキスト , IUIDesign* デザイン , T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI( std::string 初期テキスト  , T レイアウト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			UIデザイン = デザイン;
@@ -217,29 +217,29 @@ namespace SDX_ADE
 
 			if (is押下 == true)
 			{
-				DrawUI(UIType::凹ボタン, UIデザイン);
+				DrawUI(UIType::凹ボタン, UIDesign::data[UIデザイン]);
 				yd = 2;
 			}
 			else if (isOver)
 			{
-				DrawUI( UIType::平ボタン, UIデザイン);
+				DrawUI( UIType::平ボタン, UIDesign::data[UIデザイン]);
 			}
 			else
 			{
-				DrawUI( UIType::凸ボタン, UIデザイン);
+				DrawUI( UIType::凸ボタン, UIDesign::data[UIデザイン]);
 				yd = -2;
 			}
 
 			switch (layout->フォントID)
 			{
 			case 0:
-				MFont::S->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				MFont::S->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
 				break;
 			case 1:
-				MFont::M->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				MFont::M->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
 				break;
 			default:
-				MFont::L->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::Brown.暗字, テキスト, false);
+				MFont::L->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
 				break;
 			}
 
@@ -256,7 +256,7 @@ namespace SDX_ADE
 	{
 	public:
 		Image* 画像;
-		IUIDesign* UIデザイン;
+		DesignType UIデザイン;
 		bool is押下 = false;//押し下げ状態フラグ
 
 		//
@@ -266,7 +266,7 @@ namespace SDX_ADE
 		//ラムダ式でも良さそう
 
 		template<class T>
-		void SetUI(Image* 画像, IUIDesign* デザイン, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI(Image* 画像, T レイアウト, DesignType デザイン = DesignType::セット1 , int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			this->画像 = 画像;
 			UIデザイン = デザイン;
@@ -282,16 +282,16 @@ namespace SDX_ADE
 
 			if (is押下 == true)
 			{
-				DrawUI(UIType::凹ボタン, UIデザイン);
+				DrawUI(UIType::凹ボタン, UIDesign::data[UIデザイン]);
 				yd = 2;
 			}
 			else if (isOver)
 			{
-				DrawUI(UIType::平ボタン, UIデザイン);
+				DrawUI(UIType::平ボタン, UIDesign::data[UIデザイン]);
 			}
 			else
 			{
-				DrawUI(UIType::凸ボタン, UIデザイン);
+				DrawUI(UIType::凸ボタン, UIDesign::data[UIデザイン]);
 				yd = -2;
 			}
 
@@ -309,10 +309,10 @@ namespace SDX_ADE
 	{
 	public:
 		std::string テキスト;
-		IUIDesign* UIデザイン;
+		DesignType UIデザイン;
 
 		template<class T>
-		void SetUI(std::string 初期テキスト, IUIDesign* デザイン, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI(std::string 初期テキスト, T レイアウト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			UIデザイン = デザイン;
@@ -327,15 +327,15 @@ namespace SDX_ADE
 			switch (layout->画像ID)
 			{
 			case 0:
-				DrawUI(UIType::背景, UIデザイン);
+				DrawUI(UIType::背景, UIDesign::data[UIデザイン]);
 				break;
 				break;
 			case 1:
-				DrawUI(UIType::グループ明, UIデザイン);
+				DrawUI(UIType::グループ明, UIDesign::data[UIデザイン]);
 				break;
 				break;
 			default:
-				DrawUI(UIType::グループ暗, UIデザイン);
+				DrawUI(UIType::グループ暗, UIDesign::data[UIデザイン]);
 				break;
 			}
 
@@ -343,13 +343,13 @@ namespace SDX_ADE
 			switch (layout->フォントID)
 			{
 			case 0:
-				MFont::S->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				MFont::S->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
 				break;
 			case 1:
-				MFont::M->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				MFont::M->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
 				break;
 			default:
-				MFont::L->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::Brown.暗字, テキスト);
+				MFont::L->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
 				break;
 			}
 		}

@@ -221,6 +221,12 @@ namespace SDX_ADE
 		ゲージ
 	};
 
+	enum class DesignType
+	{
+		セット1,
+		COUNT
+	};
+
 	//これを継承して、画像素材利用UIに後から差し替えも可能にしておく
 	class IUIDesign
 	{
@@ -256,6 +262,7 @@ namespace SDX_ADE
 		}
 
 	public:
+		static EnumArray<UIDesign*, DesignType> data;
 		static UIDesign Green;
 		static UIDesign Blue;
 		static UIDesign Brown;
@@ -479,10 +486,14 @@ namespace SDX_ADE
 			Wood.明字 = { 0xEEEEEE };//Gray 200
 			Wood.灰字 = { 0x9E9E9E };//Gray 500
 			Wood.暗字 = { 0x424242 };//Gray 900
+
+			data[DesignType::セット1] = &Brown;
+
 		}
 
 	};
 
+	EnumArray<UIDesign*, DesignType> UIDesign::data;
 	UIDesign UIDesign::Green;
 	UIDesign UIDesign::Blue;
 	UIDesign UIDesign::Brown;

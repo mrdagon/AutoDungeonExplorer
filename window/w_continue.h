@@ -87,9 +87,9 @@ namespace SDX_ADE
 				データ.ファイル名 = name;
 				SetUI(UIタイトル::続きから_セーブデータ枠 , id );
 
-				日数.SetUI("日数", &UIDesign::Brown, UIタイトル::続きから_日数, 0, this);
-				フロア.SetUI("フロア", &UIDesign::Brown, UIタイトル::続きから_階層, 0, this);
-				難易度.SetUI("難易度", &UIDesign::Brown, UIタイトル::続きから_難易度, 0, this);
+				日数.SetUI("日数", UIタイトル::続きから_日数 , DesignType::セット1, 0, this);
+				フロア.SetUI("フロア",  UIタイトル::続きから_階層 , DesignType::セット1, 0, this);
+				難易度.SetUI("難易度",  UIタイトル::続きから_難易度, DesignType::セット1, 0, this);
 				パーティ.SetUI( UIタイトル::続きから_パーティ, 0, this);
 				削除.SetUI( UIタイトル::続きから_削除, 0, this);
 
@@ -152,7 +152,7 @@ namespace SDX_ADE
 			UpdateSaveData();
 
 			//共通初期化
-			Set(WindowType::Continue, &UIDesign::Brown, IconType::情報);
+			Set(WindowType::Continue, IconType::情報);
 			SetPos(UIタイトル::続きから_ウィンドウ , true , true);
 			縦内部幅 = 170 + UILayout::Data(UIタイトル::続きから_ウィンドウ).並べy * セーブスロット.size();
 			
