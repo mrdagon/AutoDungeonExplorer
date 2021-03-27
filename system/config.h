@@ -76,14 +76,14 @@ namespace SDX_ADE
 
 				Config::解像度W = Game::最大解像度W / 解像度X倍;
 				Config::解像度H = Game::最大解像度H / 解像度X倍;
-				if (Config::解像度W < 1260)
+				if (Config::解像度W < 920)
 				{
 					解像度X倍 = 1;
 					Config::解像度W = Game::最大解像度W;
 					Config::解像度H = Game::最大解像度H;
 				}
 
-				Window::SetSize(Config::解像度W, Config::解像度H);
+				Window::SetSize(Config::解像度W * 解像度X倍, Config::解像度H * 解像度X倍);
 				Window::SetFullscreen(true);
 			}
 
@@ -117,6 +117,10 @@ namespace SDX_ADE
 				MFont::M = &MFont::MAlias;
 				MFont::L = &MFont::LAlias;
 			}
+
+			MFont::F[0] = MFont::S;
+			MFont::F[1] = MFont::M;
+			MFont::F[2] = MFont::L;
 
 			if (Config::is超加速 == true)
 			{

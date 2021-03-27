@@ -43,8 +43,9 @@ namespace SDX_ADE
 		std::string Config_超加速 = "速度上限";
 		std::string Config_フォント種 = "フォント";
 
-		std::string Config_ウィンドウモード設定[2] = { "ウィンドウ" , "フルスクリーン" };
-		std::string Config_ボス戦速度_設定[2] = { "等速" , "そのまま" , };
+		std::string Config_ウィンドウモード設定[2] = { "フル" , "ウィンドウ" };
+		std::string Config_4Kモード[3] = { "" , "通常" , "表示２倍" };
+		std::string Config_ボス戦速度_設定[2] = { "等速で見る" , "倍速のまま" , };
 		std::string Config_夜間加速_設定[2] = { "４倍速" , "そのまま" };
 		std::string Config_超加速_設定[2] = { "64倍速" , "16倍速" };
 		std::string Config_フォント設定[2] = { "ドット" , "なめらか" };
@@ -135,33 +136,33 @@ namespace SDX_ADE
 		//テキストデータ読み込み
 		bool Load()
 		{
-			Window_名前[WindowType::Dungeon] = "ダンジョン";
+			Window_名前[WindowType::Dungeon] = "ダンジョン一覧";
 			Window_略記[WindowType::Dungeon] = "迷宮";
 			Window_ヘルプ[WindowType::Dungeon] = "発見済みのダンジョンです\nパーティにドラッグ＆ドロップで探索先を変更する";
 
-			Window_名前[WindowType::EventLog] = "イベントログ";
+			Window_名前[WindowType::EventLog] = "ログ";
 			Window_略記[WindowType::EventLog] = "ログ";
-			Window_ヘルプ[WindowType::EventLog] = "ゲームのログを確認";
+			Window_ヘルプ[WindowType::EventLog] = "探索記録のログを確認";
 
-			Window_名前[WindowType::Item] = "装備品";
-			Window_略記[WindowType::Item] = "装備";
-			Window_ヘルプ[WindowType::Item] = "装備品の在庫表示\nギルメンにドラッグ＆ドロップで装備変更";
+			Window_名前[WindowType::Item] = "遺物一覧";
+			Window_略記[WindowType::Item] = "遺物";
+			Window_ヘルプ[WindowType::Item] = "遺物の所持数\n探索者にドラッグ＆ドロップで装備変更";
 
-			Window_名前[WindowType::Management] = "部門投資";
-			Window_略記[WindowType::Management] = "投資";
-			Window_ヘルプ[WindowType::Management] = "Gを消費して様々なボーナスを獲得";
+			Window_名前[WindowType::Management] = "設備投資";
+			Window_略記[WindowType::Management] = "設備";
+			Window_ヘルプ[WindowType::Management] = "資金を消費して施設を改良、様々なボーナスを獲得";
 
-			Window_名前[WindowType::Material] = "素材";
+			Window_名前[WindowType::Material] = "素材一覧";
 			Window_略記[WindowType::Material] = "素材";
-			Window_ヘルプ[WindowType::Material] = "装備製造に必要な素材の在庫を確認";
+			Window_ヘルプ[WindowType::Material] = "装備強化に必要な素材の所持数を確認";
 
-			Window_名前[WindowType::Party] = "ギルメン/探索パーティ";
+			Window_名前[WindowType::Party] = "探索者/パーティ編成";
 			Window_略記[WindowType::Party] = "編成";
 			Window_ヘルプ[WindowType::Party] = "ダンジョンを探索するパーティを編成\nドラッグ＆ドロップで入れ替え\n探索指示をクリックで変更";
 
-			Window_名前[WindowType::Quest] = "クエスト";
+			Window_名前[WindowType::Quest] = "クエスト一覧";
 			Window_略記[WindowType::Quest] = "依頼";
-			Window_ヘルプ[WindowType::Quest] = "依頼と報酬を確認";
+			Window_ヘルプ[WindowType::Quest] = "クエスト内容と報酬を確認";
 
 			Window_名前[WindowType::Recruit] = "求人";
 			Window_略記[WindowType::Recruit] = "求人";
@@ -183,10 +184,6 @@ namespace SDX_ADE
 			Window_略記[WindowType::Skilltree] = "スキル";
 			Window_ヘルプ[WindowType::Skilltree] = "";
 
-			Window_名前[WindowType::Config] = "設定変更";
-			Window_略記[WindowType::Config] = "設定";
-			Window_ヘルプ[WindowType::Config] = "";
-
 			Window_名前[WindowType::Newgame] = "難易度選択";
 			Window_略記[WindowType::Newgame] = "";
 			Window_ヘルプ[WindowType::Newgame] = "";
@@ -198,6 +195,22 @@ namespace SDX_ADE
 			Window_名前[WindowType::Credit] = "クレジット";
 			Window_略記[WindowType::Credit] = "";
 			Window_ヘルプ[WindowType::Credit] = "";
+
+			Window_名前[WindowType::Title] = "保存して終了";
+			Window_略記[WindowType::Title] = "";
+			Window_ヘルプ[WindowType::Title] = "タイトル画面に戻りますか？";
+
+			Window_名前[WindowType::Help] = "ヘルプ";
+			Window_略記[WindowType::Help] = "";
+			Window_ヘルプ[WindowType::Help] = "未実装です";
+
+			Window_名前[WindowType::Popup] = "確認";
+			Window_略記[WindowType::Popup] = "";
+			Window_ヘルプ[WindowType::Popup] = "";
+
+			Window_名前[WindowType::Delete] = "除名";
+			Window_略記[WindowType::Delete] = "";
+			Window_ヘルプ[WindowType::Delete] = "本当に除名しますか？\n※除名した探索者は戻せません";
 			return true;
 		}
 

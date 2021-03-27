@@ -16,18 +16,19 @@ namespace SDX_ADE
 		//各種変数
 		std::vector<UIWindow*> windows;
 
-		W_ToolBar ToolBar;
+		W_ToolBar toolBar;
 
-		W_Dungeon  Win_Dungeon;//ダンジョン
-		W_EventLog Win_EventLog;//ログ
-		W_Item Win_Item;//装備品
-		W_Management Win_Management;//経営戦術
-		W_Material Win_Material;//素材
-		W_Party Win_Party;//ギルメン
-		W_Quest Win_Quest;//クエスト
+		W_Item win_item;//装備品
+		W_Dungeon  win_dungeon;//ダンジョン
+		W_EventLog win_eventLog;//ログ
+		W_Management win_management;//経営戦術
+		W_Material win_material;//素材
+		W_Party win_party;//ギルメン
+		W_Quest win_quest;//クエスト
 
-		W_Config Win_Config;//設定ウィンドウ
-		W_Popup Win_Title;//タイトルに戻る
+		W_Config win_config;//設定ウィンドウ
+		W_Popup win_title;//タイトルに戻る
+		W_Popup win_help;//とりあえず未実装なので汎用ポップアップ
 
 		Guild guild;
 
@@ -47,20 +48,22 @@ namespace SDX_ADE
 			BetaInit();
 
 			//ウィンドウ初期化
-			windows.push_back(&Win_Item);
-			windows.push_back(&Win_Dungeon);
-			windows.push_back(&Win_Party);
-			windows.push_back(&Win_Management);
-			windows.push_back(&Win_Material);
-			windows.push_back(&Win_Quest);
-			windows.push_back(&Win_EventLog);
+			windows.push_back(&win_item);
+			windows.push_back(&win_party);
+			windows.push_back(&win_dungeon);
+			windows.push_back(&win_management);
+			windows.push_back(&win_material);
+			windows.push_back(&win_quest);
+			windows.push_back(&win_eventLog);
 
-			ToolBar.SetConfig(&Win_Config,&Win_Title);
+			win_config.Init();
+			win_title.Init();
+			win_help.Init();
 
-			Win_Config.Init();
-			Win_Title.Init();
+			win_title.SetText(WindowType::Title );
+			win_help.SetText(WindowType::Help);
 
-			ToolBar.Init();
+			toolBar.Init();
 
 			int XXX = 100;
 			for (auto& it : windows)
@@ -72,17 +75,18 @@ namespace SDX_ADE
 				XXX += 50;
 			}
 
-			Win_Item.is表示 = true;
-			Win_Dungeon.is表示 = true;
-			Win_Party.is表示 = true;		
+			//基本は全ウィンドウ非表示
+			win_item.is表示 = false;
+			win_dungeon.is表示 = false;
+			win_party.is表示 = false;
 
 			WindowSaveLoad(FileMode::Read);
 
-			ToolBar.SetWindow(windows);
+			toolBar.SetWindow(windows , &win_help , &win_config, &win_title);
 
-
-			Win_Config.is表示 = true;
-			Win_Title.is表示 = false;
+			win_config.is表示 = false;
+			win_title.is表示 = false;
+			win_help.is表示 = false;
 		}
 
 		void Init(GameType 難易度)
@@ -123,6 +127,8 @@ namespace SDX_ADE
 			{
 				frame++;
 				
+				toolBar.Update();
+
 				Input();
 				Process();
 				Draw();
@@ -153,7 +159,7 @@ namespace SDX_ADE
 
 			UIObject::now_help = nullptr;
 
-			ToolBar.操作();
+			toolBar.派生Input();
 
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{
@@ -170,24 +176,28 @@ namespace SDX_ADE
 			}
 			W_Drag::Drop();
 
+			if (Input::key.F12.on == true)
+			{
+				keybd_event(VK_LWIN, 0, 0, 0);
+				keybd_event(VK_LMENU, 0, 0, 0);
+				keybd_event(VK_SNAPSHOT, 0, 0, 0);
+
+				keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0);
+				keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
+				keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
+			}
+
 		}
 		//描画処理
 		void Draw()
 		{
 			Game::アニメーション時間++;
 
-			//暫定背景表示-時間で明るさ変化
-			//if(Game::時間 > 22 * 360) { MSystem::背景.SetColor({ 0,0,0 }); }
-			//else if (Game::時間 > 20 * 360) { MSystem::背景.SetColor({255-(Game::時間 - 20 * 360)*255/720,255 - (Game::時間 - 20 * 360) * 255 / 720,255 - (Game::時間 - 20 * 360) * 255 / 720 }); }//20~22で暗くなる
-			//else if (Game::時間 < 4 * 360) { MSystem::背景.SetColor({0,0,0}); }
-			//else if (Game::時間 < 6 * 360) { MSystem::背景.SetColor({ (Game::時間 - 4 * 360)*255/720,(Game::時間 - 4 * 360) * 255 / 720,(Game::時間 - 4 * 360) * 255 / 720 }); }//4~6で明るくなる
-			//else { MSystem::背景.SetColor(Color::White); }
-
 			const int back_w = 384;
 			const int back_h = 288;
 
-			int b倍率 = (Window::GetHeight() - ToolBar.ツールバー高さ) / back_h + 1;
-			int h余り = (Window::GetHeight() - ToolBar.ツールバー高さ) % back_h - back_h;
+			int b倍率 = (Window::GetHeight() - toolBar.ツールバー高さ) / back_h + 1;
+			int h余り = (Window::GetHeight() - toolBar.ツールバー高さ) % back_h - back_h;
 
 			int w余り = Window::GetWidth() - back_w * b倍率;
 			int x差分 = w余り / 2;
@@ -199,10 +209,10 @@ namespace SDX_ADE
 			//背景描画
 			if (y差分 > 0)
 			{
-				Drawing::Rect({ 0,ToolBar.ツールバー高さ,Window::GetWidth() , y差分 }, Color(113, 63, 90), true);
+				Drawing::Rect({ 0,toolBar.ツールバー高さ,Window::GetWidth() , y差分 }, Color(113, 63, 90), true);
 				Drawing::Rect({ 0,Window::GetHeight() - y差分,Window::GetWidth() , y差分 }, Color(57, 45, 85), true);
 			}
-			y差分 += ToolBar.ツールバー高さ;
+			y差分 += toolBar.ツールバー高さ;
 			x差分 = (Window::GetWidth() - 幅);
 			
 			static int scr_x = 0;
@@ -219,10 +229,11 @@ namespace SDX_ADE
 			for (auto& it : windows)
 			{
 				if (it->is表示 == false) { continue; };
+				it->Update();
 				it->Draw();
 			}
 
-			ToolBar.Draw();
+			toolBar.Draw();
 
 			UIObject::now_help = nullptr;
 
@@ -233,18 +244,17 @@ namespace SDX_ADE
 
 			W_Drag::Draw();
 
-			if (CV::isデバッグ)
+			if (CV::isレイアウト)
 			{
-				CSVDraw();
-				CSVCheckInput();
+				Layout::Draw();
+				Layout::Input();
 			}
 
 		}
 
 		//各種処理
 		void Process()
-		{
-
+		{			
 			UseManagement();
 
 			if (Game::is停止) { return; }
@@ -369,13 +379,13 @@ namespace SDX_ADE
 
 			std::vector<UIWindow*> wins;
 
-			wins.push_back(&Win_Item);
-			wins.push_back(&Win_Dungeon);
-			wins.push_back(&Win_Party);
-			wins.push_back(&Win_Management);
-			wins.push_back(&Win_Material);
-			wins.push_back(&Win_Quest);
-			wins.push_back(&Win_EventLog);
+			wins.push_back(&win_item);
+			wins.push_back(&win_dungeon);
+			wins.push_back(&win_party);
+			wins.push_back(&win_management);
+			wins.push_back(&win_material);
+			wins.push_back(&win_quest);
+			wins.push_back(&win_eventLog);
 
 			for (auto& it : wins)
 			{

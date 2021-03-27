@@ -545,6 +545,10 @@ namespace SDX_ADE
 		Newgame,
 		Continue,
 		Credit,
+		Title,
+		Help,
+		Popup,
+		Delete,
 		COUNT
 	};
 

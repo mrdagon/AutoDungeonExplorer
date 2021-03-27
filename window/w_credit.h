@@ -16,20 +16,20 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			Set(WindowType::Config, IconType::情報);
-			SetPos(UIタイトル::クレジット_ウィンドウ, true , true);
+			Set(WindowType::Credit, IconType::情報);
+			SetPos(LTitle::クレジット_ウィンドウ, true , true , true);
 
-			縦内部幅 = std::max(縦幅, UILayout::Data(UIタイトル::クレジット_説明枠).h + 16);
+			縦内部幅 = std::max(縦幅, Layout::Data(LTitle::クレジット_説明枠).h + 16);
 
-			文章.SetUI("付属テキストの内容を表示\nあああああ\nああ\nあ" , UIタイトル::クレジット_説明枠);
+			文章.SetUI("付属テキストの内容を表示\nあああああ\nああ\nあ" , LTitle::クレジット_説明枠);
 
 			AddItem(文章);
 		}
 
 		void Update()
 		{
-			SetPos(UIタイトル::クレジット_ウィンドウ, true , true);
-			縦内部幅 = std::max(縦幅, UILayout::Data(UIタイトル::クレジット_説明枠).h + 16);
+			SetPos(LTitle::クレジット_ウィンドウ, true , true , true);
+			縦内部幅 = std::max(縦幅, Layout::Data(LTitle::クレジット_説明枠).h + 16);
 		}
 	};
 }

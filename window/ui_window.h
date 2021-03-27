@@ -14,14 +14,14 @@ namespace SDX_ADE
 		bool is最小縮小;
 	public:
 		static const int タイトル枠高さ = 30;
-		static const int ツールバー高さ = 90;
+		inline static int ツールバー高さ = 90;
 
 		WindowType 種類;
 		DesignType デザイン;
 
 		//描画および操作可能なオブジェクト
-		std::vector<UIObject*> ui_objects;//スクロールするオブジェクト
-		std::vector<UIObject*> 固定objects;//スクロールしないオブジェクト
+		std::vector<UIObject*> item;//スクロールするオブジェクト
+		std::vector<UIObject*> 固定item;//スクロールしないオブジェクト
 
 		bool is閉じるボタン = true;
 		bool is固定 = false;//大きさ変更と掴み移動可能フラグ
@@ -35,13 +35,13 @@ namespace SDX_ADE
 		Point 相対座標;//タイトル部分を除外した、スクロール位置計算後の左上座標
 		
 		int 横幅;
-		int 縦幅;//タイトル部分は含まない
+		int 縦幅 = 0;//タイトル部分は含まない
 		int 最大縦, 最小縦;
 		int 固定縦 = 0;//スクロールせずに固定な部分の高さ
 
 		//内部の幅、内部幅が縦幅より大きい場合スクロールバーが出る
-		double 縦内部幅;
-		double スクロール位置 = 0;//最小0、最大立幅内部 - 立幅
+		int 縦内部幅;
+		int スクロール位置 = 0;//最小0、最大立幅内部 - 立幅
 		bool isスクロールバー表示 = true;
 
 		//つかみ処理用、一時変数
@@ -67,13 +67,26 @@ namespace SDX_ADE
 			this->種類 = 種類;
 			this->デザイン = デザイン;
 			this->アイコン = アイコン;
+			スクロール位置 = 0;
 		}
 
 		template<class TUIEnum>
-		void SetPos(TUIEnum type , bool isSetCenter , bool isスクロールバー)
+		void SetPos(TUIEnum type , bool isSetCenter , bool isスクロールバー , bool is縦幅固定 )
 		{
-			横幅 = UILayout::Data(type).w;
-			縦幅 = UILayout::Data(type).h;
+			横幅 = Layout::Data(type).w;
+			if (is縦幅固定)
+			{
+				縦幅 = Layout::Data(type).h;
+				最小縦 = 縦幅;
+				最大縦 = 縦幅;
+				縦内部幅 = 縦幅;
+			}
+			else
+			{
+				最小縦 = Layout::Data(type).h;
+				最大縦 = Config::解像度H;
+				縦内部幅 = 最小縦;
+			}
 
 			if (isSetCenter)
 			{
@@ -81,11 +94,6 @@ namespace SDX_ADE
 				座標.y = Config::解像度H / 2 - 縦幅 / 2;
 			}
 
-			最小縦 = 縦幅;
-			最大縦 = 縦幅;
-			縦内部幅 = 縦幅;
-
-			スクロール位置 = 0;
 			isスクロールバー表示 = isスクロールバー;
 		}
 
@@ -102,15 +110,15 @@ namespace SDX_ADE
 
 			Reset描画範囲(false);
 			////配列の後ろから描画
-			for (int a = (int)ui_objects.size() - 1; a >= 0; a--)
+			for (int a = (int)item.size() - 1; a >= 0; a--)
 			{
-				if (ui_objects[a]->is表示) { ui_objects[a]->Draw(); }
+				if (item[a]->is表示) { item[a]->Draw(); }
 			}
 
 			Reset描画範囲(true);
-			for (int a = (int)固定objects.size() - 1; a >= 0; a--)
+			for (int a = (int)固定item.size() - 1; a >= 0; a--)
 			{
-				if (固定objects[a]->is表示) { 固定objects[a]->Draw(); }
+				if (固定item[a]->is表示) { 固定item[a]->Draw(); }
 			}
 
 			派生Draw();
@@ -122,33 +130,33 @@ namespace SDX_ADE
 		void 共通Draw()
 		{
 			//タイトル部分
-			UIDesign::data[デザイン]->Draw(UIType::タイトル, 座標.x, 座標.y, 横幅, タイトル枠高さ);
+			Design::data[デザイン]->Draw(UIType::タイトル, (int)座標.x, (int)座標.y, 横幅, タイトル枠高さ);
 
-			//ウィンドウアイコン			
-			UIDesign::data[デザイン]->Draw(UIType::背景, 座標.x + 6, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
-			
-			MFont::M->Draw({ 座標.x + 34,座標.y + 1 }, Color::White ,{ TX::Window_名前[種類] });
-			//MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
+			//ウィンドウ名
+			MFont::M->Draw({ (int)座標.x + 34,(int)座標.y + 1 }, Color::White, { TX::Window_名前[種類] });
+
+			//ウィンドウアイコン
+			Design::data[デザイン]->Draw(UIType::背景, (int)座標.x + 6, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+			MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン/ヘルプボタン
 			if (is閉じるボタン == true)
 			{
-				UIDesign::data[デザイン]->Draw(UIType::背景, 座標.x + 横幅 - 25, 座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
-				//MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
+				Design::data[デザイン]->Draw(UIType::背景, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
 			}
 
 			//メイン部分描画
-			UIDesign::data[デザイン]->Draw(UIType::ウィンドウ, 座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅);
+			Design::data[デザイン]->Draw(UIType::ウィンドウ, (int)座標.x, (int)座標.y + タイトル枠高さ, 横幅, 縦幅);
 
-			//ウィンドウスクロール部分
-			//スクロール最大高さ = 縦幅-8-8
+			//スクロール
 			if (縦幅 < 縦内部幅)
 			{
-				MSystem::DrawWindow({ 座標.x + 横幅 - 26 , 座標.y + タイトル枠高さ + 4 }, 20, 縦幅 - 8, 2, -1);
+				Design::data[デザイン]->Draw(UIType::丸フレーム, (int)座標.x + 横幅 - 26, (int)座標.y + タイトル枠高さ + 4, 20, 縦幅 - 8);
 
 				int scrH = int((縦幅 - 16) * 縦幅 / 縦内部幅);
 				int scrY = int(座標.y + タイトル枠高さ + 8 + (縦幅 - 16) * スクロール位置 / 縦内部幅);
-				MSystem::DrawWindow({ 座標.x + 横幅 - 23 , scrY }, 14, scrH, 14);
+				Design::data[デザイン]->DrawGauge(座標.x + 横幅 - 23, scrY, 14, scrH, 1);
 			}
 		}
 		
@@ -390,13 +398,13 @@ namespace SDX_ADE
 		virtual bool 派生Input()
 		{
 			//配列の前からチェック
-			for (auto& it : 固定objects)
+			for (auto& it : 固定item)
 			{
 				//クリックとドロップのチェック
 				if (it->CheckInput(座標.x, 座標.y + タイトル枠高さ)) { return true; };
 			}
 
-			for (auto& it : ui_objects)
+			for (auto& it : item)
 			{
 				//クリックとドロップのチェック
 				if (it->CheckInput(相対座標.x, 相対座標.y)) { return true; };
@@ -436,7 +444,7 @@ namespace SDX_ADE
 		}
 
 		/*最前面にこのウィンドウだけ表示*/
-		int Openポップアップ(bool is多重呼び出し = false)
+		int OpenPopup(bool is多重呼び出し = false)
 		{
 			is表示 = true;
 			is固定 = true;
@@ -475,10 +483,10 @@ namespace SDX_ADE
 					break;
 				}
 
-				if (CV::isデバッグ)
+				if (CV::isレイアウト)
 				{
-					UILayout::Draw();
-					UILayout::Input();
+					Layout::Draw();
+					Layout::Input();
 				}
 
 				if (is表示 == false){ break; }
@@ -494,9 +502,9 @@ namespace SDX_ADE
 		{
 			if (is固定 == true)
 			{
-				固定objects.push_back(&object);
+				固定item.push_back(&object);
 			} else {
-				ui_objects.push_back(&object);
+				item.push_back(&object);
 			}
 		}
 	};

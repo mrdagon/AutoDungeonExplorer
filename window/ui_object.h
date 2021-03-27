@@ -13,7 +13,7 @@ namespace SDX_ADE
 	private:
 		virtual void Draw派生()
 		{
-
+			drawEvent();
 		}
 
 		virtual bool Check派生(double px, double py)
@@ -24,42 +24,79 @@ namespace SDX_ADE
 	public:
 		inline static UIHelp* now_help = nullptr;
 
-		UILayout* layout;
+		Layout* layout;
 		UIObject* 親 = nullptr;
 		UIHelp* help = nullptr;
 		bool is表示 = true;
 		bool is表示オンリー = false;
 		bool isOver = false;
 		int lineID = 0;
+		bool isLeftPos = true;
 
+		std::function<void()> clickEvent = []() {};
+		std::function<void()> drawEvent = []() {};
+		std::function<void()> dropEvent = []() {};
+		std::function<void()> overEvent = []() {};
 
 		template<class T>
 		void SetUI(T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
-			layout = &UILayout::Data(レイアウト);
+			layout = &Layout::Data(レイアウト);
 			lineID = 整列ID;
 			親 = 親object;
 		}
 
 		int GetX()
 		{
+			if (isLeftPos)
+			{
+				if (lineID <= 0)
+				{
+					if (親 == nullptr)
+					{
+						return layout->x;
+					}
+
+					return 親->GetX() + layout->x;
+				}
+
+				if (親 == nullptr)
+				{
+					return layout->x + (lineID % layout->改行値) * layout->並べx;
+				}
+
+				return 親->GetX() + layout->x + (lineID % layout->改行値) * layout->並べx;
+			}
+
 			if (lineID <= 0)
 			{
 				if (親 == nullptr)
 				{
-					return layout->x;
+					return Config::解像度W - (layout->x);
 				}
 
-				return 親->GetX() + layout->x;
+				return Config::解像度W - (親->GetX() + layout->x);
 			}
 
 			if (親 == nullptr)
 			{
-				return layout->x + ( lineID % layout->改行値) * layout->並べx ;
+				return Config::解像度W - (layout->x + (lineID % layout->改行値) * layout->並べx);
 			}
 
-			return 親->GetX() + layout->x + (lineID % layout->改行値) * layout->並べx;
+			return Config::解像度W - (親->GetX() + layout->x + (lineID % layout->改行値) * layout->並べx);
+
 		}
+
+		Font* GetFont()
+		{
+			if (layout->フォントID < 0 || layout->フォントID > 2)
+			{
+				return MFont::F[2];
+			}
+
+			return MFont::F[layout->フォントID];
+		}
+
 		int GetY()
 		{
 			if (lineID <= 0)
@@ -121,7 +158,7 @@ namespace SDX_ADE
 			}
 		}
 
-		void DrawUI(UIType UI枠種 , IUIDesign* UIデザイン)
+		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::data[DesignType::セット1])
 		{
 			UIデザイン->Draw(UI枠種, GetX(), GetY(), GetW(), GetH());
 		}
@@ -149,8 +186,9 @@ namespace SDX_ADE
 			int posY = GetY();
 
 			Rect pt = { posX + px, posY + py , GetW() , GetH() };
+			Point mp = Input::mouse.GetPoint();
 
-			if (Input::mouse.GetPoint().Hit(&pt))
+			if ( mp.Hit(&pt))
 			{
 				isOver = true;
 
@@ -174,194 +212,22 @@ namespace SDX_ADE
 		}
 
 		/*クリック操作*/
-		virtual void Click(){}
+		virtual void Click()
+		{
+			clickEvent();		
+		}
 
 		/*ドロップ操作*/
-		virtual void Drop(){}
+		virtual void Drop()
+		{
+			dropEvent();
+		}
 
 		/*マウスオーバー時の処理*/
-		virtual void Over(){}
-	};
-
-	//よく使うUIObjectの基本形
-	
-
-	//文字付きボタンオブジェクト
-	class UIButton : public UIObject
-	{
-	public:
-		std::string テキスト;
-		DesignType UIデザイン;
-		bool is押下 = false;//押し下げ状態フラグ
-
-		//
-		std::function<void()> clickEvent = [](){};
-
-		//クリック時の処理はオーバーライド
-		//ラムダ式でも良さそう
-
-		template<class T>
-		void SetUI( std::string 初期テキスト  , T レイアウト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
+		virtual void Over()
 		{
-			テキスト = 初期テキスト;
-			UIデザイン = デザイン;
-			layout = &UILayout::Data(レイアウト);
-			lineID = 整列ID;
-			親 = 親object;
-		}
-
-		void Draw派生()
-		{
-			//凸ボタン、マウスオーバー時は平
-			int yd = 0;
-
-			if (is押下 == true)
-			{
-				DrawUI(UIType::凹ボタン, UIDesign::data[UIデザイン]);
-				yd = 2;
-			}
-			else if (isOver)
-			{
-				DrawUI( UIType::平ボタン, UIDesign::data[UIデザイン]);
-			}
-			else
-			{
-				DrawUI( UIType::凸ボタン, UIDesign::data[UIデザイン]);
-				yd = -2;
-			}
-
-			switch (layout->フォントID)
-			{
-			case 0:
-				MFont::S->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
-				break;
-			case 1:
-				MFont::M->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
-				break;
-			default:
-				MFont::L->DrawRotate({ GetCenterX() , GetCenterY() + yd }, 1, 0, UIDesign::data[UIデザイン]->暗字, テキスト, false);
-				break;
-			}
-
-		}
-
-		void Click()
-		{
-			clickEvent();
+			overEvent();
 		}
 	};
 
-	//画像付きボタン
-	class UIImageButton : public UIObject
-	{
-	public:
-		Image* 画像;
-		DesignType UIデザイン;
-		bool is押下 = false;//押し下げ状態フラグ
-
-		//
-		std::function<void()> clickEvent = [](){};
-
-		//クリック時の処理はオーバーライド
-		//ラムダ式でも良さそう
-
-		template<class T>
-		void SetUI(Image* 画像, T レイアウト, DesignType デザイン = DesignType::セット1 , int 整列ID = 0, UIObject* 親object = nullptr)
-		{
-			this->画像 = 画像;
-			UIデザイン = デザイン;
-			layout = &UILayout::Data(レイアウト);
-			lineID = 整列ID;
-			親 = 親object;
-		}
-
-		void Draw派生()
-		{
-			//凸ボタン、マウスオーバー時は平
-			int yd = 0;
-
-			if (is押下 == true)
-			{
-				DrawUI(UIType::凹ボタン, UIDesign::data[UIデザイン]);
-				yd = 2;
-			}
-			else if (isOver)
-			{
-				DrawUI(UIType::平ボタン, UIDesign::data[UIデザイン]);
-			}
-			else
-			{
-				DrawUI(UIType::凸ボタン, UIDesign::data[UIデザイン]);
-				yd = -2;
-			}
-
-			画像->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0);
-		}
-
-		void Click()
-		{
-			clickEvent();
-		}
-	};
-
-	//テキスト表示枠 ＋　テキスト
-	class UITextFrame : public UIObject
-	{
-	public:
-		std::string テキスト;
-		DesignType UIデザイン;
-
-		template<class T>
-		void SetUI(std::string 初期テキスト, T レイアウト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
-		{
-			テキスト = 初期テキスト;
-			UIデザイン = デザイン;
-			layout = &UILayout::Data(レイアウト);
-			lineID = 整列ID;
-			親 = 親object;
-		}
-
-
-		void Draw派生()
-		{
-			switch (layout->画像ID)
-			{
-			case 0:
-				DrawUI(UIType::背景, UIDesign::data[UIデザイン]);
-				break;
-				break;
-			case 1:
-				DrawUI(UIType::グループ明, UIDesign::data[UIデザイン]);
-				break;
-				break;
-			default:
-				DrawUI(UIType::グループ暗, UIDesign::data[UIデザイン]);
-				break;
-			}
-
-
-			switch (layout->フォントID)
-			{
-			case 0:
-				MFont::S->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
-				break;
-			case 1:
-				MFont::M->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
-				break;
-			default:
-				MFont::L->Draw({ GetX() + 4 , GetY() + 4 }, UIDesign::data[UIデザイン]->暗字, テキスト);
-				break;
-			}
-		}
-	};
-
-	class UITab : public UIObject
-	{
-	//タブ1枚に付き、1オブジェクト
-	public:
-		int tabID;
-		int& tabSelect参照;
-		Image* アイコン;
-		std::string テキスト;
-	};
 }

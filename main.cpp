@@ -31,7 +31,7 @@ void LoadAndInitData()
 
 	//各種リソース読み込み
 	LoadAsset();
-	UIDesign::Load();
+	Design::Load();
 
 	//外部データ読込
 	PassiveSkill::LoadData();
@@ -44,7 +44,7 @@ void LoadAndInitData()
 
 	Quest::LoadData();
 	Dungeon::LoadData();
-	UILayout::LoadData();
+	Layout::LoadData();
 
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に
@@ -62,13 +62,10 @@ int main(int argc, char* argv[])
 
 	int text_x = 100;
 
-	UILayout::Data(UIタイトル::題字);
+	Layout::Data(LTitle::題字);
 
 	while (System::ProcessMessage())
 	{
-		menu.Init();
-		menu.Main();
-
 		if (Game::isゲーム終了) { break; }
 
 		if (menu.セーブ == nullptr)
@@ -80,6 +77,9 @@ int main(int argc, char* argv[])
 
 		game.Init();
 		game.Main();
+
+		menu.Init();//とりあえずタイトルスキップ
+		menu.Main();
 	}
 
 	if (CV::isデバッグ)
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
 
 	Config::SaveLoad(FileMode::Write);
 
-	UILayout::SaveData();
+	Layout::SaveData();
 
 	System::End();//ライブラリの終了処理
 	return 0;

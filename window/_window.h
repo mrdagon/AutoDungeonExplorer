@@ -6,6 +6,7 @@
 #include "ui_help.h"
 #include "ui_layout.h"
 #include "ui_object.h"
+#include "ui_common_object.h"
 #include "ui_window.h"
 
 //windowはWindow

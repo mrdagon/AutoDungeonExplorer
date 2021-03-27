@@ -19,23 +19,15 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			Set(WindowType::Config, IconType::情報);
+			Set(WindowType::Popup, IconType::情報);
 
-			横幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).w;
-			縦幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).h;
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
-			最小縦 = 170;
-			最大縦 = 170;
-			縦内部幅 = 170;
-			スクロール位置 = 0;
-
+			SetPos(L基本::ポップアップ_ウィンドウ, true, false, true);
 			is閉じるボタン = false;
 			isスクロールバー表示 = false;
 
-			文章.SetUI("テキスト未設定", UI基本::ポップアップ_説明);
-			確定.SetUI("はい", UI基本::ポップアップ_はい);
-			キャンセル.SetUI("いいえ", UI基本::ポップアップ_いいえ);
+			文章.SetUI("テキスト未設定", L基本::ポップアップ_説明);
+			確定.SetUI("はい", L基本::ポップアップ_はい);
+			キャンセル.SetUI("いいえ", L基本::ポップアップ_いいえ);
 
 			確定.clickEvent = [&]()
 			{
@@ -49,17 +41,20 @@ namespace SDX_ADE
 				ポップアップリザルト = 0;
 			};
 
-			ui_objects.push_back(&文章);
-			ui_objects.push_back(&確定);
-			ui_objects.push_back(&キャンセル);
+			item.push_back(&文章);
+			item.push_back(&確定);
+			item.push_back(&キャンセル);
 		}
 
 		void Update()
 		{
-			横幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).w;
-			縦幅 = UILayout::Data(UI基本::ポップアップ_ウィンドウ).h;
-			座標.x = Window::GetWidth() / 2 - 横幅 / 2;
-			座標.y = Window::GetHeight() / 2 - 縦幅 / 2;
+			SetPos(L基本::ポップアップ_ウィンドウ, true, false, true);
 		}
+
+		void SetText( WindowType 種類 )
+		{
+			文章.テキスト = TX::Window_ヘルプ[種類];
+		}
+
 	};
 }

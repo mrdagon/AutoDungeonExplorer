@@ -7,6 +7,15 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+
+
+	enum class LBattle
+	{
+		ウィンドウ,
+		COUNT,
+		PAGE = (int)UIPage::パーティ探索
+	};
+
 	/*パーティウィンドウ*/
 	class W_Party: public UIWindow
 	{
@@ -244,7 +253,7 @@ namespace SDX_ADE
 					スキルツリー->ギルメン = ギルメン;
 					スキルツリー->配置id = 並びID;
 					スキルツリー->Init();
-					スキルツリー->Openポップアップ();
+					スキルツリー->OpenPopup();
 					所属->基礎ステ再計算();
 
 					return;
@@ -580,7 +589,7 @@ namespace SDX_ADE
 						buf_y = py + Lp(2 + it.配置ID);
 					}
 
-					it.Draw(buf_x, buf_y, 0.4);
+					it.Draw((int)buf_x, (int)buf_y, 0.4);
 				}
 
 				//文字エフェクト
@@ -888,7 +897,7 @@ namespace SDX_ADE
 			void Click(double px, double py)
 			{
 				//ギルメン掴む
-				int result = 求人ウィンドウ.Openポップアップ();
+				int result = 求人ウィンドウ.OpenPopup();
 			}
 		};
 
@@ -918,7 +927,7 @@ namespace SDX_ADE
 				if (W_Drag::探索メン == nullptr) { return; }
 				W_Drag::探索メン = nullptr;
 
-				int result = 確認ウィンドウ.Openポップアップ();
+				int result = 確認ウィンドウ.OpenPopup();
 
 				if (result == 1)
 				{
@@ -927,63 +936,247 @@ namespace SDX_ADE
 			}
 		};
 
+		class UI探索先 : public UIObject
+		{
+			void Draw派生() override
+			{
+				//全体枠
+
+				//探索先画像
+
+				//探索先階層数
+
+				//探索度
+
+				//ボスフラグ
+
+				//宝箱回収率
+
+				//+1Fボタン
+
+
+				//-1Fボタン
+
+				//探索指示
+				//コンボボックス的なのから選ぶ
+			}
+
+			void Click() override
+			{
+				//探索者掴む
+
+				//探索先変更、探索指示変更
+
+			}
+
+			void Drop() override
+			{
+				//探索者入れ替え
+
+				//探索先変更
+
+			}
+		};
+
+		class UI探索者 : public UIObject
+		{
+			void Draw派生() override
+			{
+				//全体枠
+
+				//探索者画像
+
+				//Lv
+
+				//経験値バー？
+
+				//装備品２つ
+
+				//遺物１つ
+
+				//スキル画面ボタン
+			}
+
+			void Click() override
+			{
+				//探索者掴む
+
+				//探索先変更、探索指示変更
+
+			}
+
+			void Drop() override
+			{
+				//探索者入れ替え
+
+				//探索先変更
+
+			}
+
+		};
+
+		class UIパーティ : public UIObject
+		{
+		public:
+			UI探索先 探索先;
+			UI探索者 探索者[CV::パーティ人数];
+
+			void Draw派生() override
+			{
+				//全体枠
+				DrawUI(UIType::グループ暗);
+				//パーティメンバー５人
+
+				//探索先の情報と探索指示
+			}
+
+			void Click() override
+			{
+				//探索者掴む
+
+				//探索先変更、探索指示変更
+
+			}
+
+			void Drop() override
+			{
+				//探索者入れ替え
+
+				//探索先変更
+
+			}
+		};
+
+		class UI控え探索者 : public UIObject
+		{
+		public:
+			Explorer* 探索者;
+			void Draw派生() override
+			{
+				//ボタン枠-掴み中だと凹み
+
+				//キャラ画像
+
+				//Lv
+			}
+
+			void Click() override
+			{
+				//掴む
+
+			}
+
+			void Drop() override
+			{
+				//並び替える
+
+			}
+		};
+
+		class UI除名 : public UIObject
+		{
+			void Draw派生() override
+			{
+				//中央にアイコン
+
+				//下に除名の文字
+
+				//キャラクター掴んでいて
+			}
+
+			void Drop() override
+			{
+				//除名するか確認して、はいを選んだら除名
+
+			}
+
+		};
+
 	public:
 		//パーティ
 		W_Skilltree スキルツリー;
+		W_Recruit 求人ウィンドウ;
+		W_Popup 除名ウィンドウ;
 
-		GUI_パーティ パーティ[CV::上限パーティ数];
-		GUI_探索先 探索先[CV::上限パーティ数];
-		GUI_パーティメンバー パーティメンバー[CV::上限パーティ数 * CV::パーティ人数];
-		GUI_控え 控え[CV::最大控え人数];
-		GUI_控え枠 控え枠;
-		GUI_求人 求人;
-		GUI_除名 除名;
+		UIパーティ パーティ[CV::上限パーティ数];
+		UITextFrame 控え枠;
+		UI控え探索者 控え[CV::最大控え人数];
+		UIButton 除名;
+		UIButton 登録;
 
 		void Init()
 		{
-			種類 = WindowType::Party;
-
-			アイコン = IconType::編成;
-			横幅 = 550;
-			縦幅 = 125;
-			最小縦 = 125;
-			最大縦 = 800;
-			縦内部幅 = 800;//120 x ランク数
-			スクロール位置 = 0;
-
 			スキルツリー.Init();
+			求人ウィンドウ.Init();
+			除名ウィンドウ.Init();
+			除名ウィンドウ.SetText(WindowType::Delete);
 
-			for (int a = 0; a < Guild::P->最大パーティ数 * CV::パーティ人数; a++)
+			Set(種類 = WindowType::Party, IconType::編成);
+			SetPos(LParty::ウィンドウ, false, true, false);
+
+			//●初期化
+			int a = -1;
+			for (auto& it : パーティ)
 			{
-				パーティメンバー[a].親ウィンドウ = this;
-				パーティメンバー[a].所属 = &Guild::P->探索パーティ[a/5];
-				パーティメンバー[a].並びID = a;
-				パーティメンバー[a].csv_page = 8;
-				パーティメンバー[a].スキルツリー = &スキルツリー;
+				a++;
+				AddItem(it);
+				it.SetUI(LParty::パーティ_ウィンドウ, a);
 			}
 
-			for (int a = 0; a < Guild::P->最大パーティ数; a++)
+			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え枠_控え探索者, 0, &控え枠);
+			除名.SetUI(&MIcon::UI[IconType::ゴミ箱], "除名", LParty::控え枠_控え探索者, CV::最大控え人数, &控え枠);
+			除名.is押下 = true;//平状態で固定
+			除名.押下状態 = 1;
+			AddItem(登録);
+			AddItem(除名);
+
+			a = 0;//0の位置に登録を置くので1から
+			for (auto& it : 控え)
 			{
-				探索先[a].csv_page = 8;
+				a++;
+				AddItem(it);
+				it.SetUI(LParty::控え枠_控え探索者, a , &控え枠);
+				it.探索者 = Guild::P->控え探索者[a];
+				if (it.探索者 == nullptr) { it.is表示 = false; }
+			}
+			AddItem(控え枠);
+			控え枠.SetUI("", LParty::控え枠_ウィンドウ);
+
+			//●イベント
+			登録.clickEvent = [&]()
+			{
+				求人ウィンドウ.OpenPopup();
+			};
+			
+			除名.dropEvent = [&]()
+			{
+				除名ウィンドウ.OpenPopup();			
+			};
+		}
+
+		void Update()
+		{
+			SetPos(LParty::ウィンドウ, false, true, false);
+
+			int a = -1;
+			for (auto& it : パーティ)
+			{
+				a++;
+				it.is表示 = it.lineID < Guild::P->最大パーティ数;
 			}
 
-			//パーティだけCSVページ分ける
-			for (int a = 0; a < Guild::P->最大パーティ数; a++)
+			for (auto& it : 控え)
 			{
-				パーティ[a].csv_page = 22;
+				it.is表示 = (it.探索者 != nullptr);
 			}
+			//控え枠の位置はパーティ数で変化			
+			auto& LA = Layout::Data(LParty::パーティ_ウィンドウ);
+			auto& LB = Layout::Data(LParty::控え枠_ウィンドウ);
 
-			for (int a = 0; a < CV::最大控え人数; a++)
-			{
-				控え[a].ID = a;
-				控え[a].csv_page = 8;
-			}
+			LB.y = LA.並べy * Guild::P->最大パーティ数 + LB.並べy;
 
-			除名.csv_page = 8;
-
-			求人.csv_page = 8;
-
-			控え枠.csv_page = 8;
+			//パーティ数に応じて内部幅を計算
+			縦内部幅 = LB.y + LB.h + LB.並べy * 2;
 		}
 
 	};

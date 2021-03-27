@@ -736,7 +736,7 @@ namespace SDX_ADE
 				break;
 			//スキル使用時限定
 			case PSkillEffect::スキル威力増減:
-				Aスキル->反映率 *= 1.0 + Pスキル->効果量[0];
+				//Aスキル->反映率 *= 1.0 + Pスキル->効果量[0];
 				break;
 			case PSkillEffect::スキル効果増減:
 				//Aスキル->バフ効果補正 += Pスキル->効果量[0];

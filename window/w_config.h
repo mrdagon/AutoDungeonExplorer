@@ -7,7 +7,7 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	enum class UIコンフィグ
+	enum class LConfig
 	{
 		ウィンドウ,
 		決定_キャンセル,
@@ -47,8 +47,8 @@ namespace SDX_ADE
 			IconType アイコン;
 			std::string 名前;
 			std::string 設定値;
-			UIImageButton 増加ボタン;
-			UIImageButton 減少ボタン;
+			UIButton 増加ボタン;
+			UIButton 減少ボタン;
 
 			W_Config* 親;
 
@@ -59,8 +59,8 @@ namespace SDX_ADE
 				this->アイコン = アイコン;
 				this->type = 種類;
 
-				増加ボタン.SetUI(&MIcon::UI[IconType::三角], UIコンフィグ::設定増減 , DesignType::セット1, 1,this);
-				減少ボタン.SetUI(&MIcon::UI[IconType::三角], UIコンフィグ::設定増減 , DesignType::セット1, 0,this);
+				増加ボタン.SetUI(&MIcon::UI[IconType::三角], LConfig::設定増減 , 1,this);
+				減少ボタン.SetUI(&MIcon::UI[IconType::三角], LConfig::設定増減 , 0,this);
 			}
 
 			bool Check派生(double px,double py) override
@@ -74,12 +74,12 @@ namespace SDX_ADE
 			void Draw派生()
 			{
 
-				auto posA = UILayout::Data(UIコンフィグ::設定アイコン);
-				auto posB = UILayout::Data(UIコンフィグ::設定項目名);
-				auto posC = UILayout::Data(UIコンフィグ::設定数値);
+				auto posA = Layout::Data(LConfig::設定アイコン);
+				auto posB = Layout::Data(LConfig::設定項目名);
+				auto posC = Layout::Data(LConfig::設定数値);
 
 				//UIDesign::Brown.Draw(UIType::背景, UILayout::Data(UIコンフィグ::設定ボタン));
-				DrawUI(UIType::背景, UIDesign::data[DesignType::セット1]);
+				DrawUI(UIType::丸フレーム, Design::data[DesignType::セット1]);
 
 				MIcon::UI[アイコン].DrawRotate({ GetX() + posA.x , GetY() + posA.y },2,0);//アイコン表示削除
 
@@ -142,12 +142,12 @@ namespace SDX_ADE
 		{
 			//基本Window設定
 			Set(WindowType::Config, IconType::情報);
-			SetPos(UIコンフィグ::ウィンドウ, true, false);
+			SetPos(LConfig::ウィンドウ, true, false , true);
 			is閉じるボタン = false;
 
 			//レイアウト値
-			確定.SetUI("決定", UIコンフィグ::決定_キャンセル, DesignType::セット1, 0);
-			キャンセル.SetUI("キャンセル", UIコンフィグ::決定_キャンセル, DesignType::セット1, 1);
+			確定.SetUI("決定", LConfig::決定_キャンセル, 0);
+			キャンセル.SetUI("キャンセル", LConfig::決定_キャンセル, 1);
 
 			//仮数値に現在の設定を代入
 			仮_BGM設定 = Config::BGM設定;
@@ -166,22 +166,22 @@ namespace SDX_ADE
 			BGM音量.Set( TX::Config_音楽.c_str() , IconType::BGM, ConfigType::BGM音量 , this);
 			SE音量.Set( TX::Config_効果音.c_str() , IconType::効果音, ConfigType::SE音量, this);
 			解像度.Set( TX::Config_解像度.c_str() , IconType::解像度, ConfigType::解像度 , this);
-			解像度X倍.Set(TX::Config_解像度X倍.c_str(), IconType::BGM, ConfigType::BGM音量, this);
+			解像度X倍.Set(TX::Config_解像度X倍.c_str(), IconType::解像度, ConfigType::BGM音量, this);
 
 			ボス戦等速.Set(TX::Config_ボス戦速度.c_str(), IconType::ボス, ConfigType::ボス戦等速, this);
 			夜加速.Set(TX::Config_夜間加速.c_str(), IconType::時間, ConfigType::夜加速, this);
 			超加速.Set(TX::Config_超加速.c_str(), IconType::時間, ConfigType::超加速, this);
 			フォント種.Set(TX::Config_フォント種.c_str(), IconType::ヘルプ, ConfigType::フォント, this);
 
-			ウィンドウモード.SetUI(UIコンフィグ::設定ボタン, 0);
-			解像度.SetUI(UIコンフィグ::設定ボタン, 2);
-			解像度X倍.SetUI(UIコンフィグ::設定ボタン, 4);
-			BGM音量.SetUI(UIコンフィグ::設定ボタン, 7);
-			SE音量.SetUI(UIコンフィグ::設定ボタン, 9);
-			ボス戦等速.SetUI(UIコンフィグ::設定ボタン, 12);
-			夜加速.SetUI(UIコンフィグ::設定ボタン, 14);
-			超加速.SetUI(UIコンフィグ::設定ボタン, 16);
-			フォント種.SetUI(UIコンフィグ::設定ボタン, 18);
+			ウィンドウモード.SetUI(LConfig::設定ボタン, 0);
+			解像度.SetUI(LConfig::設定ボタン, 2);
+			解像度X倍.SetUI(LConfig::設定ボタン, 4);
+			BGM音量.SetUI(LConfig::設定ボタン, 7);
+			SE音量.SetUI(LConfig::設定ボタン, 9);
+			ボス戦等速.SetUI(LConfig::設定ボタン, 12);
+			夜加速.SetUI(LConfig::設定ボタン, 14);
+			超加速.SetUI(LConfig::設定ボタン, 16);
+			フォント種.SetUI(LConfig::設定ボタン, 18);
 
 			確定.clickEvent = [&](){
 				is表示 = false;
@@ -217,6 +217,7 @@ namespace SDX_ADE
 			{
 				仮_ウィンドウモード = !仮_ウィンドウモード;
 				ウィンドウモード.設定値 = TX::Config_ウィンドウモード設定[(int)仮_ウィンドウモード];
+
 			};
 
 			BGM音量.増加ボタン.clickEvent = [&]()
@@ -224,12 +225,16 @@ namespace SDX_ADE
 				仮_BGM設定 += 1;
 				if (仮_BGM設定 > 10) { 仮_BGM設定 = 10; }
 				BGM音量.設定値 = std::to_string(仮_BGM設定 * 10) + " %";
+				Config::BGM音量 = 仮_BGM設定 * 仮_BGM設定 / 100.0;
+				Music::SetMainVolume(Config::BGM音量);
 			};
 			BGM音量.減少ボタン.clickEvent = [&]()
 			{
 				仮_BGM設定 -= 1;
 				if (仮_BGM設定 < 0) { 仮_BGM設定 = 0; }
 				BGM音量.設定値 = std::to_string(仮_BGM設定 * 10) + " %";
+				Config::BGM音量 = 仮_BGM設定 * 仮_BGM設定 / 100.0;
+				Music::SetMainVolume(Config::BGM音量);
 			};
 
 			SE音量.増加ボタン.clickEvent = [&]()
@@ -237,12 +242,18 @@ namespace SDX_ADE
 				仮_SE設定 += 1;
 				if ( 仮_SE設定 > 10) { 仮_SE設定 = 10; }
 				SE音量.設定値 = std::to_string(仮_SE設定 * 10) + " %";
+				Config::SE音量 = 仮_SE設定 * 仮_SE設定 / 100.0;
+				Sound::SetMainVolume(Config::SE音量);
+				MSound::効果音[SE::決定].Play();
 			};
 			SE音量.減少ボタン.clickEvent = [&]()
 			{
 				仮_SE設定 -= 1;
 				if ( 仮_SE設定 < 0) { 仮_SE設定 = 0; }
 				SE音量.設定値 = std::to_string(仮_SE設定 * 10) + " %";
+				Config::SE音量 = 仮_SE設定 * 仮_SE設定 / 100.0;
+				Sound::SetMainVolume(Config::SE音量);
+				MSound::効果音[SE::決定].Play();
 			};
 
 			解像度.増加ボタン.clickEvent = [&]()
@@ -254,23 +265,22 @@ namespace SDX_ADE
 			解像度.減少ボタン.clickEvent = [&]()
 			{
 				仮_解像度 -= 1;
-				if (仮_解像度 < 8) { 仮_解像度 = 8; }
+				if (仮_解像度 < 6) { 仮_解像度 = 6; }
 				解像度.設定値 = std::to_string(仮_解像度 * 160) + " x " + std::to_string(仮_解像度 * 90);
 			};
 
 			解像度X倍.増加ボタン.clickEvent = [&]()
 			{
 				仮_解像度X倍 += 1;
-				if (仮_解像度X倍 > 4) { 仮_解像度X倍 = 4; }
-				解像度X倍.設定値 = std::to_string(仮_解像度X倍);
+				if (仮_解像度X倍 > 2) { 仮_解像度X倍 = 1; }
+				解像度X倍.設定値 = TX::Config_4Kモード[仮_解像度X倍];
 			};
 			解像度X倍.減少ボタン.clickEvent = [&]()
 			{
 				仮_解像度X倍 -= 1;
-				if (仮_解像度X倍 < 1) { 仮_解像度X倍 = 1; }
-				解像度X倍.設定値 = std::to_string(仮_解像度X倍);
+				if (仮_解像度X倍 < 1) { 仮_解像度X倍 = 2; }
+				解像度X倍.設定値 = TX::Config_4Kモード[仮_解像度X倍];
 			};
-
 
 			ボス戦等速.増加ボタン.clickEvent = [&]()
 			{
@@ -321,14 +331,14 @@ namespace SDX_ADE
 			BGM音量.設定値 = std::to_string(仮_BGM設定 * 10) + " %";
 			SE音量.設定値 = std::to_string(仮_SE設定 * 10) + " %";
 			解像度.設定値 = std::to_string(仮_解像度 * 160) + " x " + std::to_string(仮_解像度 * 90);
-			解像度X倍.設定値 = std::to_string(仮_解像度X倍);
+			解像度X倍.設定値 = TX::Config_4Kモード[仮_解像度X倍];
 			ボス戦等速.設定値 = TX::Config_ボス戦速度_設定[仮_ボス戦等速 ? 0 : 1];
 			夜加速.設定値 = TX::Config_夜間加速_設定[仮_夜加速 ? 0 : 1];
 			超加速.設定値 = TX::Config_超加速_設定[仮_超加速 ? 0 : 1];
-			フォント種.設定値 = TX::Config_フォント設定[仮_超加速 ? 0 : 1];
+			フォント種.設定値 = TX::Config_フォント設定[仮_フォント種 ? 0 : 1];
 
 			//オブジェクトを登録
-			ui_objects.clear();
+			item.clear();
 			AddItem(ウィンドウモード);
 			AddItem(BGM音量);
 			AddItem(SE音量);
@@ -346,7 +356,7 @@ namespace SDX_ADE
 
 		void Update()
 		{
-			SetPos(UIコンフィグ::ウィンドウ, true, false);
+			SetPos(LConfig::ウィンドウ, true, false , true);
 		}
 	};
 }

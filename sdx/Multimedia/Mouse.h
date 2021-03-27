@@ -124,7 +124,7 @@ namespace SDX
 		{
 			if (Camera::Get() != nullptr)
 			{
-				return { x / Camera::Get()->zoom ,y / Camera::Get()->zoom };
+				return { x / Camera::Get()->zoom,y / Camera::Get()->zoom };
 			}
 
 			return {x,y};

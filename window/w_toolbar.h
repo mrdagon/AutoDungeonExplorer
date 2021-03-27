@@ -6,6 +6,19 @@
 namespace SDX_ADE
 {
 	using namespace SDX;
+	enum class LToolBar
+	{
+		ツールバー_全体,
+		ツールバー_ウィンドウボタン,
+		ツールバー_速度ボタン,
+		ツールバー_その他ボタン,
+		ツールバー_日付,
+		ツールバー_日付文字,
+		COUNT,
+		PAGE = (int)UIPage::メイン画面
+	};
+
+
 	/*上部ツールバー*/
 	class W_ToolBar : public UIWindow
 	{
@@ -14,269 +27,230 @@ namespace SDX_ADE
 		static const int ボタン枠 = 1;
 		static const int ボタン押 = 3;
 
-		class G_日付 : public GUI_Object
+		class UITime : public UIObject
 		{
 		public:
-			void Draw派生(double px,double py)
+			DesignType UIデザイン;
+
+			template<class T>
+			void SetUI( T レイアウト)
 			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::UI[IconType::日付].DrawRotate({ px+16,py + 14 }, 2, 0);
-				MFont::LDot.DrawBold({ px + 150,py - 3 }, Color::White, Color::Black, { Game::日付 + 1 , TX::Tool_日付 }, true);
+				layout = &Layout::Data(レイアウト);
 			}
-		};
-		class G_時刻 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
+
+			void Draw派生()
 			{
-				int jikan = Game::時間 / CV::一時間フレーム数;
-				int hun = (Game::時間 / (CV::一時間フレーム数 / 60) )% 60;
-				Color 文字色 = Color::White;
-				if (Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) { 文字色 = Color::Blue; }
-				else if (Game::is仕事中 == true) { 文字色 = {255,128,128}; }
+				int 日 = Game::日付 + 1;
+				int 時 = Game::時間 / CV::一時間フレーム数;
+				int 分 = (Game::時間 / (CV::一時間フレーム数 / 60)) % 60;
 
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::UI[IconType::時間].DrawRotate({ px + 14,py + 14 },2,0);
-				MFont::LDot.DrawBold({ px + 94,py - 3 }, 文字色, Color::Black, { jikan ,":",hun/10,hun%10}, true);
-
-				if (Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間)
+				switch (layout->画像ID)
 				{
-					MFont::LDot.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::Tool_待機中 }, true);
-				} else {
-					MFont::LDot.DrawBold({ px + Lp(34),py - 3 }, Color::White, Color::Black, { TX::TooL_活動中 }, true);
+				case 0:
+					DrawUI(UIType::背景, Design::data[UIデザイン]);
+					break;
+					break;
+				case 1:
+					DrawUI(UIType::グループ明, Design::data[UIデザイン]);
+					break;
+					break;
+				default:
+					DrawUI(UIType::グループ暗, Design::data[UIデザイン]);
+					break;
 				}
-			}
-		};
-		class G_人口 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::UI[IconType::人口].DrawRotate({ px + 14,py + 14 }, 2, 0);
+
+				auto& it = Layout::Data(LToolBar::ツールバー_日付文字);
+
+				MFont::F[layout->フォントID]->Draw({ GetX() + it.x, GetY() + it.y }, Design::Blue.暗字 , { 日 , "日" }, true);
+				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べx, GetY() + it.y + it.並べy }, Design::Blue.暗字, { 時 , ":" , 分 }, true);
 			}
 		};
 
-		class G_資金 : public GUI_Object
+		class UIWindowButton : public UIButton
 		{
 		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), 表示枠, 0);
-				MIcon::UI[IconType::資金].DrawRotate({ px + 14,py + 14 }, 2, 0);
+			//対象ウィンドウが閉じてると出っ張る仕様
+			UIWindow* 対象ウィンドウ;
+			bool isポップアップ = false;
 
-				std::string str = "G";
-				double g = Guild::P->資金;
-				while (1)
+			void Draw派生() override
+			{
+				//対象ウィンドウが表示中は凹み状態になる
+				is押下 = (対象ウィンドウ->is表示 == true);
+
+				UIButton::Draw派生();
+			}
+
+			void Click() override
+			{
+				if (isポップアップ)
 				{
-					str = std::to_string((int)g%1000) + str;
+					対象ウィンドウ->OpenPopup();
 
-					if (g < 1000) { break; }
-					if ((int)g%1000 < 10)
+					if (対象ウィンドウ->ポップアップリザルト > 0)
 					{
-						str = "00" + str;
+						clickEvent();
 					}
-					else if ((int)g % 1000 < 100)
-					{
-						str = "0" + str;
-					}
-
-					g /= 1000;
-					str = "," + str;
 				}
-
-				MFont::LDot.DrawBold({ px+位置.GetW()-5,py-3 }, Color::White, Color::Black, str,true);
-
-			}
-		};
-		class G_ウィンドウ : public GUI_Object
-		{
-		public:
-			UIWindow* 対象ウィンドウ;
-
-			void Draw派生(double px, double py)
-			{
-				//対象ウィンドウ->アイコン
-				if (対象ウィンドウ->is表示)
+				else
 				{
-					MSystem::DrawWindow({px,py  },位置.GetW(),位置.GetH(), ボタン押, -1);
-				} else {
-					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
+					対象ウィンドウ->is表示 = !対象ウィンドウ->is表示;
+					対象ウィンドウ->is最前面へ移動 = true;
 				}
-				MIcon::UI[対象ウィンドウ->アイコン].DrawRotate({px+Lp(22),py+ Lp(23)}, 2, 0);
-				MFont::SAlias.DrawBold({px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Window_略記[対象ウィンドウ->種類]);
 			}
+		};
 
-			void Click(double px, double py)
+		class UISpeedButton : public UIButton
+		{
+		public:
+			void Draw派生() override
 			{
-				対象ウィンドウ->is表示 = !対象ウィンドウ->is表示;
-				対象ウィンドウ->is最前面へ移動 = 対象ウィンドウ->is表示;
+				//倍速値、アイコン、現在設定と同じなら凹ませる
 
-				if (対象ウィンドウ->is表示)
+				if (Config::is超加速 == true)
 				{
-					MSound::効果音[SE::ウィンドウ開く].Play();
-				} else {
-					MSound::効果音[SE::ウィンドウ閉じ].Play();
+					if (lineID == 3) { is押下 = Game::is停止; }
+					if (lineID == 2) { is押下 = (Game::ゲームスピード == 1); }
+					if (lineID == 1) { is押下 = (Game::ゲームスピード == 8); }
+					if (lineID == 0) { is押下 = (Game::ゲームスピード == 64); }
 				}
-
-			}
-
-		};
-		class G_ヘルプ : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::UI[IconType::ヘルプ].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::SAlias.DrawBold({ px + Lp(24)-7,py + Lp(25) }, Color::White, Color::Black, TX::Tool_ヘルプ );
-
-			}
-		};
-		class G_停止 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				if (Game::is停止)
+				else
 				{
-					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン押, -1);
-
-				} else {
-					MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
+					if (lineID == 3) { is押下 = Game::is停止; }
+					if (lineID == 2) { is押下 = (Game::ゲームスピード == 1); }
+					if (lineID == 1) { is押下 = (Game::ゲームスピード == 4); }
+					if (lineID == 0) { is押下 = (Game::ゲームスピード == 16); }
 				}
 
-				MIcon::UI[IconType::停止].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_停止);
+				UIButton::Draw派生();
 			}
 
-			void Click(double px, double py)
+			void Click() override
 			{
-				Game::is停止 = !Game::is停止;
-				MSound::効果音[SE::ボタンクリック].Play();
-			}
-		};
-		class G_速度 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::UI[IconType::速度].DrawRotate({ px + Lp(22) + Lp(26),py + Lp(23) }, 2, 0);
-				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) - 25,py + Lp(23) }, 2, 0);
-				MIcon::UI[IconType::三角].DrawRotate({ px + Lp(22) + Lp(26) + 25,py + Lp(23) }, 2, 0,true);
-
-				MFont::SAlias.DrawBold({ px + Lp(24)+Lp(26),py + Lp(25) }, Color::White, Color::Black, TX::Tool_速度);
-				MFont::MDot.DrawBold({ px + Lp(24) + Lp(26) + 5,py + Lp(25) - 20 }, Color::White, Color::Black, "x", true);
-				MFont::MDot.DrawBold({ px + Lp(24) + Lp(26) + 28,py + Lp(25) - 20 }, Color::White, Color::Black, Game::ゲームスピード,true);
-
-			}
-
-			void Click(double px, double py)
-			{
-				if (px < 位置.GetW() / 2)
+				switch (lineID)
 				{
-					Game::ゲームスピード = std::max(1, Game::ゲームスピード / Config::ゲーム速度変更倍率);
-				}else {
-					Game::ゲームスピード = std::min(Config::最大ゲーム倍速, Game::ゲームスピード * Config::ゲーム速度変更倍率);
-				}
-				MSound::効果音[SE::ボタンクリック].Play();
-			}
-
-		};
-		class G_設定 : public GUI_Object
-		{
-		public:
-			UIWindow* 対象ウィンドウ;
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::UI[IconType::設定].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_設定);
-			}
-
-			void Click(double px, double py)
-			{
-				//設定ウィンドウ開く
-				MSound::効果音[SE::ボタンクリック].Play();
-				対象ウィンドウ->is表示 = true;
-				対象ウィンドウ->is最前面へ移動 = true;
-				対象ウィンドウ->Openポップアップ();
-			}
-
-		};
-
-		class G_タイトル : public GUI_Object
-		{
-		public:
-			UIWindow* 対象ウィンドウ;
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, 位置.GetW(), 位置.GetH(), ボタン枠, 1);
-				MIcon::UI[IconType::終了].DrawRotate({ px + Lp(22),py + Lp(23) }, 2, 0);
-				MFont::SAlias.DrawBold({ px + Lp(24),py + Lp(25) }, Color::White, Color::Black, TX::Tool_タイトル);
-			}
-
-			void Click(double px, double py)
-			{
-				//確認ウィンドウを出す
-				MSound::効果音[SE::ボタンクリック].Play();
-				対象ウィンドウ->is表示 = true;
-				対象ウィンドウ->is最前面へ移動 = true;
-				int id = 対象ウィンドウ->Openポップアップ();
-
-				if (id == 1)//はい
-				{
-					Game::isゲーム終了 = true;
+				case 3:
+					Game::is停止 = !Game::is停止;
+					break;
+				case 2://x1
+					Game::ゲームスピード = Config::is超加速 ? 1 : 1;
+					break;
+				case 1://x4/8
+					Game::ゲームスピード = Config::is超加速 ? 8 : 4;
+					break;
+				case 0://x16/64
+					Game::ゲームスピード = Config::is超加速 ? 64 : 16;
+					break;
 				}
 			}
 		};
+
 	public:
-		G_日付 日付;
-		G_時刻 時刻;
-		G_人口 人口;
-		G_資金 資金;
-		G_ウィンドウ ウィンドウ[CV::ウィンドウ数];
-		G_ヘルプ ヘルプ;
-		G_停止 停止;
-		G_速度 速度;
-		G_設定 設定;
-		G_タイトル タイトル;
+		UITime 日付表示;
 
-		GUI_Frame 枠;
+		UIWindowButton ウィンドウボタン[CV::ウィンドウ数];
 
-		void SetWindow(std::vector<UIWindow*> &windows)
-		{
-			for (int a = 0; a < CV::ウィンドウ数; a++)
-			{
-				ウィンドウ[a].対象ウィンドウ = windows[a];
-			}
-		}
-
-		void SetConfig(UIWindow* config, UIWindow* title)
-		{
-			設定.対象ウィンドウ = config;
-			タイトル.対象ウィンドウ = title;
-		}
+		UISpeedButton 停止ボタン;//一時停止時凹む仕様
+		UISpeedButton 速度ボタンA;//左右でクリック時の処理が異なる仕様
+		UISpeedButton 速度ボタンB;//左右でクリック時の処理が異なる仕様
+		UISpeedButton 速度ボタンC;//左右でクリック時の処理が異なる仕様
+		UIWindowButton ヘルプボタン;
+		UIWindowButton コンフィグボタン;
+		UIWindowButton タイトルボタン;
 
 		void Init()
 		{
+			Update();
+			//UI基礎パラメータ設定
+			日付表示.SetUI(LToolBar::ツールバー_日付);
+
+			for(int i=0;i<CV::ウィンドウ数;i++)
+			{ 
+				ウィンドウボタン[i].SetUI( LToolBar::ツールバー_ウィンドウボタン,i);
+				ウィンドウボタン[i].layout->改行値 = 100;
+				ウィンドウボタン[i].画像位置 = 8;
+				ウィンドウボタン[i].テキスト位置 = 2;
+			}
+
+			停止ボタン.SetUI( "＝", LToolBar::ツールバー_速度ボタン,3);//一時停止時凹む仕様
+			速度ボタンA.SetUI( "＞", LToolBar::ツールバー_速度ボタン,2);//左右でクリック時の処理が異なる仕様
+			速度ボタンB.SetUI( ">>", LToolBar::ツールバー_速度ボタン,1);//左右でクリック時の処理が異なる仕様
+			速度ボタンC.SetUI( ">>>", LToolBar::ツールバー_速度ボタン,0);//左右でクリック時の処理が異なる仕様
+
+			ヘルプボタン.SetUI(&MIcon::UI[IconType::BGM], "ヘルプ", LToolBar::ツールバー_その他ボタン, 2);
+			コンフィグボタン.SetUI(&MIcon::UI[IconType::BGM], "設定", LToolBar::ツールバー_その他ボタン , 1);
+			タイトルボタン.SetUI(&MIcon::UI[IconType::BGM], "終了", LToolBar::ツールバー_その他ボタン , 0);
+
+			//基準座標を左上にする
+			停止ボタン.isLeftPos = false;
+			速度ボタンA.isLeftPos = false;
+			速度ボタンB.isLeftPos = false;
+			速度ボタンC.isLeftPos = false;
+			ヘルプボタン.isLeftPos = false;
+			コンフィグボタン.isLeftPos = false;
+			タイトルボタン.isLeftPos = false;
+
+			//ポップアップ設定
+			コンフィグボタン.isポップアップ = true;
+			ヘルプボタン.isポップアップ = true;
+			タイトルボタン.isポップアップ = true;
+
+			タイトルボタン.clickEvent = []() { Game::isゲーム終了 = true; };
+
+			//オブジェクト登録
+			for (int i = 0; i < CV::ウィンドウ数; i++)
+			{
+				AddItem(ウィンドウボタン[i]);
+			}
+
+			AddItem(日付表示);
+			AddItem(停止ボタン);
+			AddItem(速度ボタンA);
+			AddItem(速度ボタンB);
+			AddItem(速度ボタンC);
+			AddItem(コンフィグボタン);
+			AddItem(ヘルプボタン);
+			AddItem(タイトルボタン);
+
+			//描画とクリック時のイベントを登録
+
 		}
 
-		void GUI_Update()
+		void SetWindow(std::vector<UIWindow*> &windows , UIWindow* help , UIWindow* config, UIWindow* title)
 		{
+			for (int a = 0; a < CV::ウィンドウ数; a++)
+			{
+				ウィンドウボタン[a].対象ウィンドウ = windows[a];
+				ウィンドウボタン[a].テキスト = TX::Window_略記[windows[a]->種類];
+				ウィンドウボタン[a].画像 = &MIcon::UI[ウィンドウボタン[a].対象ウィンドウ->アイコン];
+			}
 
+			ヘルプボタン.対象ウィンドウ = help;
+			コンフィグボタン.対象ウィンドウ = config;
+			タイトルボタン.対象ウィンドウ = title;
 		}
+
 
 		void Draw()
 		{
+			//枠無しウィンドウ
+			Design::data[DesignType::セット1]->Draw(UIType::ウィンドウ, Layout::Data(LToolBar::ツールバー_全体));
+
+			//日付と時刻、各種ボタンの表示
+			for (int a = (int)item.size() - 1; a >= 0; a--)
+			{
+				if (item[a]->is表示) { item[a]->Draw(); }
+			}
 		}
 
-		bool 操作()
+		void Update()
 		{
-			return false;
+			//画面サイズに合わせてツールバー大きさ変更
+			auto& it = Layout::Data(LToolBar::ツールバー_全体);
+			it.x = 0;
+			it.y = 0;
+			it.w = Config::解像度W;
+			UIWindow::ツールバー高さ = it.h;
 		}
 
 		bool CheckInfo()

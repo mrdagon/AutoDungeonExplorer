@@ -13,12 +13,12 @@ namespace SDX_ADE
 		//ドラッグ中の物
 		static Dungeon* ダンジョン = nullptr;
 
-		static Item* アイテム = nullptr;
+		static Item* アイテム = nullptr;//装備中の場合、探索メンをnullptrにしない
 
 		Explorer* 探索メン = nullptr;
-		int 並びID = 0;//パーティと製造部門での位置
+		int 並びID = 0;//パーティでの位置-キャラに持たせる
 
-		ActiveSkill* Aスキル = nullptr;
+		ActiveSkill* Aスキル = nullptr;//消す
 
 		struct equipItem
 		{

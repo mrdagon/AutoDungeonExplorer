@@ -129,7 +129,7 @@ namespace SDX_ADE
 						it.財宝.emplace_back(&Item::accessory_data[dummy]);
 					}
 				}
-				it.最大財宝数 = it.財宝.size();
+				it.最大財宝数 = (int)it.財宝.size();
 
 				file_data.Read(dummy);//部屋数
 

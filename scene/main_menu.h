@@ -29,18 +29,18 @@ namespace SDX_ADE
 		{
 			isゲーム開始 = false;
 
-			ボタン[0].SetUI( "始めから", UIタイトル::ボタン, DesignType::セット1, 0);
-			ボタン[1].SetUI("続きから", UIタイトル::ボタン, DesignType::セット1, 1);
-			ボタン[2].SetUI("設定", UIタイトル::ボタン, DesignType::セット1, 2);
-			ボタン[3].SetUI("クレジット", UIタイトル::ボタン, DesignType::セット1, 3);
-			ボタン[4].SetUI("アンケート", UIタイトル::ボタン, DesignType::セット1, 4);
-			ボタン[5].SetUI("終了", UIタイトル::ボタン, DesignType::セット1, 5);
+			ボタン[0].SetUI( "始めから", LTitle::ボタン, 0);
+			ボタン[1].SetUI("続きから", LTitle::ボタン, 1);
+			ボタン[2].SetUI("設定", LTitle::ボタン, 2);
+			ボタン[3].SetUI("クレジット", LTitle::ボタン, 3);
+			ボタン[4].SetUI("アンケート", LTitle::ボタン, 4);
+			ボタン[5].SetUI("終了", LTitle::ボタン, 5);
 
 			ボタン[0].clickEvent = [&]()
 			{
 				Win_NewGame.Init();
 
-				if (Win_NewGame.Openポップアップ() == 1)
+				if (Win_NewGame.OpenPopup() == 1)
 				{
 					セーブ = nullptr;
 					難易度 = Win_NewGame.選択中難易度;
@@ -52,7 +52,7 @@ namespace SDX_ADE
 			{
 				Win_Conitnue.Init();
 
-				if ( Win_Conitnue.Openポップアップ() == 1)
+				if ( Win_Conitnue.OpenPopup() == 1)
 				{
 					セーブ = Win_Conitnue.GetSave();
 					難易度 = GameType::COUNT;
@@ -63,13 +63,13 @@ namespace SDX_ADE
 			ボタン[2].clickEvent = [&]()
 			{
 				Win_Config.Init();
-				Win_Config.Openポップアップ();
+				Win_Config.OpenPopup();
 			};
 
 			ボタン[3].clickEvent = [&]()
 			{
 				Win_Credit.Init();
-				Win_Credit.Openポップアップ();
+				Win_Credit.OpenPopup();
 			};
 
 			ボタン[4].clickEvent = [&]()
@@ -114,8 +114,6 @@ namespace SDX_ADE
 
 		void Input()
 		{
-			const Point& pt = Input::mouse.GetPoint();
-
 			//ボタンクリックとマウスオーバー判定
 			for (auto& it : ボタン)
 			{
@@ -123,7 +121,7 @@ namespace SDX_ADE
 			}
 
 			//スクショ撮影
-			if (Input::key.F10.on == true)
+			if (Input::key.F12.on == true)
 			{
 				keybd_event(VK_LWIN, 0, 0, 0);
 				keybd_event(VK_LMENU, 0, 0, 0);
@@ -141,12 +139,12 @@ namespace SDX_ADE
 			Draw背景();
 
 			//タイトル
-			static UILayout& 題字 = UILayout::Data(UIタイトル::題字);
+			static Layout& 題字 = Layout::Data(LTitle::題字);
 			MSystem::タイトルロゴ.DrawRotate({ Config::解像度W / 2 , Config::解像度H * 題字.y / 100 }, 2, 0);
 
 			//画面中央になるように計算、画像IDをY代わりに使用
-			UILayout::Data(UIタイトル::ボタン).y = Config::解像度H * 40 / 100;//UILayout::Data(UIタイトル::ボタン).画像IDでテスト
-			UILayout::Data(UIタイトル::ボタン).x = Config::解像度W / 2 - UILayout::Data(UIタイトル::ボタン).w / 2;
+			Layout::Data(LTitle::ボタン).y = Config::解像度H * 40 / 100;//UILayout::Data(UIタイトル::ボタン).画像IDでテスト
+			Layout::Data(LTitle::ボタン).x = Config::解像度W / 2 - Layout::Data(LTitle::ボタン).w / 2;
 
 			for (auto& it : ボタン)
 			{			
@@ -154,15 +152,15 @@ namespace SDX_ADE
 			}
 
 			//作者名、著作権表記
-			static UILayout& ライセンス = UILayout::Data(UIタイトル::ライセンス);
+			static Layout& ライセンス = Layout::Data(LTitle::ライセンス);
 
 			MFont::M->DrawBoldRotate({ Config::解像度W / 2 , Config::解像度H * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
 
 			//デバッグ用
 			if (CV::isレイアウト)
 			{
-				UILayout::Draw();
-				UILayout::Input();
+				Layout::Draw();
+				Layout::Input();
 			}
 		}
 

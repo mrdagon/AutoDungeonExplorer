@@ -211,6 +211,8 @@ namespace SDX_ADE
 			装備品[(int)ItemType::軽装].Load("file/equip/armor002.png");
 			装備品[(int)ItemType::外套].Load("file/equip/armor003.png");
 
+			装備品[(int)ItemType::アクセサリー].Load("file/equip/armor003.png");
+
 			アクセサリ[0].Load("file/accessory/boots_007.png");
 			//素材
 
@@ -268,6 +270,8 @@ namespace SDX_ADE
 	//文字データ
 	namespace MFont
 	{
+		Font* F[3];
+
 		Font* S;
 		Font* M;
 		Font* L;

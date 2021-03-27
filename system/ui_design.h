@@ -218,7 +218,8 @@ namespace SDX_ADE
 		タイトル,
 		ウィンドウ,
 		フレーム,
-		ゲージ
+		ゲージ,
+		丸フレーム
 	};
 
 	enum class DesignType
@@ -228,7 +229,7 @@ namespace SDX_ADE
 	};
 
 	//これを継承して、画像素材利用UIに後から差し替えも可能にしておく
-	class IUIDesign
+	class IDesign
 	{
 	public:
 		virtual void Draw(UIType type, int x, int y, int w, int h) = 0;
@@ -236,7 +237,7 @@ namespace SDX_ADE
 		virtual void DrawGauge(int x, int y, int w, int h, double rate) = 0;
 	};
 
-	class UIDesign : public IUIDesign
+	class Design : public IDesign
 	{
 	private:
 		void DrawRoundColor(int x, int y, int w, int h , Color& color)
@@ -262,11 +263,12 @@ namespace SDX_ADE
 		}
 
 	public:
-		static EnumArray<UIDesign*, DesignType> data;
-		static UIDesign Green;
-		static UIDesign Blue;
-		static UIDesign Brown;
-		static UIDesign Wood;
+		static EnumArray<Design*, DesignType> data;
+		static Design Green;
+		static Design Blue;
+		static Design Brown;
+		static Design Wood;
+		static Design BlueGrey;
 
 		Color 影色;//ほぼ黒色
 
@@ -303,6 +305,7 @@ namespace SDX_ADE
 				case UIType::ウィンドウ: DrawWindow(x, y, w, h); break;
 				case UIType::フレーム: DrawFrame(x, y, w, h); break;
 				case UIType::ゲージ: DrawGauge(x, y, w, h , 1.0 ); break;
+				case UIType::丸フレーム: DrawRound(x, y, w, h); break;
 			default:
 				break;
 			}
@@ -409,24 +412,27 @@ namespace SDX_ADE
 		}
 		
 		//両端が丸い明るい枠を描画
-		//hがwより小さいと変になる
 		void DrawRound(int x , int y , int w , int h )
 		{
 			DrawRoundColor(x, y, w, h, 凸色);
 			DrawRoundColor(x+1, y+1, w-2, h-2, ハイライト);
-
 		}
 
 		void DrawGauge(int x, int y, int w, int h, double rate)
 		{
-			DrawRoundColor(x, y, w, h , 凸色);
-			DrawRoundColor(x + 1, y + 1, w - 2, h - 2, ハイライト);
+			DrawRoundColor(x, y, w, h , ハイライト);
 
-			
 			if (rate > 0)
 			{
-				int wr = std::max(int(w * rate), h);
-				DrawRoundColor(x + 2, y + 2, wr - 4, h - 4, 凸色);
+				if (w > h)
+				{
+					int wr = std::max(int(w * rate), h);
+					DrawRoundColor(x + 1, y + 1, wr - 2, h - 2, 凹色);
+				}else{
+					int hr = std::max(w , int(h * rate));
+					DrawRoundColor(x + 1, y + 1, w - 2, hr - 2, 凹色);
+				}
+
 			}
 		}
 
@@ -473,7 +479,20 @@ namespace SDX_ADE
 			Brown.灰字 = { 0x9E9E9E };//Gray 500
 			Brown.暗字 = { 0x424242 };//Gray 900
 
+			BlueGrey.影色 = { 0x424242 };//Gray 800
+			BlueGrey.エッジ色 = { 0x616161 };//Gray 600
+			BlueGrey.濃色 = { 0x37474F };//800
+			BlueGrey.凹色 = { 0x546E7A };//600
+			BlueGrey.グループ = { 0x78909C };//400
+			BlueGrey.背景色 = { 0xB0BEC5 };//200
+			BlueGrey.凸色 = { 0xCFD8DC };//100
+			BlueGrey.ハイライト = { 0xECEFF1 };////50
 
+			BlueGrey.明字 = { 0xEEEEEE };//Gray 200
+			BlueGrey.灰字 = { 0x9E9E9E };//Gray 500
+			BlueGrey.暗字 = { 0x424242 };//Gray 900
+
+			//オリジナル配色
 			Wood.影色 = { 0x424242 };//Gray 800
 			Wood.エッジ色 = { 0x616161 };//Gray 600
 			Wood.濃色 = { 82,45,20 };//Blue 800
@@ -487,15 +506,15 @@ namespace SDX_ADE
 			Wood.灰字 = { 0x9E9E9E };//Gray 500
 			Wood.暗字 = { 0x424242 };//Gray 900
 
-			data[DesignType::セット1] = &Brown;
-
+			data[DesignType::セット1] = &BlueGrey;
 		}
 
 	};
 
-	EnumArray<UIDesign*, DesignType> UIDesign::data;
-	UIDesign UIDesign::Green;
-	UIDesign UIDesign::Blue;
-	UIDesign UIDesign::Brown;
-	UIDesign UIDesign::Wood;
+	EnumArray<Design*, DesignType> Design::data;
+	Design Design::Green;
+	Design Design::Blue;
+	Design Design::Brown;
+	Design Design::Wood;
+	Design Design::BlueGrey;
 }

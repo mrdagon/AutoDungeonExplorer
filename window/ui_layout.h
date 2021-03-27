@@ -33,7 +33,7 @@ namespace SDX_ADE
 	};
 
 	//ページ毎のオブジェクトの列挙型、共通で使うパラメータ	
-	enum class UI基本
+	enum class L基本
 	{
 		ポップアップ_ウィンドウ,
 		ポップアップ_説明,
@@ -44,7 +44,7 @@ namespace SDX_ADE
 	};
 
 
-	class UILayout
+	class Layout
 	{
 	private:
 		Color col;
@@ -52,8 +52,8 @@ namespace SDX_ADE
 		inline static int now_page = 0;//選択中のページ
 		inline static int now_index[(int)UIPage::COUNT];//選択中のインデックス
 		inline static std::string data_name[(int)UIPage::COUNT];//ページ名
-		inline static std::vector<UILayout> data[(int)UIPage::COUNT];//各アイテム
-		inline static UILayout* select_now;//現在選択中のアイテム
+		inline static std::vector<Layout> data[(int)UIPage::COUNT];//各アイテム
+		inline static Layout* select_now;//現在選択中のアイテム
 		inline static int select_time = 0;//直前に選択を変更してからのフレーム数
 	public:
 
@@ -72,14 +72,14 @@ namespace SDX_ADE
 		int 画像ID = 0;
 		int フォントID = 0;//0～2
 
-		UILayout()
+		Layout()
 		{}
 
-		UILayout(std::string 登録名):
+		Layout(std::string 登録名):
 			登録名(登録名)
 		{}
 
-		UILayout( std::string 登録名 , int x, int y, int w, int h, int 並べx, int 並べy, int 改行値, int 画像ID , int フォントID):
+		Layout( std::string 登録名 , int x, int y, int w, int h, int 並べx, int 並べy, int 改行値, int 画像ID , int フォントID):
 			登録名(登録名),
 			x(x),
 			y(y),
@@ -99,7 +99,7 @@ namespace SDX_ADE
 		}
 
 		template< class TUIEnum>
-		static UILayout& Data( TUIEnum key )
+		static Layout& Data( TUIEnum key )
 		{
 			int no = (int)key;
 
@@ -207,7 +207,7 @@ namespace SDX_ADE
 			auto& it = data[now_page][now_index[now_page]];
 			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),ID(画像 " , it.画像ID , ",フォント " , it.フォントID , ")" });
 
-			int now_page_max = data[now_page].size();
+			int now_page_max = (int)data[now_page].size();
 			int p_no = now_index[now_page]/30;
 
 
@@ -241,7 +241,7 @@ namespace SDX_ADE
 			{
 				now_index[now_page]--;
 				select_time = 0;
-				if (now_index[now_page] < 0) { now_index[now_page] = data[now_page].size()-1; }
+				if (now_index[now_page] < 0) { now_index[now_page] = (int)data[now_page].size()-1; }
 			}
 			if (Input::key.Numpad2.IsPush(連打st, 連打rp))
 			{
@@ -264,7 +264,7 @@ namespace SDX_ADE
 			}
 
 
-			UILayout& it = data[now_page][now_index[now_page]];
+			Layout& it = data[now_page][now_index[now_page]];
 			select_now = &it;
 
 			//通常カーソル操作で移動
@@ -382,7 +382,7 @@ namespace SDX_ADE
 			}
 
 			//デバッグ時にブレークポイント挟んで選択中をウォッチ
-			if (Input::key.F1.on == true)
+			if (Input::key.F2.on == true)
 			{
 				select_now = select_now;
 			}
