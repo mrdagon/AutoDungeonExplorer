@@ -507,6 +507,42 @@ namespace SDX_ADE
 				item.push_back(&object);
 			}
 		}
+
+		template <class TObject>
+		void AddItem( std::vector<TObject>& object , bool is固定 = false)
+		{
+			if (is固定 == true)
+			{
+				for (auto& it : object)
+				{
+					固定item.push_back(&it);
+				}
+			}
+			else {
+				for (auto& it : object)
+				{
+					item.push_back(&it);
+				}
+			}
+		}
+
+		void AddItem(UIObject object[] , int 要素数 , bool is固定 = false)
+		{
+			if (is固定 == true)
+			{
+				for (int i = 0; i < 要素数; i++)
+				{
+					固定item.push_back(&object[i]);
+				}
+			}
+			else {
+				for (int i = 0; i < 要素数; i++)
+				{
+					item.push_back(&object[i]);
+				}
+			}
+		}
+
 	};
 
 }

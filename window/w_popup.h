@@ -25,10 +25,11 @@ namespace SDX_ADE
 			is閉じるボタン = false;
 			isスクロールバー表示 = false;
 
+			//●初期化
 			文章.SetUI("テキスト未設定", L基本::ポップアップ_説明);
 			確定.SetUI("はい", L基本::ポップアップ_はい);
 			キャンセル.SetUI("いいえ", L基本::ポップアップ_いいえ);
-
+			//●イベント
 			確定.clickEvent = [&]()
 			{
 				is表示 = false;
@@ -41,9 +42,10 @@ namespace SDX_ADE
 				ポップアップリザルト = 0;
 			};
 
-			item.push_back(&文章);
-			item.push_back(&確定);
-			item.push_back(&キャンセル);
+			//●登録
+			AddItem(文章);
+			AddItem(確定);
+			AddItem(キャンセル);
 		}
 
 		void Update()

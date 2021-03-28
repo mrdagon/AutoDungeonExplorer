@@ -3,6 +3,8 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+#include "enum_layout.h"
+
 #include "ui_help.h"
 #include "ui_layout.h"
 #include "ui_object.h"

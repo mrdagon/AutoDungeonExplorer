@@ -9,12 +9,6 @@ namespace SDX_ADE
 
 
 
-	enum class LBattle
-	{
-		ウィンドウ,
-		COUNT,
-		PAGE = (int)UIPage::パーティ探索
-	};
 
 	/*パーティウィンドウ*/
 	class W_Party: public UIWindow
@@ -881,7 +875,6 @@ namespace SDX_ADE
 			GUI_求人()
 			{
 				求人ウィンドウ.Init();
-				求人ウィンドウ.GUI_Update();
 			}
 
 			void Draw派生(double px, double py)
@@ -1120,27 +1113,29 @@ namespace SDX_ADE
 			{
 				a++;
 				AddItem(it);
-				it.SetUI(LParty::パーティ_ウィンドウ, a);
 			}
 
 			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え枠_控え探索者, 0, &控え枠);
 			除名.SetUI(&MIcon::UI[IconType::ゴミ箱], "除名", LParty::控え枠_控え探索者, CV::最大控え人数, &控え枠);
 			除名.is押下 = true;//平状態で固定
 			除名.押下状態 = 1;
-			AddItem(登録);
-			AddItem(除名);
-
+			
 			a = 0;//0の位置に登録を置くので1から
 			for (auto& it : 控え)
 			{
 				a++;
-				AddItem(it);
 				it.SetUI(LParty::控え枠_控え探索者, a , &控え枠);
 				it.探索者 = Guild::P->控え探索者[a];
 				if (it.探索者 == nullptr) { it.is表示 = false; }
 			}
-			AddItem(控え枠);
 			控え枠.SetUI("", LParty::控え枠_ウィンドウ);
+
+			//●登録
+			AddItem(パーティ , CV::上限パーティ数);
+			AddItem(登録);
+			AddItem(除名);
+			AddItem(控え, CV::最大控え人数);
+			AddItem(控え枠);
 
 			//●イベント
 			登録.clickEvent = [&]()

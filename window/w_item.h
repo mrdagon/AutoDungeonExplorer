@@ -7,28 +7,6 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	enum class LItem
-	{
-		ウィンドウ,
-		内枠,
-		タブ,
-		アイテム,
-		アイテム数,
-		アイテムレア度,
-		COUNT,
-		PAGE = (int)UIPage::アイテム
-	};
-
-	enum class LParty
-	{
-		ウィンドウ,//全体ウィンドウ幅
-		パーティ_ウィンドウ,
-		控え枠_ウィンドウ,
-		控え枠_控え探索者,//除名は登録と除名も
-		COUNT,
-		PAGE = (int)UIPage::パーティ編成
-	};
-
 	/*アイテムウィンドウ*/
 	class W_Item: public UIWindow
 	{
@@ -81,16 +59,18 @@ namespace SDX_ADE
 			Set(WindowType::Item, IconType::装備);
 			SetPos(LItem::ウィンドウ,false, true,false);
 			
+			//●初期化
 			int a = -1;
 			for (auto& it : アイテム)
 			{
 				a++;
 				it.SetUI(LItem::アイテム);
 				it.itemID = a;
-				AddItem(it);
 			}
-
 			内枠.SetUI("", LItem::内枠);
+
+			//●登録
+			AddItem(アイテム,CV::最大アクセサリ種類);
 			AddItem(内枠);
 
 			Update();

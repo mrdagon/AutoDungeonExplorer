@@ -7,41 +7,9 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	enum class UIPage
-	{
-		基本,//common
-		タイトル,//title
-		コンフィグ,//config
-		メイン画面,//main
-		//●Window
-		アイテム,//item
-		ダンジョン,//dungeon
-		パーティ編成,//party_town
-		パーティ探索,//party_dungeon
-		投資,//invest
-		素材,//material
-		クエスト,//quest
-		ログ,//log
-		//●サブウィンドウ
-		求人,//recruit
-		スキルツリー,//skill
-		//●ヘルプ専用
-		Helpエクスプローラ,//h_explorer
-		Helpモンスター,//h_monster
-		Helpスキル,//h_skill
-		COUNT
-	};
+
 
 	//ページ毎のオブジェクトの列挙型、共通で使うパラメータ	
-	enum class L基本
-	{
-		ポップアップ_ウィンドウ,
-		ポップアップ_説明,
-		ポップアップ_はい,
-		ポップアップ_いいえ,
-		COUNT,
-		PAGE = (int)UIPage::基本
-	};
 
 
 	class Layout
@@ -375,7 +343,7 @@ namespace SDX_ADE
 			}
 
 			//Enter長押しで代入
-			if (Input::key.Return.holdCount == 30)
+			if (Input::key.Return.holdCount == 15)
 			{	
 				it.登録名 = System::inputText;
 				System::inputText = "";

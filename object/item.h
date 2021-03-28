@@ -43,6 +43,7 @@ namespace SDX_ADE
 		//攻撃力等のステータス、追加されるスキル等
 		EnumArray<int, StatusType> ステ;
 
+		//強化レシピ
 		std::vector<Recipe> レシピ;
 
 		Item(){}

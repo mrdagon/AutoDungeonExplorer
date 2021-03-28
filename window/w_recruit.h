@@ -10,6 +10,8 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+
+
 	/*求人ウィンドウ*/
 	class W_Recruit: public UIWindow
 	{
@@ -185,49 +187,104 @@ namespace SDX_ADE
 			}
 		};
 
-	public:
-		GUI_名前変更 名前変更;
-		GUI_ランダム ランダム;//名前ランダムボタン
-		GUI_Frame 職業枠;
-		std::vector<GUI_職業選択> 職業;
-		GUI_採用 採用;
-		GUI_職業説明枠 職業説明枠;
+		class UI名前 : public UIObject
+		{
+		public:
 
-		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;
+		};
+
+		class UI説明 : public UIObject
+		{
+		public:
+			//職業名
+			//装備アイコン
+			//概説
+			//分割線
+			//職業詳細説明文
+			//職業イラスト
+		};
+			 
+
+		class UI職業 : public UIObject
+		{
+		public:
+			ExplorerClass* 職業;
+
+			//選択中は明るい、マウスオーバーでやや明るい
+		};
+
+	public:
+		//GUI_名前変更 名前変更;
+		//GUI_ランダム ランダム;//名前ランダムボタン
+		//GUI_Frame 職業枠;
+		//std::vector<GUI_職業選択> 職業;
+		//GUI_採用 採用;
+		//GUI_職業説明枠 職業説明枠;
+		ExplorerClass* 選択中職業;
+
+		UI名前 名前入力欄;
+		UI説明 説明;
+		std::vector<UI職業> 職業;
+
+		UITextFrame 一覧枠;
+
+		UIButton ランダム名ボタン;
+		UIButton 名前変更ボタン;
+		UIButton 登録ボタン;
+
+		//名前入力用変数
+		std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> conv;//入力を変換する
 		bool is名前入力中 = false;
 		int 挿入位置 = 0;
 		std::wstring 入力中文字;
-		bool is変換 = false;
+		bool is確定前 = false;
 
 		void Init()
 		{
-			種類 = WindowType::Recruit;
+			Set(WindowType::Recruit, IconType::求人);
+			SetPos(LReqruit::ウィンドウ, true, false, true);
 
-			アイコン = IconType::求人;
-			横幅 = 280;
-			縦幅 = 125;
-			最小縦 = 125;
-			最大縦 = 180;
-			縦内部幅 = 180;//120xランク数
-			スクロール位置 = 0;
-			isスクロールバー表示 = false;
+			選択中職業 = &ExplorerClass::data[0];
+			//●初期化
+			職業.resize(ExplorerClass::data.size());
+			int a = -1;
 
-			名前変更.親 = this;
-			ランダム.親 = this;
-			採用.親 = this;
-
-			職業.reserve((int)ExplorerClass::data.size());
-			for (int a = 0; a < (int)ExplorerClass::data.size(); a++)
+			名前入力欄.SetUI(LReqruit::名前枠);
+			説明.SetUI(LReqruit::説明枠);
+			for (auto& it : ExplorerClass::data )
 			{
-				職業.emplace_back(a);
+				a++;
+				職業[a].職業 = &it;
+				職業[a].SetUI(LReqruit::職一覧, a, &一覧枠);
 			}
 
-			職業枠.text = "Job";
+			一覧枠.SetUI("", LReqruit::職一覧枠);
+			ランダム名ボタン.SetUI(LReqruit::ランダムボタン);
+			名前変更ボタン.SetUI(LReqruit::名前変更ボタン);
+			登録ボタン.SetUI(LReqruit::登録ボタン);
+
+			//●イベント
+			ランダム名ボタン.clickEvent = [&](){};
+			名前変更ボタン.clickEvent = [&](){};
+			登録ボタン.clickEvent = [&]() {};
+
+			//●登録
+			{
+				item.clear();
+				AddItem(名前入力欄);
+				AddItem(説明);
+				AddItem(職業);
+				AddItem(一覧枠);
+				AddItem(ランダム名ボタン);
+				AddItem(名前変更ボタン);
+				AddItem(登録ボタン);
+			}
 		}
 
-		void GUI_Update()
+		void Update()
 		{
-
+			SetPos(LReqruit::ウィンドウ, true, false, true);
+			名前更新();
 		}
 
 		void 名前確定()
@@ -240,7 +297,6 @@ namespace SDX_ADE
 			CSV::isDebugInput = true;
 
 			MSound::効果音[SE::決定].Play();			
-
 		}
 
 		void 名前更新()
@@ -250,7 +306,7 @@ namespace SDX_ADE
 				入力中文字.insert(挿入位置, conv.from_bytes(System::inputText));
 				挿入位置 += (int)conv.from_bytes(System::inputText).size();
 				System::inputText = "";
-				is変換 = true;
+				is確定前 = true;
 			}
 		}
 
@@ -260,9 +316,9 @@ namespace SDX_ADE
 
 			if (Input::key.Return.on)
 			{
-				if (is変換)
+				if (is確定前)
 				{
-					is変換 = false;
+					is確定前 = false;
 				} else {
 					名前確定();
 					return;

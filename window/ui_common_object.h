@@ -68,11 +68,13 @@ namespace SDX_ADE
 		{
 			//凸ボタン、マウスオーバー時は平
 			int yd = 0;
+			bool push = false;
 
 			if (is押下 == true && 押下状態 == 0)
 			{
 				DrawUI(UIType::凹ボタン, Design::data[UIデザイン]);
 				yd = 2;
+				push = true;
 			}
 			else if ((is押下 == true && 押下状態 == 1))
 			{
@@ -152,8 +154,7 @@ namespace SDX_ADE
 					ydd += MFont::F[layout->フォントID]->GetSize() - 4;
 				}
 
-				MFont::F[layout->フォントID]->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, Design::data[UIデザイン]->暗字, テキスト, false);
-
+				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, push ? Design::data[UIデザイン]->明字 : Design::data[UIデザイン]->暗字, テキスト, false);
 			}
 		}
 	};
@@ -183,10 +184,8 @@ namespace SDX_ADE
 			case 0:
 				DrawUI(UIType::背景, Design::data[UIデザイン]);
 				break;
-				break;
 			case 1:
 				DrawUI(UIType::グループ明, Design::data[UIデザイン]);
-				break;
 				break;
 			default:
 				DrawUI(UIType::グループ暗, Design::data[UIデザイン]);
@@ -194,18 +193,7 @@ namespace SDX_ADE
 			}
 
 
-			switch (layout->フォントID)
-			{
-			case 0:
-				MFont::S->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
-				break;
-			case 1:
-				MFont::M->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
-				break;
-			default:
-				MFont::L->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
-				break;
-			}
+			GetFont()->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
 		}
 	};
 

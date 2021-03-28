@@ -7,18 +7,6 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	enum class LConfig
-	{
-		ウィンドウ,
-		決定_キャンセル,
-		設定ボタン,
-		設定アイコン,//子項目４つ
-		設定項目名,
-		設定数値,
-		設定増減,
-		COUNT,
-		PAGE = (int)UIPage::コンフィグ
-	};
 
 
 	/*ギルドの情報*/
@@ -143,13 +131,9 @@ namespace SDX_ADE
 			//基本Window設定
 			Set(WindowType::Config, IconType::情報);
 			SetPos(LConfig::ウィンドウ, true, false , true);
-			is閉じるボタン = false;
 
-			//レイアウト値
-			確定.SetUI("決定", LConfig::決定_キャンセル, 0);
-			キャンセル.SetUI("キャンセル", LConfig::決定_キャンセル, 1);
 
-			//仮数値に現在の設定を代入
+			//●仮数値に現在の設定を代入
 			仮_BGM設定 = Config::BGM設定;
 			仮_SE設定 = Config::SE設定;
 			仮_解像度 = Config::解像度設定;
@@ -161,7 +145,10 @@ namespace SDX_ADE
 			仮_超加速 = Config::is超加速; 
 			仮_フォント種 = Config::isドットフォント;
 
-			//設定値、代入
+			//●初期化
+			確定.SetUI("決定", LConfig::決定_キャンセル, 0);
+			キャンセル.SetUI("キャンセル", LConfig::決定_キャンセル, 1);
+
 			ウィンドウモード.Set(TX::Config_ウィンドウモード.c_str(), IconType::解像度, ConfigType::ウィンドウモード, this);
 			BGM音量.Set( TX::Config_音楽.c_str() , IconType::BGM, ConfigType::BGM音量 , this);
 			SE音量.Set( TX::Config_効果音.c_str() , IconType::効果音, ConfigType::SE音量, this);
@@ -183,6 +170,7 @@ namespace SDX_ADE
 			超加速.SetUI(LConfig::設定ボタン, 16);
 			フォント種.SetUI(LConfig::設定ボタン, 18);
 
+			//●イベント
 			確定.clickEvent = [&](){
 				is表示 = false;
 
@@ -326,7 +314,7 @@ namespace SDX_ADE
 				フォント種.設定値 = TX::Config_フォント設定[仮_フォント種 ? 0 : 1];
 			};
 
-			//初期設定値テキスト
+			//●初期テキスト
 			ウィンドウモード.設定値 = TX::Config_ウィンドウモード設定[(int)仮_ウィンドウモード];
 			BGM音量.設定値 = std::to_string(仮_BGM設定 * 10) + " %";
 			SE音量.設定値 = std::to_string(仮_SE設定 * 10) + " %";
@@ -337,7 +325,8 @@ namespace SDX_ADE
 			超加速.設定値 = TX::Config_超加速_設定[仮_超加速 ? 0 : 1];
 			フォント種.設定値 = TX::Config_フォント設定[仮_フォント種 ? 0 : 1];
 
-			//オブジェクトを登録
+			//●登録
+			{
 			item.clear();
 			AddItem(ウィンドウモード);
 			AddItem(BGM音量);
@@ -352,6 +341,7 @@ namespace SDX_ADE
 
 			AddItem(確定);
 			AddItem(キャンセル);
+			}
 		}
 
 		void Update()

@@ -6,18 +6,6 @@
 namespace SDX_ADE
 {
 	using namespace SDX;
-	enum class LToolBar
-	{
-		ツールバー_全体,
-		ツールバー_ウィンドウボタン,
-		ツールバー_速度ボタン,
-		ツールバー_その他ボタン,
-		ツールバー_日付,
-		ツールバー_日付文字,
-		COUNT,
-		PAGE = (int)UIPage::メイン画面
-	};
-
 
 	/*上部ツールバー*/
 	class W_ToolBar : public UIWindow

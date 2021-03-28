@@ -18,11 +18,12 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Credit, IconType::情報);
 			SetPos(LTitle::クレジット_ウィンドウ, true , true , true);
-
 			縦内部幅 = std::max(縦幅, Layout::Data(LTitle::クレジット_説明枠).h + 16);
 
+			//●初期化
 			文章.SetUI("付属テキストの内容を表示\nあああああ\nああ\nあ" , LTitle::クレジット_説明枠);
 
+			//●登録
 			AddItem(文章);
 		}
 
