@@ -5,7 +5,7 @@
 #pragma once
 namespace SDX_ADE
 {
-	//シナリオの仕様変更で廃止予定
+	//シナリオの仕様変更で削除する
 
 	using namespace SDX;
 	//テキストウィンドウ１つと、顔と感情吹き出しで会話シーン作る

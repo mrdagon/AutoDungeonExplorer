@@ -3,6 +3,8 @@
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
 
+
+//削除する
 namespace SDX_BSC
 {
 	using namespace SDX;

@@ -255,7 +255,7 @@ namespace SDX_ADE
 
 				//ギルメン掴む
 				W_Drag::探索メン = ギルメン;
-				W_Drag::並びID = 並びID;
+				//W_Drag::並びID = 並びID;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -266,36 +266,36 @@ namespace SDX_ADE
 				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					Guild::P->パーティ移動( W_Drag::探索メン, W_Drag::並びID , ギルメン , 並びID);
+					//Guild::P->パーティ移動( W_Drag::探索メン, W_Drag::並びID , ギルメン , 並びID);
 				}
-				else if(W_Drag::アイテム != nullptr && ギルメン != nullptr)
+				else if(W_Drag::所持アーティファクト != nullptr && ギルメン != nullptr)
 				{
 					//装備変更
 					int 部位 = 0;
-					if (W_Drag::アイテム->種類 == ItemType::アクセサリー)
+					if (W_Drag::所持アーティファクト->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
-					}else if (W_Drag::アイテム->種類 == ItemType::外套 ||
-						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
-						W_Drag::アイテム->種類 == ItemType::重鎧 ||
-						W_Drag::アイテム->種類 == ItemType::軽装 )
+					}else if (W_Drag::所持アーティファクト->種類 == ItemType::外套 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::軽鎧 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::重鎧 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::軽装 )
 					{
 						部位 = 1;
-						if (W_Drag::アイテム->種類 != ギルメン->職業->防具種)
+						if (W_Drag::所持アーティファクト->種類 != ギルメン->職業->防具種)
 						{
 							return;
 						}
 					}
 
 					//武器は装備種があってないと交換不可
-					if (部位 == 0 && W_Drag::アイテム->種類 != ギルメン->職業->武器種)
+					if (部位 == 0 && W_Drag::所持アーティファクト->種類 != ギルメン->職業->武器種)
 					{
 						return;
 					}
 
 					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->アクセサリー所持数[W_Drag::アイテム->ID]--;
-					ギルメン->装備[部位] = W_Drag::アイテム;
+					Guild::P->アクセサリー所持数[W_Drag::所持アーティファクト->ID]--;
+					ギルメン->装備[部位] = W_Drag::所持アーティファクト;
 
 					所属->基礎ステ再計算();
 					MSound::効果音[SE::装備変更].Play();
@@ -772,7 +772,7 @@ namespace SDX_ADE
 				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					Guild::P->パーティ移動( W_Drag::探索メン , W_Drag::並びID , nullptr, -100);
+					//Guild::P->パーティ移動( W_Drag::探索メン , W_Drag::並びID , nullptr, -100);
 				}
 			}
 
@@ -806,7 +806,7 @@ namespace SDX_ADE
 
 				//ギルメン掴む
 				W_Drag::探索メン = ギルメン;
-				W_Drag::並びID = -ID - 1;
+				//W_Drag::並びID = -ID - 1;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -817,27 +817,27 @@ namespace SDX_ADE
 				if (W_Drag::探索メン != nullptr)
 				{
 					//ギルメン入れ替え
-					Guild::P->パーティ移動(W_Drag::探索メン, W_Drag::並びID , ギルメン, -ID-1);
+					//Guild::P->パーティ移動(W_Drag::探索メン, W_Drag::並びID , ギルメン, -ID-1);
 				}
-				else if (W_Drag::アイテム != nullptr)
+				else if (W_Drag::所持アーティファクト != nullptr)
 				{
 					//装備変更
 					int 部位 = 0;
-					if ( W_Drag::アイテム->種類 == ItemType::アクセサリー)
+					if ( W_Drag::所持アーティファクト->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
 					}
-					else if ( W_Drag::アイテム->種類 == ItemType::外套 ||
-						W_Drag::アイテム->種類 == ItemType::軽鎧 ||
-						W_Drag::アイテム->種類 == ItemType::重鎧 ||
-						W_Drag::アイテム->種類 == ItemType::軽装 ) 
+					else if ( W_Drag::所持アーティファクト->種類 == ItemType::外套 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::軽鎧 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::重鎧 ||
+						W_Drag::所持アーティファクト->種類 == ItemType::軽装 ) 
 					{
 						部位 = 1;
 					}
 
 					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->アクセサリー所持数[W_Drag::アイテム->ID]--;
-					ギルメン->装備[部位] = W_Drag::アイテム;
+					Guild::P->アクセサリー所持数[W_Drag::所持アーティファクト->ID]--;
+					ギルメン->装備[部位] = W_Drag::所持アーティファクト;
 					ギルメン->基礎ステータス計算();
 					MSound::効果音[SE::装備変更].Play();
 				}
@@ -924,7 +924,7 @@ namespace SDX_ADE
 
 				if (result == 1)
 				{
-					Guild::P->除名(W_Drag::並びID);
+					//Guild::P->除名(W_Drag::並びID);
 				}
 			}
 		};

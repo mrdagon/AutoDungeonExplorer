@@ -9,7 +9,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*ポップアップヘルプ*/
-
+	//全部リファクタリングする
 	class GUI_Help
 	{
 	private:
@@ -311,8 +311,6 @@ namespace SDX_ADE
 		void InfoManagement(Management* it, Point 座標)
 		{
 			help_csv_page = 12;
-
-			W_Drag::Over戦術 = it;//消費資金表示するための代入
 
 			ヘルプ縦幅 = Lph(0);
 			ヘルプ横幅 = Lph(1);

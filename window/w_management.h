@@ -37,14 +37,14 @@ namespace SDX_ADE
 				MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
 				MFont::MAlias.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
-				if (W_Drag::Over戦術 != nullptr)
+				//if (W_Drag::Over戦術 != nullptr)
 				{
 					Color fc = { 255,128,128 };
-					if (W_Drag::Over戦術->消費資金 <= Guild::P->資金) { fc = Color(128,255,128); }
-					MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
-					W_Drag::Over戦術 = nullptr;
+					//if (W_Drag::Over戦術->消費資金 <= Guild::P->資金) { fc = Color(128,255,128); }
+					//MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
+					//W_Drag::Over戦術 = nullptr;
 				}
-				else if ( true )
+				if ( true )
 				{
 					Color fc = {255,128,128};
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
@@ -160,16 +160,21 @@ namespace SDX_ADE
 		GUI_Rank gui_rank[10];//ランク毎の区切り-10個？
 		GUI_Skill gui_skill[100];//各種戦術アイコン、とりあえず最大100
 
-		//消費資金
+		//資金と消費G
+		//街Lv
+		//Lv毎のフォルダ
+		//投資案
+		//同じ種類でレベル違いは横に並べる？
 
 		int 現在タブ = 0;
 		int 戦術数 = 0;
 
 		void Init()
 		{
-			種類 = WindowType::Management;
+			Set( WindowType::Management, IconType::戦略);
+			SetPos( LManagement::ウィンドウ , false , true , false );
 
-			アイコン = IconType::戦略;
+			/*
 			横幅 = 320;
 			縦幅 = 300;
 			最小縦 = 200;
@@ -177,6 +182,7 @@ namespace SDX_ADE
 			縦内部幅 = 600;//変動する
 			固定縦 = 85;
 			スクロール位置 = 0;
+			*/
 
 			タブ.emplace_back(現在タブ, 0, IconType::情報, "");//経営
 			タブ.emplace_back(現在タブ, 1, IconType::求人, "");//人事

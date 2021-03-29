@@ -8,6 +8,7 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*ウィンドウベースクラス*/
+	//削除予定
 	class GUI_Object : public GUI_Help
 	{
 	public:

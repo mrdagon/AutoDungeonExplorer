@@ -47,18 +47,28 @@ namespace SDX_ADE
 
 		std::vector<GUI_依頼> 依頼;
 
+		//新たに発生してチェックしていない
+		//完了してチェックしてない
+		//未完クエスト
+		//完了済みクエスト		
+		//の順番で表示？
+
+		//詳細はヘルプポップアップで確認
+
 		void Init()
 		{
 			依頼.clear();
-			種類 = WindowType::Quest;
+			Set(WindowType::Quest, IconType::依頼);
+			SetPos(LQuest::ウィンドウ, false, true, false);
 
-			アイコン = IconType::依頼;
+			/*
 			横幅 = 330;
 			縦幅 = 125;
 			最小縦 = 125;
 			最大縦 = 600;
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
+			*/
 
 			for (int a = 0; a < (int)Quest::data.size(); a++)
 			{
@@ -72,25 +82,9 @@ namespace SDX_ADE
 			}
 		}
 
-		void GUI_Update()
+		void Update()
 		{
-
+			SetPos(LQuest::ウィンドウ, false, true, false);
 		}
-
-		void 派生Draw()
-		{
-			//GUI_Update();
-
-			//for (auto& it : gui_objects)
-			//{
-			//	it->Draw();
-			//}
-		}
-
-		bool 派生操作()
-		{
-			return false;
-		}
-
 	};
 }

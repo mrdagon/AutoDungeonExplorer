@@ -11,31 +11,30 @@ namespace SDX_ADE
 	namespace W_Drag
 	{
 		//ドラッグ中の物
+		//掴めるのは４種類
 		static Dungeon* ダンジョン = nullptr;
 
-		static Item* アイテム = nullptr;//装備中の場合、探索メンをnullptrにしない
+		static Item* 所持アーティファクト = nullptr;
 
-		Explorer* 探索メン = nullptr;
-		int 並びID = 0;//パーティでの位置-キャラに持たせる
+		static Explorer* 探索メン = nullptr;
 
-		ActiveSkill* Aスキル = nullptr;//消す
-
-		struct equipItem
+		struct EquipItem
 		{
-			int 部位 = 0;
 			Explorer* メンバー = nullptr;
-		} ギルメン装備;
+			Item* アイテム = nullptr;
+			int 部位 = 0;
+		};
+		
+		static EquipItem ギルメン装備;
 
-		//マウスオーバー中の物
-		Management* Over戦術 = nullptr;
-
+		/*ドラッグ中の物を表示*/
 		void Draw()
 		{
 			if (ダンジョン != nullptr)
 			{
 				ダンジョン->image->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
-			else if (アイテム != nullptr)
+			else if (所持アーティファクト != nullptr)
 			{
 				//アイテム->画像.DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
@@ -48,22 +47,17 @@ namespace SDX_ADE
 			{
 				//ギルメン装備.メンバー->装備[ギルメン装備.部位]->画像.DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}			
-			else if ( Aスキル != nullptr)
-			{
-				MSystem::DrawSkill(Aスキル->image, { Input::mouse.x - 12 ,Input::mouse.y - 12 }, Color(200, 64, 64));
-
-			}
 		}
 
+		/*非ドラッグ状態にする*/
 		bool Drop()
 		{
 			if (Input::mouse.Left.off)
 			{
 				ダンジョン = nullptr;
 				探索メン = nullptr;
-				アイテム = nullptr;
+				所持アーティファクト = nullptr;
 				ギルメン装備.メンバー = nullptr;
-				Aスキル = nullptr;
 			}
 
 			return false;

@@ -130,7 +130,7 @@ namespace SDX_ADE
 		PAGE = (int)UIPage::パーティ探索
 	};
 
-	enum class LInvest
+	enum class LManagement
 	{
 		ウィンドウ,
 		COUNT,

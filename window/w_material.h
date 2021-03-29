@@ -48,24 +48,26 @@ namespace SDX_ADE
 
 		};
 
+		//素材アイコン、ランク、数
+
 	public:
 		GUI_Mat_num GUI_素材数[CV::素材系統];
+		//素材一覧表示６列、高ランクを上に表示
 
 		void Init()
 		{
-			種類 = WindowType::Material;
+			Set(WindowType::Material, IconType::素材);
+			SetPos(LMaterial::ウィンドウ,false,true,false);
 
-			アイコン = IconType::素材;
+			/*
 			横幅 = 250;
 			縦幅 = 240;
 			最小縦 = 240;
 			最大縦 = 800;
 			縦内部幅 = 480;//120☓ランク数
 			スクロール位置 = 0;
+			*/
 
-			for (auto& it : GUI_素材数)
-			{
-			}
 		}
 	};
 }

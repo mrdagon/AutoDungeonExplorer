@@ -10,18 +10,27 @@ namespace SDX_ADE
 	/*イベントログウィンドウ*/
 	class W_EventLog : public UIWindow
 	{
+		class UILog : public UIObject
+		{
+			public:
+		};
+
+
 	public:
 		std::vector<GUI_Tab> タブ;
 		EnumArray<IconType,LogType> 種類アイコン;
 		
+		//タブ
+
 		int 現在タブ = 0;
 
 		void Init()
 		{
 			タブ.clear();
-			種類 = WindowType::EventLog;
+			Set( WindowType::EventLog , IconType::ログ );
+			SetPos(LLog::ウィンドウ, false, true, false);
 
-			アイコン = IconType::ログ;
+			/*
 			横幅 = 330;
 			縦幅 = 125;
 			最小縦 = 125;
@@ -29,6 +38,7 @@ namespace SDX_ADE
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
 			固定縦 = 50;
+			*/
 
 			種類アイコン[LogType::重要] = IconType::ランク;
 			種類アイコン[LogType::経営] = IconType::情報;

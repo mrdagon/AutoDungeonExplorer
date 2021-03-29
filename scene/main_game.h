@@ -239,7 +239,7 @@ namespace SDX_ADE
 
 			if (UIObject::now_help != nullptr && Game::isヘルプ == true)
 			{
-				UIObject::now_help->Draw();
+				//UIObject::now_help->Draw();
 			}
 
 			W_Drag::Draw();

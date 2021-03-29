@@ -51,7 +51,7 @@ namespace SDX_ADE
 				
 				親->ギルメン = Guild::P->探索パーティ[親->配置id / 5].メンバー[親->配置id % 5];
 
-				W_Drag::Aスキル = nullptr;
+				//W_Drag::Aスキル = nullptr;
 			}
 
 			void Info派生(Point 座標) override
@@ -104,19 +104,19 @@ namespace SDX_ADE
 
 			void Drop(double px, double py)
 			{
-				if (W_Drag::Aスキル == nullptr) { return; }
+				//if (W_Drag::Aスキル == nullptr) { return; }
 				
 				for (int a = 0; a < 4; a++)
 				{
-					if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
-					{
-						親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
-						親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
-						return;
-					}
+					//if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
+					//{
+					//	親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
+					//	親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
+					//	return;
+					//}
 				}
 
-				親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
+				//親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 			}
 
 			void Info派生(Point 座標) override
@@ -156,7 +156,7 @@ namespace SDX_ADE
 				auto it = 親->ギルメン->職業->習得Aスキル[id];
 
 				//習得済みなら掴む
-				W_Drag::Aスキル = it;
+				//W_Drag::Aスキル = it;
 				return;
 
 
@@ -301,10 +301,28 @@ namespace SDX_ADE
 		int 配置id;;
 		int Pスキル仮習得ID = -1;
 
+		//ギルメンの画像と名前
+		//前へと次へ(確定前はクリック不可にする)
+		//装備中のAスキル、通常と対ボス
+
+		//キースキル
+		//Aスキル
+		//Pスキル
+
+		//習得予約表示
+
+		//確定ボタン
+		//キャンセル
+		//忘却 - スキルポイントのリセット
+		//残りスキルポイントと予約状態の表示
+
+
 		void Init()
 		{
-			種類 = WindowType::Skilltree;
-			アイコン = IconType::ランク;
+			Set(WindowType::Skilltree, IconType::ランク);
+			SetPos(LSkill::ウィンドウ,true,false,true);
+
+			/*
 			横幅 = 230;
 			縦幅 = 125;
 			最小縦 = 125;
@@ -312,7 +330,8 @@ namespace SDX_ADE
 			縦内部幅 = 縦幅;
 			スクロール位置 = 0;
 			isスクロールバー表示 = false;
-			
+			*/
+
 			編集中ギルメン.親 = this;
 			スキルポイント.親 = this;
 			Aスキル枠.isアクティブ枠 = true;
@@ -339,6 +358,11 @@ namespace SDX_ADE
 				Pスキル[a].id = a;
 				Pスキル[a].親 = this;
 			}
+		}
+
+		void Update()
+		{
+			SetPos(LSkill::ウィンドウ, true, false, true);
 		}
 	};
 }

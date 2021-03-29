@@ -69,28 +69,35 @@ namespace SDX_ADE
 
 		};
 
+		class UIDungeon : public UIObject
+		{
+		public:
+			//ダンジョン毎の枠
+			//ダンジョンの外観
+			//階層
+			//探索率
+			//財宝発見率
+			//階段発見フラグ
+			//探索中のパーティ
+			//出現モンスター or 出現ボス(ボス出現中は通常モンスター見れなくなる)
+		};
+
 	public:
 		std::vector<GUI_Tab> タブ;
 		GUI_Dun ダンジョン[50];//とりあえず要素数50
 		GUI_Frame 枠;
 
-		int 現在タブ = 0;
+		//階層毎にタブ分け５つ
+		//ダンジョン
 
+		int 現在タブ = 0;
 
 		void Init()
 		{
 			タブ.clear();
 
-			種類 = WindowType::Dungeon;
-
-			アイコン = IconType::迷宮;
-			横幅 = 320;
-			縦幅 = 300;
-			最小縦 = 200;
-			最大縦 = 600;
-			縦内部幅 = 600;//変動する
-			固定縦 = 50;
-			スクロール位置 = 0;
+			Set(WindowType::Dungeon, IconType::迷宮);
+			SetPos(LDungeon::ウィンドウ, false, true, false);
 
 			for (int a = 0; a < 5; a++)
 			{
@@ -113,31 +120,9 @@ namespace SDX_ADE
 			}
 		}
 
-		void GUI_Update()
+		void Update()
 		{
-			
-		}
-
-		void 派生Draw()
-		{
-			GUI_Update();
-
-			//タブ部分
-			for (auto& it : タブ)
-			{
-				it.Draw();
-			}
-
-			枠.Draw();
-
-			//スクロールする
-			Reset描画範囲(true);
-			for (auto& it : ダンジョン)
-			{
-				if (it.参照 == nullptr) { break; }
-				it.Draw();
-			}
-
+			SetPos(LDungeon::ウィンドウ, false, true, false);	
 		}
 
 		bool 派生操作()
