@@ -176,8 +176,7 @@ namespace SDX_ADE
 			親 = 親object;
 		}
 
-
-		void Draw派生()
+		void Draw派生() override
 		{
 			switch (layout->画像ID)
 			{
@@ -192,7 +191,6 @@ namespace SDX_ADE
 				break;
 			}
 
-
 			GetFont()->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
 		}
 	};
@@ -201,9 +199,121 @@ namespace SDX_ADE
 	{
 	//タブ1枚に付き、1オブジェクト
 	public:
+		int* tabNo参照;
+
 		int tabID;
-		int& tabSelect参照;
-		Image* アイコン;
+		Image* 画像;
 		std::string テキスト;
+		DesignType UIデザイン = DesignType::セット1;
+
+		int テキスト位置 = 5;//1~9、テンキーの位置関係と対応
+		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
+
+		template<class T>
+		void SetUI( int* tabNo , Image* 画像, std::string テキスト, T レイアウト, int 整列ID , UIObject* 親object = nullptr)
+		{
+			tabNo参照 = tabNo;
+
+			this->画像 = 画像;
+			this->テキスト = テキスト;
+			layout = &Layout::Data(レイアウト);
+			lineID = 整列ID;
+			tabID = 整列ID;
+
+			親 = 親object;
+			if (テキスト == "" || 画像 == nullptr)
+			{
+				画像位置 = 5;
+				テキスト位置 = 5;
+			} else {
+				画像位置 = 8;
+				テキスト位置 = 2;
+			}
+		}
+
+		void Draw派生() override
+		{
+			if (tabID == *tabNo参照)
+			{
+				DrawUI(UIType::背景 , Design::data[UIデザイン]);
+			} else {
+				DrawUI(UIType::グループ暗 , Design::data[UIデザイン]);
+			}
+
+			bool push = false;
+
+			if (画像 != nullptr)
+			{
+
+				int xd = 0;
+				int yd = 0;
+
+				if (画像位置 == 1 || 画像位置 == 4 || 画像位置 == 7)
+				{
+					//←
+					xd -= layout->w * 2 / 5 - 画像->GetWidth() / 2;
+
+				}
+				else if (画像位置 == 3 || 画像位置 == 6 || 画像位置 == 9)
+				{
+					//→
+					xd += layout->w * 2 / 5 - 画像->GetWidth() / 2;
+				}
+
+				if (画像位置 == 7 || 画像位置 == 8 || 画像位置 == 9)
+				{
+					//↑
+					yd -= layout->h * 2 / 5 - 画像->GetHeight() / 2;
+
+				}
+				else if (画像位置 == 1 || 画像位置 == 2 || 画像位置 == 3)
+				{
+					//↓
+					yd -= layout->h * 2 / 5 - 画像->GetHeight() / 2;
+				}
+				画像->DrawRotate({ GetCenterX() + xd ,GetCenterY() + yd }, 1, 0);
+			}
+
+			if (テキスト.length() > 0)
+			{
+				int xd = 0;
+				int yd = 0;
+
+				if (テキスト位置 == 1 || テキスト位置 == 4 || テキスト位置 == 7)
+				{
+					//←
+					xd -= MFont::F[layout->フォントID]->GetDrawStringWidth(テキスト) / 2;
+				}
+				else if (テキスト位置 == 3 || テキスト位置 == 6 || テキスト位置 == 9)
+				{
+					//→
+					xd += MFont::F[layout->フォントID]->GetDrawStringWidth(テキスト) / 2;
+				}
+
+				if (テキスト位置 == 7 || テキスト位置 == 8 || テキスト位置 == 9)
+				{
+					//↑
+					yd -= MFont::F[layout->フォントID]->GetSize() + 4;
+				}
+				else if (テキスト位置 == 1 || テキスト位置 == 2 || テキスト位置 == 3)
+				{
+					//↓
+					yd += MFont::F[layout->フォントID]->GetSize() - 4;
+				}
+
+				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, push ? Design::data[UIデザイン]->明字 : Design::data[UIデザイン]->暗字, テキスト, false);
+			}
+
+		}
+
+		void Click() override
+		{
+			if ( *tabNo参照 != tabID )
+			{
+				*tabNo参照 = tabID;
+				clickEvent();
+			}
+		}
+
 	};
 }

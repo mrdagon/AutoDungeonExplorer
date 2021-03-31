@@ -219,7 +219,8 @@ namespace SDX_ADE
 		ウィンドウ,
 		フレーム,
 		ゲージ,
-		丸フレーム
+		丸フレーム,
+		選択丸フレーム,
 	};
 
 	enum class DesignType
@@ -306,6 +307,7 @@ namespace SDX_ADE
 				case UIType::フレーム: DrawFrame(x, y, w, h); break;
 				case UIType::ゲージ: DrawGauge(x, y, w, h , 1.0 ); break;
 				case UIType::丸フレーム: DrawRound(x, y, w, h); break;
+				case UIType::選択丸フレーム: DrawSelectRound(x, y, w, h); break;
 			default:
 				break;
 			}
@@ -416,6 +418,12 @@ namespace SDX_ADE
 		{
 			DrawRoundColor(x, y, w, h, 凸色);
 			DrawRoundColor(x+1, y+1, w-2, h-2, ハイライト);
+		}
+
+		void DrawSelectRound(int x, int y, int w, int h)
+		{
+			DrawRoundColor(x, y, w, h, 凸色);
+			DrawRoundColor(x + 1, y + 1, w - 2, h - 2, 凹色);
 		}
 
 		void DrawGauge(int x, int y, int w, int h, double rate)

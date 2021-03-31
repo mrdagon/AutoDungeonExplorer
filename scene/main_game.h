@@ -159,7 +159,7 @@ namespace SDX_ADE
 
 			UIObject::now_help = nullptr;
 
-			toolBar.派生Input();
+			toolBar.ObjectInput();
 
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{

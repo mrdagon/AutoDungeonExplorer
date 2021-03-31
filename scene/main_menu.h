@@ -40,7 +40,7 @@ namespace SDX_ADE
 			{
 				Win_NewGame.Init();
 
-				if (Win_NewGame.OpenPopup() == 1)
+				if (Win_NewGame.OpenPopup() >= 1)
 				{
 					セーブ = nullptr;
 					難易度 = Win_NewGame.選択中難易度;

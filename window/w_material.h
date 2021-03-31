@@ -50,6 +50,16 @@ namespace SDX_ADE
 
 		//素材アイコン、ランク、数
 
+		class UIMaterial : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{}
+
+			void Over() override
+			{}
+		};
+
 	public:
 		GUI_Mat_num GUI_素材数[CV::素材系統];
 		//素材一覧表示６列、高ランクを上に表示
@@ -68,6 +78,11 @@ namespace SDX_ADE
 			スクロール位置 = 0;
 			*/
 
+		}
+
+		void Update()
+		{
+			SetPos(LMaterial::ウィンドウ, false, true, false);
 		}
 	};
 }

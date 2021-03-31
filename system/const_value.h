@@ -9,7 +9,7 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		constexpr bool isレイアウト = true;
+		bool isレイアウト = true;
 		constexpr bool isデバッグ = true;
 
 		//外部データ件数上限

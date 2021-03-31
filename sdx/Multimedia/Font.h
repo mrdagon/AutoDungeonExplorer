@@ -621,7 +621,7 @@ namespace SDX
             Point 位置 = 座標;
             double x = 位置.x;
 
-            位置.y += differenceHeight;
+            位置.y -= differenceHeight;
 
             for (auto it : 描画する文字列.StringS)
             {
@@ -642,7 +642,7 @@ namespace SDX
             Point 位置 = 座標;
             double x = 位置.x;
 
-            位置.y += differenceHeight;
+            位置.y -= differenceHeight;
 
             for (auto it : 描画する文字列.StringS)
             {
@@ -723,7 +723,7 @@ namespace SDX
         bool DrawExtend(const Point &座標, double X拡大率, double Y拡大率, const Color &描画色, const VariadicStream &描画する文字列, bool 反転フラグ = false) const override
         {
             Point 位置 = 座標;
-            位置.y += differenceHeight;
+            位置.y -= differenceHeight;
             for (auto it : 描画する文字列.StringS)
             {
                 DrawUTFString(位置, X拡大率, Y拡大率, it, 描画色);

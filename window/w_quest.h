@@ -44,9 +44,6 @@ namespace SDX_ADE
 
 
 	public:
-
-		std::vector<GUI_依頼> 依頼;
-
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
 		//未完クエスト
@@ -57,7 +54,6 @@ namespace SDX_ADE
 
 		void Init()
 		{
-			依頼.clear();
 			Set(WindowType::Quest, IconType::依頼);
 			SetPos(LQuest::ウィンドウ, false, true, false);
 
@@ -69,17 +65,6 @@ namespace SDX_ADE
 			縦内部幅 = 600;//120☓ランク数
 			スクロール位置 = 0;
 			*/
-
-			for (int a = 0; a < (int)Quest::data.size(); a++)
-			{
-				依頼.emplace_back();
-				依頼[a].id = a;
-				依頼[a].SetHelp(Quest::data[a].説明);
-			}
-
-			for (int a = 0; a < (int)依頼.size(); a++)
-			{
-			}
 		}
 
 		void Update()

@@ -152,18 +152,12 @@ namespace SDX_ADE
 		};
 
 	public:
-		std::vector<GUI_Tab> タブ;
-		GUI_Gold gui_gold;//消費資金
-		GUI_MLv gui_mlv[4];//部門Lpと経験値バー
-		GUI_Frame 枠;
 
-		GUI_Rank gui_rank[10];//ランク毎の区切り-10個？
-		GUI_Skill gui_skill[100];//各種戦術アイコン、とりあえず最大100
-
-		//資金と消費G
-		//街Lv
-		//Lv毎のフォルダ
+		//タブ無くす
+		UIObject 資金;//資金と消費G
+		UIObject 街Lv;//街Lv
 		//投資案
+		UITextFrame Lvグループ;
 		//同じ種類でレベル違いは横に並べる？
 
 		int 現在タブ = 0;
@@ -184,110 +178,12 @@ namespace SDX_ADE
 			スクロール位置 = 0;
 			*/
 
-			タブ.emplace_back(現在タブ, 0, IconType::情報, "");//経営
-			タブ.emplace_back(現在タブ, 1, IconType::求人, "");//人事
-			タブ.emplace_back(現在タブ, 2, IconType::製造, "");//製造
-			タブ.emplace_back(現在タブ, 3, IconType::迷宮, "");//探索
-
-			for (int a = 0; a < 4; a++)
-			{
-				タブ[a].SetHelp(TX::Manage_タブヘルプ[a]);
-			}
-
-			gui_gold.SetHelp( TX::Manage_お金 );
-
-			gui_gold.isヘルプ表示 = true;
-			for (int a = 0; a < 4; a++) { タブ[a].isヘルプ表示 = true; }
-			for (int a = 0; a < 4; a++) { gui_mlv[a].isヘルプ表示 = true; }
-
-			gui_gold.is固定 = true;
-			for (int a = 0; a < 4; a++) { タブ[a].is固定 = true; }
-			for (int a = 0; a < 4; a++) { gui_mlv[a].is固定 = true; }
-
-			GUI_Update();
-			Tub_Change();
+			Update();
 		}
 
-		void GUI_Update()
+		void Update()
 		{
-		}
-
-		void Tub_Change()
-		{
-			int n = 0;
-			int r = -1;
-
-			for (int a = 0; a < 10; a++)
-			{
-				gui_rank[a].ランク = a + 1;
-				gui_rank[a].位置.x = -1000;
-			}
-
-			for (int a = 0; a < 100; a++)
-			{
-				gui_skill[a].位置.x = -1000;
-			}
-
-
-
-			戦術数 = n;
-		}
-
-		void 派生Draw()
-		{			
-			GUI_Update();
-
-			//固定描画
-			for (auto&it : タブ)
-			{
-				it.Draw();
-			}
-
-			枠.Draw();
-
-
-			gui_gold.Draw();
-			for (auto &it : gui_mlv)
-			{
-				it.Draw();
-			}
-
-			//スクロールする
-			Reset描画範囲(true);
-
-			for (auto &it : gui_rank)
-			{
-				it.Draw();
-			}
-
-			for (int a = 0; a < 戦術数; a++)
-			{
-				gui_skill[a].Draw();
-			}
-		}
-
-		bool 派生操作()
-		{
-			int tubcheck = 現在タブ;
-
-			for (auto& it : タブ)
-			{
-				it.操作チェック(座標.x, 座標.y + タイトル枠高さ);
-			}
-
-			for (auto& it : gui_skill)
-			{
-				if (Input::mouse.y - 座標.y - タイトル枠高さ < 固定縦){break;}
-
-				it.操作チェック(相対座標.x, 相対座標.y);
-			}
-
-			if (tubcheck != 現在タブ)
-			{
-				Tub_Change();
-			}
-
-			return false;
+			SetPos(LManagement::ウィンドウ, false, true, false);
 		}
 	};
 }

@@ -121,7 +121,6 @@ namespace SDX_ADE
 				if (固定item[a]->is表示) { 固定item[a]->Draw(); }
 			}
 
-			派生Draw();
 			Screen::GetRenderer()->SetClip();
 			SDX::Camera::Get()->position = { 0,0 };
 			return;
@@ -160,10 +159,6 @@ namespace SDX_ADE
 			}
 		}
 		
-		virtual void 派生Draw()
-		{
-		};
-
 		/*なんらかの操作をしたorウィンドウ上にあった場合 trueを返す*/
 		bool Input()
 		{
@@ -175,12 +170,12 @@ namespace SDX_ADE
 			相対座標.y = 座標.y - スクロール位置 + タイトル枠高さ + 固定縦;
 
 			//ウィンドウ範囲内の時の操作
-			if (Input::mouse.x >= 座標.x &&
-				Input::mouse.x <= 座標.x + 横幅 &&
-				Input::mouse.y >= 座標.y &&
-				Input::mouse.y <= 座標.y + 縦幅 + タイトル枠高さ)
+			if (Input::mouse.x / Config::解像度X倍 >= 座標.x &&
+				Input::mouse.x / Config::解像度X倍 <= 座標.x + 横幅 &&
+				Input::mouse.y / Config::解像度X倍 >= 座標.y &&
+				Input::mouse.y / Config::解像度X倍 <= 座標.y + 縦幅 + タイトル枠高さ)
 			{
-				is操作 = is操作 || 派生Input();
+				is操作 = is操作 || ObjectInput();
 			}
 
 			return is最前面へ移動 || is操作 || Rect(座標.x,座標.y, 横幅 , タイトル枠高さ + 縦幅).Hit(&Input::mouse.GetPoint());		
@@ -200,7 +195,7 @@ namespace SDX_ADE
 				if (スクロール位置 < 0) { スクロール位置 = 0; }
 			}
 
-			//左クリックしていない場合共通操作なし
+			//左押してない場合共通操作なし
 			if (Input::mouse.Left.hold == false)
 			{
 				is移動中 = false;
@@ -220,16 +215,15 @@ namespace SDX_ADE
 				座標.x = std::max(0.0, 座標.x);
 
 				座標.y = std::min(double(Window::GetHeight() - 縦幅 - タイトル枠高さ), 座標.y);
-				座標.y = std::max(double(ツールバー高さ), 座標.y);
+				座標.y = std::max( is固定 ? 0 : double(ツールバー高さ), 座標.y);
 
 				return true;
-			}
-			else {
+			} else {
 				座標.x = std::min(double(Window::GetWidth() - 横幅), 座標.x);
 				座標.x = std::max(0.0, 座標.x);
 
 				座標.y = std::min(double(Window::GetHeight() - 縦幅 - タイトル枠高さ), 座標.y);
-				座標.y = std::max(double(ツールバー高さ), 座標.y);
+				座標.y = std::max( is固定 ? 0 : double(ツールバー高さ), 座標.y);
 			}
 
 			//上側掴んで拡大縮小中
@@ -303,7 +297,7 @@ namespace SDX_ADE
 				マウス座標.y > 座標.y + タイトル枠高さ &&
 				マウス座標.y < 座標.y + タイトル枠高さ + 縦幅)
 			{
-				スクロール位置 += Input::mouse.moveY * 縦内部幅 / 縦幅;
+				スクロール位置 += Input::mouse.moveY / Config::解像度X倍 * 縦内部幅 / 縦幅;
 			}
 
 			if (スクロール位置 > 縦内部幅 - 縦幅) { スクロール位置 = 縦内部幅 - 縦幅; }
@@ -316,12 +310,13 @@ namespace SDX_ADE
 			}
 
 			//閉じる判定//
-			if (is閉じるボタン &&
+			if (is閉じるボタン == true &&
 				abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
 				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1)
 			{
 				is表示 = false;
 				MSound::効果音[SE::ウィンドウ閉じ].Play();
+				ポップアップリザルト = 0;
 				return true;
 			}
 
@@ -395,7 +390,7 @@ namespace SDX_ADE
 			return false;
 		}
 
-		virtual bool 派生Input()
+		bool ObjectInput()
 		{
 			//配列の前からチェック
 			for (auto& it : 固定item)
@@ -469,19 +464,7 @@ namespace SDX_ADE
 				//ポップアップではドラッグ＆ドロップ無し
 				//ウィンドウの拡大縮小ドラッグ＆ドロップ無し
 				共通Input();
-				派生Input();
-
-				//✗クリック判定
-				if (is閉じるボタン == true &&
-					abs(Input::mouse.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
-					abs(Input::mouse.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1 && 
-					Input::mouse.Left.on )
-				{
-					is表示 = false;
-					ポップアップリザルト = 0;
-					MSound::効果音[SE::ウィンドウ閉じ].Play();
-					break;
-				}
+				ObjectInput();
 
 				if (CV::isレイアウト)
 				{
@@ -526,7 +509,8 @@ namespace SDX_ADE
 			}
 		}
 
-		void AddItem(UIObject object[] , int 要素数 , bool is固定 = false)
+		template <class TObject>
+		void AddItem(TObject object[] , int 要素数 , bool is固定 = false)
 		{
 			if (is固定 == true)
 			{
@@ -535,7 +519,8 @@ namespace SDX_ADE
 					固定item.push_back(&object[i]);
 				}
 			}
-			else {
+			else
+			{
 				for (int i = 0; i < 要素数; i++)
 				{
 					item.push_back(&object[i]);

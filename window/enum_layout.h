@@ -109,6 +109,8 @@ namespace SDX_ADE
 	enum class LDungeon
 	{
 		ウィンドウ,
+		タブ,
+		内枠,
 		COUNT,
 		PAGE = (int)UIPage::ダンジョン
 	};

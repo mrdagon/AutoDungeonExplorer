@@ -11,10 +11,6 @@ namespace SDX_ADE
 	class W_ToolBar : public UIWindow
 	{
 	private:
-		static const int 表示枠 = 11;
-		static const int ボタン枠 = 1;
-		static const int ボタン押 = 3;
-
 		class UITime : public UIObject
 		{
 		public:
@@ -218,7 +214,6 @@ namespace SDX_ADE
 			タイトルボタン.対象ウィンドウ = title;
 		}
 
-
 		void Draw()
 		{
 			//枠無しウィンドウ
@@ -241,9 +236,5 @@ namespace SDX_ADE
 			UIWindow::ツールバー高さ = it.h;
 		}
 
-		bool CheckInfo()
-		{
-			return false;
-		}
 	};
 }

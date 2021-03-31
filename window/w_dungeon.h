@@ -76,73 +76,44 @@ namespace SDX_ADE
 			//ダンジョンの外観
 			//階層
 			//探索率
-			//財宝発見率
+			//財宝発見数と存在する数
 			//階段発見フラグ
 			//探索中のパーティ
+			//ボスの有無と出現条件
 			//出現モンスター or 出現ボス(ボス出現中は通常モンスター見れなくなる)
 		};
 
 	public:
-		std::vector<GUI_Tab> タブ;
-		GUI_Dun ダンジョン[50];//とりあえず要素数50
-		GUI_Frame 枠;
 
 		//階層毎にタブ分け５つ
+		//枠
 		//ダンジョン
-
 		int 現在タブ = 0;
+		UITab タブ[5];
+		UITextFrame 枠;
 
 		void Init()
 		{
-			タブ.clear();
 
 			Set(WindowType::Dungeon, IconType::迷宮);
 			SetPos(LDungeon::ウィンドウ, false, true, false);
 
-			for (int a = 0; a < 5; a++)
-			{
-				タブ.emplace_back(現在タブ, a, IconType::BGM, TX::Dungeon_タブ名[a]);
-				タブ[a].SetHelp( TX::Dungeon_タブヘルプ[a]);
-			}
-			タブ[0].アイコン = IconType::森;
-			タブ[1].アイコン = IconType::洞窟;
-			タブ[2].アイコン = IconType::砂漠;
-			タブ[3].アイコン = IconType::滝;
-			タブ[4].アイコン = IconType::城;
+			//●初期化
+			枠.SetUI("", LDungeon::内枠);
+			タブ[0].SetUI(&現在タブ, &MIcon::UI[IconType::森], "一層", LDungeon::タブ, 0);
+			タブ[1].SetUI(&現在タブ, &MIcon::UI[IconType::洞窟], "二層", LDungeon::タブ, 1);
+			タブ[2].SetUI(&現在タブ, &MIcon::UI[IconType::砂漠], "三層", LDungeon::タブ, 2);
+			タブ[3].SetUI(&現在タブ, &MIcon::UI[IconType::滝], "四層", LDungeon::タブ, 3);
+			タブ[4].SetUI(&現在タブ, &MIcon::UI[IconType::城], "五層", LDungeon::タブ, 4);
 
-			for (int a = 0; a < 50; a++)
-			{
-				ダンジョン[a].親ウィンドウ = this;
-			}
-
-			for (auto& it : タブ)
-			{
-			}
+			//●登録
+			AddItem(枠);
+			AddItem(タブ, 5);
 		}
 
 		void Update()
 		{
 			SetPos(LDungeon::ウィンドウ, false, true, false);	
-		}
-
-		bool 派生操作()
-		{
-			for (auto& it : タブ)
-			{
-				it.操作チェック(座標.x, 座標.y + タイトル枠高さ);
-			}
-			for (auto& it : ダンジョン)
-			{
-				if (Input::mouse.y - 座標.y - タイトル枠高さ < 固定縦)
-				{
-					break;
-				}
-
-				if (it.参照 == nullptr) { break; }
-				it.操作チェック(相対座標.x, 相対座標.y);
-			}
-
-			return false;
 		}
 	};
 }

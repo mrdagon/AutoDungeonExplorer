@@ -173,7 +173,7 @@ namespace SDX_ADE
 			
 			//選択中のアイテムのパラメータ7種
 			auto& it = data[now_page][now_index[now_page]];
-			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),ID(画像 " , it.画像ID , ",フォント " , it.フォントID , ")" });
+			MFont::MDot.DrawBold({ 10,55 }, Color::White, Color::Black, { "座標(" , it.x , "," , it.y , "),大きさ(" , it.w , "," , it.h , "),整列(" , it.並べx , "," , it.並べy , "),ID(画像 " , it.画像ID , ",フォント " , it.フォントID , ") 改行値 = " , it.改行値 });
 
 			int now_page_max = (int)data[now_page].size();
 			int p_no = now_index[now_page]/30;
@@ -326,12 +326,20 @@ namespace SDX_ADE
 				if (it.画像ID < 0) { it.画像ID = 0; }
 			}
 
-			//PageUP,PageDownで画像ID
+			//Enterでフォントサイズ
 			if (Input::key.NUMPADEnter.IsPush(連打st, 連打rp) == true)
 			{
 				it.フォントID++;
 				if (it.フォントID > 2) { it.フォントID = 0; }
 			}
+
+			//マhomeで改行値
+			if (Input::key.Home.IsPush(連打st, 連打rp) == true)
+			{
+				it.改行値++;
+				if (it.改行値 > 10) { it.改行値 = 1; }
+			}
+
 
 			//直接入力
 			if (Input::key.Back.IsPush(連打st, 連打rp))
@@ -359,6 +367,11 @@ namespace SDX_ADE
 			if (Input::key.Pause.on == true)
 			{
 				SaveData();
+			}
+
+			if (Input::key.Pause.holdCount > 60)
+			{
+				CV::isレイアウト = false;
 			}
 		}
 	};

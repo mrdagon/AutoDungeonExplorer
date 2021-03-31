@@ -759,25 +759,6 @@ namespace SDX_ADE
 			}
 		};
 
-		class GUI_控え枠 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-			}
-
-			void Drop(double px, double py)
-			{
-				if (W_Drag::探索メン != nullptr)
-				{
-					//ギルメン入れ替え
-					//Guild::P->パーティ移動( W_Drag::探索メン , W_Drag::並びID , nullptr, -100);
-				}
-			}
-
-		};
-
 		class GUI_控え : public GUI_Object
 		{
 		public:
@@ -867,177 +848,154 @@ namespace SDX_ADE
 			}
 		};
 
-		class GUI_求人 : public GUI_Object
-		{
-		public:
-			W_Recruit 求人ウィンドウ;
 
-			GUI_求人()
-			{
-				求人ウィンドウ.Init();
-			}
-
-			void Draw派生(double px, double py)
-			{
-				//アイコン、Lv
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-
-				MIcon::UI[IconType::求人].DrawRotate({ px + 位置.GetW() / 2,py + 位置.GetH() / 2 }, 2, 0);
-
-				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "登録" }, true);
-			}
-
-			void Click(double px, double py)
-			{
-				//ギルメン掴む
-				int result = 求人ウィンドウ.OpenPopup();
-			}
-		};
-
-		class GUI_除名 : public GUI_Object
-		{
-		public:
-			W_Popup 確認ウィンドウ;
-
-			GUI_除名()
-			{
-				確認ウィンドウ.Init();
-				確認ウィンドウ.文章.テキスト = "除名しますか？";
-			}
-
-			void Draw派生(double px, double py)
-			{
-				//アイコン、Lv
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-
-				MIcon::UI[IconType::ゴミ箱].DrawRotate({ px + 位置.GetW()/2,py + 位置.GetH() /2 } , 2, 0);
-
-				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "除名" }, true);
-			}
-
-			void Drop(double px, double py)
-			{
-				if (W_Drag::探索メン == nullptr) { return; }
-				W_Drag::探索メン = nullptr;
-
-				int result = 確認ウィンドウ.OpenPopup();
-
-				if (result == 1)
-				{
-					//Guild::P->除名(W_Drag::並びID);
-				}
-			}
-		};
-
-		class UI探索先 : public UIObject
-		{
-			void Draw派生() override
-			{
-				//全体枠
-
-				//探索先画像
-
-				//探索先階層数
-
-				//探索度
-
-				//ボスフラグ
-
-				//宝箱回収率
-
-				//+1Fボタン
-
-
-				//-1Fボタン
-
-				//探索指示
-				//コンボボックス的なのから選ぶ
-			}
-
-			void Click() override
-			{
-				//探索者掴む
-
-				//探索先変更、探索指示変更
-
-			}
-
-			void Drop() override
-			{
-				//探索者入れ替え
-
-				//探索先変更
-
-			}
-		};
-
-		class UI探索者 : public UIObject
-		{
-			void Draw派生() override
-			{
-				//全体枠
-
-				//探索者画像
-
-				//Lv
-
-				//経験値バー？
-
-				//装備品２つ
-
-				//遺物１つ
-
-				//スキル画面ボタン
-			}
-
-			void Click() override
-			{
-				//探索者掴む
-
-				//探索先変更、探索指示変更
-
-			}
-
-			void Drop() override
-			{
-				//探索者入れ替え
-
-				//探索先変更
-
-			}
-
-		};
 
 		class UIパーティ : public UIObject
 		{
+			class UI探索先 : public UIObject
+			{
+				void Draw派生() override
+				{
+					//全体枠
+
+					//探索先画像
+
+					//探索先階層数
+
+					//探索度
+
+					//ボスフラグ
+
+					//宝箱回収率
+
+					//+1Fボタン
+
+
+					//-1Fボタン
+
+					//探索指示
+					//コンボボックス的なのから選ぶ
+				}
+
+				void Click() override
+				{
+					//探索者掴む
+
+					//探索先変更、探索指示変更
+
+				}
+
+				void Drop() override
+				{
+					//探索者入れ替え
+
+					//探索先変更
+
+				}
+			};
+
+			class UI探索者 : public UIObject
+			{
+				void Draw派生() override
+				{
+					//全体枠
+
+					//探索者画像
+
+					//Lv
+
+					//経験値バー？
+
+					//装備品２つ
+
+					//遺物１つ
+
+					//スキル画面ボタン
+				}
+
+				void Click() override
+				{
+					//探索者掴む
+
+					//探索先変更、探索指示変更
+
+				}
+
+				void Drop() override
+				{
+					//探索者入れ替え
+
+					//探索先変更
+
+				}
+
+			};
 		public:
+			Guild::Party* パーティ;
 			UI探索先 探索先;
 			UI探索者 探索者[CV::パーティ人数];
 
 			void Draw派生() override
 			{
-				//全体枠
-				DrawUI(UIType::グループ暗);
-				//パーティメンバー５人
-
-				//探索先の情報と探索指示
+				if (パーティ->探索状態 == ExplorerType::編成中)
+				{
+					Draw街();
+				}
+				else
+				{
+					Drawダンジョン();
+				}
 			}
 
 			void Click() override
 			{
-				//探索者掴む
+				if (パーティ->探索状態 == ExplorerType::編成中)
+				{
+					//街
+					//探索者掴む
 
-				//探索先変更、探索指示変更
+					//探索先変更、探索指示変更
+
+					//探索者の装備掴む、スキルウィンドウ開く、装備強化
+
+				}
+				else if(パーティ->探索状態 == ExplorerType::撤退中)
+				{
+					//探索完了後にクリックで街モードに即帰還
+
+				}
 
 			}
 
 			void Drop() override
 			{
+				if (パーティ->探索状態 != ExplorerType::編成中) { return; }
 				//探索者入れ替え
 
 				//探索先変更
 
 			}
+
+			//街と探索中で分ける
+			void Draw街()
+			{
+				//全体枠
+				DrawUI(UIType::グループ暗);
+				//パーティメンバー５人
+				for (auto& it : 探索者)
+				{
+					it.Draw();
+				}
+				//探索先の情報と探索指示
+				探索先.Draw();
+			}
+
+			void Drawダンジョン()
+			{
+				//色々表示
+
+			}
+
 		};
 
 		class UI控え探索者 : public UIObject
@@ -1086,7 +1044,7 @@ namespace SDX_ADE
 		};
 
 	public:
-		//パーティ
+		//パーティsou
 		W_Skilltree スキルツリー;
 		W_Recruit 求人ウィンドウ;
 		W_Popup 除名ウィンドウ;
@@ -1112,7 +1070,8 @@ namespace SDX_ADE
 			for (auto& it : パーティ)
 			{
 				a++;
-				AddItem(it);
+				it.パーティ = &Guild::P->探索パーティ[a];
+				it.SetUI(LParty::パーティ_ウィンドウ, a);
 			}
 
 			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え枠_控え探索者, 0, &控え枠);
@@ -1131,7 +1090,7 @@ namespace SDX_ADE
 			控え枠.SetUI("", LParty::控え枠_ウィンドウ);
 
 			//●登録
-			AddItem(パーティ , CV::上限パーティ数);
+			//AddItem(パーティ , CV::上限パーティ数);
 			AddItem(登録);
 			AddItem(除名);
 			AddItem(控え, CV::最大控え人数);
@@ -1141,6 +1100,7 @@ namespace SDX_ADE
 			登録.clickEvent = [&]()
 			{
 				求人ウィンドウ.OpenPopup();
+				登録.isOver = false;
 			};
 			
 			除名.dropEvent = [&]()

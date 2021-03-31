@@ -10,30 +10,9 @@ namespace SDX_ADE
 	/*難易度選択ポップアップウィンドウ*/
 	class W_Newgame : public UIWindow
 	{
-	private:
-
-		class UIボタン : public UIButton
-		{
-		public:
-			W_Newgame* 親;
-			GameType 難易度;
-
-			void Click() override
-			{
-				親->is表示 = false;
-				親->ポップアップリザルト = 1;
-			}
-
-			void Over() override
-			{
-
-			}
-		};
-
 	public:
-		UIボタン 難易度ボタン[(int)GameType::COUNT];
+		UIButton 難易度ボタン[(int)GameType::COUNT];
 		UITextFrame 説明;
-
 		GameType 選択中難易度 = GameType::ノーマル;
 
 		void Init()
@@ -45,9 +24,14 @@ namespace SDX_ADE
 			int a = 0;
 			for (auto& it : 難易度ボタン)
 			{
-				it.親 = this;
-				it.難易度 = GameType(a);
 				it.SetUI(TX::難易度[a],LTitle::始めから_ボタン, a);
+
+				it.clickEvent = [&]()
+				{
+					is表示 = false;
+					ポップアップリザルト = it.lineID + 1;
+					選択中難易度 = GameType(it.lineID);
+				};
 				a++;
 			}
 			説明.SetUI("ここに難易度の説明が出ます\n※β版ではどの難易度も同じです", LTitle::始めから_説明枠);

@@ -285,13 +285,13 @@ namespace SDX_ADE
 		};
 
 	public:
-		GUI_編集中ギルメン 編集中ギルメン;//キャラアイコンと名前
-		GUI_スキルポイント スキルポイント;//現在のスキルポイントと獲得後のスキルポイント
-		GUI_スキル枠 Aスキル枠;//Aスキル表示エリア
-		GUI_スキル枠 Pスキル枠;//Pスキル表示エリア
-		GUI_NowAスキル NowAスキル[CV::最大Aスキル数];//Pスキル
-		GUI_再教育 再教育;
-		GUI_習得 習得;
+		//GUI_編集中ギルメン 編集中ギルメン;//キャラアイコンと名前
+		//GUI_スキルポイント スキルポイント;//現在のスキルポイントと獲得後のスキルポイント
+		//GUI_スキル枠 Aスキル枠;//Aスキル表示エリア
+		//GUI_スキル枠 Pスキル枠;//Pスキル表示エリア
+		//GUI_NowAスキル NowAスキル[CV::最大Aスキル数];//Pスキル
+		//GUI_再教育 再教育;
+		//GUI_習得 習得;
 
 		std::array<GUI_Aスキル, 100> Aスキル;
 		std::array<GUI_Pスキル, 100> Pスキル;
@@ -331,38 +331,17 @@ namespace SDX_ADE
 			スクロール位置 = 0;
 			isスクロールバー表示 = false;
 			*/
-
-			編集中ギルメン.親 = this;
-			スキルポイント.親 = this;
-			Aスキル枠.isアクティブ枠 = true;
-			Pスキル枠.isアクティブ枠 = false;
-			再教育.親 = this;
-			習得.親 = this;
-
-			int a = 0;
-
-			for (auto& it : NowAスキル)
-			{
-				it.親 = this;
-				it.id = a;
-				a++;
-			}
-
-			for (int a = 0; a < Aスキル.size(); a++)
-			{
-				Aスキル[a].id = a;
-				Aスキル[a].親 = this;
-			}
-			for (int a = 0; a < Pスキル.size(); a++)
-			{
-				Pスキル[a].id = a;
-				Pスキル[a].親 = this;
-			}
 		}
 
 		void Update()
 		{
 			SetPos(LSkill::ウィンドウ, true, false, true);
+		}
+
+		void ChangeMember()
+		{
+			//表示するAスキルPスキル一覧を変更
+
 		}
 	};
 }
