@@ -12,30 +12,42 @@ namespace SDX_ADE
 	class W_Management : public UIWindow
 	{
 	private:
-		class GUI_MLv : public GUI_Object
+		class UILv : public UIObject
 		{
-		public:
-			void Draw派生(double px, double py)
+			void Draw派生() override
 			{
+				DrawUI(UIType::凸ボタン);
+
+				//現在 街Lv
 				double rate = (double)Guild::P->投資経験値 / Management::必要経験値[Guild::P->投資Lv];
 
-				MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
+				//MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
 
-				MFont::SDot.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
+				//MFont::SDot.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
+				//投資経験値ゲージと増加量
+			}
+
+			void Click() override
+			{
 			}
 		};
 
-		class GUI_Gold : public GUI_Object
+		class UIGold : public UIObject
 		{
-		public:
-			void Draw派生(double px, double py)
-			{
+
+			void Draw派生() override
+			{				
+				DrawUI(UIType::凸ボタン);
+
+				//現在資金
+
+				//消費資金
+
 				//選択戦術の資金消費を表示、不足している場合赤色
-				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
 
 				//現在の資金
-				MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
-				MFont::MAlias.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
+				//MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
+				//MFont::MAlias.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
 				//消費する資金
 				//if (W_Drag::Over戦術 != nullptr)
 				{
@@ -44,121 +56,62 @@ namespace SDX_ADE
 					//MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
 					//W_Drag::Over戦術 = nullptr;
 				}
-				if ( true )
+				if (true)
 				{
-					Color fc = {255,128,128};
+					Color fc = { 255,128,128 };
 					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, {"- " , Management::data[0].消費資金 , " G"}, true);
+					//MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " , Management::data[0].消費資金 , " G" }, true);
 				}
-
 			}
-		};
-		class GUI_Rank : public GUI_Object
-		{
-		public:
-			int ランク = 0;
 
-			void Draw派生(double px, double py)
+			void Click() override
 			{
-				MSystem::DrawWindow({ px ,py }, 位置.GetW(), 位置.GetH(), 11);
-
-				MFont::MAlias.DrawBold({ px + Lp(41),py + Lp(42) }, Color::White, Color::Black, { "Lv " , ランク });
-
 			}
+
 		};
-		class GUI_Skill : public GUI_Object
+
+		//投資プラン
+		class UIPlan : public UIObject
 		{
 		public:
 			Management* 参照戦術;
-			int クリック時間 = 0;
 
-			void Draw派生(double px, double py)
+			void Draw派生() override
 			{
-				Color bc = Color::Black;
-				bool can使用 = 参照戦術->is使用可 && (参照戦術->消費資金 <= Guild::P->資金);
-			
-				//bool isLv = (参照戦術->Lv <= Guild::P->投資Lv[参照戦術->系統]);
-				//bool is選択中 = (Guild::P->選択戦術 == 参照戦術->MID);
+				//街レベル不足で枠表示変化
+				DrawUI(UIType::凸ボタン);
 
-				/*
-				int 枠No = 1;
-				int 凹凸 = 0;
-				if (参照戦術->is永続 && 参照戦術->使用回数 > 0)
-				{
-					//使用済み、永続
-					枠No = 5;
-				}
-				else if (!isLv)
-				{
-					//Lv不足は灰色
-					枠No = 15;
-				}
-				else if (is選択中 || クリック時間 > 0)
-				{
-					//選択中は凹み
-					枠No = 4;
-					凹凸 = -2;
-				}
-				else if (can使用)
-				{
-					//使用可能で盛り上がり
-					枠No = 1;
-					凹凸 = 2;
-				}
-				else
-				{
-					//資金不足
-					枠No = 3;
-				}
-
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(),枠No,凹凸);
-				//MIcon::アイコン[参照戦術->アイコン].DrawRotate({px + (int)位置.GetW()/2 - 凹凸,py + (int)位置.GetH()/2 - 凹凸 },2,0);
-				*/
-				クリック時間--;
-
+				参照戦術->image->DrawRotate({ GetCenterX() , GetCenterY() }, 2, 0);
 			}
-			void Click(double px, double py)
+
+			void Click() override
 			{
-				//お金足りてたら使用、不足してたら予約状態にする
-				if (!参照戦術->is使用可)
+				//街レベル不足で使用不可
+				if ( 参照戦術->is使用可 == false )
 				{
 					return;
 				}
 
-				/*
-				if (Guild::P->選択戦術 != 参照戦術->MID)
+				//資金不足で使用不可
+				if (参照戦術->消費資金 < Guild::P->資金)
 				{
-					Guild::P->選択戦術 = 参照戦術->MID;
-					if (Guild::P->資金 >= 参照戦術->消費資金)
-					{
-						MSound::効果音[SE::投資実行].Play();
-					} else {
-						MSound::効果音[SE::投資予約].Play();
-					}
-				} else {
-					Guild::P->選択戦術 = MSkillType::COUNT;
-					MSound::効果音[SE::投資解除].Play();
+					return;
 				}
-				*/
-
-				クリック時間 = 5;
 			}
 
-			void Info派生(Point 座標) override
+			void Over() override
 			{
-				InfoManagement(参照戦術, 座標);
+				over戦術 = 参照戦術;
 			}
-
 		};
 
 	public:
-
+		inline static Management* over戦術 = nullptr;
 		//タブ無くす
-		UIObject 資金;//資金と消費G
-		UIObject 街Lv;//街Lv
+		UIGold 資金;//資金と消費G
+		UILv 街Lv;//街Lv
 		//投資案
-		UITextFrame Lvグループ;
-		//同じ種類でレベル違いは横に並べる？
+		UITextFrame Lvグループ[10];//タブでは無く、レベル毎にグループ分け
 
 		int 現在タブ = 0;
 		int 戦術数 = 0;

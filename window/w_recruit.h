@@ -16,18 +16,6 @@ namespace SDX_ADE
 	class W_Recruit : public UIWindow
 	{
 	private:
-
-
-
-		class GUI_職業説明枠 : public GUI_Object
-		{
-		public:
-			void Draw派生(double px, double py)
-			{
-
-			}
-		};
-
 		class UI名前 : public UIObject
 		{
 		public:
@@ -110,7 +98,6 @@ namespace SDX_ADE
 				W_Recruit::This->表示職業 = Guild::P->求人職業;
 			}
 		};
-
 
 		class UI職業 : public UIObject
 		{

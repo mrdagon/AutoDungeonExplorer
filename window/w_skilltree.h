@@ -284,6 +284,81 @@ namespace SDX_ADE
 			}
 		};
 
+		class UI探索者 : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+
+			}
+
+			void Click() override
+			{
+
+			}
+		};
+
+		class UI装備Aスキル : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+
+			}
+
+			void Click() override
+			{
+
+			}
+		};
+
+		class UI予約スキル : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+
+			}
+
+			void Click() override
+			{
+
+			}
+
+			void Drop() override
+			{
+
+			}
+		};
+
+		class UIPスキル : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+
+			}
+
+			void Click() override
+			{
+
+			}
+		};
+
+		class UIAスキル : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+
+			}
+
+			void Click() override
+			{
+
+			}
+		};
+
 	public:
 		//GUI_編集中ギルメン 編集中ギルメン;//キャラアイコンと名前
 		//GUI_スキルポイント スキルポイント;//現在のスキルポイントと獲得後のスキルポイント
@@ -293,8 +368,10 @@ namespace SDX_ADE
 		//GUI_再教育 再教育;
 		//GUI_習得 習得;
 
-		std::array<GUI_Aスキル, 100> Aスキル;
-		std::array<GUI_Pスキル, 100> Pスキル;
+		UIButton 再教育;
+		UIButton 確定;
+		UIButton キャンセル;
+
 		//決定ボタン
 		//キャンセルボタン
 		Explorer* ギルメン;

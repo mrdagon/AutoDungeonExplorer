@@ -61,6 +61,9 @@ namespace SDX_ADE
 		int 探索地図ID[2];//0なら地図なし
 		int 地図発見探索率[2];
 
+		//UI用
+		bool isUIボス表示 = false;
+
 		/*暫定処理*/
 		void 探索率計算()
 		{

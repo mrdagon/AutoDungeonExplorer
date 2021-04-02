@@ -10,69 +10,11 @@ namespace SDX_ADE
 	class W_Dungeon : public UIWindow
 	{
 	private:
-		class GUI_Dun : public GUI_Object
-		{
-		public:
-			Dungeon* 参照 = nullptr;
-			W_Dungeon* 親ウィンドウ = nullptr;
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-				参照->image->DrawRotate({ px + Lp(15),py + Lp(16) },1,0);
-				MFont::SAlias.DrawBold({ px + Lp(17), py + Lp(18) }, Color::White, Color::Black, { (int)(参照->探索率*100) , "%"}, true);
-				MFont::SAlias.DrawBold({ px + Lp(19), py + Lp(20) }, Color::White, Color::Black, { "Lv",参照->雑魚Lv }, false);
-
-				//ボス
-				//参照->ボスモンスター[0].image[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
-				MFont::SAlias.DrawBold({ px + Lp(23), py + Lp(24) }, Color::White, Color::Black, "Boss");
-
-				//ザコ
-				for (int a = 0; a < (int)参照->雑魚モンスター.size() ; a++)
-				{
-					//参照->雑魚モンスター[a].image[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
-				}
-			}
-
-			void Click(double px, double py)
-			{
-				//ダンジョンを掴む
-				W_Drag::ダンジョン = 参照;
-				MSound::効果音[SE::ドラッグ].Play();
-			}
-
-			void Info派生(Point 座標) override
-			{
-				double px = 座標.x - 親ウィンドウ->相対座標.x - 位置.x;
-
-				if ( px > Lp(21) - 20 && px < Lp(21) + 20)
-				{
-					//ボスモンスターヘルプ
-					//InfoMonster( &参照->ボスモンスター[0], 参照->ボスLv, true, 座標);
-					return;
-				}
-
-				for (int a = 0; a < (int)参照->雑魚モンスター.size(); a++)
-				{
-					if (px > Lp(25) + Lp(26) * a - 20 && px < Lp(25) + Lp(26) * a + 20)
-					{
-						//ザコモンスターヘルプ
-						//InfoMonster( &参照->雑魚モンスター[a],参照->雑魚Lv,false,座標);
-						
-						return;
-					}
-				}
-
-				//モンスター以外
-				InfoDungeon(参照, 座標);
-			}
-
-		};
-
 		class UIDungeon : public UIObject
 		{
 		public:
-			//ダンジョン毎の枠
+			Dungeon* dungeon;
+
 			//ダンジョンの外観
 			//階層
 			//探索率
@@ -81,6 +23,44 @@ namespace SDX_ADE
 			//探索中のパーティ
 			//ボスの有無と出現条件
 			//出現モンスター or 出現ボス(ボス出現中は通常モンスター見れなくなる)
+			void Draw派生() override
+			{
+				//ダンジョン毎の枠
+				DrawUI(UIType::平ボタン);
+
+				
+				dungeon->image->DrawRotate({ GetX() , GetY() }, 1, 0);
+				MFont::S->DrawBold({ GetX(), GetY() }, Color::White, Color::Black, { (int)(dungeon->探索率 * 100) , "%" }, true);
+				MFont::S->DrawBold({ GetX(), GetY() }, Color::White, Color::Black, { "Lv",dungeon->雑魚Lv }, false);
+
+				//ボス
+				//参照->ボスモンスター[0].image[0][1]->DrawRotate({ px + Lp(21), py + Lp(22) }, 3, 0);
+				MFont::S->DrawBold({ GetX(), GetY() }, Color::White, Color::Black, "Boss");
+
+				//ザコ
+				for (int a = 0; a < (int)dungeon->雑魚モンスター.size(); a++)
+				{
+					//参照->雑魚モンスター[a].image[0][1]->DrawRotate({ px + Lp(25) + Lp(26) * a, py + Lp(27) }, 2, 0);
+				}
+			}
+
+			void Click() override
+			{
+				//ボス/ザコ表示切り替えボタン
+
+				W_Drag::ダンジョン = dungeon;
+				MSound::効果音[SE::ドラッグ].Play();
+			}
+
+			void Over() override
+			{
+				//ダンジョンの情報
+
+				//モンスターステータス
+
+				//切り替えボタン説明
+			}
+
 		};
 
 	public:

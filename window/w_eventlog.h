@@ -13,14 +13,16 @@ namespace SDX_ADE
 		class UILog : public UIObject
 		{
 			public:
+			void Draw派生() override
+			{
+
+			}
 		};
 
 
-	public:
-		std::vector<GUI_Tab> タブ;
-		EnumArray<IconType,LogType> 種類アイコン;
-		
+	public:	
 		//タブ
+		UITab タブ[5];
 
 		int 現在タブ = 0;
 

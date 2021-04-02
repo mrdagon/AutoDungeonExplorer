@@ -11,35 +11,27 @@ namespace SDX_ADE
 	class W_Quest : public UIWindow
 	{
 	private:
-		class GUI_依頼 : public GUI_Object
+		class UIQuest : public UIObject
 		{
 		public:
-			int id;
-
-			void Draw派生(double px, double py)
+			void Draw派生() override
 			{
-
 				//全体の枠
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
+				//MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 
 				//Main or Subをアイコン？文字？
 
-				MFont::SAlias.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Quest" });
+				//クリア済みマーク
+				//Newマーク
+				//依頼者見た目
+
+				//MFont::SAlias.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Quest" });
 
 				//クエスト名
-				MFont::LAlias.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
-
-				//達成条件と達成率＿complete表示
-				//MFont::BMSize.DrawBold({ px + Lp(7) ,py + Lp(8) }, Color::White, Color::Black, {  Quest::data[id].達成度 , " / " , Quest::data[id] .条件数値} , true );
-
-				//報酬、名誉
-				MIcon::UI[IconType::名声].Draw({ px + Lp(9), py + Lp(10) });
-				//MFont::BMSize.DrawBold({ px + Lp(11) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬名誉 } , true);
-				//報酬、資金
-				MIcon::UI[IconType::資金].Draw({ px + Lp(13), py + Lp(10) });
-				//MFont::BMSize.DrawBold({ px + Lp(14) ,py + Lp(12) }, Color::White, Color::Black, { Quest::data[id].報酬金 } );
-
+				//MFont::LAlias.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
 			}
+
+
 		};
 
 

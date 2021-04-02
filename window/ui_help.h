@@ -11,7 +11,7 @@ namespace SDX_ADE
 	{
 	private:
 		UIHelp();
-		//装備、探検者、モンスターから呼び出し
+		//装備、探検者、モンスターで使い回す
 		static void ASkillChild(ActiveSkill* Aスキル)
 		{}
 
