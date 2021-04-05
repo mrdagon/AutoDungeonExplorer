@@ -107,6 +107,11 @@ namespace SDX_ADE
 
 			共通Draw();
 
+			Reset描画範囲(true);
+			for (int a = (int)固定item.size() - 1; a >= 0; a--)
+			{
+				if (固定item[a]->is表示) { 固定item[a]->Draw(); }
+			}
 
 			Reset描画範囲(false);
 			////配列の後ろから描画
@@ -115,11 +120,6 @@ namespace SDX_ADE
 				if (item[a]->is表示) { item[a]->Draw(); }
 			}
 
-			Reset描画範囲(true);
-			for (int a = (int)固定item.size() - 1; a >= 0; a--)
-			{
-				if (固定item[a]->is表示) { 固定item[a]->Draw(); }
-			}
 
 			Screen::GetRenderer()->SetClip();
 			SDX::Camera::Get()->position = { 0,0 };

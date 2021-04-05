@@ -14,9 +14,13 @@ namespace SDX_ADE
 		class UIQuest : public UIObject
 		{
 		public:
+			Quest* quest;
+
 			void Draw派生() override
 			{
 				//全体の枠
+				DrawUI(UIType::平ボタン);
+
 				//MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
 
 				//Main or Subをアイコン？文字？
@@ -36,6 +40,8 @@ namespace SDX_ADE
 
 
 	public:
+		UIQuest 依頼[CV::上限依頼数];
+
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
 		//未完クエスト
@@ -49,19 +55,33 @@ namespace SDX_ADE
 			Set(WindowType::Quest, IconType::依頼);
 			SetPos(LQuest::ウィンドウ, false, true, false);
 
-			/*
-			横幅 = 330;
-			縦幅 = 125;
-			最小縦 = 125;
-			最大縦 = 600;
-			縦内部幅 = 600;//120☓ランク数
-			スクロール位置 = 0;
-			*/
+			//●初期化
+			for (int i = 0; i < Quest::data.size(); i++)
+			{
+				依頼[i].SetUI(LQuest::依頼枠, i);
+				依頼[i].quest = &Quest::data[i];
+			}
+
+			//●登録
+			AddItem(依頼, Quest::data.size() );
+
+			Update();
 		}
 
 		void Update()
 		{
 			SetPos(LQuest::ウィンドウ, false, true, false);
+
+			int cnt = 0;
+			for (int i = 0; i < Quest::data.size(); i++)
+			{
+				if (依頼[i].quest->is受注 == false)
+				{
+					依頼[i].lineID = cnt;
+					依頼[i].is表示 = true;
+					cnt++;
+				}
+			}
 		}
 	};
 }

@@ -13,12 +13,18 @@ namespace SDX_ADE
 		constexpr bool isデバッグ = true;
 
 		//外部データ件数上限
-		constexpr int 最大Aスキル種類 = 200;
-		constexpr int 最大Pスキル種類 = 200;
+		constexpr int 上限Aスキル種類 = 200;
+		constexpr int 上限Pスキル種類 = 200;
 
-		constexpr int 最大素材種類 = 200;
+		constexpr int 上限素材種類 = 200;
 
-		constexpr int 最大アクセサリ種類 = 200;
+		constexpr int 上限アクセサリ種類 = 200;
+
+		constexpr int 上限ダンジョン数 = 100;
+
+		constexpr int 上限投資案 = 200;
+
+		constexpr int 上限依頼数 = 200;
 
 		constexpr int パーティ人数 = 5;
 		constexpr int 上限パーティ数 = 3;//データ上増やせるパーティの限界

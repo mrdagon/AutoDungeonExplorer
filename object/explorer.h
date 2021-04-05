@@ -82,8 +82,8 @@ namespace SDX_ADE
 		ExplorerClass* 職業;
 		
 		//●スキル習得状況
-		std::array<int, CV::最大Aスキル種類> 習得AスキルLv;
-		std::array<int, CV::最大Pスキル種類> 習得PスキルLv;
+		std::array<int, CV::上限Aスキル種類> 習得AスキルLv;
+		std::array<int, CV::上限Pスキル種類> 習得PスキルLv;
 		int スキル習得予約[100];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
@@ -176,7 +176,7 @@ namespace SDX_ADE
 			//PスキルSの更新
 			Pスキル.clear();
 			//習得済みパッシブをpush
-			for (int a = 0; a < CV::最大Pスキル種類; a++)
+			for (int a = 0; a < CV::上限Pスキル種類; a++)
 			{
 				if (習得PスキルLv[a] > 0)
 				{

@@ -112,6 +112,7 @@ namespace SDX_ADE
 		UILv 街Lv;//街Lv
 		//投資案
 		UITextFrame Lvグループ[10];//タブでは無く、レベル毎にグループ分け
+		UIPlan 投資案[CV::上限投資案];
 
 		int 現在タブ = 0;
 		int 戦術数 = 0;
@@ -120,16 +121,27 @@ namespace SDX_ADE
 		{
 			Set( WindowType::Management, IconType::戦略);
 			SetPos( LManagement::ウィンドウ , false , true , false );
+			//●初期化
+			資金.SetUI(LManagement::資金枠);
+			街Lv.SetUI(LManagement::街Lv枠);
 
-			/*
-			横幅 = 320;
-			縦幅 = 300;
-			最小縦 = 200;
-			最大縦 = 600;
-			縦内部幅 = 600;//変動する
-			固定縦 = 85;
-			スクロール位置 = 0;
-			*/
+			for (int i = 0; i < 10; i++)
+			{
+				Lvグループ[i].SetUI( "" , LManagement::街グループ枠, DesignType::セット1, i);
+			}
+
+			for (int i = 0; i < Management::data.size(); i++)
+			{
+				投資案[i].SetUI(LManagement::投資案枠, i, &Lvグループ[0]);
+				投資案[i].参照戦術 = &Management::data[i];
+			}
+
+			//●登録
+
+			AddItem(資金);
+			AddItem(街Lv);
+			AddItem(Lvグループ,10);
+			AddItem(投資案, Management::data.size());
 
 			Update();
 		}

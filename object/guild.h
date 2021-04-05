@@ -42,7 +42,7 @@ namespace SDX_ADE
 
 			CraftType 発見素材種;
 			double 獲得経験値;
-			int 獲得素材[CV::最大素材種類];
+			int 獲得素材[CV::上限素材種類];
 			int 獲得財宝[10];//最大で10個まで、-は地図、0は未発見
 
 			bool isボス撃破;
@@ -735,7 +735,7 @@ namespace SDX_ADE
 		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
 
 		//装備品
-		int アクセサリー所持数[CV::最大アクセサリ種類] = { 0 };
+		int アクセサリー所持数[CV::上限アクセサリ種類] = { 0 };
 
 		EnumArray < bool, ItemType> is新開発タブ;
 

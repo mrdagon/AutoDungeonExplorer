@@ -18,8 +18,6 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				if (素材種 == nullptr) { return; }
-
 				//枠の描画
 				DrawUI(UIType::平ボタン);
 
@@ -41,21 +39,22 @@ namespace SDX_ADE
 
 	public:
 		//素材一覧表示６列、高ランクを上に表示
+		UIMaterial 素材[CV::上限素材種類];
 
 		void Init()
 		{
 			Set(WindowType::Material, IconType::素材);
 			SetPos(LMaterial::ウィンドウ,false,true,false);
 
-			/*
-			横幅 = 250;
-			縦幅 = 240;
-			最小縦 = 240;
-			最大縦 = 800;
-			縦内部幅 = 480;//120☓ランク数
-			スクロール位置 = 0;
-			*/
+			//●初期化
+			for (int i = 0; i < Material::data.size(); i++)
+			{
+				素材[i].SetUI(LMaterial::素材枠, i);
+				素材[i].素材種 = &Material::data[i];
+			}
 
+			//●登録
+			AddItem(素材, Material::data.size());
 		}
 
 		void Update()

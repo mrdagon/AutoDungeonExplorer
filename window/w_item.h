@@ -48,7 +48,7 @@ namespace SDX_ADE
 		};
 
 	public:
-		UIItem アイテム[CV::最大アクセサリ種類];
+		UIItem アイテム[CV::上限アクセサリ種類];
 		UITextFrame 内枠;
 
 		int 装備数 = 0;
@@ -70,7 +70,7 @@ namespace SDX_ADE
 			内枠.SetUI("", LItem::内枠);
 
 			//●登録
-			AddItem(アイテム,CV::最大アクセサリ種類);
+			AddItem(アイテム,CV::上限アクセサリ種類);
 			AddItem(内枠);
 
 			Update();

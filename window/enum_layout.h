@@ -111,6 +111,12 @@ namespace SDX_ADE
 		ウィンドウ,
 		タブ,
 		内枠,
+		フロア枠,
+		フロアアイコン,
+		フロアLv,
+		フロアモンスター,
+		フロアボスマーク,
+
 		COUNT,
 		PAGE = (int)UIPage::ダンジョン
 	};
@@ -135,6 +141,14 @@ namespace SDX_ADE
 	enum class LManagement
 	{
 		ウィンドウ,
+		資金枠,
+		資金アイコン,
+		資金現在,
+		資金消費,
+		街Lv枠,
+		街Lv数値,
+		街グループ枠,
+		投資案枠,
 		COUNT,
 		PAGE = (int)UIPage::投資
 	};
@@ -142,6 +156,9 @@ namespace SDX_ADE
 	enum class LMaterial
 	{
 		ウィンドウ,
+		素材枠,
+		素材Lv,
+		素材所持数,
 		COUNT,
 		PAGE = (int)UIPage::素材
 	};
@@ -149,6 +166,7 @@ namespace SDX_ADE
 	enum class LQuest
 	{
 		ウィンドウ,
+		依頼枠,
 		COUNT,
 		PAGE = (int)UIPage::クエスト
 	};
@@ -156,6 +174,11 @@ namespace SDX_ADE
 	enum class LLog
 	{
 		ウィンドウ,
+		タブ,
+		内枠,
+		ログ枠,
+		ログアイコン,
+		ログ文章,
 		COUNT,
 		PAGE = (int)UIPage::ログ
 	};

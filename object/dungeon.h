@@ -30,6 +30,7 @@ namespace SDX_ADE
 		Image* image;
 
 		ID_Dungeon ID;//0～階層と共用
+		int 層 = 0;
 		std::string 名前;
 		std::string 説明;
 
@@ -106,6 +107,7 @@ namespace SDX_ADE
 				}
 
 				it.ID = i;
+				it.層 = i / 10;
 				it.image = &MIcon::ダンジョン[i/10];
 
 				file_data.Read(dummy);
