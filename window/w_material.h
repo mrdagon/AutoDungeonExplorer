@@ -40,6 +40,7 @@ namespace SDX_ADE
 	public:
 		//素材一覧表示６列、高ランクを上に表示
 		UIMaterial 素材[CV::上限素材種類];
+		UITextFrame 内枠;
 
 		void Init()
 		{
@@ -52,9 +53,11 @@ namespace SDX_ADE
 				素材[i].SetUI(LMaterial::素材枠, i);
 				素材[i].素材種 = &Material::data[i];
 			}
+			内枠.SetUI("", LMaterial::内枠);
 
 			//●登録
 			AddItem(素材, Material::data.size());
+			AddItem(内枠);
 		}
 
 		void Update()

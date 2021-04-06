@@ -41,6 +41,7 @@ namespace SDX_ADE
 
 	public:
 		UIQuest 依頼[CV::上限依頼数];
+		UITextFrame 内枠;
 
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
@@ -61,9 +62,11 @@ namespace SDX_ADE
 				依頼[i].SetUI(LQuest::依頼枠, i);
 				依頼[i].quest = &Quest::data[i];
 			}
+			内枠.SetUI("", LQuest::内枠);
 
 			//●登録
 			AddItem(依頼, Quest::data.size() );
+			AddItem(内枠);
 
 			Update();
 		}

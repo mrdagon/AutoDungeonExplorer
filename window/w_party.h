@@ -7,9 +7,6 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-
-
-
 	/*パーティウィンドウ*/
 	class W_Party: public UIWindow
 	{
@@ -857,6 +854,7 @@ namespace SDX_ADE
 				void Draw派生() override
 				{
 					//全体枠
+					DrawUI(UIType::グループ暗);
 
 					//探索先画像
 
@@ -899,6 +897,7 @@ namespace SDX_ADE
 				void Draw派生() override
 				{
 					//全体枠
+					DrawUI(UIType::平ボタン);
 
 					//探索者画像
 
@@ -935,6 +934,15 @@ namespace SDX_ADE
 			UI探索先 探索先;
 			UI探索者 探索者[CV::パーティ人数];
 
+			UIパーティ()
+			{
+				探索先.SetUI(LParty::探索先枠,0,this);
+				for (int i = 0; i < CV::パーティ人数; i++)
+				{
+					探索者[i].SetUI(LParty::探索者枠, i,this);
+				}
+			}
+
 			void Draw派生() override
 			{
 				if (パーティ->探索状態 == ExplorerType::編成中)
@@ -964,7 +972,6 @@ namespace SDX_ADE
 					//探索完了後にクリックで街モードに即帰還
 
 				}
-
 			}
 
 			void Drop() override
@@ -980,7 +987,7 @@ namespace SDX_ADE
 			void Draw街()
 			{
 				//全体枠
-				DrawUI(UIType::グループ暗);
+				DrawUI(UIType::背景);
 				//パーティメンバー５人
 				for (auto& it : 探索者)
 				{
@@ -993,6 +1000,7 @@ namespace SDX_ADE
 			void Drawダンジョン()
 			{
 				//色々表示
+				DrawUI(UIType::平ボタン);
 
 			}
 
@@ -1071,11 +1079,11 @@ namespace SDX_ADE
 			{
 				a++;
 				it.パーティ = &Guild::P->探索パーティ[a];
-				it.SetUI(LParty::パーティ_ウィンドウ, a);
+				it.SetUI(LParty::パーティ枠, a);
 			}
 
-			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え枠_控え探索者, 0, &控え枠);
-			除名.SetUI(&MIcon::UI[IconType::ゴミ箱], "除名", LParty::控え枠_控え探索者, CV::最大控え人数, &控え枠);
+			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え探索者, 0, &控え枠);
+			除名.SetUI(&MIcon::UI[IconType::ゴミ箱], "除名", LParty::控え探索者, CV::最大控え人数, &控え枠);
 			除名.is押下 = true;//平状態で固定
 			除名.押下状態 = 1;
 			
@@ -1083,14 +1091,14 @@ namespace SDX_ADE
 			for (auto& it : 控え)
 			{
 				a++;
-				it.SetUI(LParty::控え枠_控え探索者, a , &控え枠);
+				it.SetUI(LParty::控え探索者, a , &控え枠);
 				it.探索者 = Guild::P->控え探索者[a];
 				if (it.探索者 == nullptr) { it.is表示 = false; }
 			}
-			控え枠.SetUI("", LParty::控え枠_ウィンドウ);
+			控え枠.SetUI("", LParty::控え枠);
 
 			//●登録
-			//AddItem(パーティ , CV::上限パーティ数);
+			AddItem(パーティ , CV::上限パーティ数);
 			AddItem(登録);
 			AddItem(除名);
 			AddItem(控え, CV::最大控え人数);
@@ -1125,8 +1133,8 @@ namespace SDX_ADE
 				it.is表示 = (it.探索者 != nullptr);
 			}
 			//控え枠の位置はパーティ数で変化			
-			auto& LA = Layout::Data(LParty::パーティ_ウィンドウ);
-			auto& LB = Layout::Data(LParty::控え枠_ウィンドウ);
+			auto& LA = Layout::Data(LParty::パーティ枠);
+			auto& LB = Layout::Data(LParty::控え枠);
 
 			LB.y = LA.並べy * Guild::P->最大パーティ数 + LB.並べy;
 

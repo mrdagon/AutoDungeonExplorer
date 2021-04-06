@@ -124,9 +124,11 @@ namespace SDX_ADE
 	enum class LParty
 	{
 		ウィンドウ,//全体ウィンドウ幅
-		パーティ_ウィンドウ,
-		控え枠_ウィンドウ,
-		控え枠_控え探索者,//除名は登録と除名も
+		パーティ枠,
+		控え枠,
+		控え探索者,//除名は登録と除名も
+		探索先枠,
+		探索者枠,
 		COUNT,
 		PAGE = (int)UIPage::パーティ編成
 	};
@@ -159,6 +161,7 @@ namespace SDX_ADE
 		素材枠,
 		素材Lv,
 		素材所持数,
+		内枠,
 		COUNT,
 		PAGE = (int)UIPage::素材
 	};
@@ -167,6 +170,7 @@ namespace SDX_ADE
 	{
 		ウィンドウ,
 		依頼枠,
+		内枠,
 		COUNT,
 		PAGE = (int)UIPage::クエスト
 	};
