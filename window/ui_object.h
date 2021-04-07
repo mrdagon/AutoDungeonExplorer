@@ -30,6 +30,7 @@ namespace SDX_ADE
 		bool is表示 = true;
 		bool is表示オンリー = false;
 		bool isOver = false;
+		int ClickPos = 0;//0なら左側,1なら右側
 		int lineID = 0;
 		bool isLeftPos = true;
 
@@ -194,6 +195,7 @@ namespace SDX_ADE
 
 				if (Input::mouse.Left.on == true)
 				{
+					ClickPos = (pt.x < posX + px + GetW() / 2) ? 0 : 1;//左右のどちら側をクリックしたか
 					Click();
 					return true;
 				}

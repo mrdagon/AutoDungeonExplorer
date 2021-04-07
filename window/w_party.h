@@ -845,12 +845,43 @@ namespace SDX_ADE
 			}
 		};
 
-
-
 		class UIパーティ : public UIObject
 		{
 			class UI探索先 : public UIObject
 			{
+			private:
+				class UI探索先変更 : public UIObject
+				{
+				public:
+					void Draw派生() override
+					{
+						DrawUI(UIType::平ボタン);
+					}
+
+					void Click() override
+					{}
+
+					void Over() override
+					{}
+				};
+
+				class UI探索指示変更 : public UIObject
+				{
+				public:
+					void Draw派生() override
+					{
+						DrawUI(UIType::平ボタン);
+					}
+
+					void Click() override
+					{}
+
+					void Over() override
+					{}
+				};
+			public:
+				int パーティID;
+
 				void Draw派生() override
 				{
 					//全体枠
@@ -866,13 +897,9 @@ namespace SDX_ADE
 
 					//宝箱回収率
 
-					//+1Fボタン
+					//フロア移動 △クリックで前後
 
-
-					//-1Fボタン
-
-					//探索指示
-					//コンボボックス的なのから選ぶ
+					//探索指示 △クリックで前後
 				}
 
 				void Click() override
@@ -894,8 +921,66 @@ namespace SDX_ADE
 
 			class UI探索者 : public UIObject
 			{
+				class UI装飾品 : public UIObject
+				{
+					void Draw派生() override
+					{
+						DrawUI(UIType::平ボタン);
+					}
+
+					void Click() override
+					{}
+
+					void Over() override
+					{}
+				};
+
+				class UI装備 : public UIObject
+				{
+					void Draw派生() override
+					{
+						DrawUI(UIType::凸ボタン);
+					}
+
+					void Click() override
+					{}
+
+					void Over() override
+					{}
+				};
+
+				class UIスキルボタン : public UIObject
+				{
+					void Draw派生() override
+					{
+						DrawUI(UIType::凸ボタン);
+					}
+
+					void Click() override
+					{}
+
+					void Over() override
+					{}
+				};
+
+
+			public:
+				UIスキルボタン スキルボタン;
+				UI装備 装備ボタン[2];
+				UI装飾品 装飾品ボタン;
+
+				int パーティID;
+				int 隊列ID;
+
+				UI探索者()
+				{
+
+				}
+
 				void Draw派生() override
 				{
+					auto& it = Guild::P->探索パーティ[パーティID].メンバー[隊列ID];
+
 					//全体枠
 					DrawUI(UIType::平ボタン);
 
@@ -907,7 +992,7 @@ namespace SDX_ADE
 
 					//装備品２つ
 
-					//遺物１つ
+					//装飾品１つ
 
 					//スキル画面ボタン
 				}
