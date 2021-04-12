@@ -166,13 +166,13 @@ namespace SDX_ADE
 			タイトルボタン.SetUI(&MIcon::UI[IconType::BGM], "終了", LToolBar::ツールバー_その他ボタン , 0);
 
 			//基準座標を左上にする
-			停止ボタン.isLeftPos = false;
-			速度ボタンA.isLeftPos = false;
-			速度ボタンB.isLeftPos = false;
-			速度ボタンC.isLeftPos = false;
-			ヘルプボタン.isLeftPos = false;
-			コンフィグボタン.isLeftPos = false;
-			タイトルボタン.isLeftPos = false;
+			停止ボタン.isLeftClick = false;
+			速度ボタンA.isLeftClick = false;
+			速度ボタンB.isLeftClick = false;
+			速度ボタンC.isLeftClick = false;
+			ヘルプボタン.isLeftClick = false;
+			コンフィグボタン.isLeftClick = false;
+			タイトルボタン.isLeftClick = false;
 
 			//ポップアップ設定
 			コンフィグボタン.isポップアップ = true;

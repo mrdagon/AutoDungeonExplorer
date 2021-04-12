@@ -48,7 +48,7 @@ namespace SDX_ADE
 					MFont::MAlias.DrawBold({ GetX() + layout->並べx + 4,GetY() + layout->並べy + 2 }, Color::White, Color::Black, { str.c_str() });
 				}
 				else {
-					MFont::MAlias.DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy + 2 }, Color::White, Color::Black, { Guild::P->求人名前 });
+					MFont::MAlias.DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy + 2 }, Color::White, Color::Black, { W_Recruit::This->求人名前 });
 				}
 
 
@@ -95,7 +95,7 @@ namespace SDX_ADE
 				//立ち絵
 				MJob::立ち絵[job->ID].DrawRotate({ GetX() + posF.x ,GetY() + posF.y }, 2, 0);
 
-				W_Recruit::This->表示職業 = Guild::P->求人職業;
+				W_Recruit::This->表示職業 = W_Recruit::This->選択職業;
 			}
 		};
 
@@ -106,7 +106,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				UIType ui_now = UIType::丸フレーム;
-				if (lineID == Guild::P->求人職業 || isOver == true)
+				if (lineID == W_Recruit::This->選択職業 || isOver == true)
 				{
 					//選択中は暗い
 					ui_now = UIType::選択丸フレーム;
@@ -127,7 +127,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				Guild::P->求人職業 = lineID;
+				W_Recruit::This->選択職業 = lineID;
 				W_Recruit::This->表示職業 = lineID;
 				MSound::効果音[SE::決定].Play();
 			}
@@ -141,6 +141,9 @@ namespace SDX_ADE
 
 	public:
 		static W_Recruit* This;
+		inline static std::string 求人名前;
+		inline static ID_Job 選択職業;
+
 		int 表示職業;
 
 		UI名前 名前入力欄;
@@ -189,7 +192,7 @@ namespace SDX_ADE
 			ランダム名ボタン.clickEvent = [&]()
 			{
 				is名前入力中 = false;
-				Guild::P->求人名前 = "ランダム";
+				求人名前 = "ランダム";
 			};
 			名前変更ボタン.clickEvent = [&]() {名前入力開始完了(); };
 			名前入力欄.clickEvent = [&]() {名前入力開始完了(); };
@@ -197,7 +200,7 @@ namespace SDX_ADE
 			{
 				//空きがあって編成中のパーティか、控えに追加
 				名前確定();
-				Guild::P->求人採用();
+				Guild::P->探索者登録(選択職業, 求人名前);
 				MSound::効果音[SE::決定].Play();
 				is表示 = false;
 			};
@@ -225,7 +228,7 @@ namespace SDX_ADE
 		{
 			if (!is名前入力中) { return; }
 
-			Guild::P->求人名前 = conv.to_bytes(入力中文字);
+			W_Recruit::This->求人名前 = conv.to_bytes(入力中文字);
 
 			is名前入力中 = false;
 			MSound::効果音[SE::決定].Play();
@@ -296,7 +299,7 @@ namespace SDX_ADE
 			}
 			else
 			{
-				入力中文字 = conv.from_bytes(Guild::P->求人名前);//2byte幅固定文字に変換
+				入力中文字 = conv.from_bytes(求人名前);//2byte幅固定文字に変換
 				挿入位置 = (int)入力中文字.size();
 				is名前入力中 = true;
 				MSound::効果音[SE::決定].Play();

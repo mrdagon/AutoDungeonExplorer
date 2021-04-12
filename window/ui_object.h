@@ -32,7 +32,8 @@ namespace SDX_ADE
 		bool isOver = false;
 		int ClickPos = 0;//0なら左側,1なら右側
 		int lineID = 0;
-		bool isLeftPos = true;
+
+		bool isLeftClick = true;//クリック時左右どちら半分をクリックしたか
 
 		std::function<void()> clickEvent = []() {};
 		std::function<void()> drawEvent = []() {};
@@ -47,9 +48,14 @@ namespace SDX_ADE
 			親 = 親object;
 		}
 
+		Point GetPos()
+		{
+			return { GetX() , GetY() };
+		}
+
 		int GetX()
 		{
-			if (isLeftPos)
+			if (isLeftClick)
 			{
 				if (lineID <= 0)
 				{

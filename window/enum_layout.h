@@ -130,6 +130,9 @@ namespace SDX_ADE
 		探索先枠,
 		探索者枠,
 
+		控えドット,
+		控えLv,
+
 		探索者ドット,
 		探索者Lv,
 		探索者経験値,
@@ -139,8 +142,10 @@ namespace SDX_ADE
 		探索先ドット,
 		探索先フロア,
 		探索先探索度,
-		探索先フロア移動,
+		探索先ボス,
 		探索先探索指示,
+		探索先財宝数,
+		探索先階段発見,
 
 		COUNT,
 		PAGE = (int)UIPage::パーティ編成
@@ -253,6 +258,5 @@ namespace SDX_ADE
 		COUNT,
 		PAGE = (int)UIPage::Helpスキル
 	};
-
 
 }

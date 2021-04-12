@@ -29,6 +29,7 @@ namespace SDX_ADE
 		constexpr int パーティ人数 = 5;
 		constexpr int 上限パーティ数 = 3;//データ上増やせるパーティの限界
 
+		constexpr int 上限探索者登録数 = 100;
 		constexpr int 最大控え人数 = 35;
 
 		constexpr int 素材系統 = 6;

@@ -17,10 +17,12 @@ namespace SDX_ADE
 			is味方 = true;
 		}
 
-		void Make(int id , ID_Job ジョブ , int Lv , std::string 名前)
+		//
+		void 登録(int id , ID_Job ジョブ , int Lv , std::string 名前)
 		{
 			this->ID = id;
 			this->Lv = Lv;
+			this->is登録済み = true;
 			this->職業 = &ExplorerClass::data[ジョブ];
 			this->名前 = 名前;
 
@@ -76,6 +78,7 @@ namespace SDX_ADE
 
 		//●人事関連
 		int ID;//guildのvector配列内のindex
+		bool is登録済み;
 
 		//●固定ステータス
 		std::string 名前;

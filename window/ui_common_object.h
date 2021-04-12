@@ -233,18 +233,19 @@ namespace SDX_ADE
 
 		void Draw派生() override
 		{
+			bool push = false;
+
 			if (tabID == *tabNo参照)
 			{
 				DrawUI(UIType::背景 , Design::data[UIデザイン]);
-			} else {
+			}
+			else			
+			{
 				DrawUI(UIType::グループ暗 , Design::data[UIデザイン]);
 			}
 
-			bool push = false;
-
 			if (画像 != nullptr)
 			{
-
 				int xd = 0;
 				int yd = 0;
 

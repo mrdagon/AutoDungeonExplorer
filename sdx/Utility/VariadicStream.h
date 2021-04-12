@@ -29,7 +29,7 @@ namespace SDX
 		std::string Change(TRest... 残りの要素)
 		{
 			std::ostringstream os;
-
+			
 			Change(os, 残りの要素...);
 
 			return os.str();

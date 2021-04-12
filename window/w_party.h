@@ -170,42 +170,6 @@ namespace SDX_ADE
 
 			void Draw派生(double px, double py)
 			{
-				//未配置時の表示
-				if (ギルメン == nullptr)
-				{
-					//MSystem::DrawBox({ px,py }, (int)位置.GetW(), (int)位置.GetH(), Color::Gray);
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 4);
-					return;
-				}
-
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-
-				//アイコン、Lv、Expゲージ
-				ギルメン->image[0][1]->DrawRotate({ px + Lp(35) ,py + Lp(36) }, 2, 0);
-				MSystem::DrawBar({ px + Lp(39),py + Lp(40) }, Lp(41), Lp(42), ギルメン->経験値 / ギルメン->Get要求経験値(), 1, Color::Blue, Color::White, Color::White, true);
-				MFont::SAlias.DrawBold({ px + Lp(37) ,py + Lp(38) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
-
-				//装備品 x 3と更新ボタン、自動更新設定、装備ランク
-				MSystem::DrawWindow({ px + Lp(43) ,py + Lp(46) }, Lp(48), Lp(49), 0);
-				MSystem::DrawWindow({ px + Lp(44) ,py + Lp(46) }, Lp(48), Lp(49), 0);
-				MSystem::DrawWindow({ px + Lp(45) ,py + Lp(47) }, Lp(48), Lp(49), 0);
-				//MIcon::アイテム[ギルメン->装備[0]->見た目].Draw({ px + Lp(43) + Lp(50) , py + Lp(46) + Lp(51) });
-				//MIcon::アイテム[ギルメン->装備[1]->見た目].Draw({ px + Lp(44) + Lp(50)  , py + Lp(46) + Lp(51) });
-				//MIcon::アイテム[ギルメン->装備[2]->見た目].Draw({ px + Lp(45) + Lp(50) , py + Lp(47) + Lp(51) });
-
-				MFont::SAlias.DrawBold({ px + Lp(52) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[0]->ランク });
-				MFont::SAlias.DrawBold({ px + Lp(53) , py + Lp(54) }, Color::White, Color::Black, { "Lv " , ギルメン->装備[1]->ランク });
-
-				//装備更新ボタン
-
-				//if (ギルメン->Pスキル習得予約ID == -1)
-				//{
-					//MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 0, 1);
-					//MFont::BSSize.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル未予約);
-				//} else {
-					MSystem::DrawWindow({ px + Lp(55) ,py + Lp(56) }, Lp(57), Lp(58), 3, -1);
-					MFont::SAlias.DrawBoldRotate({ px + Lp(59) ,py + Lp(60) }, 1, 0, Color::White, Color::Black, TX::Party_スキル予約);
-				//}
 
 			}
 
@@ -756,280 +720,293 @@ namespace SDX_ADE
 			}
 		};
 
-		class GUI_控え : public GUI_Object
+		//探索者子オブジェクト
+		class UI装飾品 : public UIObject
+		{
+			int パーティID;
+			int 隊列ID;
+
+			void Draw派生() override
+			{
+				DrawUI(UIType::平ボタン);
+			}
+
+			void Click() override
+			{}
+
+			void Over() override
+			{}
+		};
+
+		class UI装備 : public UIObject
+		{
+			int パーティID;
+			int 隊列ID;
+
+			void Draw派生() override
+			{
+				DrawUI(UIType::凸ボタン);
+			}
+
+			void Click() override
+			{}
+
+			void Over() override
+			{}
+		};
+
+		class UIスキルボタン : public UIObject
 		{
 		public:
-			int ID;
-			Explorer* ギルメン;
+			inline static W_Skilltree スキルツリー;
+			int パーティID;
+			int 隊列ID;
 
-			void Draw派生(double px, double py)
+			void Draw派生() override
 			{
-				//未配置時の表示
-				if (ギルメン == nullptr)
-				{
-					//MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 4);
-					return;
-				}
+				DrawUI(UIType::凸ボタン);
+				//予約中
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1);
-
-				//アイコン、Lv
-				MFont::SAlias.DrawBold({ px + Lp(84) ,py + Lp(85) }, Color::White, Color::Black, { "Lv " ,ギルメン->Lv }, true);
-				ギルメン->image[0][1]->DrawRotate({ px + (int)位置.GetW()/2 ,py + Lp(86) }, 2, 0);
-			}
-
-			void Click(double px, double py)
-			{
-				if (ギルメン == nullptr) { return; }
-
-				//ギルメン掴む
-				W_Drag::探索メン = ギルメン;
-				//W_Drag::並びID = -ID - 1;
-				MSound::効果音[SE::ドラッグ].Play();
-			}
-
-			void Drop(double px, double py)
-			{
-				if (ギルメン == nullptr) { return; }
-
-				if (W_Drag::探索メン != nullptr)
-				{
-					//ギルメン入れ替え
-					//Guild::P->パーティ移動(W_Drag::探索メン, W_Drag::並びID , ギルメン, -ID-1);
-				}
-				else if (W_Drag::所持アーティファクト != nullptr)
-				{
-					//装備変更
-					int 部位 = 0;
-					if ( W_Drag::所持アーティファクト->種類 == ItemType::アクセサリー)
-					{
-						部位 = 2;
-					}
-					else if ( W_Drag::所持アーティファクト->種類 == ItemType::外套 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::軽鎧 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::重鎧 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::軽装 ) 
-					{
-						部位 = 1;
-					}
-
-					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->アクセサリー所持数[W_Drag::所持アーティファクト->ID]--;
-					ギルメン->装備[部位] = W_Drag::所持アーティファクト;
-					ギルメン->基礎ステータス計算();
-					MSound::効果音[SE::装備変更].Play();
-				}
-				else if (W_Drag::ギルメン装備.メンバー != nullptr )
-				{
-					int n = W_Drag::ギルメン装備.部位;
-					auto buf = W_Drag::ギルメン装備.メンバー->装備[n];
-					W_Drag::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
-					ギルメン->装備[n] = buf;
-
-					for (auto& it : Guild::P->探索パーティ)
-					{
-						it.基礎ステ再計算();
-					}
-
-					MSound::効果音[SE::装備変更].Play();
-				}
+				//ポイント余り
 
 			}
 
-			void Info派生(Point 座標) override
+			void Click() override
 			{
-				if (ギルメン == nullptr) { return; }
+				スキルツリー.Init();
+				スキルツリー.OpenPopup();
+			}
 
-				//ギルメン情報
-				InfoExplorer(ギルメン, 座標);
+			void Over() override
+			{
 			}
 		};
 
+		//パーティ子オブジェクト
+		class UI探索者 : public UIObject
+		{
+		public:
+			UIスキルボタン スキルボタン;
+			UI装備 装備ボタン[2];
+			UI装飾品 装飾品ボタン;
+
+			int パーティID;
+			int 隊列ID;
+
+			UI探索者()
+			{
+				スキルボタン.SetUI(LParty::探索者スキル, 0, this);
+				装備ボタン[0].SetUI(LParty::探索者装備, 0, this);
+				装備ボタン[1].SetUI(LParty::探索者装備, 2, this);
+				装飾品ボタン.SetUI(LParty::探索者装備, 4, this);
+			}
+
+			void Draw派生() override
+			{
+				auto& it = Guild::P->探索パーティ[パーティID].メンバー[隊列ID];
+
+				//全体枠
+				DrawUI(UIType::平ボタン);
+
+				//探索者画像
+				if (it == nullptr) { return; }
+
+				it->image[0][1]->DrawRotate({ GetX(),GetY() }, 2, 0);
+
+				//Lv
+				GetFont()->DrawRotate({ GetX() , GetY() }, 1, 0, Color::Black, { "Lv " , it->Lv });
+
+				//経験値バー？
+
+				//装備品２つ
+				装備ボタン[0].Draw();
+				装備ボタン[1].Draw();
+
+				//装飾品１つ
+				装飾品ボタン.Draw();
+
+				//スキル画面ボタン
+				スキルボタン.Draw();
+			}
+
+			bool Check派生(double px, double py) override
+			{
+				if (スキルボタン.CheckInput(px, py) == true) { return true; }
+				if (装飾品ボタン.CheckInput(px, py) == true) { return true; }
+				if (装備ボタン[0].CheckInput(px, py) == true) { return true; }
+				if (装備ボタン[1].CheckInput(px, py) == true) { return true; }
+
+				return false;
+			}
+
+			void Click() override
+			{
+				//探索者掴む
+
+				//探索先変更、探索指示変更
+
+
+
+			}
+
+			void Drop() override
+			{
+				//探索者入れ替え
+
+				//探索先変更
+
+			}
+
+		};
+
+		class UI探索先変更 : public UIObject
+		{
+		public:
+			int パーティID;
+			void Draw派生() override
+			{
+				DrawUI(UIType::平ボタン);
+			}
+
+			void Click() override
+			{
+				if (isLeftClick == true)
+				{
+
+				}
+				else {
+
+				}
+			}
+
+			void Over() override
+			{}
+		};
+
+		class UI探索指示変更 : public UIObject
+		{
+		public:
+			int パーティID;
+			void Draw派生() override
+			{
+				DrawUI(UIType::平ボタン);
+			}
+
+			void Click() override
+			{
+				if (isLeftClick == true)
+				{
+
+				}
+				else {
+
+				}
+			}
+
+			void Over() override
+			{}
+		};
+
+		class UI探索先 : public UIObject
+		{
+		public:
+			int パーティID;
+
+			void Draw派生() override
+			{
+				//全体枠
+				DrawUI(UIType::グループ暗);
+
+				auto* it = Guild::P->探索パーティ[パーティID].探索先;
+
+				//フロア移動 △クリックで前後
+				//探索先画像
+				it->image->DrawRotate({ GetX(),GetY() }, 1, 0);
+
+				//探索先階層数
+				GetFont()->DrawRotate({ GetX(),GetY() }, 1, 0, Color::Black, { it->ID });
+
+				//探索度-ゲージと％の文字表示
+				it->探索率;
+
+				//ボスフラグ
+				it->isボス生存;//存在しない、未発見、発見、討伐済みの４種
+
+				//宝箱回収率
+				it->最大財宝数;
+				it->発見財宝数;
+			}
+
+			void Click() override
+			{
+				//探索者掴む
+
+				//探索先変更、探索指示変更
+
+			}
+
+			void Drop() override
+			{
+				//探索者入れ替え
+
+				//探索先変更
+
+			}
+		};
+
+		//ウィンドウ子オブジェクト
 		class UIパーティ : public UIObject
 		{
-			class UI探索先 : public UIObject
-			{
-			private:
-				class UI探索先変更 : public UIObject
-				{
-				public:
-					void Draw派生() override
-					{
-						DrawUI(UIType::平ボタン);
-					}
 
-					void Click() override
-					{}
-
-					void Over() override
-					{}
-				};
-
-				class UI探索指示変更 : public UIObject
-				{
-				public:
-					void Draw派生() override
-					{
-						DrawUI(UIType::平ボタン);
-					}
-
-					void Click() override
-					{}
-
-					void Over() override
-					{}
-				};
-			public:
-				int パーティID;
-
-				void Draw派生() override
-				{
-					//全体枠
-					DrawUI(UIType::グループ暗);
-
-					//探索先画像
-
-					//探索先階層数
-
-					//探索度
-
-					//ボスフラグ
-
-					//宝箱回収率
-
-					//フロア移動 △クリックで前後
-
-					//探索指示 △クリックで前後
-				}
-
-				void Click() override
-				{
-					//探索者掴む
-
-					//探索先変更、探索指示変更
-
-				}
-
-				void Drop() override
-				{
-					//探索者入れ替え
-
-					//探索先変更
-
-				}
-			};
-
-			class UI探索者 : public UIObject
-			{
-				class UI装飾品 : public UIObject
-				{
-					void Draw派生() override
-					{
-						DrawUI(UIType::平ボタン);
-					}
-
-					void Click() override
-					{}
-
-					void Over() override
-					{}
-				};
-
-				class UI装備 : public UIObject
-				{
-					void Draw派生() override
-					{
-						DrawUI(UIType::凸ボタン);
-					}
-
-					void Click() override
-					{}
-
-					void Over() override
-					{}
-				};
-
-				class UIスキルボタン : public UIObject
-				{
-					void Draw派生() override
-					{
-						DrawUI(UIType::凸ボタン);
-					}
-
-					void Click() override
-					{}
-
-					void Over() override
-					{}
-				};
-
-
-			public:
-				UIスキルボタン スキルボタン;
-				UI装備 装備ボタン[2];
-				UI装飾品 装飾品ボタン;
-
-				int パーティID;
-				int 隊列ID;
-
-				UI探索者()
-				{
-
-				}
-
-				void Draw派生() override
-				{
-					auto& it = Guild::P->探索パーティ[パーティID].メンバー[隊列ID];
-
-					//全体枠
-					DrawUI(UIType::平ボタン);
-
-					//探索者画像
-
-					//Lv
-
-					//経験値バー？
-
-					//装備品２つ
-
-					//装飾品１つ
-
-					//スキル画面ボタン
-				}
-
-				void Click() override
-				{
-					//探索者掴む
-
-					//探索先変更、探索指示変更
-
-				}
-
-				void Drop() override
-				{
-					//探索者入れ替え
-
-					//探索先変更
-
-				}
-
-			};
 		public:
 			Guild::Party* パーティ;
 			UI探索先 探索先;
+			UI探索先変更 探索先変更;
+			UI探索指示変更 探索指示変更;
 			UI探索者 探索者[CV::パーティ人数];
 
 			UIパーティ()
 			{
+				パーティ = nullptr;
 				探索先.SetUI(LParty::探索先枠,0,this);
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
 					探索者[i].SetUI(LParty::探索者枠, i,this);
 				}
+
+				探索先変更.SetUI(LParty::探索先ドット, 0, &探索先);
+				探索指示変更.SetUI(LParty::探索先探索指示, 0, &探索先);
+
+			}
+
+			void Init(Guild::Party* パーティ)
+			{
+				this->パーティ = パーティ;
+				探索先.パーティID = パーティ->パーティID;
+				for (int i = 0; i < CV::パーティ人数; i++)
+				{
+					探索者[i].パーティID = パーティ->パーティID;
+					探索者[i].隊列ID = i;
+				}
+			}
+
+			bool Check派生(double px, double py) override
+			{
+				if (探索先変更.CheckInput(px, py) == true) { return true; }
+				if (探索指示変更.CheckInput(px, py) == true) { return true; }
+				if (探索先.CheckInput(px, py) == true) { return true; }
+
+				for (int i = 0; i < CV::パーティ人数; i++)
+				{
+					if (探索者[i].CheckInput(px, py) == true) { return true; }
+				}
+
+				return false;
 			}
 
 			void Draw派生() override
 			{
+
 				if (パーティ->探索状態 == ExplorerType::編成中)
 				{
 					Draw街();
@@ -1038,6 +1015,11 @@ namespace SDX_ADE
 				{
 					Drawダンジョン();
 				}
+
+				//探索先情報は街でもダンジョンでも共通
+				探索先.Draw();
+				探索先変更.Draw();
+				探索指示変更.Draw();
 			}
 
 			void Click() override
@@ -1078,8 +1060,6 @@ namespace SDX_ADE
 				{
 					it.Draw();
 				}
-				//探索先の情報と探索指示
-				探索先.Draw();
 			}
 
 			void Drawダンジョン()
@@ -1091,28 +1071,48 @@ namespace SDX_ADE
 
 		};
 
-		class UI控え探索者 : public UIObject
+		class UI控え探検者 : public UIObject
 		{
 		public:
-			Explorer* 探索者;
+			Explorer* 探検者 = nullptr;
 			void Draw派生() override
 			{
+				auto& la = Layout::Data(LParty::控えドット);
+				auto& lb = Layout::Data(LParty::控えLv);
+
 				//ボタン枠-掴み中だと凹み
+				DrawUI(UIType::平ボタン);
 
 				//キャラ画像
+				探検者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
 
 				//Lv
+				GetFont()->DrawRotate({ GetCenterX() + lb.x , GetCenterY() + lb.y }, 1, 0, Color::Black, { "Lv " , 探検者->Lv });
 			}
 
 			void Click() override
 			{
 				//掴む
-
+				W_Drag::探索メン = 探検者;
+				MSound::効果音[SE::ドラッグ].Play();
 			}
 
 			void Drop() override
 			{
 				//並び替える
+				//探索者->ID;
+				if (W_Drag::探索メン != nullptr)
+				{
+					//ギルメン入れ替え
+				}
+				else if(W_Drag::所持アーティファクト != nullptr)
+				{
+					//アクセサリー交換
+				}
+				else if (W_Drag::ギルメン装備.メンバー != nullptr)
+				{
+					//パーティメンバーとアクセサリー交換
+				}
 
 			}
 		};
@@ -1137,20 +1137,17 @@ namespace SDX_ADE
 		};
 
 	public:
-		//パーティsou
-		W_Skilltree スキルツリー;
 		W_Recruit 求人ウィンドウ;
 		W_Popup 除名ウィンドウ;
 
 		UIパーティ パーティ[CV::上限パーティ数];
 		UITextFrame 控え枠;
-		UI控え探索者 控え[CV::最大控え人数];
+		UI控え探検者 控え[CV::最大控え人数];
 		UIButton 除名;
 		UIButton 登録;
 
 		void Init()
 		{
-			スキルツリー.Init();
 			求人ウィンドウ.Init();
 			除名ウィンドウ.Init();
 			除名ウィンドウ.SetText(WindowType::Delete);
@@ -1163,8 +1160,8 @@ namespace SDX_ADE
 			for (auto& it : パーティ)
 			{
 				a++;
-				it.パーティ = &Guild::P->探索パーティ[a];
 				it.SetUI(LParty::パーティ枠, a);
+				it.Init(&Guild::P->探索パーティ[a]);
 			}
 
 			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え探索者, 0, &控え枠);
@@ -1177,8 +1174,8 @@ namespace SDX_ADE
 			{
 				a++;
 				it.SetUI(LParty::控え探索者, a , &控え枠);
-				it.探索者 = Guild::P->控え探索者[a];
-				if (it.探索者 == nullptr) { it.is表示 = false; }
+				it.探検者 = Guild::P->控え探索者[a-1];
+				if (it.探検者 == nullptr) { it.is表示 = false; }
 			}
 			控え枠.SetUI("", LParty::控え枠);
 
@@ -1215,7 +1212,7 @@ namespace SDX_ADE
 
 			for (auto& it : 控え)
 			{
-				it.is表示 = (it.探索者 != nullptr);
+				it.is表示 = (it.探検者 != nullptr);
 			}
 			//控え枠の位置はパーティ数で変化			
 			auto& LA = Layout::Data(LParty::パーティ枠);

@@ -198,7 +198,7 @@ namespace SDX_ADE
 		void Update()
 		{
 			SetPos(LDungeon::ウィンドウ, false, true, false);
-			this->固定縦 = Layout::Data(LDungeon::フロア枠).h;
+			this->固定縦 = Layout::Data(LDungeon::内枠).h;
 
 			int cnt = 0;
 			for (int i = 0; i < Dungeon::data.size(); i++)
@@ -208,9 +208,7 @@ namespace SDX_ADE
 					フロア[i].lineID = cnt;
 					フロア[i].is表示 = true;
 					cnt++;
-				}
-				else
-				{
+				} else {
 					フロア[i].is表示 = false;
 				}
 			}
