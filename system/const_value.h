@@ -64,7 +64,7 @@ namespace SDX_ADE
 		constexpr int 最大敵Aスキル数 = 4;
 		constexpr int 最大敵Pスキル数 = 8;
 
-		constexpr int 最大キースキル習得リスト = 3;
+		constexpr int 最大キースキル数 = 3;
 
 		constexpr int 装備部位数 = 3;
 

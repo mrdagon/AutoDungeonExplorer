@@ -205,8 +205,7 @@ namespace SDX_ADE
 				{
 					//ギルメン->is装備更新 = !ギルメン->is装備更新;
 					//MSound::効果音[SE::ボタンクリック].Play();
-					スキルツリー->ギルメン = ギルメン;
-					スキルツリー->配置id = 並びID;
+					スキルツリー->SetMember(ギルメン);
 					スキルツリー->Init();
 					スキルツリー->OpenPopup();
 					所属->基礎ステ再計算();
@@ -773,6 +772,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
+				スキルツリー.SetMember(Guild::P->探索パーティ[パーティID].メンバー[隊列ID]);
 				スキルツリー.Init();
 				スキルツリー.OpenPopup();
 			}

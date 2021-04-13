@@ -38,18 +38,7 @@ namespace SDX_ADE
 
 			void Click(double px, double py)
 			{
-				//ギルメン切り替え
-				if (px < 位置.GetW() / 2)
-				{
-					親->配置id--;
-					if (親->配置id < 0) { 親->配置id = Guild::P->最大パーティ数*5 -1; }
-				} else {
-					親->配置id++;
-					if (親->配置id >= Guild::P->最大パーティ数 * 5) { 親->配置id = 0; }
-				}
 
-				
-				親->ギルメン = Guild::P->探索パーティ[親->配置id / 5].メンバー[親->配置id % 5];
 
 				//W_Drag::Aスキル = nullptr;
 			}
@@ -187,7 +176,6 @@ namespace SDX_ADE
 				if (it == nullptr) { return; }
 
 				if (!is習得) {
-					if (親->Pスキル仮習得ID == id ) { 凹み = -1; }
 				}
 
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
@@ -202,8 +190,6 @@ namespace SDX_ADE
 
 				if (it == nullptr) { return; }
 
-
-				親->Pスキル仮習得ID = (親->Pスキル仮習得ID == id) ? (-1) : (id);
 			}
 
 			void Info派生(Point 座標) override
@@ -258,13 +244,7 @@ namespace SDX_ADE
 			{
 				std::string str = "";
 
-				if (親->Pスキル仮習得ID >= 0 ) {
 
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
-				} else {
-					str = "習得";
-					MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2, 0);
-				}
 
 
 				MFont::MAlias.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, str, false);
@@ -273,14 +253,7 @@ namespace SDX_ADE
 			void Click(double px, double py)
 			{
 				//選択中のスキルを習得
-				if (親->Pスキル仮習得ID >= 0)
-				{
-					auto ps = 親->ギルメン->職業->習得Pスキル[親->Pスキル仮習得ID];
 
-					//習得処理
-					//親->ギルメン->isPスキル習得[親->Pスキル仮習得ID] = true;
-					親->Pスキル仮習得ID = -1;
-				}
 			}
 		};
 
@@ -289,7 +262,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-
+				DrawUI(UIType::平ボタン);
 			}
 
 			void Click() override
@@ -303,7 +276,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-
+				DrawUI(UIType::平ボタン);
 			}
 
 			void Click() override
@@ -317,7 +290,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-
+				DrawUI(UIType::平ボタン);
 			}
 
 			void Click() override
@@ -331,12 +304,26 @@ namespace SDX_ADE
 			}
 		};
 
+		class UIキースキル : public UIObject
+		{
+		public:
+			void Draw派生() override
+			{
+				DrawUI(UIType::平ボタン);
+			}
+
+			void Click() override
+			{
+
+			}
+		};
+
 		class UIPスキル : public UIObject
 		{
 		public:
 			void Draw派生() override
 			{
-
+				DrawUI(UIType::平ボタン);
 			}
 
 			void Click() override
@@ -350,7 +337,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-
+				DrawUI(UIType::平ボタン);
 			}
 
 			void Click() override
@@ -368,17 +355,7 @@ namespace SDX_ADE
 		//GUI_再教育 再教育;
 		//GUI_習得 習得;
 
-		UIButton 再教育;
-		UIButton 確定;
-		UIButton キャンセル;
-
-		//決定ボタン
-		//キャンセルボタン
-		Explorer* ギルメン;
-		int 配置id;;
-		int Pスキル仮習得ID = -1;
-
-		//ギルメンの画像と名前
+				//ギルメンの画像と名前
 		//前へと次へ(確定前はクリック不可にする)
 		//装備中のAスキル、通常と対ボス
 
@@ -393,32 +370,111 @@ namespace SDX_ADE
 		//忘却 - スキルポイントのリセット
 		//残りスキルポイントと予約状態の表示
 
+		UI探索者 探索者;
+		UI装備Aスキル 装備Aスキル[CV::最大Aスキル数];
+		UI予約スキル 予約スキル枠;
+		UIキースキル キースキル[CV::最大キースキル数];
+
+		UIPスキル Pスキル[CV::上限Pスキル種類];
+		UIPスキル Aスキル[CV::上限Aスキル種類];
+
+		UITextFrame 装備スキル枠;
+		UITextFrame 習得スキル枠;
+
+		UIButton リセット;
+		UIButton 確定;
+		UIButton キャンセル;
+
+		Explorer* ギルメン;
+
+		void SetMember(Explorer* ギルメン)
+		{
+			this->ギルメン = ギルメン;
+		}
 
 		void Init()
 		{
 			Set(WindowType::Skilltree, IconType::ランク);
 			SetPos(LSkill::ウィンドウ,true,false,true);
+			//●初期化
+			探索者.SetUI(LSkill::探索者);
+			for (int i = 0; i < CV::最大Aスキル数; i++)
+			{
+				装備Aスキル[i].SetUI(LSkill::装備Aスキル);
+			}
+			予約スキル枠.SetUI(LSkill::予約スキル枠);
+			装備スキル枠.SetUI("",LSkill::装備スキル枠);
+			習得スキル枠.SetUI("",LSkill::習得スキル枠);
 
-			/*
-			横幅 = 230;
-			縦幅 = 125;
-			最小縦 = 125;
-			最大縦 = 縦幅;
-			縦内部幅 = 縦幅;
-			スクロール位置 = 0;
-			isスクロールバー表示 = false;
-			*/
+			for (int i = 0; i < CV::最大キースキル数; i++)
+			{
+				キースキル[i].SetUI(LSkill::キースキル,i);
+			}
+			for (int i = 0; i < CV::上限Pスキル種類; i++)
+			{
+				Pスキル[i].SetUI(LSkill::Pスキル,i);
+			}
+			for (int i = 0; i < CV::上限Aスキル種類; i++)
+			{
+				Aスキル[i].SetUI(LSkill::Aスキル,i);
+			}
+
+			リセット.SetUI(LSkill::リセットボタン);
+			確定.SetUI(LSkill::確定ボタン);
+			キャンセル.SetUI(LSkill::キャンセルボタン);
+
+
+			//●登録
+			AddItem(探索者);
+
+			AddItem(装備Aスキル , CV::最大Aスキル数);
+			AddItem(キースキル , CV::最大キースキル数);
+
+			AddItem(Pスキル , CV::上限Pスキル種類);
+			AddItem(Aスキル , CV::上限Aスキル種類);
+
+			AddItem(予約スキル枠);
+			AddItem(装備スキル枠);
+			AddItem(習得スキル枠);
+
+			AddItem(リセット);
+			AddItem(確定);
+			AddItem(キャンセル);
+
+			Update();
 		}
 
 		void Update()
 		{
 			SetPos(LSkill::ウィンドウ, true, false, true);
-		}
 
-		void ChangeMember()
-		{
-			//表示するAスキルPスキル一覧を変更
+			//一旦全部非表示
+			for (auto& it : Pスキル)
+			{
+				it.is表示 = false;
+			}
+			for (auto& it : Aスキル)
+			{
+				it.is表示 = false;
+			}
 
+			//習得可能なPスキルとAスキルの更新
+			auto& job = ギルメン->職業;
+
+			int cnt = 0;
+			for (auto& it: job->習得Pスキル)
+			{
+				Pスキル[it->ID].is表示 = true;
+				Pスキル[it->ID].lineID = cnt;
+				cnt++;
+			}
+			cnt = 0;
+			for (auto& it : job->習得Aスキル)
+			{
+				Aスキル[it->ID].is表示 = true;
+				Aスキル[it->ID].lineID = cnt;
+				cnt++;
+			}
 		}
 	};
 }
