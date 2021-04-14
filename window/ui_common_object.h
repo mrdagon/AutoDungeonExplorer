@@ -35,7 +35,7 @@ namespace SDX_ADE
 		}
 
 		template<class T>
-		void SetUI( std::string 初期テキスト  , T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI(T レイアウト, std::string 初期テキスト  ,  int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			layout = &Layout::Data(レイアウト);
@@ -44,7 +44,7 @@ namespace SDX_ADE
 		}
 		
 		template<class T>
-		void SetUI(Image* 画像, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI(T レイアウト, Image* 画像,  int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			this->画像 = 画像;
 			layout = &Layout::Data(レイアウト);
@@ -53,7 +53,7 @@ namespace SDX_ADE
 		}
 
 		template<class T>
-		void SetUI(Image* 画像, std::string テキスト, T レイアウト, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI(T レイアウト, Image* 画像, std::string テキスト,  int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			this->画像 = 画像;
 			this->テキスト = テキスト;
@@ -167,7 +167,7 @@ namespace SDX_ADE
 		DesignType UIデザイン;
 
 		template<class T>
-		void SetUI(std::string 初期テキスト, T レイアウト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI( T レイアウト,std::string 初期テキスト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			UIデザイン = デザイン;
@@ -210,7 +210,7 @@ namespace SDX_ADE
 		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
 
 		template<class T>
-		void SetUI( int* tabNo , Image* 画像, std::string テキスト, T レイアウト, int 整列ID , UIObject* 親object = nullptr)
+		void SetUI(T レイアウト, int* tabNo , Image* 画像, std::string テキスト, int 整列ID , UIObject* 親object = nullptr)
 		{
 			tabNo参照 = tabNo;
 

@@ -47,8 +47,8 @@ namespace SDX_ADE
 				this->アイコン = アイコン;
 				this->type = 種類;
 
-				増加ボタン.SetUI(&MIcon::UI[IconType::三角], LConfig::設定増減 , 1,this);
-				減少ボタン.SetUI(&MIcon::UI[IconType::三角], LConfig::設定増減 , 0,this);
+				増加ボタン.SetUI(LConfig::設定増減, &MIcon::UI[IconType::三角],  1,this);
+				減少ボタン.SetUI(LConfig::設定増減, &MIcon::UI[IconType::三角],  0,this);
 			}
 
 			bool Check派生(double px,double py) override
@@ -146,8 +146,8 @@ namespace SDX_ADE
 			仮_フォント種 = Config::isドットフォント;
 
 			//●初期化
-			確定.SetUI("決定", LConfig::決定_キャンセル, 0);
-			キャンセル.SetUI("キャンセル", LConfig::決定_キャンセル, 1);
+			確定.SetUI(LConfig::決定_キャンセル, "決定",  0);
+			キャンセル.SetUI(LConfig::決定_キャンセル, "キャンセル",  1);
 
 			ウィンドウモード.Set(TX::Config_ウィンドウモード.c_str(), IconType::解像度, ConfigType::ウィンドウモード, this);
 			BGM音量.Set( TX::Config_音楽.c_str() , IconType::BGM, ConfigType::BGM音量 , this);

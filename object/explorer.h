@@ -87,7 +87,7 @@ namespace SDX_ADE
 		//●スキル習得状況
 		std::array<int, CV::上限Aスキル種類> 習得AスキルLv;
 		std::array<int, CV::上限Pスキル種類> 習得PスキルLv;
-		int スキル習得予約[100];//0は未予約 -はAスキル、+はPスキル
+		int スキル習得予約[CV::最大スキル予約数];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
 		int Lv;

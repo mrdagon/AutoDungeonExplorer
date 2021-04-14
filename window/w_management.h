@@ -127,7 +127,7 @@ namespace SDX_ADE
 
 			for (int i = 0; i < 10; i++)
 			{
-				Lvグループ[i].SetUI( "" , LManagement::街グループ枠, DesignType::セット1, i);
+				Lvグループ[i].SetUI(LManagement::街グループ枠, "" ,  DesignType::セット1, i);
 			}
 
 			for (int i = 0; i < Management::data.size(); i++)

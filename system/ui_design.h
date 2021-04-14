@@ -281,9 +281,9 @@ namespace SDX_ADE
 		Color 背景色;//ほぼ白色
 		Color ハイライト;//明るい色
 
-		Color 暗字;
-		Color 灰字;
-		Color 明字;
+		inline static Color 暗字;
+		inline static Color 灰字;
+		inline static Color 明字;
 
 		template<class TLayout>
 		void Draw(UIType type, TLayout &it )
@@ -448,17 +448,12 @@ namespace SDX_ADE
 		{
 			Green.影色 = { 0x424242 };//Gray 800
 			Green.エッジ色 = { 0x616161 };//Gray 600
-
 			Green.濃色 = { 0x2E7D32 };//Green 800
 			Green.凹色 = { 0x43A047 };//Green 600
 			Green.グループ = { 0x66bb6a };//Green 400
 			Green.背景色 = { 0xa5d6a7 };//Green 200
 			Green.凸色 = { 0xc8e6c9 };//Green 100
 			Green.ハイライト = { 0xE8F5E9 };////Green 50
-
-			Green.明字 = { 0xEEEEEE };//Gray 200
-			Green.灰字 = { 0x9E9E9E };//Gray 500
-			Green.暗字 = { 0x424242 };//Gray 900
 
 			Blue.影色 = { 0x424242 };//Gray 800
 			Blue.エッジ色 = { 0x616161 };//Gray 600
@@ -469,11 +464,6 @@ namespace SDX_ADE
 			Blue.凸色 = { 0xBBDEFB };//100
 			Blue.ハイライト = { 0xE3F2FD };////50
 
-			Blue.明字 = { 0xEEEEEE };//Gray 200
-			Blue.灰字 = { 0x9E9E9E };//Gray 500
-			Blue.暗字 = { 0x424242 };//Gray 900
-
-
 			Brown.影色 = { 0x424242 };//Gray 800
 			Brown.エッジ色 = { 0x616161 };//Gray 600
 			Brown.濃色 = { 0x6D4C41 };//600
@@ -483,10 +473,6 @@ namespace SDX_ADE
 			Brown.凸色 = { 0xD7CCC8 };//100
 			Brown.ハイライト = { 0xEFEBE9 };////50
 
-			Brown.明字 = { 0xEEEEEE };//Gray 200
-			Brown.灰字 = { 0x9E9E9E };//Gray 500
-			Brown.暗字 = { 0x424242 };//Gray 900
-
 			BlueGrey.影色 = { 0x424242 };//Gray 800
 			BlueGrey.エッジ色 = { 0x616161 };//Gray 600
 			BlueGrey.濃色 = { 0x37474F };//800
@@ -495,10 +481,6 @@ namespace SDX_ADE
 			BlueGrey.背景色 = { 0xB0BEC5 };//200
 			BlueGrey.凸色 = { 0xCFD8DC };//100
 			BlueGrey.ハイライト = { 0xECEFF1 };////50
-
-			BlueGrey.明字 = { 0xEEEEEE };//Gray 200
-			BlueGrey.灰字 = { 0x9E9E9E };//Gray 500
-			BlueGrey.暗字 = { 0x424242 };//Gray 900
 
 			//オリジナル配色
 			Wood.影色 = { 0x424242 };//Gray 800
@@ -510,9 +492,9 @@ namespace SDX_ADE
 			Wood.凸色 = { 225,205,172 };//Blue 100
 			Wood.ハイライト = { 247,235,214 };////Blue 50
 
-			Wood.明字 = { 0xEEEEEE };//Gray 200
-			Wood.灰字 = { 0x9E9E9E };//Gray 500
-			Wood.暗字 = { 0x424242 };//Gray 900
+			明字 = { 0xEEEEEE };//Gray 200
+			灰字 = { 0x9E9E9E };//Gray 500
+			暗字 = { 0x424242 };//Gray 900
 
 			data[DesignType::セット1] = &BlueGrey;
 		}

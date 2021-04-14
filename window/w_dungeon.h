@@ -173,12 +173,12 @@ namespace SDX_ADE
 			SetPos(LDungeon::ウィンドウ, false, true, false);
 
 			//●初期化
-			枠.SetUI("", LDungeon::内枠);
-			タブ[0].SetUI(&現在タブ, &MIcon::UI[IconType::森], "一層", LDungeon::タブ, 0);
-			タブ[1].SetUI(&現在タブ, &MIcon::UI[IconType::洞窟], "二層", LDungeon::タブ, 1);
-			タブ[2].SetUI(&現在タブ, &MIcon::UI[IconType::砂漠], "三層", LDungeon::タブ, 2);
-			タブ[3].SetUI(&現在タブ, &MIcon::UI[IconType::滝], "四層", LDungeon::タブ, 3);
-			タブ[4].SetUI(&現在タブ, &MIcon::UI[IconType::城], "五層", LDungeon::タブ, 4);
+			枠.SetUI(LDungeon::内枠,"");
+			タブ[0].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::森], "一層",  0);
+			タブ[1].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::洞窟], "二層",  1);
+			タブ[2].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::砂漠], "三層",  2);
+			タブ[3].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::滝], "四層", 3);
+			タブ[4].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::城], "五層",  4);
 
 			for (int i = 0; i < Dungeon::data.size(); i++)
 			{

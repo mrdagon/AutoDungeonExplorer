@@ -21,7 +21,7 @@ namespace SDX_ADE
 			縦内部幅 = std::max(縦幅, Layout::Data(LTitle::クレジット_説明枠).h + 16);
 
 			//●初期化
-			文章.SetUI("付属テキストの内容を表示\nあああああ\nああ\nあ" , LTitle::クレジット_説明枠);
+			文章.SetUI( LTitle::クレジット_説明枠 , "付属テキストの内容を表示\nあああああ\nああ\nあ");
 
 			//●登録
 			AddItem(文章);

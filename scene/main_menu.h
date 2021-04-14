@@ -29,12 +29,12 @@ namespace SDX_ADE
 		{
 			isゲーム開始 = false;
 
-			ボタン[0].SetUI( "始めから", LTitle::ボタン, 0);
-			ボタン[1].SetUI("続きから", LTitle::ボタン, 1);
-			ボタン[2].SetUI("設定", LTitle::ボタン, 2);
-			ボタン[3].SetUI("クレジット", LTitle::ボタン, 3);
-			ボタン[4].SetUI("アンケート", LTitle::ボタン, 4);
-			ボタン[5].SetUI("終了", LTitle::ボタン, 5);
+			ボタン[0].SetUI(LTitle::ボタン, "始めから",  0);
+			ボタン[1].SetUI(LTitle::ボタン, "続きから",  1);
+			ボタン[2].SetUI(LTitle::ボタン, "設定",  2);
+			ボタン[3].SetUI(LTitle::ボタン, "クレジット",  3);
+			ボタン[4].SetUI(LTitle::ボタン, "アンケート",  4);
+			ボタン[5].SetUI(LTitle::ボタン,"終了", 5);
 
 			ボタン[0].clickEvent = [&]()
 			{

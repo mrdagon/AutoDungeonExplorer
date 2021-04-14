@@ -62,7 +62,7 @@ namespace SDX_ADE
 				依頼[i].SetUI(LQuest::依頼枠, i);
 				依頼[i].quest = &Quest::data[i];
 			}
-			内枠.SetUI("", LQuest::内枠);
+			内枠.SetUI(LQuest::内枠,"");
 
 			//●登録
 			AddItem(依頼, Quest::data.size() );

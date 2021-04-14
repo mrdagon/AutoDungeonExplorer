@@ -24,7 +24,7 @@ namespace SDX_ADE
 			int a = 0;
 			for (auto& it : 難易度ボタン)
 			{
-				it.SetUI(TX::難易度[a],LTitle::始めから_ボタン, a);
+				it.SetUI(LTitle::始めから_ボタン, TX::難易度[a], a);
 
 				it.clickEvent = [&]()
 				{
@@ -34,7 +34,7 @@ namespace SDX_ADE
 				};
 				a++;
 			}
-			説明.SetUI("ここに難易度の説明が出ます\n※β版ではどの難易度も同じです", LTitle::始めから_説明枠);
+			説明.SetUI( LTitle::始めから_説明枠 , "ここに難易度の説明が出ます\n※β版ではどの難易度も同じです");
 
 			//●登録
 			AddItem(難易度ボタン , (int)GameType::COUNT );

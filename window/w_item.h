@@ -67,7 +67,7 @@ namespace SDX_ADE
 				it.SetUI(LItem::アイテム);
 				it.itemID = a;
 			}
-			内枠.SetUI("", LItem::内枠);
+			内枠.SetUI(LItem::内枠,"");
 
 			//●登録
 			AddItem(アイテム,CV::上限アクセサリ種類);

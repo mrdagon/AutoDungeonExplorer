@@ -156,14 +156,14 @@ namespace SDX_ADE
 				ウィンドウボタン[i].テキスト位置 = 2;
 			}
 
-			停止ボタン.SetUI( "＝", LToolBar::ツールバー_速度ボタン,3);//一時停止時凹む仕様
-			速度ボタンA.SetUI( "＞", LToolBar::ツールバー_速度ボタン,2);//左右でクリック時の処理が異なる仕様
-			速度ボタンB.SetUI( ">>", LToolBar::ツールバー_速度ボタン,1);//左右でクリック時の処理が異なる仕様
-			速度ボタンC.SetUI( ">>>", LToolBar::ツールバー_速度ボタン,0);//左右でクリック時の処理が異なる仕様
+			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",3);//一時停止時凹む仕様
+			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "＞" ,2);//左右でクリック時の処理が異なる仕様
+			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , ">>", 1);//左右でクリック時の処理が異なる仕様
+			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , ">>>", 0);//左右でクリック時の処理が異なる仕様
 
-			ヘルプボタン.SetUI(&MIcon::UI[IconType::BGM], "ヘルプ", LToolBar::ツールバー_その他ボタン, 2);
-			コンフィグボタン.SetUI(&MIcon::UI[IconType::BGM], "設定", LToolBar::ツールバー_その他ボタン , 1);
-			タイトルボタン.SetUI(&MIcon::UI[IconType::BGM], "終了", LToolBar::ツールバー_その他ボタン , 0);
+			ヘルプボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "ヘルプ",  2);
+			コンフィグボタン.SetUI(LToolBar::ツールバー_その他ボタン , &MIcon::UI[IconType::BGM], "設定"  , 1);
+			タイトルボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "終了",  0);
 
 			//基準座標を左上にする
 			停止ボタン.isLeftClick = false;

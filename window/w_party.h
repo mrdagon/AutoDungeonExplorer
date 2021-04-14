@@ -1164,8 +1164,8 @@ namespace SDX_ADE
 				it.Init(&Guild::P->探索パーティ[a]);
 			}
 
-			登録.SetUI(&MIcon::UI[IconType::ゴミ箱], "登録", LParty::控え探索者, 0, &控え枠);
-			除名.SetUI(&MIcon::UI[IconType::ゴミ箱], "除名", LParty::控え探索者, CV::最大控え人数, &控え枠);
+			登録.SetUI(LParty::控え探索者, &MIcon::UI[IconType::ゴミ箱], "登録",  0, &控え枠);
+			除名.SetUI(LParty::控え探索者, &MIcon::UI[IconType::ゴミ箱], "除名",  CV::最大控え人数, &控え枠);
 			除名.is押下 = true;//平状態で固定
 			除名.押下状態 = 1;
 			
@@ -1177,7 +1177,7 @@ namespace SDX_ADE
 				it.探検者 = Guild::P->控え探索者[a-1];
 				if (it.探検者 == nullptr) { it.is表示 = false; }
 			}
-			控え枠.SetUI("", LParty::控え枠);
+			控え枠.SetUI(LParty::控え枠 ,"" );
 
 			//●登録
 			AddItem(パーティ , CV::上限パーティ数);

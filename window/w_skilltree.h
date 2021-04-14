@@ -372,12 +372,13 @@ namespace SDX_ADE
 
 		UI探索者 探索者;
 		UI装備Aスキル 装備Aスキル[CV::最大Aスキル数];
-		UI予約スキル 予約スキル枠;
+		UI予約スキル 予約スキル[CV::最大スキル予約数];
 		UIキースキル キースキル[CV::最大キースキル数];
 
 		UIPスキル Pスキル[CV::上限Pスキル種類];
 		UIPスキル Aスキル[CV::上限Aスキル種類];
 
+		UITextFrame 予約スキル枠;
 		UITextFrame 装備スキル枠;
 		UITextFrame 習得スキル枠;
 
@@ -400,11 +401,11 @@ namespace SDX_ADE
 			探索者.SetUI(LSkill::探索者);
 			for (int i = 0; i < CV::最大Aスキル数; i++)
 			{
-				装備Aスキル[i].SetUI(LSkill::装備Aスキル);
+				装備Aスキル[i].SetUI(LSkill::装備Aスキル,i);
 			}
-			予約スキル枠.SetUI(LSkill::予約スキル枠);
-			装備スキル枠.SetUI("",LSkill::装備スキル枠);
-			習得スキル枠.SetUI("",LSkill::習得スキル枠);
+			予約スキル枠.SetUI(LSkill::予約スキル枠,"");
+			装備スキル枠.SetUI(LSkill::装備スキル枠,"");
+			習得スキル枠.SetUI(LSkill::習得スキル枠,"");
 
 			for (int i = 0; i < CV::最大キースキル数; i++)
 			{
@@ -418,6 +419,10 @@ namespace SDX_ADE
 			{
 				Aスキル[i].SetUI(LSkill::Aスキル,i);
 			}
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				予約スキル[i].SetUI(LSkill::予約スキル, i);
+			}
 
 			リセット.SetUI(LSkill::リセットボタン);
 			確定.SetUI(LSkill::確定ボタン);
@@ -430,6 +435,7 @@ namespace SDX_ADE
 			AddItem(装備Aスキル , CV::最大Aスキル数);
 			AddItem(キースキル , CV::最大キースキル数);
 
+			AddItem(予約スキル, CV::最大スキル予約数);
 			AddItem(Pスキル , CV::上限Pスキル種類);
 			AddItem(Aスキル , CV::上限Aスキル種類);
 
@@ -457,6 +463,10 @@ namespace SDX_ADE
 			{
 				it.is表示 = false;
 			}
+			for (auto& it : 予約スキル)
+			{
+				it.is表示 = false;
+			}
 
 			//習得可能なPスキルとAスキルの更新
 			auto& job = ギルメン->職業;
@@ -475,6 +485,15 @@ namespace SDX_ADE
 				Aスキル[it->ID].lineID = cnt;
 				cnt++;
 			}
+
+			cnt = 0;
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				if (ギルメン->スキル習得予約[i] == 1) { break; }
+				予約スキル[i].is表示 = true;
+				cnt++;
+			}
+
 		}
 	};
 }

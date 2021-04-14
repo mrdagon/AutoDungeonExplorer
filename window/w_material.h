@@ -53,7 +53,7 @@ namespace SDX_ADE
 				素材[i].SetUI(LMaterial::素材枠, i);
 				素材[i].素材種 = &Material::data[i];
 			}
-			内枠.SetUI("", LMaterial::内枠);
+			内枠.SetUI(LMaterial::内枠 ,"" );
 
 			//●登録
 			AddItem(素材, Material::data.size());

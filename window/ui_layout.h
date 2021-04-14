@@ -333,13 +333,17 @@ namespace SDX_ADE
 				if (it.フォントID > 2) { it.フォントID = 0; }
 			}
 
-			//マhomeで改行値
+			//homeで改行値
 			if (Input::key.Home.IsPush(連打st, 連打rp) == true)
 			{
 				it.改行値++;
-				if (it.改行値 > 10) { it.改行値 = 1; }
+				if (it.改行値 > 100) { it.改行値 = 100; }
 			}
-
+			if (Input::key.End.IsPush(連打st, 連打rp) == true)
+			{
+				it.改行値--;
+				if (it.改行値 < 1) { it.改行値 = 1; }
+			}
 
 			//直接入力
 			if (Input::key.Back.IsPush(連打st, 連打rp))

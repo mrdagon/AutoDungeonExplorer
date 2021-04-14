@@ -183,10 +183,10 @@ namespace SDX_ADE
 				職業[a].SetUI(LReqruit::職一覧, a, &一覧枠);
 			}
 
-			一覧枠.SetUI("", LReqruit::職一覧枠);
-			ランダム名ボタン.SetUI(&MIcon::UI[IconType::再募集], LReqruit::ランダムボタン);
-			名前変更ボタン.SetUI(&MIcon::UI[IconType::ログ], LReqruit::名前変更ボタン);
-			登録ボタン.SetUI("採用", LReqruit::登録ボタン);
+			一覧枠.SetUI(LReqruit::職一覧枠,"");
+			ランダム名ボタン.SetUI(LReqruit::ランダムボタン, &MIcon::UI[IconType::再募集] );
+			名前変更ボタン.SetUI(LReqruit::名前変更ボタン, &MIcon::UI[IconType::ログ] );
+			登録ボタン.SetUI(LReqruit::登録ボタン , "採用");
 
 			//●イベント
 			ランダム名ボタン.clickEvent = [&]()
