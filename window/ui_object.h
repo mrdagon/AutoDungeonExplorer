@@ -30,10 +30,11 @@ namespace SDX_ADE
 		bool is表示 = true;
 		bool is表示オンリー = false;
 		bool isOver = false;
-		int ClickPos = 0;//0なら左側,1なら右側
+		int mousePos = 0;//0、マウス乗っていない：1、左側：2、右側
+
 		int lineID = 0;
 
-		bool isLeftClick = true;//クリック時左右どちら半分をクリックしたか
+		bool isLeftDock = true;//X座標を左端から参照する
 
 		std::function<void()> clickEvent = []() {};
 		std::function<void()> drawEvent = []() {};
@@ -48,14 +49,37 @@ namespace SDX_ADE
 			親 = 親object;
 		}
 
+		//レイアウト参照、省略表記用
+		template<class T>
+		Layout& LData(T レイアウト)
+		{
+			return Layout::Data(レイアウト);
+		}
+
+
 		Point GetPos()
 		{
 			return { GetX() , GetY() };
 		}
 
+		Point GetPos(Layout& レイアウト)
+		{
+			return { GetX() + レイアウト.x , GetY() + レイアウト.y };
+		}
+
+		Point GetCenterPos()
+		{
+			return { GetCenterX() , GetCenterY() };
+		}
+
+		Point GetCenterPos(Layout& レイアウト)
+		{
+			return { GetCenterX() + レイアウト.x , GetCenterY() + レイアウト.y };
+		}
+
 		int GetX()
 		{
-			if (isLeftClick)
+			if (isLeftDock)
 			{
 				if (lineID <= 0)
 				{
@@ -165,7 +189,7 @@ namespace SDX_ADE
 			}
 		}
 
-		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::data[DesignType::セット1])
+		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::No1 )
 		{
 			UIデザイン->Draw(UI枠種, GetX(), GetY(), GetW(), GetH());
 		}
@@ -182,6 +206,7 @@ namespace SDX_ADE
 		bool CheckInput(double px, double py)
 		{
 			isOver = false;
+			mousePos = 0;
 			if ( is表示 == false || is表示オンリー == true ) { return false; }
 
 			if (Check派生(px, py) == true)
@@ -198,17 +223,16 @@ namespace SDX_ADE
 			if ( mp.Hit(&pt))
 			{
 				isOver = true;
+				mousePos = ( mp.x < pt.x + GetW() / 2) ? 1 : 2;//左右のどちら側をクリックしたか
 
 				if (Input::mouse.Left.on == true)
 				{
-					ClickPos = (pt.x < posX + px + GetW() / 2) ? 0 : 1;//左右のどちら側をクリックしたか
 					Click();
 					return true;
 				}
 				else if (Input::mouse.Left.off == true)
 				{
-					Drop();
-					return true;
+					if (Drop() == true) { return true; };
 				}
 
 				//マウスオーバー中の物のヘルプ
@@ -226,9 +250,10 @@ namespace SDX_ADE
 		}
 
 		/*ドロップ操作*/
-		virtual void Drop()
+		virtual bool Drop()
 		{
 			dropEvent();
+			return true;
 		}
 
 		/*マウスオーバー時の処理*/

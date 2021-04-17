@@ -14,7 +14,7 @@ namespace SDX_ADE
 		class UITime : public UIObject
 		{
 		public:
-			DesignType UIデザイン;
+			Design** UIデザイン = &Design::No1;
 
 			template<class T>
 			void SetUI( T レイアウト)
@@ -31,15 +31,15 @@ namespace SDX_ADE
 				switch (layout->画像ID)
 				{
 				case 0:
-					DrawUI(UIType::背景, Design::data[UIデザイン]);
+					DrawUI(UIType::グループ明, *UIデザイン );
 					break;
 					break;
 				case 1:
-					DrawUI(UIType::グループ明, Design::data[UIデザイン]);
+					DrawUI(UIType::グループ中, *UIデザイン );
 					break;
 					break;
 				default:
-					DrawUI(UIType::グループ暗, Design::data[UIデザイン]);
+					DrawUI(UIType::グループ暗, *UIデザイン );
 					break;
 				}
 
@@ -166,13 +166,13 @@ namespace SDX_ADE
 			タイトルボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "終了",  0);
 
 			//基準座標を左上にする
-			停止ボタン.isLeftClick = false;
-			速度ボタンA.isLeftClick = false;
-			速度ボタンB.isLeftClick = false;
-			速度ボタンC.isLeftClick = false;
-			ヘルプボタン.isLeftClick = false;
-			コンフィグボタン.isLeftClick = false;
-			タイトルボタン.isLeftClick = false;
+			停止ボタン.isLeftDock = false;
+			速度ボタンA.isLeftDock = false;
+			速度ボタンB.isLeftDock = false;
+			速度ボタンC.isLeftDock = false;
+			ヘルプボタン.isLeftDock = false;
+			コンフィグボタン.isLeftDock = false;
+			タイトルボタン.isLeftDock = false;
 
 			//ポップアップ設定
 			コンフィグボタン.isポップアップ = true;
@@ -217,7 +217,7 @@ namespace SDX_ADE
 		void Draw()
 		{
 			//枠無しウィンドウ
-			Design::data[DesignType::セット1]->Draw(UIType::ウィンドウ, Layout::Data(LToolBar::ツールバー_全体));
+			Design::No1->Draw(UIType::ウィンドウ, Layout::Data(LToolBar::ツールバー_全体));
 
 			//日付と時刻、各種ボタンの表示
 			for (int a = (int)item.size() - 1; a >= 0; a--)

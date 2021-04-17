@@ -699,6 +699,11 @@ namespace SDX
         /**@todo 反転描画無効*/
         bool DrawBoldRotate(const Point& 座標, double 拡大率, double 角度, const Color& 描画色, const Color& 縁色, const VariadicStream& 描画する文字列, bool 反転フラグ = false) const
         {
+            if (角度 == 0 && 拡大率 == 0)
+            {
+                return DrawBold(座標,描画色,縁色, 描画する文字列);
+            }
+
             int 行数 = (int)描画する文字列.StringS.size();
 
             int X補正 = int(-GetDrawStringWidth(描画する文字列) * 拡大率 * 0.5);

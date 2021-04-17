@@ -12,6 +12,7 @@ namespace SDX_ADE
 	{
 	private:
 
+		//旧UI
 		class GUI_探索先 : public GUI_Object
 		{
 		public:
@@ -22,7 +23,7 @@ namespace SDX_ADE
 			void Init(int パーティID, W_Party* 親ウィンドウ)
 			{
 				this->パーティID = パーティID;
-				所属 = &Guild::P->探索パーティ[パーティID];
+				所属 = &Guild::P->パーティ[パーティID];
 				this->親ウィンドウ = 親ウィンドウ;
 			}
 
@@ -30,7 +31,7 @@ namespace SDX_ADE
 			{
 				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 11);
 
-				auto dun = Guild::P->探索パーティ[パーティID].探索先;
+				auto dun = Guild::P->パーティ[パーティID].探索先;
 
 				if (所属->探索状態 == ExplorerType::編成中 || 所属->探索状態 == ExplorerType::リザルト中)
 				{
@@ -97,7 +98,7 @@ namespace SDX_ADE
 				//探索指示変更
 				if (Point(px, py).Hit(&Rect(Lp(31), Lp(32), Lp(33), Lp(34))) == true)
 				{
-					int n = int(Guild::P->探索パーティ[パーティID].探索指示);
+					int n = int(Guild::P->パーティ[パーティID].探索指示);
 
 					if (px < Lp(31) + Lp(33) / 2) { n--; }
 					else { n++; }
@@ -106,7 +107,7 @@ namespace SDX_ADE
 					if (n == (int)OrderType::COUNT) { n = 0; }
 					if (n <  0) { n = (int)OrderType::COUNT - 1; }
 
-					Guild::P->探索パーティ[パーティID].探索指示 = OrderType(n);
+					Guild::P->パーティ[パーティID].探索指示 = OrderType(n);
 					MSound::効果音[SE::ボタンクリック].Play();
 				}
 				//探索先変更
@@ -153,12 +154,11 @@ namespace SDX_ADE
 				else 
 				{
 					//探索方針
-					InfoDungeon(Guild::P->探索パーティ[パーティID].探索先, 座標);
+					InfoDungeon(Guild::P->パーティ[パーティID].探索先, 座標);
 				}
 			}
 
 		};
-
 		class GUI_パーティメンバー : public GUI_Object
 		{
 		public:
@@ -282,7 +282,7 @@ namespace SDX_ADE
 					W_Drag::ギルメン装備.メンバー->装備[n] = ギルメン->装備[n];
 					ギルメン->装備[n] = buf;
 
-					for (auto& it : Guild::P->探索パーティ)
+					for (auto& it : Guild::P->パーティ)
 					{
 						it.基礎ステ再計算();
 					}
@@ -330,7 +330,6 @@ namespace SDX_ADE
 				}
 			}
 		};
-
 		class GUI_パーティ : public GUI_Object
 		{
 		public:
@@ -341,7 +340,7 @@ namespace SDX_ADE
 			void Init(int パーティID, W_Party* 親ウィンドウ)
 			{
 				this->パーティID = パーティID;
-				所属 = &Guild::P->探索パーティ[パーティID];
+				所属 = &Guild::P->パーティ[パーティID];
 				this->親ウィンドウ = 親ウィンドウ;
 			}
 
@@ -719,15 +718,21 @@ namespace SDX_ADE
 			}
 		};
 
+
 		//探索者子オブジェクト
 		class UI装飾品 : public UIObject
 		{
+		public:
+			int 装備スロット = 2;
 			int パーティID;
 			int 隊列ID;
 
 			void Draw派生() override
 			{
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット];
+
+				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
 			}
 
 			void Click() override
@@ -739,12 +744,17 @@ namespace SDX_ADE
 
 		class UI装備 : public UIObject
 		{
+		public:
+			int 装備スロット = 0;
 			int パーティID;
 			int 隊列ID;
 
 			void Draw派生() override
 			{
-				DrawUI(UIType::凸ボタン);
+				DrawUI(isOver ? UIType::平ボタン : UIType::凸ボタン);
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット];
+
+				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
 			}
 
 			void Click() override
@@ -763,16 +773,18 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI(UIType::凸ボタン);
-				//予約中
+				DrawUI( isOver ? UIType::平ボタン : UIType::凸ボタン);
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
 
-				//ポイント余り
-
+				auto& LA = LData(LParty::探索者スキルボタン);
+				//スキル
+				//ポイント余りやらの状況
+				GetFont()->DrawBold({ GetX() + LA.x ,GetY() + LA.y }, Design::明字, Design::暗字, {"スキル\n10 P"});
 			}
 
 			void Click() override
 			{
-				スキルツリー.SetMember(Guild::P->探索パーティ[パーティID].メンバー[隊列ID]);
+				スキルツリー.SetMember(Guild::P->パーティ[パーティID].メンバー[隊列ID]);
 				スキルツリー.Init();
 				スキルツリー.OpenPopup();
 			}
@@ -801,22 +813,44 @@ namespace SDX_ADE
 				装飾品ボタン.SetUI(LParty::探索者装備, 4, this);
 			}
 
+
+			void SetID(int パーティID,int 隊列ID)
+			{
+				this->パーティID = パーティID;
+				this->隊列ID = 隊列ID;
+
+				for (int i = 0; i < 2; i++)
+				{
+					装備ボタン[i].装備スロット = i;
+					装備ボタン[i].パーティID = パーティID;
+					装備ボタン[i].隊列ID = 隊列ID;
+				}
+				装飾品ボタン.装備スロット = 2;
+				装飾品ボタン.パーティID = パーティID;
+				装飾品ボタン.隊列ID = 隊列ID;
+			}
+
 			void Draw派生() override
 			{
-				auto& it = Guild::P->探索パーティ[パーティID].メンバー[隊列ID];
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+
+				auto& LA = Layout::Data(LParty::探索者ドット);
+				auto& LB = Layout::Data(LParty::探索者Lv);
+				auto& LC = Layout::Data(LParty::探索者経験値);
 
 				//全体枠
 				DrawUI(UIType::平ボタン);
 
-				//探索者画像
+				//配置している場合の表示
 				if (it == nullptr) { return; }
 
-				it->image[0][1]->DrawRotate({ GetX(),GetY() }, 2, 0);
+				it->image[0][1]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
 
 				//Lv
-				GetFont()->DrawRotate({ GetX() , GetY() }, 1, 0, Color::Black, { "Lv " , it->Lv });
+				GetFont()->DrawBold({ GetX() + LB.x , GetY() + LB.y }, Design::明字 , Design::暗字 , { "Lv " , it->Lv });
 
-				//経験値バー？
+				//経験値バー
+				Design::No1->DrawGauge(GetX() + LC.x, GetY() + LC.y,LC.w,LC.h, it->Get経験値率() );
 
 				//装備品２つ
 				装備ボタン[0].Draw();
@@ -849,28 +883,78 @@ namespace SDX_ADE
 
 			}
 
-			void Drop() override
+			bool Drop() override
 			{
 				//探索者入れ替え
 
 				//探索先変更
 
+				return false;
 			}
 
 		};
 
-		class UI探索先変更 : public UIObject
+		class UI探索フロア : public UIObject
 		{
 		public:
 			int パーティID;
 			void Draw派生() override
 			{
 				DrawUI(UIType::平ボタン);
+				auto& LA = LData(LParty::探索先変更三角);
+				auto& LD = LData(LParty::探索先階数);
+				auto* it = Guild::P->パーティ[パーティID].探索先;
+
+				//探索先画像
+				it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
+
+				//階層
+				MFont::S->DrawBoldRotate(GetPos(LD), 1, 0, Design::明字, Design::暗字, { it->ID + 1 , "F" });
+
+				//三角表示
+				Font* fr = mousePos == 2 ? MFont::M : MFont::S;
+				Font* fl = mousePos == 1 ? MFont::M : MFont::S;
+
+				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h } , 1 , 0, Design::暗字, { "<" });
+				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
 			}
 
 			void Click() override
 			{
-				if (isLeftClick == true)
+				if (mousePos == 1)
+				{
+
+				}
+				else
+				{
+
+				}
+			}
+
+			void Over() override
+			{}
+		};
+
+		class UI探索指示 : public UIObject
+		{
+		public:
+			int パーティID;
+			void Draw派生() override
+			{
+				DrawUI(UIType::平ボタン);
+				GetFont()->DrawBoldRotate( GetCenterPos(), 1, 0, Design::明字, Design::暗字, { "おまかせ" });
+
+				auto& LA = LData(LParty::探索先変更三角);
+				//三角表示
+				Font* fr = mousePos == 2 ? MFont::M : MFont::S;
+				Font* fl = mousePos == 1 ? MFont::M : MFont::S;
+				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
+				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
+			}
+
+			void Click() override
+			{
+				if (isLeftDock == true)
 				{
 
 				}
@@ -883,31 +967,7 @@ namespace SDX_ADE
 			{}
 		};
 
-		class UI探索指示変更 : public UIObject
-		{
-		public:
-			int パーティID;
-			void Draw派生() override
-			{
-				DrawUI(UIType::平ボタン);
-			}
-
-			void Click() override
-			{
-				if (isLeftClick == true)
-				{
-
-				}
-				else {
-
-				}
-			}
-
-			void Over() override
-			{}
-		};
-
-		class UI探索先 : public UIObject
+		class UI探索先情報 : public UIObject
 		{
 		public:
 			int パーティID;
@@ -917,24 +977,25 @@ namespace SDX_ADE
 				//全体枠
 				DrawUI(UIType::グループ暗);
 
-				auto* it = Guild::P->探索パーティ[パーティID].探索先;
+				auto* it = Guild::P->パーティ[パーティID].探索先;
+				auto& LA = LData(LParty::探索先ボス);
+				auto& LB = LData(LParty::探索先探索度);
+				auto& LC = LData(LParty::探索先財宝数);
+				auto& LD = LData(LParty::探索先内枠);
 
-				//フロア移動 △クリックで前後
-				//探索先画像
-				it->image->DrawRotate({ GetX(),GetY() }, 1, 0);
-
-				//探索先階層数
-				GetFont()->DrawRotate({ GetX(),GetY() }, 1, 0, Color::Black, { it->ID });
+				//フロア移動とダンジョンアイコン、探索指示は別オブジェクト
+				Design::No1->Draw(UIType::グループ中, GetX() + LD.x , GetY() + LD.y , LD.w , LD.h );
 
 				//探索度-ゲージと％の文字表示
-				it->探索率;
+				Design::No1->DrawGauge(GetX() + LB.x , GetY() + LB.y , LB.w , LB.h , it->探索率 );
+				GetFont()->DrawBoldRotate({ GetX() + LB.並べx ,GetY() + LB.並べy }, 1, 0, Design::明字, Design::暗字, { int(it->探索率*100) , "%" });
 
 				//ボスフラグ
-				it->isボス生存;//存在しない、未発見、発見、討伐済みの４種
+				//存在しない、未発見、発見、討伐済みの４種
+				GetFont()->DrawBoldRotate( GetPos(LA) , 1, 0, Design::明字, Design::暗字, { it->isボス生存 , " ボス生存" });
 
 				//宝箱回収率
-				it->最大財宝数;
-				it->発見財宝数;
+				GetFont()->DrawBoldRotate( GetPos(LC), 1, 0, Design::明字, Design::暗字, { "財宝 "  , it->発見財宝数 , " / " , it->最大財宝数 });
 			}
 
 			void Click() override
@@ -945,12 +1006,14 @@ namespace SDX_ADE
 
 			}
 
-			void Drop() override
+			bool Drop() override
 			{
 				//探索者入れ替え
 
 				//探索先変更
 
+
+				return false;
 			}
 		};
 
@@ -960,23 +1023,22 @@ namespace SDX_ADE
 
 		public:
 			Guild::Party* パーティ;
-			UI探索先 探索先;
-			UI探索先変更 探索先変更;
-			UI探索指示変更 探索指示変更;
+			UI探索先情報 探索先;
+			UI探索フロア 探索フロア;
+			UI探索指示 探索指示;
 			UI探索者 探索者[CV::パーティ人数];
 
 			UIパーティ()
 			{
 				パーティ = nullptr;
 				探索先.SetUI(LParty::探索先枠,0,this);
+				探索フロア.SetUI(LParty::探索先フロア, 0, &探索先);
+				探索指示.SetUI(LParty::探索先指示, 0, &探索先);
+
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
 					探索者[i].SetUI(LParty::探索者枠, i,this);
 				}
-
-				探索先変更.SetUI(LParty::探索先ドット, 0, &探索先);
-				探索指示変更.SetUI(LParty::探索先探索指示, 0, &探索先);
-
 			}
 
 			void Init(Guild::Party* パーティ)
@@ -985,15 +1047,14 @@ namespace SDX_ADE
 				探索先.パーティID = パーティ->パーティID;
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
-					探索者[i].パーティID = パーティ->パーティID;
-					探索者[i].隊列ID = i;
+					探索者[i].SetID(パーティ->パーティID, i);
 				}
 			}
 
 			bool Check派生(double px, double py) override
 			{
-				if (探索先変更.CheckInput(px, py) == true) { return true; }
-				if (探索指示変更.CheckInput(px, py) == true) { return true; }
+				if (探索フロア.CheckInput(px, py) == true) { return true; }
+				if (探索指示.CheckInput(px, py) == true) { return true; }
 				if (探索先.CheckInput(px, py) == true) { return true; }
 
 				for (int i = 0; i < CV::パーティ人数; i++)
@@ -1018,8 +1079,8 @@ namespace SDX_ADE
 
 				//探索先情報は街でもダンジョンでも共通
 				探索先.Draw();
-				探索先変更.Draw();
-				探索指示変更.Draw();
+				探索フロア.Draw();
+				探索指示.Draw();
 			}
 
 			void Click() override
@@ -1041,20 +1102,21 @@ namespace SDX_ADE
 				}
 			}
 
-			void Drop() override
+			bool Drop() override
 			{
-				if (パーティ->探索状態 != ExplorerType::編成中) { return; }
+				if (パーティ->探索状態 != ExplorerType::編成中) { return false; }
 				//探索者入れ替え
 
 				//探索先変更
 
+				return false;
 			}
 
 			//街と探索中で分ける
 			void Draw街()
 			{
 				//全体枠
-				DrawUI(UIType::背景);
+				DrawUI(UIType::グループ明);
 				//パーティメンバー５人
 				for (auto& it : 探索者)
 				{
@@ -1087,7 +1149,7 @@ namespace SDX_ADE
 				探検者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
 
 				//Lv
-				GetFont()->DrawRotate({ GetCenterX() + lb.x , GetCenterY() + lb.y }, 1, 0, Color::Black, { "Lv " , 探検者->Lv });
+				GetFont()->DrawBold({ GetCenterX() + lb.x , GetCenterY() + lb.y } , Design::明字, Design::暗字 , { "Lv " , 探検者->Lv });
 			}
 
 			void Click() override
@@ -1097,7 +1159,7 @@ namespace SDX_ADE
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
-			void Drop() override
+			bool Drop() override
 			{
 				//並び替える
 				//探索者->ID;
@@ -1114,26 +1176,9 @@ namespace SDX_ADE
 					//パーティメンバーとアクセサリー交換
 				}
 
-			}
-		};
-
-		class UI除名 : public UIObject
-		{
-			void Draw派生() override
-			{
-				//中央にアイコン
-
-				//下に除名の文字
-
-				//キャラクター掴んでいて
-			}
-
-			void Drop() override
-			{
-				//除名するか確認して、はいを選んだら除名
+				return false;
 
 			}
-
 		};
 
 	public:
@@ -1161,7 +1206,7 @@ namespace SDX_ADE
 			{
 				a++;
 				it.SetUI(LParty::パーティ枠, a);
-				it.Init(&Guild::P->探索パーティ[a]);
+				it.Init(&Guild::P->パーティ[a]);				
 			}
 
 			登録.SetUI(LParty::控え探索者, &MIcon::UI[IconType::ゴミ箱], "登録",  0, &控え枠);

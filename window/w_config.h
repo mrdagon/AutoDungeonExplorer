@@ -67,7 +67,7 @@ namespace SDX_ADE
 				auto posC = Layout::Data(LConfig::設定数値);
 
 				//UIDesign::Brown.Draw(UIType::背景, UILayout::Data(UIコンフィグ::設定ボタン));
-				DrawUI(UIType::丸フレーム, Design::data[DesignType::セット1]);
+				DrawUI(UIType::丸フレーム, Design::No1);
 
 				MIcon::UI[アイコン].DrawRotate({ GetX() + posA.x , GetY() + posA.y },2,0);//アイコン表示削除
 

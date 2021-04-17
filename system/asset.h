@@ -96,6 +96,10 @@ namespace SDX_ADE
 			ユニット[UnitImageType::グリフィン].Load("file/monster/mon009.png", 12, 3, 4);
 			ユニット[UnitImageType::ドラゴン].Load("file/monster/mon010.png", 12, 3, 4);
 
+			for (int i = 0; i < 100; i++)
+			{
+				モンスター[i].Load("file/monster/mon010.png", 12, 3, 4);
+			}
 		}
 	}
 
@@ -215,6 +219,11 @@ namespace SDX_ADE
 
 			アクセサリ[0].Load("file/accessory/boots_007.png");
 			//素材
+			ダンジョン[0].Load("file/system/move_01.png");
+			ダンジョン[1].Load("file/system/move_01.png");
+			ダンジョン[2].Load("file/system/move_01.png");
+			ダンジョン[3].Load("file/system/move_01.png");
+			ダンジョン[4].Load("file/system/move_01.png");
 
 			UI[IconType::城].Load("file/system/move_00.png");
 			UI[IconType::森].Load("file/system/move_01.png");

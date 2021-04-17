@@ -21,7 +21,7 @@ namespace SDX_ADE
 
 			void Draw派生()
 			{
-				DrawUI(UIType::グループ明 , &Design::Brown );
+				DrawUI(UIType::グループ中 , &Design::Brown );
 				MFont::M->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0, Color::Red, "X");
 			}
 
@@ -64,9 +64,9 @@ namespace SDX_ADE
 				データ.ファイル名 = name;
 				SetUI(LTitle::続きから_セーブデータ枠 , id );
 
-				日数.SetUI(LTitle::続きから_日数, "日数",  DesignType::セット1, 0, this);
-				フロア.SetUI(LTitle::続きから_階層, "フロア",   DesignType::セット1, 0, this);
-				難易度.SetUI(LTitle::続きから_難易度, "難易度",   DesignType::セット1, 0, this);
+				日数.SetUI(LTitle::続きから_日数, "日数", &Design::No1 , 0, this);
+				フロア.SetUI(LTitle::続きから_階層, "フロア", &Design::No1 , 0, this);
+				難易度.SetUI(LTitle::続きから_難易度, "難易度", &Design::No1 , 0, this);
 				パーティ.SetUI( LTitle::続きから_パーティ, 0, this);
 				削除.SetUI( LTitle::続きから_削除, 0, this);
 
@@ -88,7 +88,7 @@ namespace SDX_ADE
 				削除.Draw();
 
 				//パーティ
-				パーティ.DrawUI(UIType::グループ明, &Design::Brown);
+				パーティ.DrawUI(UIType::グループ中, &Design::Brown);
 				for (int a = 0; a < CV::パーティ人数; a++)
 				{
 					int no = データ.メインパーティ職業[a];

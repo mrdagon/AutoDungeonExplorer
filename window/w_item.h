@@ -27,11 +27,11 @@ namespace SDX_ADE
 
 				//所持数
 				auto& itA = Layout::Data(LItem::アイテム数);
-				GetFont()->DrawBold({ GetX() + itA.x ,GetY() + itA.y }, Design::data[DesignType::セット1]->明字 , Design::data[DesignType::セット1]->暗字, { "x" , Guild::P->アクセサリー所持数[itemID] },true);
+				GetFont()->DrawBold({ GetX() + itA.x ,GetY() + itA.y }, Design::明字 , Design::暗字, { "x" , Guild::P->アクセサリー所持数[itemID] },true);
 
 				auto& itB = Layout::Data(LItem::アイテムレア度);
 				//レアリティ
-				MFont::F[0]->DrawBold({ GetX() + itB.x ,GetY() + itB.y}, Design::data[DesignType::セット1]->明字, Design::data[DesignType::セット1]->暗字, { "☆" , Item::accessory_data[itemID].ランク }, false);
+				MFont::S->DrawBold({ GetX() + itB.x ,GetY() + itB.y}, Design::明字, Design::暗字, { "☆" , Item::accessory_data[itemID].ランク }, false);
 			}
 
 			void Click() override
@@ -40,10 +40,11 @@ namespace SDX_ADE
 
 			}
 
-			void Drop() override
+			bool Drop() override
 			{
 				//探索者の遺物と交換
 
+				return false;
 			}
 		};
 

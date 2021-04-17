@@ -262,7 +262,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::グループ明);
 			}
 
 			void Click() override
@@ -294,11 +294,6 @@ namespace SDX_ADE
 			}
 
 			void Click() override
-			{
-
-			}
-
-			void Drop() override
 			{
 
 			}
@@ -403,9 +398,9 @@ namespace SDX_ADE
 			{
 				装備Aスキル[i].SetUI(LSkill::装備Aスキル,i);
 			}
-			予約スキル枠.SetUI(LSkill::予約スキル枠,"");
-			装備スキル枠.SetUI(LSkill::装備スキル枠,"");
-			習得スキル枠.SetUI(LSkill::習得スキル枠,"");
+			予約スキル枠.SetUI(LSkill::予約スキル枠,"習得予定");
+			装備スキル枠.SetUI(LSkill::装備スキル枠,"戦闘スキル");
+			習得スキル枠.SetUI(LSkill::習得スキル枠,"習得スキル");
 
 			for (int i = 0; i < CV::最大キースキル数; i++)
 			{
@@ -424,9 +419,9 @@ namespace SDX_ADE
 				予約スキル[i].SetUI(LSkill::予約スキル, i);
 			}
 
-			リセット.SetUI(LSkill::リセットボタン);
-			確定.SetUI(LSkill::確定ボタン);
-			キャンセル.SetUI(LSkill::キャンセルボタン);
+			リセット.SetUI(LSkill::リセットボタン , "リセット");
+			確定.SetUI(LSkill::確定ボタン , "確定");
+			キャンセル.SetUI(LSkill::キャンセルボタン , "キャンセル");
 
 
 			//●登録

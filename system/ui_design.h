@@ -209,24 +209,19 @@ namespace SDX_ADE
 
 	enum class UIType
 	{
+		明ボタン,
 		平ボタン,
 		凸ボタン,
 		凹ボタン,
-		背景,
-		グループ暗,
 		グループ明,
+		グループ中,
+		グループ暗,
 		タイトル,
 		ウィンドウ,
 		フレーム,
 		ゲージ,
 		丸フレーム,
 		選択丸フレーム,
-	};
-
-	enum class DesignType
-	{
-		セット1,
-		COUNT
 	};
 
 	//これを継承して、画像素材利用UIに後から差し替えも可能にしておく
@@ -264,7 +259,7 @@ namespace SDX_ADE
 		}
 
 	public:
-		static EnumArray<Design*, DesignType> data;
+		static Design* No1;
 		static Design Green;
 		static Design Blue;
 		static Design Brown;
@@ -296,12 +291,13 @@ namespace SDX_ADE
 
 			switch ( type )
 			{
-				case UIType::平ボタン: DrawButton(x,y,w,h); break;
+				case UIType::明ボタン: DrawButton(x, y, w, h , 凸色); break;
+				case UIType::平ボタン: DrawButton(x,y,w,h , 背景色); break;
 				case UIType::凸ボタン: DrawButton凸(x, y, w, h); break;
 				case UIType::凹ボタン: DrawButton凹(x, y, w, h); break;
-				case UIType::背景: DrawBack(x, y, w, h); break;
+				case UIType::グループ明: DrawBack(x, y, w, h); break;
 				case UIType::グループ暗: DrawDarkBack(x, y, w, h); break;
-				case UIType::グループ明: DrawLightBack(x, y, w, h); break;
+				case UIType::グループ中: DrawLightBack(x, y, w, h); break;
 				case UIType::タイトル: DrawTitle(x, y, w, h); break;
 				case UIType::ウィンドウ: DrawWindow(x, y, w, h); break;
 				case UIType::フレーム: DrawFrame(x, y, w, h); break;
@@ -319,21 +315,8 @@ namespace SDX_ADE
 			Drawing::Rect({ x,y,w,h - 4 }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 4 }, 凸色);
 			Drawing::Line({ x + 1,y + h - 5 }, { x + w - 2, y + h - 5 }, グループ);
-			//Drawing::Line({ x + w - 2 , y + 1 }, { x + w - 2, y + h - 2 }, グループ);
 			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
 
-			/*
-			Drawing::Rect({ x,y,w,h-4 }, エッジ色);
-			Drawing::Rect({ x+1,y+1,w-2,h - 6 }, エッジ色);
-			Drawing::Rect({ x,y+h-4,w,4 }, 影色);
-			Drawing::Rect({ x+2,y+2,w-4,h-8 }, 凸色);
-			*/
-			/*
-			Drawing::Rect({ x,y,w,h - 3 }, エッジ色);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, エッジ色);
-			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 5 }, 凸色);
-			*/
 		}
 
 		//縁有りで凹んだボタン
@@ -343,22 +326,14 @@ namespace SDX_ADE
 			Drawing::Rect({ x + 1,y + 1, w - 2, 4 }, 影色);
 			Drawing::Rect({ x + 1,y + 5,w - 2,h - 6 }, 凹色);
 			Drawing::Line({ x + 1,y + h - 2 }, { x + w - 2, y + h - 2 }, 濃色);
-
-			/*
-			Drawing::Rect({ x,y,w,h }, エッジ色 , false);
-			Drawing::Rect({ x+1,y+1,w-2,h-2 }, エッジ色, false);
-			Drawing::Rect({ x+2,y+2, w - 4, 4 }, 影色);
-			Drawing::Rect({ x+2,y+6,w-4,h-8 }, 凹色);
-			*/
 		}
 
 		//平面ボタン
-		void DrawButton(int x, int y, int w, int h)
+		void DrawButton(int x, int y, int w, int h ,Color& ボタン色)
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色, false);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, 背景色);
+			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, ボタン色);
 			Drawing::Line({ x + 1,y + h - 2 }, { x + w - 2, y + h - 2 }, 凹色);
-			//Drawing::Line({ x + w - 2 , y + 1 }, { x + w - 2, y + h - 2 }, 凹色);
 		}
 
 		//背景色の四角を描画
@@ -496,12 +471,12 @@ namespace SDX_ADE
 			灰字 = { 0x9E9E9E };//Gray 500
 			暗字 = { 0x424242 };//Gray 900
 
-			data[DesignType::セット1] = &BlueGrey;
+			No1 = &BlueGrey;
 		}
 
 	};
 
-	EnumArray<Design*, DesignType> Design::data;
+	Design* Design::No1;
 	Design Design::Green;
 	Design Design::Blue;
 	Design Design::Brown;

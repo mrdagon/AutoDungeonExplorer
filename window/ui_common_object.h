@@ -16,7 +16,7 @@ namespace SDX_ADE
 		std::string テキスト = "";
 		Image* 画像 = nullptr;
 
-		DesignType UIデザイン = DesignType::セット1;
+		Design** UIデザイン = &Design::No1;
 		bool is押下 = false;//押し下げ状態フラグ
 		int 押下状態 = 0;//押下 = true時にどう表示するか
 
@@ -72,26 +72,26 @@ namespace SDX_ADE
 
 			if (is押下 == true && 押下状態 == 0)
 			{
-				DrawUI(UIType::凹ボタン, Design::data[UIデザイン]);
+				DrawUI(UIType::凹ボタン, *UIデザイン);
 				yd = 2;
 				push = true;
 			}
 			else if ((is押下 == true && 押下状態 == 1))
 			{
-				DrawUI(UIType::平ボタン, Design::data[UIデザイン]);
+				DrawUI(UIType::平ボタン, *UIデザイン);
 			}
 			else if ((is押下 == true && 押下状態 == 2))
 			{
-				DrawUI(UIType::凸ボタン, Design::data[UIデザイン]);
+				DrawUI(UIType::凸ボタン, *UIデザイン);
 				yd = -2;
 			}
 			else if ( isOver )
 			{
-				DrawUI( UIType::平ボタン, Design::data[UIデザイン]);
+				DrawUI( UIType::平ボタン, *UIデザイン);
 			}
 			else
 			{
-				DrawUI( UIType::凸ボタン, Design::data[UIデザイン]);
+				DrawUI( UIType::凸ボタン, *UIデザイン);
 				yd = -2;
 			}
 
@@ -154,7 +154,7 @@ namespace SDX_ADE
 					ydd += MFont::F[layout->フォントID]->GetSize() - 4;
 				}
 
-				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, push ? Design::data[UIデザイン]->明字 : Design::data[UIデザイン]->暗字, テキスト, false);
+				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, push ? Design::明字 : Design::暗字, テキスト, false);
 			}
 		}
 	};
@@ -164,10 +164,10 @@ namespace SDX_ADE
 	{
 	public:
 		std::string テキスト;
-		DesignType UIデザイン;
+		Design** UIデザイン = &Design::No1;
 
 		template<class T>
-		void SetUI( T レイアウト,std::string 初期テキスト, DesignType デザイン = DesignType::セット1, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI( T レイアウト,std::string 初期テキスト, Design** デザイン = &Design::No1, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			UIデザイン = デザイン;
@@ -181,17 +181,17 @@ namespace SDX_ADE
 			switch (layout->画像ID)
 			{
 			case 0:
-				DrawUI(UIType::背景, Design::data[UIデザイン]);
+				DrawUI(UIType::グループ明, *UIデザイン);
 				break;
 			case 1:
-				DrawUI(UIType::グループ明, Design::data[UIデザイン]);
+				DrawUI(UIType::グループ中, *UIデザイン);
 				break;
 			default:
-				DrawUI(UIType::グループ暗, Design::data[UIデザイン]);
+				DrawUI(UIType::グループ暗, *UIデザイン);
 				break;
 			}
 
-			GetFont()->Draw({ GetX() + 4 , GetY() + 4 }, Design::data[UIデザイン]->暗字, テキスト);
+			GetFont()->Draw({ GetX() + 4 , GetY() + 4 }, Design::暗字, テキスト);
 		}
 	};
 
@@ -204,7 +204,7 @@ namespace SDX_ADE
 		int tabID;
 		Image* 画像;
 		std::string テキスト;
-		DesignType UIデザイン = DesignType::セット1;
+		Design** UIデザイン = &Design::No1;
 
 		int テキスト位置 = 5;//1~9、テンキーの位置関係と対応
 		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
@@ -237,11 +237,11 @@ namespace SDX_ADE
 
 			if (tabID == *tabNo参照)
 			{
-				DrawUI(UIType::背景 , Design::data[UIデザイン]);
+				DrawUI(UIType::グループ明 , *UIデザイン );
 			}
 			else			
 			{
-				DrawUI(UIType::グループ暗 , Design::data[UIデザイン]);
+				DrawUI(UIType::グループ暗 , *UIデザイン );
 			}
 
 			if (画像 != nullptr)
@@ -302,7 +302,7 @@ namespace SDX_ADE
 					yd += MFont::F[layout->フォントID]->GetSize() - 4;
 				}
 
-				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, push ? Design::data[UIデザイン]->明字 : Design::data[UIデザイン]->暗字, テキスト, false);
+				GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, push ? Design::明字 : Design::暗字 , push ? Design::暗字 : Design::明字 , テキスト, false);
 			}
 
 		}

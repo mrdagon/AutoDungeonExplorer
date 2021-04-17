@@ -10,6 +10,23 @@ namespace SDX_ADE
 	class W_Dungeon : public UIWindow
 	{
 	private:
+		class UI財宝 : public UIObject
+		{
+		public:
+			int 財宝ID;
+			Dungeon* dungeon;
+
+			void Draw派生() override
+			{
+				DrawUI(UIType::丸フレーム);
+			}
+
+			void Over() override
+			{
+
+			}
+		};
+
 		class UIMonster : public UIObject
 		{
 		public:
@@ -25,10 +42,9 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				種族->image[0][1]->DrawRotate({ GetX(),GetY() }, 1, 0);
-				//ボスは２倍表示
-
-				//レベルも表示？
+				DrawUI(UIType::丸フレーム);
+				種族->image[0][1]->DrawRotate( GetCenterPos() , 2, 0);
+				//ボスは２倍表示？
 
 			}
 
@@ -44,6 +60,9 @@ namespace SDX_ADE
 
 			std::vector<UIMonster> 出現ボス;
 			std::vector<UIMonster> 出現モンスター;
+			std::vector<UI財宝> 出現財宝;
+
+			UIButton ボス雑魚表示;
 
 			void SetDungeon(Dungeon* 参照ダンジョン)
 			{
@@ -52,60 +71,84 @@ namespace SDX_ADE
 				for (int i = 0; i < dungeon->雑魚モンスター.size() ; i++)
 				{
 					出現モンスター.emplace_back(dungeon->雑魚モンスター[i], 0 , false);
-					出現モンスター.back().SetUI(LDungeon::フロアモンスター, i, this);
+					出現モンスター.back().SetUI(LDungeon::モンスター, i, this);
 				}
 				for (int i = 0; i < dungeon->ボスモンスター.size(); i++)
 				{
 					出現ボス.emplace_back(dungeon->ボスモンスター[i] , 0 , true);
-					出現ボス.back().SetUI(LDungeon::フロアモンスター, i, this);
+					出現ボス.back().SetUI(LDungeon::モンスター, i, this);
+				}
+				for (int i = 0; i < dungeon->財宝.size(); i++)
+				{
+					出現財宝.emplace_back();
+					出現財宝.back().SetUI(LDungeon::財宝, i, this);
+					出現財宝[i].財宝ID = i;
+					出現財宝[i].dungeon = dungeon;
 				}
 
+				ボス雑魚表示.SetUI(LDungeon::雑魚ボスボタン,"Test", 0, this);
+
+				ボス雑魚表示.clickEvent = [&]() {dungeon->isUIボス表示 = !dungeon->isUIボス表示; };
 			}
 
 
 			void Draw派生() override
 			{
-				auto &loA = Layout::Data(LDungeon::フロアLv);
-				auto &loB = Layout::Data(LDungeon::フロアアイコン);
-				auto &loC = Layout::Data(LDungeon::フロアLv);
-				auto &loE = Layout::Data(LDungeon::フロアボスマーク);
+				auto &LA = Layout::Data(LDungeon::フロアLv);
+				auto &LB = Layout::Data(LDungeon::フロアアイコン);
+				auto &LC = Layout::Data(LDungeon::探索率);
 
 				if (dungeon->is発見 == false)
 				{
 					DrawUI(UIType::グループ暗);
 					//未発見
+					MFont::M->DrawBoldRotate( GetCenterPos() , 1, 0, Design::明字, Design::暗字, { "未発見" }, false);
+
 					return;
 				}
 
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
-				DrawUI(UIType::グループ明);
+				DrawUI(UIType::グループ中);
 
 				//ダンジョンの外観
-				dungeon->image->DrawRotate({ GetX() + loB.x , GetY() + loB.y }, 1, 0);
+				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
+				MFont::S->DrawBold({ GetX() + LB.w , GetY() + LB.h }, Color::White, Color::Black, { dungeon->ID + 1 , "F" }, true);
 
-				//レベル/探索率
-				MFont::S->DrawBold({ GetX() , GetY() }, Color::White, Color::Black, { (int)(dungeon->探索率 * 100) , "%" }, true);
-				MFont::S->DrawBold({ GetX() + loA.x , GetY() + loA.y }, Color::White, Color::Black, { "Lv",dungeon->雑魚Lv }, false);
+				//探索率
+				Design::No1->DrawGauge(LC.x, LC.y, LC.w, LC.h, dungeon->探索率 + 0.5);
+				MFont::S->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Color::White, Color::Black, { (int)(dungeon->探索率 * 100) , "%" }, true);
 
-				//財宝発見数と存在する数
-				//階段発見フラグ
-				//探索中のパーティ
+				//階段位置、ボス位置マーク
 
-				//ボスの有無と出現条件
-				//出現モンスター or 出現ボス(ボス出現中は通常モンスター見れなくなる)
+				//ボス雑魚ボタン - ボス撃破済みだと表示される
+				ボス雑魚表示.Draw();
 
+				//出現モンスター or 出現ボス
 				if (dungeon->isUIボス表示 == true)
 				{
+					//レベル
+					MFont::S->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Color::White, Color::Black, { "Lv",dungeon->ボスLv }, false);
+
 					for (auto& it : 出現ボス)
 					{
 						it.Draw();
 					}
 				} else {
+					//レベル
+					MFont::S->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Color::White, Color::Black, { "Lv",dungeon->雑魚Lv }, false);
+
 					for (auto& it : 出現モンスター)
 					{
 						it.Draw();
 					}
 				}
+
+				//財宝表示
+				for (auto& it : 出現財宝)
+				{
+					it.Draw();
+				}
+
 			}
 
 			void Click() override
@@ -139,7 +182,16 @@ namespace SDX_ADE
 							}
 						}
 					}
+					for (auto& it : 出現財宝)
+					{
+						if (it.CheckInput(px, py) == true)
+						{
+							return true;
+						}
+					}
 				}
+
+				return false;
 			}
 
 			void Over() override
@@ -182,8 +234,8 @@ namespace SDX_ADE
 
 			for (int i = 0; i < Dungeon::data.size(); i++)
 			{
-				フロア[i].dungeon = &Dungeon::data[i];
 				フロア[i].SetUI(LDungeon::フロア枠);
+				フロア[i].SetDungeon(&Dungeon::data[i]);
 			}
 
 			//●登録
@@ -198,7 +250,7 @@ namespace SDX_ADE
 		void Update()
 		{
 			SetPos(LDungeon::ウィンドウ, false, true, false);
-			this->固定縦 = Layout::Data(LDungeon::内枠).h;
+			this->固定縦 = Layout::Data(LDungeon::内枠).並べy;
 
 			int cnt = 0;
 			for (int i = 0; i < Dungeon::data.size(); i++)

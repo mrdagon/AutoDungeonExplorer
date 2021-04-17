@@ -17,7 +17,7 @@ namespace SDX_ADE
 		inline static int ツールバー高さ = 90;
 
 		WindowType 種類;
-		DesignType デザイン;
+		Design** デザイン = &Design::No1;
 
 		//描画および操作可能なオブジェクト
 		std::vector<UIObject*> item;//スクロールするオブジェクト
@@ -62,7 +62,7 @@ namespace SDX_ADE
 		virtual void Update(){}
 
 		//基本情報を代入
-		void Set(WindowType 種類 , IconType アイコン, DesignType デザイン = DesignType::セット1)
+		void Set(WindowType 種類 , IconType アイコン, Design** デザイン = &Design::No1)
 		{
 			this->種類 = 種類;
 			this->デザイン = デザイン;
@@ -129,33 +129,36 @@ namespace SDX_ADE
 		void 共通Draw()
 		{
 			//タイトル部分
-			Design::data[デザイン]->Draw(UIType::タイトル, (int)座標.x, (int)座標.y, 横幅, タイトル枠高さ);
+			Design* de = *デザイン;
+
+			de->Draw(UIType::タイトル, (int)座標.x, (int)座標.y, 横幅, タイトル枠高さ);
 
 			//ウィンドウ名
 			MFont::M->Draw({ (int)座標.x + 34,(int)座標.y + 1 }, Color::White, { TX::Window_名前[種類] });
 
 			//ウィンドウアイコン
-			Design::data[デザイン]->Draw(UIType::背景, (int)座標.x + 6, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+			de->Draw(UIType::グループ明, (int)座標.x + 6, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 			MIcon::UI[アイコン].DrawRotate({ 座標.x + 15,座標.y + 15 }, 1, 0);
 
 			//閉じるボタン/ヘルプボタン
 			if (is閉じるボタン == true)
 			{
-				Design::data[デザイン]->Draw(UIType::背景, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+
+				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
 			}
 
 			//メイン部分描画
-			Design::data[デザイン]->Draw(UIType::ウィンドウ, (int)座標.x, (int)座標.y + タイトル枠高さ, 横幅, 縦幅);
+			de->Draw(UIType::ウィンドウ, (int)座標.x, (int)座標.y + タイトル枠高さ, 横幅, 縦幅);
 
 			//スクロール
 			if (縦幅 < 縦内部幅)
 			{
-				Design::data[デザイン]->Draw(UIType::丸フレーム, (int)座標.x + 横幅 - 26, (int)座標.y + タイトル枠高さ + 4, 20, 縦幅 - 8);
+				de->Draw(UIType::丸フレーム, (int)座標.x + 横幅 - 26, (int)座標.y + タイトル枠高さ + 4, 20, 縦幅 - 8);
 
 				int scrH = int((縦幅 - 16) * 縦幅 / 縦内部幅);
 				int scrY = int(座標.y + タイトル枠高さ + 8 + (縦幅 - 16) * スクロール位置 / 縦内部幅);
-				Design::data[デザイン]->DrawGauge(座標.x + 横幅 - 23, scrY, 14, scrH, 1);
+				de->DrawGauge(座標.x + 横幅 - 23, scrY, 14, scrH, 1);
 			}
 		}
 		

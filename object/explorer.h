@@ -90,7 +90,7 @@ namespace SDX_ADE
 		int スキル習得予約[CV::最大スキル予約数];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
-		int Lv;
+		int Lv = 1;
 		double 経験値 = 0;
 		int スキルポイント;//余っているスキルポイント
 
@@ -112,6 +112,11 @@ namespace SDX_ADE
 		int Get要求経験値()
 		{
 			return (2 + Lv * Lv) * CV::要求経験値;
+		}
+
+		double Get経験値率()
+		{
+			return (double)探検前経験値 / Get要求経験値();
 		}
 
 		void レベルアップ判定()
