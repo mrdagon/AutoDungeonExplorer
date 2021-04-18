@@ -360,7 +360,6 @@ namespace SDX_ADE
 			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, 背景色);
 		}
 
-
 		//ウィンドウのタイトル部
 		void DrawTitle(int x, int y, int w, int h)
 		{
@@ -397,8 +396,8 @@ namespace SDX_ADE
 
 		void DrawSelectRound(int x, int y, int w, int h)
 		{
-			DrawRoundColor(x, y, w, h, 凸色);
-			DrawRoundColor(x + 1, y + 1, w - 2, h - 2, 凹色);
+			DrawRoundColor(x, y, w, h, 凹色);
+			DrawRoundColor(x + 1, y + 1, w - 2, h - 2, 凸色);
 		}
 
 		void DrawGauge(int x, int y, int w, int h, double rate)

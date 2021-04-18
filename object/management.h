@@ -38,21 +38,18 @@ namespace SDX_ADE
 		std::string 説明;
 
 		int 消費資金;
-		bool is使用済み = false;
-		bool is使用可 = false;
 
-		bool is永続 = false;//単発効果 or 永続効果
+		int 投資Lv = 0;
+		int 最大投資Lv = 10;
+		bool is使用可 = false;
 
 		/*戦術実行効果*/
 		void Active(Guild* guild)
 		{
 			//資金消費
 			guild->資金 -= 消費資金;
-			is使用済み = true;
 			//ログ
-			EventLog::Add(0, Game::日付, LogType::経営);
-
-			if (is永続) { is使用可 = false; }
+			//EventLog::Add(0, Game::日付, LogType::経営);
 
 			//部門Lv上昇判定
 			if (!Lv上昇判定()){
@@ -66,6 +63,11 @@ namespace SDX_ADE
 
 			MSound::効果音[SE::投資実行].Play();
 			return false;
+		}
+
+		int Get費用()
+		{
+			return 消費資金;
 		}
 
 		static void LoadData()
@@ -97,7 +99,8 @@ namespace SDX_ADE
 
 				file_data.Read(it.ランク);
 				file_data.Read(it.消費資金);
-				file_data.Read(it.is永続);
+				bool dumyy_b;
+				file_data.Read(dumyy_b);
 			}
 		}
 
@@ -106,7 +109,7 @@ namespace SDX_ADE
 		{
 			for (auto& it : data)
 			{
-				it.is使用済み = false;
+				it.投資Lv = 0;
 				it.is使用可 = false;
 			}
 		}

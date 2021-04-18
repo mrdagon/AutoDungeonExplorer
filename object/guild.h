@@ -705,8 +705,7 @@ namespace SDX_ADE
 
 		};
 
-		int 素材数[CV::素材系統];
-		int レア素材数[CV::素材系統];
+		int 素材数[CV::上限素材種類];
 		bool is素材発見[CV::素材系統];
 
 		double 資金 = 1000;
@@ -722,8 +721,8 @@ namespace SDX_ADE
 		int 最大パーティ数 = 3;
 
 		//パーティーと配属人員
-		int 投資Lv = 0;
-		int 投資経験値 = 0;
+		int 街Lv = 0;
+		int 街経験値 = 0;
 
 		//経営戦術効果
 		double 戦闘経験補正 = 1.0;

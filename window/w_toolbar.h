@@ -91,20 +91,13 @@ namespace SDX_ADE
 			{
 				//倍速値、アイコン、現在設定と同じなら凹ませる
 
-				if (Config::is超加速 == true)
-				{
-					if (lineID == 3) { is押下 = Game::is停止; }
-					if (lineID == 2) { is押下 = (Game::ゲームスピード == 1); }
-					if (lineID == 1) { is押下 = (Game::ゲームスピード == 8); }
-					if (lineID == 0) { is押下 = (Game::ゲームスピード == 64); }
-				}
-				else
-				{
-					if (lineID == 3) { is押下 = Game::is停止; }
-					if (lineID == 2) { is押下 = (Game::ゲームスピード == 1); }
-					if (lineID == 1) { is押下 = (Game::ゲームスピード == 4); }
-					if (lineID == 0) { is押下 = (Game::ゲームスピード == 16); }
-				}
+
+				if (lineID == 4) { is押下 = Game::is停止; }
+				if (lineID == 3) { is押下 = (Game::ゲームスピード == 1); }
+				if (lineID == 2) { is押下 = (Game::ゲームスピード == 4); }
+				if (lineID == 1) { is押下 = (Game::ゲームスピード == 16); }
+				if (lineID == 0) { is押下 = (Game::ゲームスピード == 64); }
+
 
 				UIButton::Draw派生();
 			}
@@ -113,17 +106,20 @@ namespace SDX_ADE
 			{
 				switch (lineID)
 				{
-				case 3:
+				case 4:
 					Game::is停止 = !Game::is停止;
 					break;
-				case 2://x1
-					Game::ゲームスピード = Config::is超加速 ? 1 : 1;
+				case 3:
+					Game::ゲームスピード = 1;
 					break;
-				case 1://x4/8
-					Game::ゲームスピード = Config::is超加速 ? 8 : 4;
+				case 2://x4
+					Game::ゲームスピード = 4;
 					break;
-				case 0://x16/64
-					Game::ゲームスピード = Config::is超加速 ? 64 : 16;
+				case 1://x16
+					Game::ゲームスピード = 16;
+					break;
+				case 0://x64
+					Game::ゲームスピード = 64;
 					break;
 				}
 			}
@@ -138,6 +134,7 @@ namespace SDX_ADE
 		UISpeedButton 速度ボタンA;//左右でクリック時の処理が異なる仕様
 		UISpeedButton 速度ボタンB;//左右でクリック時の処理が異なる仕様
 		UISpeedButton 速度ボタンC;//左右でクリック時の処理が異なる仕様
+		UISpeedButton 速度ボタンD;//左右でクリック時の処理が異なる仕様
 		UIWindowButton ヘルプボタン;
 		UIWindowButton コンフィグボタン;
 		UIWindowButton タイトルボタン;
@@ -156,10 +153,11 @@ namespace SDX_ADE
 				ウィンドウボタン[i].テキスト位置 = 2;
 			}
 
-			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",3);//一時停止時凹む仕様
-			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "＞" ,2);//左右でクリック時の処理が異なる仕様
-			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , ">>", 1);//左右でクリック時の処理が異なる仕様
-			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , ">>>", 0);//左右でクリック時の処理が異なる仕様
+			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",4);//一時停止時凹む仕様
+			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "x 1" ,3);//左右でクリック時の処理が異なる仕様
+			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , "x 4", 2);//左右でクリック時の処理が異なる仕様
+			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , "x16", 1);//左右でクリック時の処理が異なる仕様
+			速度ボタンD.SetUI( LToolBar::ツールバー_速度ボタン, "x64", 0);//左右でクリック時の処理が異なる仕様
 
 			ヘルプボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "ヘルプ",  2);
 			コンフィグボタン.SetUI(LToolBar::ツールバー_その他ボタン , &MIcon::UI[IconType::BGM], "設定"  , 1);
@@ -170,6 +168,7 @@ namespace SDX_ADE
 			速度ボタンA.isLeftDock = false;
 			速度ボタンB.isLeftDock = false;
 			速度ボタンC.isLeftDock = false;
+			速度ボタンD.isLeftDock = false;
 			ヘルプボタン.isLeftDock = false;
 			コンフィグボタン.isLeftDock = false;
 			タイトルボタン.isLeftDock = false;
@@ -192,6 +191,7 @@ namespace SDX_ADE
 			AddItem(速度ボタンA);
 			AddItem(速度ボタンB);
 			AddItem(速度ボタンC);
+			AddItem(速度ボタンD);
 			AddItem(コンフィグボタン);
 			AddItem(ヘルプボタン);
 			AddItem(タイトルボタン);

@@ -121,8 +121,6 @@ namespace SDX_ADE
 
 		Image 投資[100];
 
-		
-
 		EnumArray<Image, ItemType> 装備種;//いらない？
 		EnumArray<Image, StatusType> ステータス種;//ステータスのアイコン？
 
@@ -175,6 +173,18 @@ namespace SDX_ADE
 			UI[IconType::木材].Load("file/system/mat_002.png");
 			UI[IconType::皮材].Load("file/system/mat_003.png");
 			UI[IconType::骨材].Load("file/system/mat_004.png");
+
+			素材[CraftType::木材].Load("file/system/mat_002.png");
+			素材[CraftType::石材].Load("file/system/mat_001.png");
+			素材[CraftType::鉄材].Load("file/system/mat_001.png");
+			素材[CraftType::革材].Load("file/system/mat_003.png");
+			素材[CraftType::骨材].Load("file/system/mat_004.png");
+			素材[CraftType::魔材].Load("file/system/mat_001.png");
+
+			for (int i = 0; i < 100; i++)
+			{
+				投資[i].Load("file/icon/meisei.png");
+			}
 
 			//探索用
 			UI[IconType::探索_伐採].Load("file/system/dun00.png");

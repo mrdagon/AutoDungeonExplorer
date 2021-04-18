@@ -865,8 +865,8 @@ namespace SDX_ADE
 
 			bool Check派生(double px, double py) override
 			{
-				if (スキルボタン.CheckInput(px, py) == true) { return true; }
-				if (装飾品ボタン.CheckInput(px, py) == true) { return true; }
+				if (スキルボタン.CheckInput(px, py) == true){return true; }
+				if (装飾品ボタン.CheckInput(px, py) == true){return true;}
 				if (装備ボタン[0].CheckInput(px, py) == true) { return true; }
 				if (装備ボタン[1].CheckInput(px, py) == true) { return true; }
 

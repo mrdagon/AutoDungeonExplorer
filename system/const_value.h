@@ -26,6 +26,8 @@ namespace SDX_ADE
 
 		constexpr int 上限依頼数 = 200;
 
+		constexpr int 上限素材ランク = 20;
+
 		constexpr int パーティ人数 = 5;
 		constexpr int 上限パーティ数 = 3;//データ上増やせるパーティの限界
 

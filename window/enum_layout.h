@@ -172,7 +172,11 @@ namespace SDX_ADE
 		街Lv枠,
 		街Lv数値,
 		街グループ枠,
-		投資案枠,
+		プラン枠,
+		プランアイコン,
+		プランLv,
+		プラン名前,
+		プラン費用,
 		COUNT,
 		PAGE = (int)UIPage::投資
 	};
@@ -181,7 +185,7 @@ namespace SDX_ADE
 	{
 		ウィンドウ,
 		素材枠,
-		素材Lv,
+		素材ランク,
 		素材所持数,
 		内枠,
 		COUNT,
@@ -192,7 +196,11 @@ namespace SDX_ADE
 	{
 		ウィンドウ,
 		依頼枠,
-		内枠,
+		依頼者,
+		クエスト名,
+		フロア,
+		ステータス,
+		表示ボタン,
 		COUNT,
 		PAGE = (int)UIPage::クエスト
 	};
@@ -200,11 +208,11 @@ namespace SDX_ADE
 	enum class LLog
 	{
 		ウィンドウ,
-		タブ,
-		内枠,
+		表示ボタン,
 		ログ枠,
 		ログアイコン,
 		ログ文章,
+		ログ日付,
 		COUNT,
 		PAGE = (int)UIPage::ログ
 	};

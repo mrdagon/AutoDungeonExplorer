@@ -18,30 +18,32 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
+				auto& LA = LData(LQuest::依頼者);
+				auto& LB = LData(LQuest::クエスト名);
+				auto& LC = LData(LQuest::フロア);
+				auto& LD = LData(LQuest::ステータス);
+
 				//全体の枠
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::グループ明);//完了したら暗くする、クリア後未チェック
 
-				//MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-
-				//Main or Subをアイコン？文字？
-
-				//クリア済みマーク
-				//Newマーク
 				//依頼者見た目
+				quest->依頼人image->DrawRotate(GetPos( LA ), 2, 0);
 
-				//MFont::SAlias.DrawBold({ px + Lp(15) ,py + Lp(16) }, Color::White, Color::Black, { "Quest" });
+				//クリア済み、New表示
+				MFont::S->DrawBold(GetPos(LD), Design::明字, Design::暗字, { "Clear" });
 
 				//クエスト名
-				//MFont::LAlias.DrawBold({ px + Lp(5) ,py + Lp(6) }, Color::White, Color::Black, { Quest::data[id].名前 });
+				MFont::M->DrawBold(GetPos( LB ), Design::明字, Design::暗字, {quest->名前});
+
+				//対象フロア(無い場合は表示しない)
+				MFont::M->DrawBold(GetPos(LC), Design::明字, Design::暗字, { "10F" } , true);
 			}
-
-
 		};
 
 
 	public:
 		UIQuest 依頼[CV::上限依頼数];
-		UITextFrame 内枠;
+		UIButton 表示ボタン[3];
 
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
@@ -62,11 +64,14 @@ namespace SDX_ADE
 				依頼[i].SetUI(LQuest::依頼枠, i);
 				依頼[i].quest = &Quest::data[i];
 			}
-			内枠.SetUI(LQuest::内枠,"");
+
+			表示ボタン[0].SetUI(LQuest::表示ボタン, "未達成" , 0);
+			表示ボタン[1].SetUI(LQuest::表示ボタン, "完了" , 1);
+			表示ボタン[2].SetUI(LQuest::表示ボタン, "未発見" , 2);
 
 			//●登録
 			AddItem(依頼, Quest::data.size() );
-			AddItem(内枠);
+			AddItem(表示ボタン, 3 , true);
 
 			Update();
 		}
@@ -74,6 +79,7 @@ namespace SDX_ADE
 		void Update()
 		{
 			SetPos(LQuest::ウィンドウ, false, true, false);
+			固定縦 = 40;
 
 			int cnt = 0;
 			for (int i = 0; i < Quest::data.size(); i++)

@@ -8,11 +8,10 @@ namespace SDX_ADE
 	using namespace SDX;
 	enum class LogType
 	{
-		重要,
-		経営,
-		人事,
+		依頼,
+		ボス,
 		探索,
-		製造,
+		投資,
 		COUNT
 	};
 

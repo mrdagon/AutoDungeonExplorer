@@ -86,11 +86,16 @@ namespace SDX_ADE
 					出現財宝[i].dungeon = dungeon;
 				}
 
-				ボス雑魚表示.SetUI(LDungeon::雑魚ボスボタン,"Test", 0, this);
+				ボス雑魚表示.SetUI(LDungeon::雑魚ボスボタン, &MIcon::UI[IconType::ボス],"ボ\nス", 0, this);
 
-				ボス雑魚表示.clickEvent = [&]() {dungeon->isUIボス表示 = !dungeon->isUIボス表示; };
+				ボス雑魚表示.is押下 = dungeon->isUIボス表示;
+
+				ボス雑魚表示.clickEvent = [&]()
+				{
+					dungeon->isUIボス表示 = !dungeon->isUIボス表示;
+					ボス雑魚表示.is押下 = dungeon->isUIボス表示;
+				};
 			}
-
 
 			void Draw派生() override
 			{
@@ -103,12 +108,11 @@ namespace SDX_ADE
 					DrawUI(UIType::グループ暗);
 					//未発見
 					MFont::M->DrawBoldRotate( GetCenterPos() , 1, 0, Design::明字, Design::暗字, { "未発見" }, false);
-
 					return;
 				}
 
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
-				DrawUI(UIType::グループ中);
+				DrawUI(UIType::平ボタン);
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
@@ -163,6 +167,11 @@ namespace SDX_ADE
 				//子オブジェクトの当たり判定
 				if (dungeon->is発見 == true)
 				{
+					if (ボス雑魚表示.CheckInput(px, py) == true)
+					{
+						return true;
+					}
+
 					if (dungeon->isUIボス表示 == true)
 					{
 						for (auto& it : 出現ボス)
@@ -189,6 +198,7 @@ namespace SDX_ADE
 							return true;
 						}
 					}
+
 				}
 
 				return false;
@@ -239,9 +249,8 @@ namespace SDX_ADE
 			}
 
 			//●登録
-			AddItem(枠 , true);
+			AddItem(枠, true);
 			AddItem(タブ, 5, true);
-
 			AddItem(フロア, Dungeon::data.size());
 
 			Update();

@@ -396,10 +396,13 @@ namespace SDX_ADE
 		bool ObjectInput()
 		{
 			//配列の前からチェック
-			for (auto& it : 固定item)
+			if (Input::mouse.y - 座標.y - タイトル枠高さ <= 固定縦 )
 			{
-				//クリックとドロップのチェック
-				if (it->CheckInput(座標.x, 座標.y + タイトル枠高さ)) { return true; };
+				for (auto& it : 固定item)
+				{
+					//クリックとドロップのチェック
+					if (it->CheckInput(座標.x, 座標.y + タイトル枠高さ)) { return true; };
+				}
 			}
 
 			for (auto& it : item)

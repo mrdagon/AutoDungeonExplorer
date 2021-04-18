@@ -16,15 +16,12 @@ namespace SDX_ADE
 		{
 			void Draw派生() override
 			{
-				DrawUI(UIType::凸ボタン);
+				//街経験値 - 現在値、使用後
+				double rate = (double)Guild::P->街経験値 / Management::必要経験値[Guild::P->街Lv];
+				Design::No1->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
 
-				//現在 街Lv
-				double rate = (double)Guild::P->投資経験値 / Management::必要経験値[Guild::P->投資Lv];
-
-				//MSystem::DrawBar({ px,py }, (int)位置.GetW(), (int)位置.GetH(), rate, 1, Color::Blue, Color::White, Color::White, true);
-
-				//MFont::SDot.DrawBold({ px + Lp(30) ,py + Lp(31) }, Color::White, Color::Black, { "Lv",Guild::P->投資Lv });
-				//投資経験値ゲージと増加量
+				//街 Lv 現在値のみ
+				MFont::M->DrawBold({ GetX() + layout->並べx , GetY() + layout->並べy }, Design::明字, Design::暗字, { "街 Lv ",Guild::P->街Lv } , true );
 			}
 
 			void Click() override
@@ -36,32 +33,27 @@ namespace SDX_ADE
 		{
 
 			void Draw派生() override
-			{				
-				DrawUI(UIType::凸ボタン);
+			{
 
-				//現在資金
+				auto& LA = LData(LManagement::資金現在);
+				auto& LB = LData(LManagement::資金消費);
+				auto& LC = LData(LManagement::資金アイコン);
 
-				//消費資金
+				DrawUI(UIType::グループ明);
 
-				//選択戦術の資金消費を表示、不足している場合赤色
-
-				//現在の資金
-				//MIcon::UI[IconType::資金].Draw({ px + Lp(34) , py + Lp(35) });
-				//MFont::MAlias.DrawBold({ px + Lp(32) ,py + Lp(33) }, Color::White, Color::Black, { (long long)Guild::P->資金 , " G" }, true);
-				//消費する資金
-				//if (W_Drag::Over戦術 != nullptr)
+				//アイコン
+				MIcon::UI[IconType::資金].DrawRotate( GetPos(LC) , 2,0);
+				if (over戦術 != nullptr)
 				{
-					Color fc = { 255,128,128 };
-					//if (W_Drag::Over戦術->消費資金 <= Guild::P->資金) { fc = Color(128,255,128); }
-					//MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " ,W_Drag::Over戦術->消費資金 , " G" }, true);
-					//W_Drag::Over戦術 = nullptr;
+					//現在資金
+					MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { 1000 , "G"}, true);
+				} else {
+					//現在資金
+					MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { 1000 , "G >"}, true);
+					//消費資金
+					MFont::M->DrawBold(GetPos(LB), Design::Blue.明字, Design::暗字, { -1000 , "G" }, true);
 				}
-				if (true)
-				{
-					Color fc = { 255,128,128 };
-					//if (Guild::P->選択戦術->消費資金 > Guild::P->資金) { fc = Color::Red; }
-					//MFont::MAlias.DrawBold({ px + Lp(36) ,py + Lp(37) }, fc, Color::Black, { "- " , Management::data[0].消費資金 , " G" }, true);
-				}
+
 			}
 
 			void Click() override
@@ -74,26 +66,41 @@ namespace SDX_ADE
 		class UIPlan : public UIObject
 		{
 		public:
-			Management* 参照戦術;
+			Management* manage;
 
 			void Draw派生() override
 			{
-				//街レベル不足で枠表示変化
+				auto& LA = LData(LManagement::プランLv);
+				auto& LB = LData(LManagement::プラン名前);
+				auto& LC = LData(LManagement::プラン費用);
+				auto& LD = LData(LManagement::プランアイコン);
+
+				//使用可能、不可で表示変化
 				DrawUI(UIType::凸ボタン);
 
-				参照戦術->image->DrawRotate({ GetCenterX() , GetCenterY() }, 2, 0);
+
+				//投資名 Lv
+				Design::No1->Draw(UIType::丸フレーム, GetX() + LB.x, GetY() + LB.y, LB.w, LB.h);
+				MFont::M->DrawBold({ GetX() + LB.並べx , GetY() + LB.並べy }, Design::明字, Design::暗字, { manage->名前 });
+				MFont::M->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Design::明字, Design::暗字, { "Lv" , manage->投資Lv });
+				//費用
+				Design::No1->Draw(UIType::丸フレーム, GetX() + LC.x, GetY() + LC.y, LC.w, LC.h);
+				MFont::M->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::明字, Design::暗字, { manage->Get費用() , "G" } , true);
+
+				//投資アイコン
+				manage->image->DrawRotate(GetPos(LD), 2, 0);
 			}
 
 			void Click() override
 			{
 				//街レベル不足で使用不可
-				if ( 参照戦術->is使用可 == false )
+				if ( manage->is使用可 == false )
 				{
 					return;
 				}
 
 				//資金不足で使用不可
-				if (参照戦術->消費資金 < Guild::P->資金)
+				if ( manage->消費資金 < Guild::P->資金)
 				{
 					return;
 				}
@@ -101,21 +108,16 @@ namespace SDX_ADE
 
 			void Over() override
 			{
-				over戦術 = 参照戦術;
+				over戦術 = manage;
 			}
 		};
 
 	public:
 		inline static Management* over戦術 = nullptr;
-		//タブ無くす
 		UIGold 資金;//資金と消費G
 		UILv 街Lv;//街Lv
 		//投資案
-		UITextFrame Lvグループ[10];//タブでは無く、レベル毎にグループ分け
 		UIPlan 投資案[CV::上限投資案];
-
-		int 現在タブ = 0;
-		int 戦術数 = 0;
 
 		void Init()
 		{
@@ -125,22 +127,16 @@ namespace SDX_ADE
 			資金.SetUI(LManagement::資金枠);
 			街Lv.SetUI(LManagement::街Lv枠);
 
-			for (int i = 0; i < 10; i++)
-			{
-				Lvグループ[i].SetUI(LManagement::街グループ枠, "" ,  &Design::No1, i);
-			}
-
 			for (int i = 0; i < Management::data.size(); i++)
 			{
-				投資案[i].SetUI(LManagement::投資案枠, i, &Lvグループ[0]);
-				投資案[i].参照戦術 = &Management::data[i];
+				投資案[i].SetUI(LManagement::プラン枠, i );
+				投資案[i].manage = &Management::data[i];
 			}
 
 			//●登録
 
-			AddItem(資金);
-			AddItem(街Lv);
-			AddItem(Lvグループ,10);
+			AddItem(資金,true);
+			AddItem(街Lv,true);
 			AddItem(投資案, Management::data.size());
 
 			Update();
@@ -149,6 +145,8 @@ namespace SDX_ADE
 		void Update()
 		{
 			SetPos(LManagement::ウィンドウ, false, true, false);
+			固定縦 = 100;
+			over戦術 = nullptr;
 		}
 	};
 }

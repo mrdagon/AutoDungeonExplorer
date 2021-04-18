@@ -110,7 +110,7 @@ namespace SDX_ADE
 
 			if (達成度 >= 条件数値)
 			{
-				EventLog::Add(0, Game::日付, LogType::重要 );
+				//EventLog::Add(0, Game::日付, LogType::重要 );
 				return true;
 			}
 
