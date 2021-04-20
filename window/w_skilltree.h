@@ -49,210 +49,63 @@ namespace SDX_ADE
 			}
 		};
 
-		class GUI_スキルポイント : public GUI_Object
+		class UI装備スキルコンボアイテム : public UIObject
 		{
 		public:
-			W_Skilltree* 親;
-			void Draw派生(double px, double py)
+			void Draw派生() override
 			{
-				auto it = 親->ギルメン;
+				DrawUI(UIType::凸ボタン);
 
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				MFont::MAlias.DrawBold({ px + Lp(46) ,py + Lp(47) }, Color::White, Color::Black, { "SkillPoint " , it->スキルポイント }, false);
+			}
+
+			void Click() override
+			{
+
 			}
 		};
 
-		class GUI_スキル枠 : public GUI_Object
+		class UI装備スキルコンボボックス : public UIObject
 		{
 		public:
-			bool isアクティブ枠;//fならパッシブ
+			std::vector<UI装備スキルコンボアイテム> item;
 
-			void Draw派生(double px, double py)
+			void Init()
 			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 12);
-				MFont::SAlias.DrawBold({ px + Lp(48) ,py + Lp(49) }, Color::White, Color::Black, (isアクティブ枠) ? ("ActiveSkill") : ("PassiveSkill"), false);
-			}
-		};
+				auto* it = W_Skilltree::ギルメン;
+				item.clear();
+				item.resize(it->職業->習得Aスキル.size());
 
-		class GUI_NowAスキル : public GUI_Object
-		{
-		public:
-			W_Skilltree* 親;
-			int id;
-
-			void Draw派生(double px, double py)
-			{
-				auto it = 親->ギルメン->Aスキル[id];
-
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 0,0);
-				//スキルアイコン
-				MSystem::DrawSkill(it->image, { px + Lp(64) , py + Lp(65) }, Color(200, 64, 64));
-				//習得に必要なポイントorレベル
-				MFont::SAlias.DrawBold({ px + Lp(66) ,py + Lp(67) }, Color::White, Color::Black, {"Slot ",id+1}, true);
-			}
-
-			void Drop(double px, double py)
-			{
-				//if (W_Drag::Aスキル == nullptr) { return; }
-				
-				for (int a = 0; a < 4; a++)
+				for (int i = 0; i < item.size(); i++)
 				{
-					//if (親->ギルメン->Aスキル[a] == W_Drag::Aスキル)
-					//{
-					//	親->ギルメン->Aスキル[a] = 親->ギルメン->Aスキル[id];
-					//	親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
-					//	return;
-					//}
+					item[i].SetUI(LSkill::スキルコンボアイテム, i , this);
 				}
 
-				//親->ギルメン->Aスキル[id] = W_Drag::Aスキル;
 			}
 
-			void Info派生(Point 座標) override
+			void Draw派生() override
 			{
-				InfoASkillSub(親->ギルメン->Aスキル[id], 座標, true);
-			}
-		};
-
-		class GUI_Aスキル : public GUI_Object
-		{
-		public:
-			W_Skilltree* 親;
-			int id;
-
-			void Draw派生(double px, double py)
-			{
-				auto it = 親->ギルメン->職業->習得Aスキル[id];
-				bool is習得 = true;
-				int 凹み = 0;
-
-				if (it == nullptr) { return; }
-
-				if (!is習得) {
-					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
-				} else {
-					MSystem::DrawWindow({ px ,py }, (int)位置.GetW(), (int)位置.GetH(), 0, 凹み);
-				}
-
-				//スキルアイコン
-				MSystem::DrawSkill( it->image , { px + Lp(50),py + Lp(51) }, (is習得) ? Color(200, 64, 64) : Color::Gray);
-				//習得に必要なポイントorレベル
-				if (!is習得) { MFont::SAlias.DrawBold({ px + Lp(52) ,py + Lp(53) }, Color::White, Color::Black, { "Lv" , 1 }, true); }
-			}
-
-			void Click(double px, double py)
-			{
-				auto it = 親->ギルメン->職業->習得Aスキル[id];
-
-				//習得済みなら掴む
-				//W_Drag::Aスキル = it;
-				return;
+				DrawUI(UIType::平ボタン);
+				this->layout->h = layout->並べy + item[0].layout->並べy * item.size();
 
 
-				//未習得でポイント足りてるなら仮習得
-				//if (親->ギルメン->スキルポイント < it->必要SP) { return; }
-				//親->Aスキル仮習得ID = (親->Aスキル仮習得ID == id) ? (-1) : (id);
-				//親->Pスキル仮習得ID =-1;
-			}
-
-			void Info派生(Point 座標) override
-			{
-				InfoASkillSub( 親->ギルメン->職業->習得Aスキル[id],座標,true);
-			}
-		};
-
-		class GUI_Pスキル : public GUI_Object
-		{
-		public:
-			W_Skilltree* 親;
-			int id;
-
-			void Draw派生(double px, double py)
-			{
-				auto it = 親->ギルメン->職業->習得Pスキル[id];
-				bool is習得 = true;
-				int 凹み = 0;
-
-				if (it == nullptr) { return; }
-
-				if (!is習得) {
-				}
-
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 2 - 凹み * 2, 凹み);
-				//スキルアイコン
-				MSystem::DrawSkill( it->image, { px + Lp(54) ,py + Lp(55) }, (is習得) ? Color(0, 141, 255) : Color::Gray, "");
-			}
-
-			void Click(double px, double py)
-			{
-				//未習得でポイント足りてるなら仮習得
-				auto it = 親->ギルメン->職業->習得Pスキル[id];
-
-				if (it == nullptr) { return; }
-
-			}
-
-			void Info派生(Point 座標) override
-			{
-				//親->ギルメン->isPスキル習得[id]
-				auto it = 親->ギルメン->職業->習得Pスキル[id];
-				if (it == nullptr) { return; }
-
-				InfoPSkillSub(it,座標,true,true);
-			}
-		};
-
-		class GUI_再教育 : public GUI_Object
-		{
-		public:
-			W_Skilltree* 親;
-			W_Skilltree* base;
-			W_Popup 確認ウィンドウ;
-
-			void Draw派生(double px, double py)
-			{
-				MSystem::DrawWindow({ px,py }, (int)位置.GetW(), (int)位置.GetH(), 1, 1);
-
-				MFont::MAlias.DrawBold({ px + Lp(58) ,py + Lp(59) }, Color::White, Color::Black, "再教育", false);
-			}
-
-			void Click(double px, double py)
-			{
-				//ポップアップでスキルリセットするか確認してするなら
-				確認ウィンドウ.is表示 = true;
-				確認ウィンドウ.Init();
-				確認ウィンドウ.文章.テキスト = "スキルをリセットする？\n(レベルが５下がる)";
-
-				int res = 確認ウィンドウ.OpenPopup();
-
-				//はい ならレベル下げてスキルリセット
-				if (res == 1)
+				for (int i = 0; i < item.size(); i++)
 				{
-					親->ギルメン->スキルリセット(5);
+					item[i].Draw();
+				}
+			}
+
+			virtual bool Check派生(double px, double py) override
+			{
+				for (int i = 0; i < item.size(); i++)
+				{
+					if (item[i].CheckInput(px, py) == true) { return true; }
 				}
 
-			}
-		};
-
-		class GUI_習得 : public GUI_Object
-		{
-		public:
-			W_Skilltree* 親;
-			W_Skilltree* base;
-
-			void Draw派生(double px, double py)
-			{
-				std::string str = "";
-
-
-
-
-				MFont::MAlias.DrawBold({ px + Lp(63) ,py + Lp(59) }, Color::White, Color::Black, str, false);
+				return false;
 			}
 
-			void Click(double px, double py)
+			void Click() override
 			{
-				//選択中のスキルを習得
 
 			}
 		};
@@ -262,7 +115,34 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
+				auto* it = W_Skilltree::ギルメン;
+				auto& LA = LData(LSkill::探索者ドット);
+				auto& LB = LData(LSkill::探索者立ち絵);
+				auto& LC = LData(LSkill::探索者名前);
+				auto& LD = LData(LSkill::探索者Lv);
+				auto& LE = LData(LSkill::探索者スキルP);
+				auto& LF = LData(LSkill::探索者職業名);
+
 				DrawUI(UIType::グループ明);
+
+				//キャラドット絵
+				it->image[0][1]->DrawRotate(GetPos(LA) , 2 , 0);
+
+				//キャラ立ち絵
+				it->職業->立ち絵image->DrawRotate(GetPos(LB),2,0);
+
+				//名前
+				MFont::M->DrawRotate(GetPos(LC), 1, 0, Design::暗字, { it->名前 });
+
+				//職業名
+				MFont::M->DrawRotate(GetPos(LF),1,0, Design::暗字, { it->職業->名前 } , false);
+
+				//Lv
+				MFont::M->Draw(GetPos(LD), Design::暗字, { "Lv" , it->Lv } , true);
+
+				//残りスキルポイント or 予約ポイント
+				MFont::M->Draw( GetPos(LE) , Design::暗字, { it->スキルポイント , " スキルポイント"  });
+
 			}
 
 			void Click() override
@@ -274,9 +154,29 @@ namespace SDX_ADE
 		class UI装備Aスキル : public UIObject
 		{
 		public:
+
 			void Draw派生() override
 			{
+				auto* it = W_Skilltree::ギルメン->装備Aスキル通常[lineID];
+				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
+				auto& LA = LData(LSkill::装備スキルLv);
+				auto& LB = LData(LSkill::装備スキルスロット);
+
+				//Lv Maxで押せなくする
 				DrawUI(UIType::平ボタン);
+				it->image->DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
+
+				switch (lineID)
+				{
+					case 0:MFont::M->Draw(GetPos(LB), Design::暗字, { "1st" }); break;
+					case 1:MFont::M->Draw(GetPos(LB), Design::暗字, { "2nd" }); break;
+					case 2:MFont::M->Draw(GetPos(LB), Design::暗字, { "3rd" }); break;
+					case 3:MFont::M->Draw(GetPos(LB), Design::暗字, { "4th" }); break;
+				}
+
+				
+
+				MFont::M->Draw(GetPos(LA), Design::暗字, { "Lv " , Lv },true);
 			}
 
 			void Click() override
@@ -290,7 +190,11 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
+				auto* it = &PassiveSkill::data[W_Skilltree::ギルメン->スキル習得予約[lineID]];
+				auto& LA = LData(LSkill::スキルLv);
+
 				DrawUI(UIType::平ボタン);
+				it->image->DrawRotate(GetCenterPos(), 2, 0);
 			}
 
 			void Click() override
@@ -305,6 +209,10 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				DrawUI(UIType::平ボタン);
+				auto& LB = LData(LSkill::キースキル名前);
+
+				MIcon::UI[IconType::ヘルプ].DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
+				MFont::M->DrawRotate(GetCenterPos(LB),1,0, Design::暗字, { "キースキル未実装" });
 			}
 
 			void Click() override
@@ -318,7 +226,16 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
+				auto* it = W_Skilltree::ギルメン->職業->習得Pスキル[lineID];
+				int Lv = W_Skilltree::ギルメン->習得PスキルLv[it->ID];
+				auto& LA = LData(LSkill::スキルLv);
+
 				DrawUI(UIType::平ボタン);
+
+				it->image->DrawRotate(GetCenterPos(), 2, 0);
+
+				//予約は+表示、予約分は文字色を変える
+				MFont::M->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
 			}
 
 			void Click() override
@@ -332,7 +249,16 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
+				auto* it = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
+				auto& LA = LData(LSkill::スキルLv);
+
 				DrawUI(UIType::平ボタン);
+
+				it->image->DrawRotate(GetCenterPos(), 2, 0);
+
+				//予約は+表示、予約分は文字色を変える
+				MFont::S->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
 			}
 
 			void Click() override
@@ -365,6 +291,9 @@ namespace SDX_ADE
 		//忘却 - スキルポイントのリセット
 		//残りスキルポイントと予約状態の表示
 
+		UI装備スキルコンボボックス スキルコンボボックス;
+		int 選択中スキルスロット = 0;
+
 		UI探索者 探索者;
 		UI装備Aスキル 装備Aスキル[CV::最大Aスキル数];
 		UI予約スキル 予約スキル[CV::最大スキル予約数];
@@ -381,7 +310,7 @@ namespace SDX_ADE
 		UIButton 確定;
 		UIButton キャンセル;
 
-		Explorer* ギルメン;
+		inline static Explorer* ギルメン;
 
 		void SetMember(Explorer* ギルメン)
 		{
@@ -399,7 +328,7 @@ namespace SDX_ADE
 				装備Aスキル[i].SetUI(LSkill::装備Aスキル,i);
 			}
 			予約スキル枠.SetUI(LSkill::予約スキル枠,"習得予定");
-			装備スキル枠.SetUI(LSkill::装備スキル枠,"戦闘スキル");
+			装備スキル枠.SetUI(LSkill::装備スキル枠,"スキル使用順");
 			習得スキル枠.SetUI(LSkill::習得スキル枠,"習得スキル");
 
 			for (int i = 0; i < CV::最大キースキル数; i++)
@@ -419,12 +348,24 @@ namespace SDX_ADE
 				予約スキル[i].SetUI(LSkill::予約スキル, i);
 			}
 
-			リセット.SetUI(LSkill::リセットボタン , "リセット");
+			リセット.SetUI(LSkill::リセットボタン , "再訓練");
 			確定.SetUI(LSkill::確定ボタン , "確定");
-			キャンセル.SetUI(LSkill::キャンセルボタン , "キャンセル");
+			キャンセル.SetUI(LSkill::確定ボタン, "キャンセル" , 1);
 
+			スキルコンボボックス.SetUI(LSkill::スキルコンボボックス);
+			スキルコンボボックス.Init();
+
+			リセット.clickEvent = [&](){};
+			確定.clickEvent = [&](){};
+			キャンセル.clickEvent = [&](){};
 
 			//●登録
+			AddItem(スキルコンボボックス);
+
+			AddItem(リセット);
+			AddItem(確定);
+			AddItem(キャンセル);
+
 			AddItem(探索者);
 
 			AddItem(装備Aスキル , CV::最大Aスキル数);
@@ -437,10 +378,6 @@ namespace SDX_ADE
 			AddItem(予約スキル枠);
 			AddItem(装備スキル枠);
 			AddItem(習得スキル枠);
-
-			AddItem(リセット);
-			AddItem(確定);
-			AddItem(キャンセル);
 
 			Update();
 		}

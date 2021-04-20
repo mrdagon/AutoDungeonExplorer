@@ -184,6 +184,8 @@ namespace SDX_ADE
 			for (int i = 0; i < 100; i++)
 			{
 				投資[i].Load("file/icon/meisei.png");
+				Aスキル[i].Load("file/icon/meisei.png");
+				Pスキル[i].Load("file/icon/meisei.png");
 			}
 
 			//探索用
