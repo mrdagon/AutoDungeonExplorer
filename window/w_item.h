@@ -27,11 +27,11 @@ namespace SDX_ADE
 
 				//所持数
 				auto& itA = Layout::Data(LItem::アイテム数);
-				GetFont()->DrawBold({ GetX() + itA.x ,GetY() + itA.y }, Design::明字 , Design::暗字, { "x" , Guild::P->アクセサリー所持数[itemID] },true);
+				GetFont()->Draw({ GetX() + itA.x ,GetY() + itA.y }, Design::暗字, { "x" , Guild::P->アクセサリー所持数[itemID] },true);
 
 				auto& itB = Layout::Data(LItem::アイテムレア度);
 				//レアリティ
-				MFont::S->DrawBold({ GetX() + itB.x ,GetY() + itB.y}, Design::明字, Design::暗字, { "☆" , Item::accessory_data[itemID].ランク }, false);
+				MFont::S->Draw({ GetX() + itB.x ,GetY() + itB.y}, Design::暗字, { "☆" , Item::accessory_data[itemID].ランク }, false);
 			}
 
 			void Click() override

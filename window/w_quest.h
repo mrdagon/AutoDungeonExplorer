@@ -30,13 +30,13 @@ namespace SDX_ADE
 				quest->依頼人image->DrawRotate(GetPos( LA ), 2, 0);
 
 				//クリア済み、New表示
-				MFont::S->DrawBold(GetPos(LD), Design::明字, Design::暗字, { "Clear" });
+				MFont::S->Draw(GetPos(LD), Design::暗字, { "Clear" });
 
 				//クエスト名
-				MFont::M->DrawBold(GetPos( LB ), Design::明字, Design::暗字, {quest->名前});
+				MFont::L->Draw(GetPos( LB ), Design::暗字, {quest->名前});
 
 				//対象フロア(無い場合は表示しない)
-				MFont::M->DrawBold(GetPos(LC), Design::明字, Design::暗字, { "10F" } , true);
+				MFont::L->Draw(GetPos(LC), Design::暗字, { "10F" } , true);
 			}
 		};
 

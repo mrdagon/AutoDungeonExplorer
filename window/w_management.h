@@ -21,7 +21,7 @@ namespace SDX_ADE
 				Design::No1->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
 
 				//街 Lv 現在値のみ
-				MFont::M->DrawBold({ GetX() + layout->並べx , GetY() + layout->並べy }, Design::明字, Design::暗字, { "街 Lv ",Guild::P->街Lv } , true );
+				MFont::L->Draw({ GetX() + layout->並べx , GetY() + layout->並べy }, Design::暗字, { "街 Lv ",Guild::P->街Lv } , true );
 			}
 
 			void Click() override
@@ -46,12 +46,12 @@ namespace SDX_ADE
 				if (over戦術 != nullptr)
 				{
 					//現在資金
-					MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { 1000 , "G"}, true);
+					MFont::L->Draw(GetPos(LA), Design::暗字, { 1000 , "G"}, true);
 				} else {
 					//現在資金
-					MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { 1000 , "G >"}, true);
+					MFont::L->Draw(GetPos(LA), Design::暗字, { 1000 , "G >"}, true);
 					//消費資金
-					MFont::M->DrawBold(GetPos(LB), Design::Blue.明字, Design::暗字, { -1000 , "G" }, true);
+					MFont::L->Draw(GetPos(LB), Design::暗字, { -1000 , "G" }, true);
 				}
 
 			}
@@ -81,11 +81,11 @@ namespace SDX_ADE
 
 				//投資名 Lv
 				Design::No1->Draw(UIType::丸フレーム, GetX() + LB.x, GetY() + LB.y, LB.w, LB.h);
-				MFont::M->DrawBold({ GetX() + LB.並べx , GetY() + LB.並べy }, Design::明字, Design::暗字, { manage->名前 });
-				MFont::M->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Design::明字, Design::暗字, { "Lv" , manage->投資Lv });
+				MFont::L->Draw({ GetX() + LB.並べx , GetY() + LB.並べy }, Design::暗字, { manage->名前 });
+				MFont::L->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv" , manage->投資Lv });
 				//費用
 				Design::No1->Draw(UIType::丸フレーム, GetX() + LC.x, GetY() + LC.y, LC.w, LC.h);
-				MFont::M->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::明字, Design::暗字, { manage->Get費用() , "G" } , true);
+				MFont::L->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { manage->Get費用() , "G" } , true);
 
 				//投資アイコン
 				manage->image->DrawRotate(GetPos(LD), 2, 0);

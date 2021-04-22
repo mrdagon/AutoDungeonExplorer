@@ -134,7 +134,7 @@ namespace SDX_ADE
 			de->Draw(UIType::タイトル, (int)座標.x, (int)座標.y, 横幅, タイトル枠高さ);
 
 			//ウィンドウ名
-			MFont::M->Draw({ (int)座標.x + 34,(int)座標.y + 1 }, Color::White, { TX::Window_名前[種類] });
+			MFont::L->Draw({ (int)座標.x + 34,(int)座標.y + 1 }, Color::White, { TX::Window_名前[種類] });
 
 			//ウィンドウアイコン
 			de->Draw(UIType::グループ明, (int)座標.x + 6, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
@@ -396,7 +396,7 @@ namespace SDX_ADE
 		bool ObjectInput()
 		{
 			//配列の前からチェック
-			if (Input::mouse.y - 座標.y - タイトル枠高さ <= 固定縦 )
+			if (Input::mouse.y / Config::解像度X倍 - 座標.y - タイトル枠高さ <= 固定縦 )
 			{
 				for (auto& it : 固定item)
 				{
@@ -466,11 +466,18 @@ namespace SDX_ADE
 				img.DrawPartExtend({ 0,0 , Config::解像度W , Config::解像度H }, { 0,0 , Window::GetWidth() , Window::GetHeight() });
 
 				Update();
-				Draw();
 				//ポップアップではドラッグ＆ドロップ無し
 				//ウィンドウの拡大縮小ドラッグ＆ドロップ無し
+				UIObject::now_help = nullptr;
 				共通Input();
 				ObjectInput();
+				Draw();
+
+
+				if (UIObject::now_help != nullptr && Game::isヘルプ == true)
+				{
+					UIObject::now_help->DrawHelp();
+				}
 
 				if (CV::isレイアウト)
 				{

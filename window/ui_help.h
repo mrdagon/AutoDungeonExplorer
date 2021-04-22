@@ -2,6 +2,7 @@
 //[License]GNU Affero General Public License, version 3
 //[Contact]http://tacoika.blog87.fc2.com/
 #pragma once
+#include <iostream>
 
 namespace SDX_ADE
 {
@@ -10,7 +11,9 @@ namespace SDX_ADE
 	class UIHelp
 	{
 	private:
-		UIHelp();
+		UIHelp()
+		{}
+
 		//装備、探検者、モンスターで使い回す
 		static void ASkillChild(ActiveSkill* Aスキル)
 		{}
@@ -19,24 +22,44 @@ namespace SDX_ADE
 		{}
 
 
-		static void DrawFrame(int x , int y , int w , int h)
+		static Point DrawFrame( int w , int h)
 		{
-			//マウス位置とウィンドウサイズから、上下左右どちらの方向にウィンドウ出すか計算
+			Point pt = Input::mouse.GetPoint();
 
-			//カメラ座標を計算
+			//マウス位置とウィンドウサイズから、上下左右どちらの方向にウィンドウ出すか計算
+			if (pt.x + w > Config::解像度W)
+			{
+				pt.x -= w;
+			}
+			if (pt.y + h > Config::解像度H)
+			{
+				pt.y -= h;
+			}
+
+			Design::No1->Draw(UIType::明ボタン, pt.x, pt.y, w, h);
+
+			return pt;
 		}
 
 		template<class TLayout>
-		static void DrawFrame(TLayout type)
+		static Point DrawFrame(TLayout type)
 		{
 			auto& it = Layout::Data(type);
-			DrawFrame( it.x , it.y , it.w , it.h );
+			return DrawFrame(  it.w , it.h );
 		}
 
 	public:
 		//テキストのみのヘルプ
-		static void Text(std::string& テキスト)
+		static void Text(std::string* テキスト)
 		{
+			int n = std::count(テキスト->begin(), テキスト->end(), '\n') + 1;
+
+			auto it = DrawFrame(MFont::L->GetDrawStringWidth(*テキスト) + 8, n * MFont::L->GetHeight() + 8 );
+
+			it.x += 4;
+			it.y += 4;
+
+			MFont::L->Draw( it , Design::暗字, *テキスト);
 		}
 
 		//●特殊なヘルプ

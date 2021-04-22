@@ -56,7 +56,7 @@ namespace SDX_ADE
 				//枠の描画
 				DrawUI(UIType::グループ明);
 				//ランク
-				MFont::M->DrawRotate({ GetCenterPos() },1,0, Design::暗字, { "★" , rank }, true);
+				MFont::L->DrawRotate({ GetCenterPos() },1,0, Design::暗字, { "★" , rank }, true);
 			}
 
 			void Over() override

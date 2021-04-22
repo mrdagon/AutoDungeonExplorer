@@ -71,9 +71,9 @@ namespace SDX_ADE
 
 				MIcon::UI[アイコン].DrawRotate({ GetX() + posA.x , GetY() + posA.y },2,0);//アイコン表示削除
 
-				MFont::M->DrawRotate({ GetX() + posB.x , GetY() + posB.y } , 1 , 0, Color::Black, 名前, false);
+				MFont::L->DrawRotate({ GetX() + posB.x , GetY() + posB.y } , 1 , 0, Color::Black, 名前, false);
 
-				MFont::M->DrawRotate({ GetX() + posC.x , GetY() + posC.y } , 1 , 0 , Color::Black, { 設定値 }, true);
+				MFont::L->DrawRotate({ GetX() + posC.x , GetY() + posC.y } , 1 , 0 , Color::Black, { 設定値 }, true);
 
 				増加ボタン.Draw();
 				減少ボタン.Draw();

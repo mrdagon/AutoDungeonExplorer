@@ -122,7 +122,7 @@ namespace SDX_ADE
 				//職業ちびどっと
 				job->ちびimage[0][1]->DrawRotate({ GetX() + posA.x , GetY() + posA.y }, 2, 0);
 				//職業名
-				MFont::M->DrawRotate({ GetCenterX() + posB.x ,GetCenterY() + posB.y } , 1, 0 ,Color::Black , { job->名前 });
+				MFont::L->DrawRotate({ GetCenterX() + posB.x ,GetCenterY() + posB.y } , 1, 0 ,Color::Black , { job->名前 });
 			}
 
 			void Click() override

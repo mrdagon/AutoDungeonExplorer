@@ -107,7 +107,7 @@ namespace SDX_ADE
 				{
 					DrawUI(UIType::グループ暗);
 					//未発見
-					MFont::M->DrawBoldRotate( GetCenterPos() , 1, 0, Design::明字, Design::暗字, { "未発見" }, false);
+					MFont::L->DrawBoldRotate( GetCenterPos() , 1, 0, Design::明字, Design::暗字, { "未発見" }, false);
 					return;
 				}
 
@@ -116,11 +116,11 @@ namespace SDX_ADE
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
-				MFont::S->DrawBold({ GetX() + LB.w , GetY() + LB.h }, Color::White, Color::Black, { dungeon->ID + 1 , "F" }, true);
+				MFont::S->Draw({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
 
 				//探索率
 				Design::No1->DrawGauge(LC.x, LC.y, LC.w, LC.h, dungeon->探索率 + 0.5);
-				MFont::S->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Color::White, Color::Black, { (int)(dungeon->探索率 * 100) , "%" }, true);
+				MFont::S->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { (int)(dungeon->探索率 * 100) , "%" }, true);
 
 				//階段位置、ボス位置マーク
 

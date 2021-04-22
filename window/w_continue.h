@@ -22,7 +22,7 @@ namespace SDX_ADE
 			void Draw派生()
 			{
 				DrawUI(UIType::グループ中 , &Design::Brown );
-				MFont::M->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0, Color::Red, "X");
+				MFont::L->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0, Color::Red, "X");
 			}
 
 

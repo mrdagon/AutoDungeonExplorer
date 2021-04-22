@@ -22,11 +22,13 @@ namespace SDX_ADE
 		}
 
 	public:
-		inline static UIHelp* now_help = nullptr;
+		static UIObject* now_help;
+
+		std::string* ヘルプテキスト;
 
 		Layout* layout;
 		UIObject* 親 = nullptr;
-		UIHelp* help = nullptr;
+
 		bool is表示 = true;
 		bool is表示オンリー = false;
 		bool isOver = false;
@@ -194,14 +196,6 @@ namespace SDX_ADE
 			UIデザイン->Draw(UI枠種, GetX(), GetY(), GetW(), GetH());
 		}
 
-		void DrawInfo(int x , int y)
-		{
-			if (help != nullptr)
-			{
-
-			}
-		}
-
 		//クリック、ドロップ、マウスオーバー判定を処理 //クリック or ドロップでtrue
 		bool CheckInput(double px, double py)
 		{
@@ -224,6 +218,7 @@ namespace SDX_ADE
 			{
 				isOver = true;
 				mousePos = ( mp.x < pt.x + GetW() / 2) ? 1 : 2;//左右のどちら側をクリックしたか
+				now_help = this;
 
 				if (Input::mouse.Left.on == true)
 				{
@@ -236,7 +231,6 @@ namespace SDX_ADE
 				}
 
 				//マウスオーバー中の物のヘルプ
-				now_help = help;
 				Over();
 			}
 
@@ -261,6 +255,15 @@ namespace SDX_ADE
 		{
 			overEvent();
 		}
+
+		virtual void DrawHelp()
+		{
+			//通常はセットしてあるテキストヘルプ
+			std::string test = "てすと\nてすと２\nてすと３";
+			UIHelp::Text( &test );
+
+		}
 	};
 
+	UIObject* UIObject::now_help;
 }

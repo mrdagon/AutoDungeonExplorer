@@ -154,7 +154,7 @@ namespace SDX_ADE
 			//作者名、著作権表記
 			static Layout& ライセンス = Layout::Data(LTitle::ライセンス);
 
-			MFont::M->DrawBoldRotate({ Config::解像度W / 2 , Config::解像度H * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
+			MFont::L->DrawBoldRotate({ Config::解像度W / 2 , Config::解像度H * ライセンス.y / 100 } , 1 , 0 , Color::White, Color::Black, "(C) 2021/3 (´･@･)だごん", false);
 
 			//デバッグ用
 			if (CV::isレイアウト)

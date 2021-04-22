@@ -132,16 +132,16 @@ namespace SDX_ADE
 				it->職業->立ち絵image->DrawRotate(GetPos(LB),2,0);
 
 				//名前
-				MFont::M->DrawRotate(GetPos(LC), 1, 0, Design::暗字, { it->名前 });
+				MFont::L->DrawRotate(GetPos(LC), 1, 0, Design::暗字, { it->名前 });
 
 				//職業名
-				MFont::M->DrawRotate(GetPos(LF),1,0, Design::暗字, { it->職業->名前 } , false);
+				MFont::L->DrawRotate(GetPos(LF),1,0, Design::暗字, { it->職業->名前 } , false);
 
 				//Lv
-				MFont::M->Draw(GetPos(LD), Design::暗字, { "Lv" , it->Lv } , true);
+				MFont::L->Draw(GetPos(LD), Design::暗字, { "Lv" , it->Lv } , true);
 
 				//残りスキルポイント or 予約ポイント
-				MFont::M->Draw( GetPos(LE) , Design::暗字, { it->スキルポイント , " スキルポイント"  });
+				MFont::L->Draw( GetPos(LE) , Design::暗字, { it->スキルポイント , " スキルポイント"  });
 
 			}
 
@@ -168,15 +168,15 @@ namespace SDX_ADE
 
 				switch (lineID)
 				{
-					case 0:MFont::M->Draw(GetPos(LB), Design::暗字, { "1st" }); break;
-					case 1:MFont::M->Draw(GetPos(LB), Design::暗字, { "2nd" }); break;
-					case 2:MFont::M->Draw(GetPos(LB), Design::暗字, { "3rd" }); break;
-					case 3:MFont::M->Draw(GetPos(LB), Design::暗字, { "4th" }); break;
+					case 0:MFont::L->Draw(GetPos(LB), Design::暗字, { "1st" }); break;
+					case 1:MFont::L->Draw(GetPos(LB), Design::暗字, { "2nd" }); break;
+					case 2:MFont::L->Draw(GetPos(LB), Design::暗字, { "3rd" }); break;
+					case 3:MFont::L->Draw(GetPos(LB), Design::暗字, { "4th" }); break;
 				}
 
 				
 
-				MFont::M->Draw(GetPos(LA), Design::暗字, { "Lv " , Lv },true);
+				MFont::L->Draw(GetPos(LA), Design::暗字, { "Lv " , Lv },true);
 			}
 
 			void Click() override
@@ -212,7 +212,7 @@ namespace SDX_ADE
 				auto& LB = LData(LSkill::キースキル名前);
 
 				MIcon::UI[IconType::ヘルプ].DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
-				MFont::M->DrawRotate(GetCenterPos(LB),1,0, Design::暗字, { "キースキル未実装" });
+				MFont::L->DrawRotate(GetCenterPos(LB),1,0, Design::暗字, { "キースキル未実装" });
 			}
 
 			void Click() override
@@ -235,7 +235,7 @@ namespace SDX_ADE
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
 
 				//予約は+表示、予約分は文字色を変える
-				MFont::M->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
+				MFont::L->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
 			}
 
 			void Click() override

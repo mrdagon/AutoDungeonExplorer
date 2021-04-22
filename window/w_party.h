@@ -44,10 +44,10 @@ namespace SDX_ADE
 
 				//探索先アイコン、レベル
 				dun->image->Draw({ px + Lp(12),py + Lp(13) });
-				MFont::SAlias.DrawBold({ px + Lp(14) ,py + Lp(15) }, Color::White, Color::Black, { "Lv ", dun->雑魚Lv });
+				MFont::SAlias.Draw({ px + Lp(14) ,py + Lp(15) }, Design::暗字, { "Lv ", dun->雑魚Lv });
 				//探索度ゲージと探索率
 				MSystem::DrawBar({ px + Lp(18) , py + Lp(19) }, Lp(20), Lp(21), dun->探索率, 1 , Color::Blue, Color::White, Color::White, true);				
-				MFont::SAlias.DrawBold({ px + Lp(16) ,py + Lp(17) }, Color::White, Color::Black, { (int)(dun->探索率 * 100) , "%" }, true);				
+				MFont::SAlias.Draw({ px + Lp(16) ,py + Lp(17) }, Design::暗字, { (int)(dun->探索率 * 100) , "%" }, true);
 				//ボス状態
 				MIcon::UI[IconType::ボス].DrawRotate({ px + Lp(22),py + Lp(23) }, 1, 0);
 
@@ -68,12 +68,9 @@ namespace SDX_ADE
 				MFont::SAlias.DrawBold({ px + Lp(22) + 50 ,py + Lp(23) - 9 }, Color::White, Color::Black, sボス状態, true);
 				//地図状態
 				MIcon::UI[IconType::地図].DrawRotate({ px + Lp(22),py + Lp(24) }, 1, 0);
-				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(24) - 9 }, Color::White, Color::Black, { dun->発見地図 , " / " , dun->最大地図}, true);
 				//財宝状態
 				MIcon::UI[IconType::宝箱].DrawRotate({ px + Lp(22),py + Lp(25) }, 1, 0);
-				//MFont::BSSize.DrawBold({ px + Lp(22) + 50 ,py + Lp(25) - 9 }, Color::White, Color::Black, { dun->発見財宝 , " / " , dun->最大財宝 }, true);
-
-
+				
 				//探索指示-冒険中は三角を非表示
 				if (所属->探索状態 == ExplorerType::編成中 || 所属->探索状態 == ExplorerType::リザルト中)
 				{
@@ -779,7 +776,7 @@ namespace SDX_ADE
 				auto& LA = LData(LParty::探索者スキルボタン);
 				//スキル
 				//ポイント余りやらの状況
-				GetFont()->DrawBold({ GetX() + LA.x ,GetY() + LA.y }, Design::明字, Design::暗字, {"スキル\n10 P"});
+				GetFont()->Draw({ GetX() + LA.x ,GetY() + LA.y }, Design::暗字, {"スキル\n10 P"});
 			}
 
 			void Click() override
@@ -847,7 +844,7 @@ namespace SDX_ADE
 				it->image[0][1]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
 
 				//Lv
-				GetFont()->DrawBold({ GetX() + LB.x , GetY() + LB.y }, Design::明字 , Design::暗字 , { "Lv " , it->Lv });
+				GetFont()->Draw({ GetX() + LB.x , GetY() + LB.y }, Design::暗字 , { "Lv " , it->Lv });
 
 				//経験値バー
 				Design::No1->DrawGauge(GetX() + LC.x, GetY() + LC.y,LC.w,LC.h, it->Get経験値率() );
@@ -909,11 +906,11 @@ namespace SDX_ADE
 				it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
 
 				//階層
-				MFont::S->DrawBoldRotate(GetPos(LD), 1, 0, Design::明字, Design::暗字, { it->ID + 1 , "F" });
+				MFont::S->DrawRotate(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
 
 				//三角表示
-				Font* fr = mousePos == 2 ? MFont::M : MFont::S;
-				Font* fl = mousePos == 1 ? MFont::M : MFont::S;
+				Font* fr = mousePos == 2 ? MFont::L : MFont::S;
+				Font* fl = mousePos == 1 ? MFont::L : MFont::S;
 
 				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h } , 1 , 0, Design::暗字, { "<" });
 				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
@@ -942,12 +939,12 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				DrawUI(UIType::平ボタン);
-				GetFont()->DrawBoldRotate( GetCenterPos(), 1, 0, Design::明字, Design::暗字, { "おまかせ" });
+				GetFont()->DrawRotate( GetCenterPos(), 1, 0, Design::暗字, { "おまかせ" });
 
 				auto& LA = LData(LParty::探索先変更三角);
 				//三角表示
-				Font* fr = mousePos == 2 ? MFont::M : MFont::S;
-				Font* fl = mousePos == 1 ? MFont::M : MFont::S;
+				Font* fr = mousePos == 2 ? MFont::L : MFont::S;
+				Font* fl = mousePos == 1 ? MFont::L : MFont::S;
 				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
 				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
 			}
@@ -988,14 +985,14 @@ namespace SDX_ADE
 
 				//探索度-ゲージと％の文字表示
 				Design::No1->DrawGauge(GetX() + LB.x , GetY() + LB.y , LB.w , LB.h , it->探索率 );
-				GetFont()->DrawBoldRotate({ GetX() + LB.並べx ,GetY() + LB.並べy }, 1, 0, Design::明字, Design::暗字, { int(it->探索率*100) , "%" });
+				GetFont()->DrawRotate({ GetX() + LB.並べx ,GetY() + LB.並べy }, 1, 0, Design::暗字, { int(it->探索率*100) , "%" });
 
 				//ボスフラグ
 				//存在しない、未発見、発見、討伐済みの４種
-				GetFont()->DrawBoldRotate( GetPos(LA) , 1, 0, Design::明字, Design::暗字, { it->isボス生存 , " ボス生存" });
+				GetFont()->DrawRotate( GetPos(LA) , 1, 0, Design::暗字, { it->isボス生存 , " ボス生存" });
 
 				//宝箱回収率
-				GetFont()->DrawBoldRotate( GetPos(LC), 1, 0, Design::明字, Design::暗字, { "財宝 "  , it->発見財宝数 , " / " , it->最大財宝数 });
+				GetFont()->DrawRotate( GetPos(LC), 1, 0, Design::暗字, { "財宝 "  , it->発見財宝数 , " / " , it->最大財宝数 });
 			}
 
 			void Click() override
@@ -1149,7 +1146,7 @@ namespace SDX_ADE
 				探検者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
 
 				//Lv
-				GetFont()->DrawBold({ GetCenterX() + lb.x , GetCenterY() + lb.y } , Design::明字, Design::暗字 , { "Lv " , 探検者->Lv });
+				GetFont()->Draw({ GetCenterX() + lb.x , GetCenterY() + lb.y } , Design::暗字 , { "Lv " , 探検者->Lv });
 			}
 
 			void Click() override

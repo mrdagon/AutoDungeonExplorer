@@ -160,7 +160,6 @@ namespace SDX_ADE
 			UIObject::now_help = nullptr;
 
 			toolBar.ObjectInput();
-
 			for (int a = (int)windows.size() - 1; a >= 0; a--)
 			{
 				if (windows[a]->Input() == true)
@@ -176,6 +175,7 @@ namespace SDX_ADE
 			}
 			W_Drag::Drop();
 
+			//F12キーでスクショ
 			if (Input::key.F12.on == true)
 			{
 				keybd_event(VK_LWIN, 0, 0, 0);
@@ -226,6 +226,7 @@ namespace SDX_ADE
 			MSystem::メインゲーム前景.DrawExtend({ x差分     ,y差分,幅,高 });
 			MSystem::メインゲーム前景.DrawExtend({ x差分 + 幅,y差分,幅,高 });
 
+			//ウィンドウを表示
 			for (auto& it : windows)
 			{
 				if (it->is表示 == false) { continue; };
@@ -235,11 +236,10 @@ namespace SDX_ADE
 
 			toolBar.Draw();
 
-			UIObject::now_help = nullptr;
-
+			//ポップアップヘルプ表示
 			if (UIObject::now_help != nullptr && Game::isヘルプ == true)
 			{
-				//UIObject::now_help->Draw();
+				UIObject::now_help->DrawHelp();
 			}
 
 			W_Drag::Draw();

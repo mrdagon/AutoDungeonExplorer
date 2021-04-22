@@ -576,6 +576,11 @@ namespace SDX
             return this->size;
         }
 
+        int GetHeight() const
+        {
+            return this->enterHeight;
+        }
+
         /** 描画時の幅を取得.*/
         int GetDrawStringWidth(const VariadicStream &幅を計算する文字列) const
         {

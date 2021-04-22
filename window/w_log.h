@@ -42,10 +42,10 @@ namespace SDX_ADE
 						break;
 					}
 					//日付
-					MFont::M->DrawBold({ LD.x,LD.y + y差分 }, Design::明字, Design::暗字, { it.日付 , "日" },true);
+					MFont::L->Draw({ LD.x,LD.y + y差分 }, Design::暗字, { it.日付 , "日" },true);
 
 					//文章
-					MFont::M->DrawBold({ LC.x,LC.y + y差分 }, Design::明字, Design::暗字, { it.テキスト });
+					MFont::L->Draw({ LC.x,LC.y + y差分 }, Design::暗字, { it.テキスト });
 					
 					y差分 += LA.並べy;
 				}
