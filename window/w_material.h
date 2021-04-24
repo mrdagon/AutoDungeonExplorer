@@ -42,6 +42,11 @@ namespace SDX_ADE
 
 			void Over() override
 			{}
+
+			void DrawHelp() override
+			{
+				UIHelp::Material(nullptr);
+			}
 		};
 
 		class UIRank : public UIObject
@@ -86,6 +91,7 @@ namespace SDX_ADE
 			}
 
 			//●登録
+			item.clear();
 			AddItem(素材, Material::data.size());
 			AddItem(ランク, CV::上限素材ランク);
 		}

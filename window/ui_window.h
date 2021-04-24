@@ -24,6 +24,7 @@ namespace SDX_ADE
 		std::vector<UIObject*> 固定item;//スクロールしないオブジェクト
 
 		bool is閉じるボタン = true;
+		bool isヘルプボタン = true;
 		bool is固定 = false;//大きさ変更と掴み移動可能フラグ
 
 		//状態
@@ -146,6 +147,13 @@ namespace SDX_ADE
 
 				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
+			}
+			//ヘルプボタン
+			if (isヘルプボタン == true)
+			{
+
+				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 55, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+				MIcon::UI[IconType::ヘルプ].DrawRotate({ 座標.x + 横幅 - 46 ,座標.y + 15 }, 1, 0);
 			}
 
 			//メイン部分描画
@@ -315,6 +323,17 @@ namespace SDX_ADE
 			//閉じる判定//
 			if (is閉じるボタン == true &&
 				abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2)) < タイトル枠高さ / 2 - 1 &&
+				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1)
+			{
+				is表示 = false;
+				MSound::効果音[SE::ウィンドウ閉じ].Play();
+				ポップアップリザルト = 0;
+				return true;
+			}
+
+			//ヘルプクリック
+			if (isヘルプボタン == true &&
+				abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2) + 30) < タイトル枠高さ / 2 - 1 &&
 				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1)
 			{
 				is表示 = false;

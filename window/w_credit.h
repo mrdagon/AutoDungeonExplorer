@@ -24,6 +24,7 @@ namespace SDX_ADE
 			文章.SetUI( LTitle::クレジット_説明枠 , "付属テキストの内容を表示\nあああああ\nああ\nあ");
 
 			//●登録
+			item.clear();
 			AddItem(文章);
 		}
 

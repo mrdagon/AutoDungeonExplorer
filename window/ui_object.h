@@ -21,10 +21,11 @@ namespace SDX_ADE
 			return false;
 		}
 
+		inline static std::string 未設定テキスト = "\nテキスト未設定\n";
+		std::string* ヘルプテキスト = nullptr;
+
 	public:
 		static UIObject* now_help;
-
-		std::string* ヘルプテキスト;
 
 		Layout* layout;
 		UIObject* 親 = nullptr;
@@ -32,6 +33,7 @@ namespace SDX_ADE
 		bool is表示 = true;
 		bool is表示オンリー = false;
 		bool isOver = false;
+		bool isCanClick = true;//クリック、ドラッグ、ドロップをスルー
 		int mousePos = 0;//0、マウス乗っていない：1、左側：2、右側
 
 		int lineID = 0;
@@ -51,7 +53,11 @@ namespace SDX_ADE
 			親 = 親object;
 		}
 
-		//レイアウト参照、省略表記用
+		void SetText(std::string* ヘルプテキスト)
+		{
+			this->ヘルプテキスト = ヘルプテキスト;
+		}
+
 		template<class T>
 		Layout& LData(T レイアウト)
 		{
@@ -189,6 +195,8 @@ namespace SDX_ADE
 					Drawing::Line({ GetCenterX(),GetCenterY() + 30 }, { GetCenterX(),GetCenterY() - 30 }, Color::Red, 3);
 				}
 			}
+
+			isOver = false;
 		}
 
 		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::No1 )
@@ -199,13 +207,12 @@ namespace SDX_ADE
 		//クリック、ドロップ、マウスオーバー判定を処理 //クリック or ドロップでtrue
 		bool CheckInput(double px, double py)
 		{
-			isOver = false;
 			mousePos = 0;
 			if ( is表示 == false || is表示オンリー == true ) { return false; }
 
 			if (Check派生(px, py) == true)
 			{
-				return false;
+				return true;
 			}
 
 			int posX = GetX();
@@ -218,9 +225,14 @@ namespace SDX_ADE
 			{
 				isOver = true;
 				mousePos = ( mp.x < pt.x + GetW() / 2) ? 1 : 2;//左右のどちら側をクリックしたか
-				now_help = this;
+				if (now_help == nullptr) { now_help = this; }
 
-				if (Input::mouse.Left.on == true)
+				if (isCanClick == false)
+				{
+					Over();
+					return false;
+				}
+				else if (Input::mouse.Left.on == true)
 				{
 					Click();
 					return true;
@@ -232,6 +244,7 @@ namespace SDX_ADE
 
 				//マウスオーバー中の物のヘルプ
 				Over();
+				return true;
 			}
 
 			return false;
@@ -259,9 +272,10 @@ namespace SDX_ADE
 		virtual void DrawHelp()
 		{
 			//通常はセットしてあるテキストヘルプ
-			std::string test = "てすと\nてすと２\nてすと３";
-			UIHelp::Text( &test );
-
+			if (ヘルプテキスト != nullptr)
+			{
+				UIHelp::Text(ヘルプテキスト);
+			}
 		}
 	};
 

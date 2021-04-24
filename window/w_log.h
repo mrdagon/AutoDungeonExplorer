@@ -102,6 +102,7 @@ namespace SDX_ADE
 			};
 
 			//●登録
+			item.clear();
 			AddItem(表示ボタン, 4, true);
 			AddItem(ログ);
 

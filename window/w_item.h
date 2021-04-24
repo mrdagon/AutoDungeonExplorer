@@ -20,7 +20,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//枠
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
 
 				//遺物アイコン
 				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);
@@ -45,6 +45,11 @@ namespace SDX_ADE
 				//探索者の遺物と交換
 
 				return false;
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Item(nullptr , false);
 			}
 		};
 
@@ -71,6 +76,7 @@ namespace SDX_ADE
 			内枠.SetUI(LItem::内枠,"");
 
 			//●登録
+			item.clear();
 			AddItem(アイテム,CV::上限アクセサリ種類);
 			AddItem(内枠);
 

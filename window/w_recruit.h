@@ -40,15 +40,15 @@ namespace SDX_ADE
 					std::string str = W_Recruit::This->conv.to_bytes(wstr);//マルチバイト文字に変換
 
 					//挿入中の文字の座標を計算
-					int W変換中文字 = MFont::MAlias.GetDrawStringWidth(System::textComposition);
+					int W変換中文字 = MFont::L->GetDrawStringWidth(System::textComposition);
 					auto sstr = W_Recruit::This->conv.to_bytes(W_Recruit::This->入力中文字.substr(0, W_Recruit::This->挿入位置));
-					int X変換中文字 = MFont::MAlias.GetDrawStringWidth(sstr.c_str());
+					int X変換中文字 = MFont::L->GetDrawStringWidth(sstr.c_str());
 
 					Drawing::Rect({ GetX() + layout->並べx + X変換中文字 + 4 , GetY() + layout->並べy + 4 , W変換中文字 , 32 }, Color::Yellow);
-					MFont::MAlias.DrawBold({ GetX() + layout->並べx + 4,GetY() + layout->並べy + 2 }, Color::White, Color::Black, { str.c_str() });
+					MFont::L->DrawBold({ GetX() + layout->並べx + 4,GetY() + layout->並べy + 2 }, Color::White, Color::Black, { str.c_str() });
 				}
 				else {
-					MFont::MAlias.DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy + 2 }, Color::White, Color::Black, { W_Recruit::This->求人名前 });
+					MFont::L->DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy + 2 }, Color::White, Color::Black, { W_Recruit::This->求人名前 });
 				}
 
 
@@ -79,18 +79,18 @@ namespace SDX_ADE
 				DrawUI(UIType::グループ暗);
 
 				//ジョブ名
-				MFont::MAlias.DrawBoldRotate({ GetX() + posA.x ,GetY() + posA.y }, 1, 0, Color::White, Color::Black, job->名前, false);
+				MFont::M->DrawBoldRotate({ GetX() + posA.x ,GetY() + posA.y }, 1, 0, Color::White, Color::Black, job->名前, false);
 				//ジョブ装備種
 				job->初期装備[0]->image->DrawRotate({ GetX() + posB.x ,GetY() + posB.y },1,0);
 
 				//一行説明
-				MFont::MAlias.DrawBold({ GetX() + posC.x ,GetY() + posC.y }, Color::White, Color::Black, job->概説, false);
+				MFont::M->DrawBold({ GetX() + posC.x ,GetY() + posC.y }, Color::White, Color::Black, job->概説, false);
 
 				//区切り線
 				Drawing::Line({ GetX() + posD.x ,GetY() + posD.y }, { GetX() + posD.x + posD.w ,GetY() + posD.y + posD.h }, Color::White, 1);
 
 				//ジョブ説明
-				MFont::MAlias.DrawBold({ GetX() + posE.x ,GetY() + posE.y }, Color::White, Color::Black, { job->説明 });
+				MFont::M->DrawBold({ GetX() + posE.x ,GetY() + posE.y }, Color::White, Color::Black, { job->説明 });
 
 				//立ち絵
 				MJob::立ち絵[job->ID].DrawRotate({ GetX() + posF.x ,GetY() + posF.y }, 2, 0);
@@ -206,16 +206,14 @@ namespace SDX_ADE
 			};
 
 			//●登録
-			{
-				item.clear();
-				AddItem(名前入力欄);
-				AddItem(ランダム名ボタン);
-				AddItem(名前変更ボタン);
-				AddItem(登録ボタン);
-				AddItem(説明);
-				AddItem(職業);
-				AddItem(一覧枠);
-			}
+			item.clear();
+			AddItem(名前入力欄);
+			AddItem(ランダム名ボタン);
+			AddItem(名前変更ボタン);
+			AddItem(登録ボタン);
+			AddItem(説明);
+			AddItem(職業);
+			AddItem(一覧枠);			
 		}
 
 		void Update()

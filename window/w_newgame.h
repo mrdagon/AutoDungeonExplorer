@@ -37,6 +37,7 @@ namespace SDX_ADE
 			説明.SetUI( LTitle::始めから_説明枠 , "ここに難易度の説明が出ます\n※β版ではどの難易度も同じです");
 
 			//●登録
+			item.clear();
 			AddItem(難易度ボタン , (int)GameType::COUNT );
 			AddItem(説明);
 		}

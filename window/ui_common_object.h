@@ -239,8 +239,9 @@ namespace SDX_ADE
 			{
 				DrawUI(UIType::グループ明 , *UIデザイン );
 			}
-			else			
+			else
 			{
+				push = true;
 				DrawUI(UIType::グループ暗 , *UIデザイン );
 			}
 
@@ -302,7 +303,7 @@ namespace SDX_ADE
 					yd += MFont::F[layout->フォントID]->GetSize() - 4;
 				}
 
-				GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, push ? Design::明字 : Design::暗字 , push ? Design::暗字 : Design::明字 , テキスト, false);
+				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + yd },1,0, push ? Design::明字 : Design::暗字 , テキスト, false);
 			}
 
 		}

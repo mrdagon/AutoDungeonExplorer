@@ -737,6 +737,10 @@ namespace SDX_ADE
 
 			void Over() override
 			{}
+			void DrawHelp() override
+			{
+				UIHelp::Item(nullptr , false);
+			}
 		};
 
 		class UI装備 : public UIObject
@@ -755,10 +759,19 @@ namespace SDX_ADE
 			}
 
 			void Click() override
-			{}
+			{
+			
+			}
 
 			void Over() override
-			{}
+			{
+			
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Item(nullptr , true);
+			}
 		};
 
 		class UIスキルボタン : public UIObject
@@ -841,7 +854,7 @@ namespace SDX_ADE
 				//配置している場合の表示
 				if (it == nullptr) { return; }
 
-				it->image[0][1]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
+				it->image[0][4]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
 
 				//Lv
 				GetFont()->Draw({ GetX() + LB.x , GetY() + LB.y }, Design::暗字 , { "Lv " , it->Lv });
@@ -862,6 +875,9 @@ namespace SDX_ADE
 
 			bool Check派生(double px, double py) override
 			{
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				if (it == nullptr) { return false; }
+
 				if (スキルボタン.CheckInput(px, py) == true){return true; }
 				if (装飾品ボタン.CheckInput(px, py) == true){return true;}
 				if (装備ボタン[0].CheckInput(px, py) == true) { return true; }
@@ -889,6 +905,18 @@ namespace SDX_ADE
 				return false;
 			}
 
+			void DrawHelp() override
+			{
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				if (it != nullptr)
+				{
+					UIHelp::Explorer(nullptr);
+				}
+				else
+				{
+
+				}
+			}
 		};
 
 		class UI探索フロア : public UIObject
@@ -897,7 +925,7 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
 				auto& LA = LData(LParty::探索先変更三角);
 				auto& LD = LData(LParty::探索先階数);
 				auto* it = Guild::P->パーティ[パーティID].探索先;
@@ -906,7 +934,7 @@ namespace SDX_ADE
 				it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
 
 				//階層
-				MFont::S->DrawRotate(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
+				MFont::M->DrawRotate(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
 
 				//三角表示
 				Font* fr = mousePos == 2 ? MFont::L : MFont::S;
@@ -930,6 +958,11 @@ namespace SDX_ADE
 
 			void Over() override
 			{}
+
+			void DrawHelp() override
+			{
+				UIHelp::Dungeon(nullptr);
+			}
 		};
 
 		class UI探索指示 : public UIObject
@@ -938,7 +971,7 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
 				GetFont()->DrawRotate( GetCenterPos(), 1, 0, Design::暗字, { "おまかせ" });
 
 				auto& LA = LData(LParty::探索先変更三角);
@@ -1011,6 +1044,11 @@ namespace SDX_ADE
 
 
 				return false;
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Dungeon(nullptr);
 			}
 		};
 
@@ -1140,7 +1178,7 @@ namespace SDX_ADE
 				auto& lb = Layout::Data(LParty::控えLv);
 
 				//ボタン枠-掴み中だと凹み
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
 
 				//キャラ画像
 				探検者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
@@ -1175,6 +1213,12 @@ namespace SDX_ADE
 
 				return false;
 
+			}
+
+
+			void DrawHelp() override
+			{
+				UIHelp::Explorer(nullptr);
 			}
 		};
 
@@ -1222,6 +1266,7 @@ namespace SDX_ADE
 			控え枠.SetUI(LParty::控え枠 ,"" );
 
 			//●登録
+			item.clear();
 			AddItem(パーティ , CV::上限パーティ数);
 			AddItem(登録);
 			AddItem(除名);

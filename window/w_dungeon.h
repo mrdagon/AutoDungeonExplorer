@@ -16,6 +16,11 @@ namespace SDX_ADE
 			int 財宝ID;
 			Dungeon* dungeon;
 
+			UI財宝()
+			{
+				isCanClick = false;
+			}
+
 			void Draw派生() override
 			{
 				DrawUI(UIType::丸フレーム);
@@ -24,6 +29,11 @@ namespace SDX_ADE
 			void Over() override
 			{
 
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Item(nullptr,false);
 			}
 		};
 
@@ -34,11 +44,13 @@ namespace SDX_ADE
 			bool isボス;
 			MonsterClass* 種族;
 			
-			UIMonster(MonsterClass* 種族 , int Lv , bool isボス):
+			UIMonster(MonsterClass* 種族, int Lv, bool isボス) :
 				種族(種族),
 				Lv(Lv),
 				isボス(isボス)
-			{}
+			{
+				isCanClick = false;
+			}
 
 			void Draw派生() override
 			{
@@ -50,6 +62,11 @@ namespace SDX_ADE
 
 			void Over() override
 			{
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Monster(nullptr,Lv);
 			}
 		};
 
@@ -116,11 +133,11 @@ namespace SDX_ADE
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
-				MFont::S->Draw({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
+				MFont::M->Draw({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
 
 				//探索率
 				Design::No1->DrawGauge(LC.x, LC.y, LC.w, LC.h, dungeon->探索率 + 0.5);
-				MFont::S->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { (int)(dungeon->探索率 * 100) , "%" }, true);
+				MFont::M->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { (int)(dungeon->探索率 * 100) , "%" }, true);
 
 				//階段位置、ボス位置マーク
 
@@ -131,7 +148,7 @@ namespace SDX_ADE
 				if (dungeon->isUIボス表示 == true)
 				{
 					//レベル
-					MFont::S->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Color::White, Color::Black, { "Lv",dungeon->ボスLv }, false);
+					//MFont::M->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv",dungeon->ボスLv }, false);
 
 					for (auto& it : 出現ボス)
 					{
@@ -139,7 +156,7 @@ namespace SDX_ADE
 					}
 				} else {
 					//レベル
-					MFont::S->DrawBold({ GetX() + LA.x , GetY() + LA.y }, Color::White, Color::Black, { "Lv",dungeon->雑魚Lv }, false);
+					//MFont::M->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv",dungeon->雑魚Lv }, false);
 
 					for (auto& it : 出現モンスター)
 					{
@@ -218,6 +235,11 @@ namespace SDX_ADE
 				//切り替えボタン説明
 			}
 
+
+			void DrawHelp() override
+			{
+				UIHelp::Dungeon(nullptr);
+			}
 		};
 
 	public:
@@ -249,6 +271,7 @@ namespace SDX_ADE
 			}
 
 			//●登録
+			item.clear();
 			AddItem(枠, true);
 			AddItem(タブ, 5, true);
 			AddItem(フロア, Dungeon::data.size());

@@ -76,8 +76,12 @@ namespace SDX_ADE
 				auto& LD = LData(LManagement::プランアイコン);
 
 				//使用可能、不可で表示変化
-				DrawUI(UIType::凸ボタン);
-
+				if (isOver == true)
+				{
+					DrawUI(UIType::平ボタン);
+				} else {
+					DrawUI(UIType::凸ボタン);
+				}
 
 				//投資名 Lv
 				Design::No1->Draw(UIType::丸フレーム, GetX() + LB.x, GetY() + LB.y, LB.w, LB.h);
@@ -110,6 +114,12 @@ namespace SDX_ADE
 			{
 				over戦術 = manage;
 			}
+
+
+			void DrawHelp() override
+			{
+				UIHelp::Management(nullptr);
+			}
 		};
 
 	public:
@@ -134,7 +144,7 @@ namespace SDX_ADE
 			}
 
 			//●登録
-
+			item.clear();
 			AddItem(資金,true);
 			AddItem(街Lv,true);
 			AddItem(投資案, Management::data.size());

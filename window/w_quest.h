@@ -38,12 +38,20 @@ namespace SDX_ADE
 				//対象フロア(無い場合は表示しない)
 				MFont::L->Draw(GetPos(LC), Design::暗字, { "10F" } , true);
 			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Quest(nullptr);
+			}
 		};
 
 
 	public:
 		UIQuest 依頼[CV::上限依頼数];
 		UIButton 表示ボタン[3];
+		bool is表示未達成 = true;
+		bool is表示完了 = true;
+		bool is表示未発見 = true;
 
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
@@ -68,10 +76,30 @@ namespace SDX_ADE
 			表示ボタン[0].SetUI(LQuest::表示ボタン, "未達成" , 0);
 			表示ボタン[1].SetUI(LQuest::表示ボタン, "完了" , 1);
 			表示ボタン[2].SetUI(LQuest::表示ボタン, "未発見" , 2);
+			表示ボタン[0].is押下 = true;
+			表示ボタン[1].is押下 = true;
+			表示ボタン[2].is押下 = true;
 
 			//●登録
 			AddItem(依頼, Quest::data.size() );
 			AddItem(表示ボタン, 3 , true);
+
+			//●イベント
+			表示ボタン[0].clickEvent = [&]()
+			{
+				表示ボタン[0].is押下 = !表示ボタン[0].is押下;
+				is表示未達成 = 表示ボタン[0].is押下;
+			};
+			表示ボタン[1].clickEvent = [&]()
+			{
+				表示ボタン[1].is押下 = !表示ボタン[1].is押下;
+				is表示完了 = 表示ボタン[1].is押下;
+			};
+			表示ボタン[2].clickEvent = [&]()
+			{
+				表示ボタン[2].is押下 = !表示ボタン[2].is押下;
+				is表示未発見 = 表示ボタン[2].is押下;
+			};
 
 			Update();
 		}

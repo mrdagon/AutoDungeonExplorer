@@ -326,7 +326,6 @@ namespace SDX_ADE
 			フォント種.設定値 = TX::Config_フォント設定[仮_フォント種 ? 0 : 1];
 
 			//●登録
-			{
 			item.clear();
 			AddItem(ウィンドウモード);
 			AddItem(BGM音量);
@@ -341,7 +340,6 @@ namespace SDX_ADE
 
 			AddItem(確定);
 			AddItem(キャンセル);
-			}
 		}
 
 		void Update()

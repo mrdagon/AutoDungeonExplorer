@@ -62,6 +62,11 @@ namespace SDX_ADE
 			{
 
 			}
+
+			void DrawHelp() override
+			{
+				UIHelp::ASkill(nullptr);
+			}
 		};
 
 		class UI装備スキルコンボボックス : public UIObject
@@ -149,6 +154,11 @@ namespace SDX_ADE
 			{
 
 			}
+
+			void DrawHelp() override
+			{
+				UIHelp::Explorer(nullptr);
+			}
 		};
 
 		class UI装備Aスキル : public UIObject
@@ -183,6 +193,11 @@ namespace SDX_ADE
 			{
 
 			}
+
+			void DrawHelp() override
+			{
+				UIHelp::ASkill(nullptr);
+			}
 		};
 
 		class UI予約スキル : public UIObject
@@ -201,6 +216,13 @@ namespace SDX_ADE
 			{
 
 			}
+
+			void DrawHelp() override
+			{
+				//AスキルかPスキル
+
+				UIHelp::ASkill(nullptr);
+			}
 		};
 
 		class UIキースキル : public UIObject
@@ -218,6 +240,11 @@ namespace SDX_ADE
 			void Click() override
 			{
 
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::PSkill(nullptr);
 			}
 		};
 
@@ -242,6 +269,11 @@ namespace SDX_ADE
 			{
 
 			}
+
+			void DrawHelp() override
+			{
+				UIHelp::PSkill(nullptr);
+			}
 		};
 
 		class UIAスキル : public UIObject
@@ -264,6 +296,11 @@ namespace SDX_ADE
 			void Click() override
 			{
 
+			}
+
+			void DrawHelp() override
+			{
+				UIHelp::ASkill(nullptr);
 			}
 		};
 
@@ -360,6 +397,7 @@ namespace SDX_ADE
 			キャンセル.clickEvent = [&](){};
 
 			//●登録
+			item.clear();
 			AddItem(スキルコンボボックス);
 
 			AddItem(リセット);

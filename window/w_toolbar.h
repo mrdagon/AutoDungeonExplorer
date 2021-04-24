@@ -181,6 +181,7 @@ namespace SDX_ADE
 			タイトルボタン.clickEvent = []() { Game::isゲーム終了 = true; };
 
 			//オブジェクト登録
+			item.clear();
 			for (int i = 0; i < CV::ウィンドウ数; i++)
 			{
 				AddItem(ウィンドウボタン[i]);
