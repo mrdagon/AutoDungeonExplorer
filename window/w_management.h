@@ -79,6 +79,7 @@ namespace SDX_ADE
 				if (isOver == true)
 				{
 					DrawUI(UIType::平ボタン);
+					Camera::Get()->position.y -= 2;
 				} else {
 					DrawUI(UIType::凸ボタン);
 				}
@@ -93,6 +94,12 @@ namespace SDX_ADE
 
 				//投資アイコン
 				manage->image->DrawRotate(GetPos(LD), 2, 0);
+
+				if (isOver == true)
+				{
+					Camera::Get()->position.y += 2;
+				}
+
 			}
 
 			void Click() override
@@ -118,7 +125,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Management(nullptr);
+				UIHelp::Management( manage );
 			}
 		};
 
@@ -133,6 +140,11 @@ namespace SDX_ADE
 		{
 			Set( WindowType::Management, IconType::戦略);
 			SetPos( LManagement::ウィンドウ , false , true , false );
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
+
 			//●初期化
 			資金.SetUI(LManagement::資金枠);
 			街Lv.SetUI(LManagement::街Lv枠);
@@ -148,6 +160,10 @@ namespace SDX_ADE
 			AddItem(資金,true);
 			AddItem(街Lv,true);
 			AddItem(投資案, Management::data.size());
+
+			//●ヘルプ
+			街Lv.SetHelp(&TH::Management::街Lv);
+			資金.SetHelp(&TH::Management::資金);
 
 			Update();
 		}

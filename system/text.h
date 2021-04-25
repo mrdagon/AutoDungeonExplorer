@@ -15,9 +15,9 @@ namespace SDX_ADE
 	//各種UIのタイトル、説明文などはここで読込
 	namespace TX
 	{
-		EnumArray<std::string, WindowType> Window_名前;
-		EnumArray<std::string, WindowType> Window_略記;
-		EnumArray<std::string, WindowType> Window_ヘルプ;
+		EnumArray<std::string, WindowType> Window_名前;//ウィンドウタイトル
+		EnumArray<std::string, WindowType> Window_略記;//ボタン用の略記
+		EnumArray<std::string, WindowType> Window_ヘルプ;//ウィンドウのヘルプとポップアップ時のテキスト
 
 		std::string タイトル = "だいじぇすと　ダンジョン　 0.2β";
 		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
@@ -138,35 +138,35 @@ namespace SDX_ADE
 		{
 			Window_名前[WindowType::Dungeon] = "ダンジョン一覧";
 			Window_略記[WindowType::Dungeon] = "迷宮";
-			Window_ヘルプ[WindowType::Dungeon] = "発見済みのダンジョンです\nパーティにドラッグ＆ドロップで探索先を変更する";
+			Window_ヘルプ[WindowType::Dungeon] = "ダンジョン一覧：\nパーティにドラッグ＆ドロップで探索先を変更";
 
 			Window_名前[WindowType::EventLog] = "ログ";
 			Window_略記[WindowType::EventLog] = "ログ";
-			Window_ヘルプ[WindowType::EventLog] = "探索記録のログを確認";
+			Window_ヘルプ[WindowType::EventLog] = "ログ一覧：\n探索記録の確認";
 
 			Window_名前[WindowType::Item] = "遺物一覧";
 			Window_略記[WindowType::Item] = "遺物";
-			Window_ヘルプ[WindowType::Item] = "遺物の所持数\n探索者にドラッグ＆ドロップで装備変更";
+			Window_ヘルプ[WindowType::Item] = "遺物一覧：\n探索者にドラッグ＆ドロップで装備変更";
 
 			Window_名前[WindowType::Management] = "設備投資";
 			Window_略記[WindowType::Management] = "設備";
-			Window_ヘルプ[WindowType::Management] = "資金を消費して施設を改良、様々なボーナスを獲得";
+			Window_ヘルプ[WindowType::Management] = "設備投資：\n資金を消費して街の施設を改良\n様々なボーナスを獲得";
 
 			Window_名前[WindowType::Material] = "素材一覧";
 			Window_略記[WindowType::Material] = "素材";
-			Window_ヘルプ[WindowType::Material] = "装備強化に必要な素材の所持数を確認";
+			Window_ヘルプ[WindowType::Material] = "素材一覧：\n装備強化に必要な素材の所持数";
 
 			Window_名前[WindowType::Party] = "探索者/パーティ編成";
 			Window_略記[WindowType::Party] = "編成";
-			Window_ヘルプ[WindowType::Party] = "ダンジョンを探索するパーティを編成\nドラッグ＆ドロップで入れ替え\n探索指示をクリックで変更";
+			Window_ヘルプ[WindowType::Party] = "パーティ編成：\n探索パーティを編成\n装備やスキルの変更\n探索指示や探索先の変更";
 
 			Window_名前[WindowType::Quest] = "クエスト一覧";
 			Window_略記[WindowType::Quest] = "依頼";
-			Window_ヘルプ[WindowType::Quest] = "クエスト内容と報酬を確認";
+			Window_ヘルプ[WindowType::Quest] = "クエスト一覧：\nクエストの達成状況や報酬の確認";
 
 			Window_名前[WindowType::Recruit] = "求人";
 			Window_略記[WindowType::Recruit] = "求人";
-			Window_ヘルプ[WindowType::Recruit] = "入団志願者一覧\nパーティか製造にドラッグ＆ドロップで採用\nリロールクリックで再募集\n採用とリロールで人事ポイントを消費";
+			Window_ヘルプ[WindowType::Recruit] = "";
 
 			Window_名前[WindowType::Config] = "設定変更";
 			Window_略記[WindowType::Config] = "設定";
@@ -217,34 +217,70 @@ namespace SDX_ADE
 	}
 
 	//ポップアップヘルプのテキスト
-	namespace HTX
+	namespace TH
 	{
 		//各ウィンドウのヘルプ
+		namespace Bar
+		{
+			std::string 日付 = "経過日数と現在時刻";
+			std::string 停止 = "一時停止ON/OFF\n右クリックでショートカット操作";
+			std::string 速度変更 = "時間経過スピードを変更";
+			std::string ヘルプ = "ヘルプを閲覧する(未実装)";
+			std::string 設定 = "各種設定の変更";
+			std::string 終了 = "タイトルへ戻る";
+		}
 
-		//パーティ：探索指示説明
-		//パーティ：探索者無しの所の説明
-		//パーティ：登録ボタン
-		//パーティ：除名ボタン
-		//パーティ：スキルボタン
 
-		//迷宮：ボス表示切り替え
-		//迷宮：未発見ダンジョン
+		namespace Party
+		{
+			std::string 空きメンバー = "探索者をドロップで配置";
+			std::string 登録 = "探索者を無料で登録";
+			std::string 除名 = "ドロップで探索者を除名";
+			std::string スキルボタン = "使用スキルの変更\nスキル習得と習得予約";
+			EnumArray<std::string, OrderType> 探索指示;
+		}
 
-		//設備：街Lv説明
-		//設備：資金
+		namespace Dungeon
+		{
+			std::string ボス表示切り替え = "ボス/雑魚 表示切り替え";
+			std::string 未発見フロア = "未発見フロア";
+		}
 
-		//依頼：表示ON/OFFボタン
+		namespace Management
+		{
+			std::string 街Lv = "街Lvが上昇すると投資プランの種類と上限Lvが増加\n投資を実行すると街Lvが上昇";
+			std::string 資金 = "所持資金/消費資金";
+		}
 
-		//ログ：表示ON/OFFボタン
+		namespace Quest
+		{
+			std::string 表示ボタン[3];//無し？
+		}
 
-		//上バー：日付
-		//上バー：速度変更
-		//上バー：ヘルプ、設定、終了
+		namespace Log
+		{
+			std::string 表示ボタン[4];//無し？
+		}
 
 		//スキル：
 
 		bool Load()
 		{
+			Party::探索指示[OrderType::なし] = "探索指示：\n探索先を自分で指定";
+			Party::探索指示[OrderType::お宝探して] = "探索指示：\n未発見の財宝がある階層を探索";
+			Party::探索指示[OrderType::ガンガン進め] = "探索指示：\n一番深い階層を探索";
+			Party::探索指示[OrderType::命大事に] = "探索指示：\n全滅したら一つ下のフロアを探索";
+			Party::探索指示[OrderType::強敵探して] = "探索指示：\n未討伐のボスがいるフロアを探索";
+
+			Quest::表示ボタン[0] = "";
+			Quest::表示ボタン[1] = "";
+			Quest::表示ボタン[2] = "";
+
+			Log::表示ボタン[0] = "";
+			Log::表示ボタン[1] = "";
+			Log::表示ボタン[2] = "";
+			Log::表示ボタン[3] = "";
+			
 
 			return true;
 		}

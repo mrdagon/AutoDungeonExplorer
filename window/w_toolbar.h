@@ -142,7 +142,7 @@ namespace SDX_ADE
 		void Init()
 		{
 			Update();
-			//UI基礎パラメータ設定
+			//●UI初期化
 			日付表示.SetUI(LToolBar::ツールバー_日付);
 
 			for(int i=0;i<CV::ウィンドウ数;i++)
@@ -180,7 +180,19 @@ namespace SDX_ADE
 
 			タイトルボタン.clickEvent = []() { Game::isゲーム終了 = true; };
 
-			//オブジェクト登録
+			//●ヘルプ設定
+			日付表示.SetHelp(&TH::Bar::日付);
+			停止ボタン.SetHelp(&TH::Bar::停止);
+			速度ボタンA.SetHelp(&TH::Bar::速度変更);
+			速度ボタンB.SetHelp(&TH::Bar::速度変更);
+			速度ボタンC.SetHelp(&TH::Bar::速度変更);
+			速度ボタンD.SetHelp(&TH::Bar::速度変更);
+			コンフィグボタン.SetHelp(&TH::Bar::設定);
+			ヘルプボタン.SetHelp(&TH::Bar::ヘルプ);
+			タイトルボタン.SetHelp(&TH::Bar::終了);
+
+
+			//●UI登録
 			item.clear();
 			for (int i = 0; i < CV::ウィンドウ数; i++)
 			{
@@ -196,9 +208,6 @@ namespace SDX_ADE
 			AddItem(コンフィグボタン);
 			AddItem(ヘルプボタン);
 			AddItem(タイトルボタン);
-
-			//描画とクリック時のイベントを登録
-
 		}
 
 		void SetWindow(std::vector<UIWindow*> &windows , UIWindow* help , UIWindow* config, UIWindow* title)
@@ -207,7 +216,8 @@ namespace SDX_ADE
 			{
 				ウィンドウボタン[a].対象ウィンドウ = windows[a];
 				ウィンドウボタン[a].テキスト = TX::Window_略記[windows[a]->種類];
-				ウィンドウボタン[a].画像 = &MIcon::UI[ウィンドウボタン[a].対象ウィンドウ->アイコン];
+				ウィンドウボタン[a].画像 = &MIcon::UI[ウィンドウボタン[a].対象ウィンドウ->アイコン];				
+				ウィンドウボタン[a].SetHelp(&TX::Window_ヘルプ[windows[a]->種類]);			
 			}
 
 			ヘルプボタン.対象ウィンドウ = help;

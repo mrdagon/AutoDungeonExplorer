@@ -82,6 +82,10 @@ namespace SDX_ADE
 			}
 			else if ((is押下 == true && 押下状態 == 2))
 			{
+				DrawUI(UIType::明ボタン, *UIデザイン);
+			}
+			else if ((is押下 == true && 押下状態 == 3))
+			{
 				DrawUI(UIType::凸ボタン, *UIデザイン);
 				yd = -2;
 			}

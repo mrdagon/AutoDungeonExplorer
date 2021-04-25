@@ -13,7 +13,6 @@ namespace SDX_ADE
 		class UI財宝 : public UIObject
 		{
 		public:
-			int 財宝ID;
 			Dungeon* dungeon;
 
 			UI財宝()
@@ -33,7 +32,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Item(nullptr,false);
+				UIHelp::Item( dungeon->財宝[lineID] ,false);
 			}
 		};
 
@@ -66,7 +65,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Monster(nullptr,Lv);
+				UIHelp::Monster(種族,Lv);
 			}
 		};
 
@@ -80,6 +79,11 @@ namespace SDX_ADE
 			std::vector<UI財宝> 出現財宝;
 
 			UIButton ボス雑魚表示;
+
+			UIDungeon()
+			{
+				ボス雑魚表示.SetHelp(&TH::Dungeon::ボス表示切り替え);
+			}
 
 			void SetDungeon(Dungeon* 参照ダンジョン)
 			{
@@ -99,7 +103,6 @@ namespace SDX_ADE
 				{
 					出現財宝.emplace_back();
 					出現財宝.back().SetUI(LDungeon::財宝, i, this);
-					出現財宝[i].財宝ID = i;
 					出現財宝[i].dungeon = dungeon;
 				}
 
@@ -137,7 +140,7 @@ namespace SDX_ADE
 
 				//探索率
 				Design::No1->DrawGauge(LC.x, LC.y, LC.w, LC.h, dungeon->探索率 + 0.5);
-				MFont::M->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { (int)(dungeon->探索率 * 100) , "%" }, true);
+				MFont::M->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字 , Design::明字 , { (int)(dungeon->探索率 * 100) , "%" }, true);
 
 				//階段位置、ボス位置マーク
 
@@ -235,10 +238,17 @@ namespace SDX_ADE
 				//切り替えボタン説明
 			}
 
-
 			void DrawHelp() override
 			{
-				UIHelp::Dungeon(nullptr);
+				if (dungeon->is発見)
+				{
+					UIHelp::Dungeon( dungeon );
+				}
+				else
+				{
+					UIHelp::Text(&TH::Dungeon::未発見フロア);
+				}
+
 			}
 		};
 
@@ -255,6 +265,10 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Dungeon, IconType::迷宮);
 			SetPos(LDungeon::ウィンドウ, false, true, false);
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
 			枠.SetUI(LDungeon::内枠,"");

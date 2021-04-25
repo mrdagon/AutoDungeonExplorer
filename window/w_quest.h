@@ -41,7 +41,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Quest(nullptr);
+				UIHelp::Quest(quest);
 			}
 		};
 
@@ -65,6 +65,10 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Quest, IconType::依頼);
 			SetPos(LQuest::ウィンドウ, false, true, false);
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
 			for (int i = 0; i < Quest::data.size(); i++)

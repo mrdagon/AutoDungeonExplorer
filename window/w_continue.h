@@ -128,6 +128,9 @@ namespace SDX_ADE
 			//セーブデータの取得
 			UpdateSaveData();
 
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+
 			//共通初期化
 			Set(WindowType::Continue, IconType::情報);
 			SetPos(LTitle::続きから_ウィンドウ , true , true , true);

@@ -57,11 +57,8 @@ namespace SDX_ADE
 			windows.push_back(&win_eventLog);
 
 			win_config.Init();
-			win_title.Init();
-			win_help.Init();
-
-			win_title.SetText(WindowType::Title );
-			win_help.SetText(WindowType::Help);
+			win_title.Init(WindowType::Title);
+			win_help.Init(WindowType::Help);
 
 			toolBar.Init();
 
@@ -175,8 +172,8 @@ namespace SDX_ADE
 			}
 			W_Drag::Drop();
 
-			//F12キーでスクショ
-			if (Input::key.F12.on == true)
+			//F10キーでスクショ//レイアウトはスクショしない
+			if (Input::key.F10.on == true)
 			{
 				keybd_event(VK_LWIN, 0, 0, 0);
 				keybd_event(VK_LMENU, 0, 0, 0);
@@ -186,7 +183,6 @@ namespace SDX_ADE
 				keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
 				keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
 			}
-
 		}
 		//描画処理
 		void Draw()

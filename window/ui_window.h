@@ -18,13 +18,13 @@ namespace SDX_ADE
 
 		WindowType 種類;
 		Design** デザイン = &Design::No1;
+		UIWindow* ヘルプウィンドウ = nullptr;
 
 		//描画および操作可能なオブジェクト
 		std::vector<UIObject*> item;//スクロールするオブジェクト
 		std::vector<UIObject*> 固定item;//スクロールしないオブジェクト
 
 		bool is閉じるボタン = true;
-		bool isヘルプボタン = true;
 		bool is固定 = false;//大きさ変更と掴み移動可能フラグ
 
 		//状態
@@ -144,16 +144,16 @@ namespace SDX_ADE
 			//閉じるボタン/ヘルプボタン
 			if (is閉じるボタン == true)
 			{
-
+				//閉じるボタン
 				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
-			}
-			//ヘルプボタン
-			if (isヘルプボタン == true)
-			{
 
-				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 55, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
-				MIcon::UI[IconType::ヘルプ].DrawRotate({ 座標.x + 横幅 - 46 ,座標.y + 15 }, 1, 0);
+				//ヘルプボタン
+				if (ヘルプウィンドウ != nullptr )
+				{
+					de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 55, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+					MIcon::UI[IconType::ヘルプ].DrawRotate({ 座標.x + 横幅 - 46 ,座標.y + 15 }, 1, 0);
+				}
 			}
 
 			//メイン部分描画
@@ -332,13 +332,11 @@ namespace SDX_ADE
 			}
 
 			//ヘルプクリック
-			if (isヘルプボタン == true &&
+			if (ヘルプウィンドウ != nullptr &&
 				abs(マウス座標.x - (座標.x + 横幅 - タイトル枠高さ / 2 - 2) + 30) < タイトル枠高さ / 2 - 1 &&
 				abs(マウス座標.y - (座標.y + 2 + タイトル枠高さ / 2)) < タイトル枠高さ / 2 - 1)
 			{
-				is表示 = false;
-				MSound::効果音[SE::ウィンドウ閉じ].Play();
-				ポップアップリザルト = 0;
+				ヘルプウィンドウ->OpenPopup();
 				return true;
 			}
 
@@ -475,27 +473,33 @@ namespace SDX_ADE
 				Drawing::Rect({ 0,0,Config::解像度W , Config::解像度H }, Color(0, 0, 0, 128));
 			}
 
-
 			//現在の画面を記憶
 			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth() , Window::GetHeight() );
 
 			while (System::Update(true,false))
 			{
-				//img.DrawExtend({ 0,0 , Window::GetWidth() / full_rate, Window::GetHeight() / full_rate });
 				img.DrawPartExtend({ 0,0 , Config::解像度W , Config::解像度H }, { 0,0 , Window::GetWidth() , Window::GetHeight() });
 
 				Update();
-				//ポップアップではドラッグ＆ドロップ無し
+				//ポップアップではドラッグ＆ドロップ操作無し
 				//ウィンドウの拡大縮小ドラッグ＆ドロップ無し
-				UIObject::now_help = nullptr;
-				共通Input();
-				ObjectInput();
 				Draw();
-
 
 				if (UIObject::now_help != nullptr && Game::isヘルプ == true)
 				{
 					UIObject::now_help->DrawHelp();
+				}
+
+				//スクショ
+				if (Input::key.F10.on == true)
+				{
+					keybd_event(VK_LWIN, 0, 0, 0);
+					keybd_event(VK_LMENU, 0, 0, 0);
+					keybd_event(VK_SNAPSHOT, 0, 0, 0);
+
+					keybd_event(VK_LWIN, 0, KEYEVENTF_KEYUP, 0);
+					keybd_event(VK_LMENU, 0, KEYEVENTF_KEYUP, 0);
+					keybd_event(VK_SNAPSHOT, 0, KEYEVENTF_KEYUP, 0);
 				}
 
 				if (CV::isレイアウト)
@@ -503,6 +507,10 @@ namespace SDX_ADE
 					Layout::Draw();
 					Layout::Input();
 				}
+
+				UIObject::now_help = nullptr;
+				共通Input();
+				ObjectInput();
 
 				if (is表示 == false){ break; }
 			}

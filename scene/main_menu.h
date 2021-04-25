@@ -121,7 +121,7 @@ namespace SDX_ADE
 			}
 
 			//スクショ撮影
-			if (Input::key.F12.on == true)
+			if (Input::key.F10.on == true)
 			{
 				keybd_event(VK_LWIN, 0, 0, 0);
 				keybd_event(VK_LMENU, 0, 0, 0);

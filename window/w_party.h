@@ -739,7 +739,7 @@ namespace SDX_ADE
 			{}
 			void DrawHelp() override
 			{
-				UIHelp::Item(nullptr , false);
+				UIHelp::Item( Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット], false);
 			}
 		};
 
@@ -770,7 +770,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Item(nullptr , true);
+				UIHelp::Item( Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット], true);
 			}
 		};
 
@@ -780,6 +780,11 @@ namespace SDX_ADE
 			inline static W_Skilltree スキルツリー;
 			int パーティID;
 			int 隊列ID;
+
+			UIスキルボタン()
+			{
+				SetHelp(&TH::Party::スキルボタン);
+			}
 
 			void Draw派生() override
 			{
@@ -856,11 +861,11 @@ namespace SDX_ADE
 
 				it->image[0][4]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
 
-				//Lv
-				GetFont()->Draw({ GetX() + LB.x , GetY() + LB.y }, Design::暗字 , { "Lv " , it->Lv });
-
 				//経験値バー
-				Design::No1->DrawGauge(GetX() + LC.x, GetY() + LC.y,LC.w,LC.h, it->Get経験値率() );
+				Design::No1->DrawGauge(GetX() + LC.x, GetY() + LC.y, LC.w, LC.h, it->Get経験値率());
+
+				//Lv
+				GetFont()->DrawBold({ GetX() + LB.x , GetY() + LB.y }, Design::暗字 , Design::明字 , { "Lv " , it->Lv });
 
 				//装備品２つ
 				装備ボタン[0].Draw();
@@ -910,11 +915,11 @@ namespace SDX_ADE
 				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
 				if (it != nullptr)
 				{
-					UIHelp::Explorer(nullptr);
+					UIHelp::Explorer(it);
 				}
 				else
 				{
-
+					UIHelp::Text(&TH::Party::空きメンバー);
 				}
 			}
 		};
@@ -961,7 +966,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Dungeon(nullptr);
+				UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
 			}
 		};
 
@@ -995,6 +1000,11 @@ namespace SDX_ADE
 
 			void Over() override
 			{}
+
+			void DrawHelp() override
+			{
+				UIHelp::Text(&TH::Party::探索指示[OrderType::なし]);
+			}
 		};
 
 		class UI探索先情報 : public UIObject
@@ -1018,7 +1028,7 @@ namespace SDX_ADE
 
 				//探索度-ゲージと％の文字表示
 				Design::No1->DrawGauge(GetX() + LB.x , GetY() + LB.y , LB.w , LB.h , it->探索率 );
-				GetFont()->DrawRotate({ GetX() + LB.並べx ,GetY() + LB.並べy }, 1, 0, Design::暗字, { int(it->探索率*100) , "%" });
+				GetFont()->DrawBold({ GetX() + LB.並べx ,GetY() + LB.並べy }, Design::暗字, Design::明字, { int(it->探索率*100) , "%" });
 
 				//ボスフラグ
 				//存在しない、未発見、発見、討伐済みの４種
@@ -1048,7 +1058,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Dungeon(nullptr);
+				UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
 			}
 		};
 
@@ -1171,7 +1181,7 @@ namespace SDX_ADE
 		class UI控え探検者 : public UIObject
 		{
 		public:
-			Explorer* 探検者 = nullptr;
+			Explorer* 探索者 = nullptr;
 			void Draw派生() override
 			{
 				auto& la = Layout::Data(LParty::控えドット);
@@ -1181,16 +1191,16 @@ namespace SDX_ADE
 				DrawUI(UIType::明ボタン);
 
 				//キャラ画像
-				探検者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
+				探索者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
 
 				//Lv
-				GetFont()->Draw({ GetCenterX() + lb.x , GetCenterY() + lb.y } , Design::暗字 , { "Lv " , 探検者->Lv });
+				GetFont()->Draw({ GetCenterX() + lb.x , GetCenterY() + lb.y } , Design::暗字 , { "Lv " , 探索者->Lv });
 			}
 
 			void Click() override
 			{
 				//掴む
-				W_Drag::探索メン = 探検者;
+				W_Drag::探索メン = 探索者;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -1218,10 +1228,9 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Explorer(nullptr);
+				UIHelp::Explorer( 探索者);
 			}
 		};
-
 	public:
 		W_Recruit 求人ウィンドウ;
 		W_Popup 除名ウィンドウ;
@@ -1235,11 +1244,14 @@ namespace SDX_ADE
 		void Init()
 		{
 			求人ウィンドウ.Init();
-			除名ウィンドウ.Init();
-			除名ウィンドウ.SetText(WindowType::Delete);
+			除名ウィンドウ.Init(WindowType::Delete);
 
 			Set(種類 = WindowType::Party, IconType::編成);
 			SetPos(LParty::ウィンドウ, false, true, false);
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
 			int a = -1;
@@ -1253,15 +1265,15 @@ namespace SDX_ADE
 			登録.SetUI(LParty::控え探索者, &MIcon::UI[IconType::ゴミ箱], "登録",  0, &控え枠);
 			除名.SetUI(LParty::控え探索者, &MIcon::UI[IconType::ゴミ箱], "除名",  CV::最大控え人数, &控え枠);
 			除名.is押下 = true;//平状態で固定
-			除名.押下状態 = 1;
+			除名.押下状態 = 2;
 			
 			a = 0;//0の位置に登録を置くので1から
 			for (auto& it : 控え)
 			{
 				a++;
 				it.SetUI(LParty::控え探索者, a , &控え枠);
-				it.探検者 = Guild::P->控え探索者[a-1];
-				if (it.探検者 == nullptr) { it.is表示 = false; }
+				it.探索者 = Guild::P->控え探索者[a-1];
+				if (it.探索者 == nullptr) { it.is表示 = false; }
 			}
 			控え枠.SetUI(LParty::控え枠 ,"" );
 
@@ -1284,6 +1296,11 @@ namespace SDX_ADE
 			{
 				除名ウィンドウ.OpenPopup();			
 			};
+
+			//●ヘルプ設定
+			登録.SetHelp(&TH::Party::登録);
+			除名.SetHelp(&TH::Party::除名);
+
 		}
 
 		void Update()
@@ -1299,7 +1316,7 @@ namespace SDX_ADE
 
 			for (auto& it : 控え)
 			{
-				it.is表示 = (it.探検者 != nullptr);
+				it.is表示 = (it.探索者 != nullptr);
 			}
 			//控え枠の位置はパーティ数で変化			
 			auto& LA = Layout::Data(LParty::パーティ枠);

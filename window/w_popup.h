@@ -10,12 +10,14 @@ namespace SDX_ADE
 	/*汎用２択ポップアップウィンドウ*/
 	class W_Popup : public UIWindow
 	{
+	private:
 	public:
 
 		UITextFrame 文章;
 
 		UIButton 確定;
 		UIButton キャンセル;
+
 
 		void Init()
 		{
@@ -26,9 +28,9 @@ namespace SDX_ADE
 			isスクロールバー表示 = false;
 
 			//●初期化
-			文章.SetUI( L基本::ポップアップ_説明, "テキスト未設定");
-			確定.SetUI( L基本::ポップアップ_はい , "はい");
-			キャンセル.SetUI( L基本::ポップアップ_いいえ , "いいえ");
+			文章.SetUI(L基本::ポップアップ_説明, "テキスト未設定");
+			確定.SetUI(L基本::ポップアップ_はい, "はい");
+			キャンセル.SetUI(L基本::ポップアップ_いいえ, "いいえ");
 			//●イベント
 			確定.clickEvent = [&]()
 			{
@@ -42,10 +44,17 @@ namespace SDX_ADE
 				ポップアップリザルト = 0;
 			};
 
+
 			//●登録
 			AddItem(文章);
 			AddItem(確定);
 			AddItem(キャンセル);
+		}
+
+		void Init(WindowType 種類)
+		{
+			Init();
+			SetText(種類);
 		}
 
 		void Update()

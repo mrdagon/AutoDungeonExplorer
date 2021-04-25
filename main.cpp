@@ -17,6 +17,7 @@ using namespace SDX_ADE;
 void LoadAndInitData()
 {
 	TX::Load();
+	TH::Load();
 
 	auto time_t = time(nullptr);
 	Rand::Reset((int)time_t);

@@ -52,6 +52,8 @@ namespace SDX_ADE
 		class UI装備スキルコンボアイテム : public UIObject
 		{
 		public:
+			ActiveSkill* askill;
+
 			void Draw派生() override
 			{
 				DrawUI(UIType::凸ボタン);
@@ -65,7 +67,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::ASkill(nullptr);
+				UIHelp::ASkill(askill);
 			}
 		};
 
@@ -83,6 +85,7 @@ namespace SDX_ADE
 				for (int i = 0; i < item.size(); i++)
 				{
 					item[i].SetUI(LSkill::スキルコンボアイテム, i , this);
+					item[i].askill = it->職業->習得Aスキル[i];
 				}
 
 			}
@@ -154,11 +157,6 @@ namespace SDX_ADE
 			{
 
 			}
-
-			void DrawHelp() override
-			{
-				UIHelp::Explorer(nullptr);
-			}
 		};
 
 		class UI装備Aスキル : public UIObject
@@ -196,7 +194,8 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::ASkill(nullptr);
+				auto* it = W_Skilltree::ギルメン->装備Aスキル通常[lineID];
+				UIHelp::ASkill( it );
 			}
 		};
 
@@ -205,11 +204,20 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-				auto* it = &PassiveSkill::data[W_Skilltree::ギルメン->スキル習得予約[lineID]];
+				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
 				auto& LA = LData(LSkill::スキルLv);
-
 				DrawUI(UIType::平ボタン);
-				it->image->DrawRotate(GetCenterPos(), 2, 0);
+
+				if( no > 0 )
+				{
+					auto* it = &PassiveSkill::data[no];
+					it->image->DrawRotate(GetCenterPos(), 2, 0);
+				}
+				else
+				{
+					auto* it = &ActiveSkill::data[-no];
+					it->image->DrawRotate(GetCenterPos(), 2, 0);
+				}
 			}
 
 			void Click() override
@@ -220,8 +228,17 @@ namespace SDX_ADE
 			void DrawHelp() override
 			{
 				//AスキルかPスキル
+				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
+				if (no > 0)
+				{
+					UIHelp::PSkill(&PassiveSkill::data[no]);
+				}
+				else
+				{
+					UIHelp::ASkill(&ActiveSkill::data[-no]);
+				}
 
-				UIHelp::ASkill(nullptr);
+
 			}
 		};
 
@@ -272,7 +289,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::PSkill(nullptr);
+				UIHelp::PSkill(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]);
 			}
 		};
 
@@ -300,7 +317,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::ASkill(nullptr);
+				UIHelp::ASkill(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]);
 			}
 		};
 
@@ -358,6 +375,11 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Skilltree, IconType::ランク);
 			SetPos(LSkill::ウィンドウ,true,false,true);
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
+
 			//●初期化
 			探索者.SetUI(LSkill::探索者);
 			for (int i = 0; i < CV::最大Aスキル数; i++)

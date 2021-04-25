@@ -31,7 +31,7 @@ namespace SDX_ADE
 
 				auto& itB = Layout::Data(LItem::アイテムレア度);
 				//レアリティ
-				MFont::S->Draw({ GetX() + itB.x ,GetY() + itB.y}, Design::暗字, { "☆" , Item::accessory_data[itemID].ランク }, false);
+				MFont::S->Draw({ GetX() + itB.x ,GetY() + itB.y}, Design::暗字, { "★" , Item::accessory_data[itemID].ランク }, false);
 			}
 
 			void Click() override
@@ -49,7 +49,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Item(nullptr , false);
+				UIHelp::Item( &Item::accessory_data[itemID], false);
 			}
 		};
 
@@ -64,7 +64,11 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Item, IconType::装備);
 			SetPos(LItem::ウィンドウ,false, true,false);
-			
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
+
 			//●初期化
 			int a = -1;
 			for (auto& it : アイテム)

@@ -132,7 +132,6 @@ namespace SDX_ADE
 			Set(WindowType::Config, IconType::情報);
 			SetPos(LConfig::ウィンドウ, true, false , true);
 
-
 			//●仮数値に現在の設定を代入
 			仮_BGM設定 = Config::BGM設定;
 			仮_SE設定 = Config::SE設定;

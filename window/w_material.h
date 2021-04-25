@@ -26,14 +26,7 @@ namespace SDX_ADE
 				//素材アイコン
 				material->image->DrawRotate( GetCenterPos() , 1, 0);
 
-				//ランク
-				//MFont::S->DrawBold({ GetCenterPos(LA) }, Design::明字, Design::暗字, { "☆" , material->ランク }, true);
-				
-				//所持数
-				//MFont::S->DrawBold({ GetCenterX() + LB.並べx , GetCenterY() + LB.並べy }, Design::明字, Design::暗字, "x", true);
-				//MFont::S->DrawBold({ GetCenterPos(LB) }, Design::明字, Design::暗字, Guild::P->素材数[material->ID], true);
-
-				//MFont::S->DrawRotate({ GetCenterPos(LA) },1,0, Design::暗字, { "☆ " , material->ランク }, true);
+				//必要としてる人がいるマーク？ 1,2,3パーティ
 
 				//所持数
 				MFont::S->Draw({ GetCenterX() + LB.並べx , GetCenterY() + LB.並べy }, Design::暗字, "x");
@@ -45,7 +38,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Material(nullptr);
+				UIHelp::Material(material);
 			}
 		};
 
@@ -77,6 +70,10 @@ namespace SDX_ADE
 		{
 			Set(WindowType::Material, IconType::素材);
 			SetPos(LMaterial::ウィンドウ,false,true,false);
+
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
 			for (int i = 0; i < Material::data.size(); i++)

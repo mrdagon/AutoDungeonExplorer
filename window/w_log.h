@@ -66,6 +66,10 @@ namespace SDX_ADE
 			Set( WindowType::EventLog , IconType::ログ );
 			SetPos(LLog::ウィンドウ, false, true, false);
 
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
+
 			//●初期化
 			表示ボタン[0].SetUI(LLog::表示ボタン, &MIcon::UI[IconType::情報], "依頼", 0);
 			表示ボタン[1].SetUI(LLog::表示ボタン, &MIcon::UI[IconType::ボス], "ボス", 1);

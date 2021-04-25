@@ -53,7 +53,7 @@ namespace SDX_ADE
 			親 = 親object;
 		}
 
-		void SetText(std::string* ヘルプテキスト)
+		void SetHelp(std::string* ヘルプテキスト)
 		{
 			this->ヘルプテキスト = ヘルプテキスト;
 		}

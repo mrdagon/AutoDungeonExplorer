@@ -170,6 +170,10 @@ namespace SDX_ADE
 			Set(WindowType::Recruit, IconType::求人);
 			SetPos(LReqruit::ウィンドウ, true, false, true);
 
+			static W_Popup Hウィンドウ;
+			Hウィンドウ.Init(WindowType::Help);
+			ヘルプウィンドウ = &Hウィンドウ;
+
 			表示職業 = 0;
 			//●初期化
 			職業.resize(ExplorerClass::data.size());
