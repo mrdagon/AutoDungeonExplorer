@@ -7,26 +7,36 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
+	enum class QuestState
+	{
+		未発見,		
+		受注前,
+		進行中,
+		完了
+	};
+
+	
 	/*依頼*/
 	class Quest
 	{
 	public:
 		inline static std::vector<Quest> data;
 
-		Image* アイコンimage;
+		Image* image;
 		Image* 依頼人image;
 
 		QuestType 種類;
 		std::string 名前;
+		std::string 依頼人名前;
 		std::string 説明 = "クエストの説明文を表示するよ[実装中]";
 
 		int ID;
 		int 条件数値;//作る装備の数、倒すモンスターの数など
 
 		int 開放フロア = 0;
-		bool is受注 = false;
-		bool is完了 = false;
-		bool is新規 = false;//UI表示用
+		QuestState 進行状況 = QuestState::未発見;
+
+		bool is新規 = false;//UI表示用 カーソル合わせたら消える
 
 		int 必要クエスト = -1;//受注に必要なクエスト
 		
@@ -64,7 +74,7 @@ namespace SDX_ADE
 				file_data.Read( it.報酬ゴールド );
 				file_data.Read( it.報酬アクセサリ );
 
-				it.アイコンimage = &MIcon::クエスト[it.種類];
+				it.image = &MIcon::クエスト[it.種類];
 				it.依頼人image = MJob::ちび[0][0];
 			}
 		}
@@ -74,8 +84,10 @@ namespace SDX_ADE
 		{
 			for (auto& it : data)
 			{
-				it.is受注 = false;
-				it.is完了 = false;
+				if (it.進行状況 != QuestState::未発見)
+				{
+					it.進行状況 = QuestState::受注前;
+				}
 				it.is新規 = false;
 			}
 		}

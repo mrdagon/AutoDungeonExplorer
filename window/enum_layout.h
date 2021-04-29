@@ -103,6 +103,12 @@ namespace SDX_ADE
 		アイテム数,
 		アイテムレア度,
 		ヘルプ枠,
+		Hアイコン,
+		H名前,
+		H説明,
+		Hステータス,
+		Hパッシブ,
+		Hレシピ,
 		COUNT,
 		PAGE = (int)UIPage::アイテム
 	};
@@ -120,6 +126,12 @@ namespace SDX_ADE
 		モンスター,
 		財宝,
 		ヘルプ枠,
+		Hアイコン,
+		H名前,
+		H説明,
+		H探索率,
+		Hモンスター,
+		H財宝,
 		COUNT,
 		PAGE = (int)UIPage::ダンジョン
 	};
@@ -160,6 +172,10 @@ namespace SDX_ADE
 	enum class LBattle
 	{
 		ヘルプ枠,
+		Hメンバー,
+		H項目名,
+		H数値,
+
 		ウィンドウ,
 		COUNT,
 		PAGE = (int)UIPage::パーティ探索
@@ -181,6 +197,12 @@ namespace SDX_ADE
 		プラン名前,
 		プラン費用,
 		ヘルプ枠,
+		Hアイコン,
+		H名前,
+		H説明,
+		H消費資金,
+		HLv,
+
 		COUNT,
 		PAGE = (int)UIPage::投資
 	};
@@ -193,6 +215,12 @@ namespace SDX_ADE
 		素材所持数,
 		内枠,
 		ヘルプ枠,
+		Hアイコン,
+		Hランク,
+		H名前,
+		H説明,
+		H価格,
+		H所持数,
 		COUNT,
 		PAGE = (int)UIPage::素材
 	};
@@ -207,6 +235,14 @@ namespace SDX_ADE
 		ステータス,
 		表示ボタン,
 		ヘルプ枠,
+		Hアイコン,
+		H名前,
+		H依頼人,
+		H依頼人名前,
+		H説明,
+		H受注状況,
+		H報酬説明,
+		H受注条件,
 		COUNT,
 		PAGE = (int)UIPage::クエスト
 	};
@@ -286,6 +322,16 @@ namespace SDX_ADE
 	enum class LHExplorer
 	{
 		ヘルプ枠,
+		ドット,
+		名前,
+		経験値バー,
+		Lv,
+		装備,
+		Aスキル,
+		習得キースキル,
+		習得Aスキル,
+		習得Pスキル,
+
 		COUNT,
 		PAGE = (int)UIPage::Helpエクスプローラ
 	};
@@ -293,6 +339,14 @@ namespace SDX_ADE
 	enum class LHMonster
 	{
 		ヘルプ枠,
+		ドット,
+		名前,
+		素材,
+		ボスマーク,
+		ボスドロップ,
+		基礎ステータス,
+		アクティブスキル,
+		パッシブスキル,
 		COUNT,
 		PAGE = (int)UIPage::Helpモンスター
 	};
@@ -301,6 +355,21 @@ namespace SDX_ADE
 	{
 		Aヘルプ枠,
 		Pヘルプ枠,
+		Cアイコン,
+		C名前,
+		ACクールタイム,
+		AC説明,
+		PCタイミング,
+		PC説明,
+		Aアイコン,
+		A名前,
+		A説明,
+		Aクールタイム,
+		A隊列,
+		Pアイコン,
+		P名前,
+		P説明,
+		Pタイミング,
 		COUNT,
 		PAGE = (int)UIPage::Helpスキル
 	};

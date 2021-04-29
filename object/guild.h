@@ -933,7 +933,7 @@ namespace SDX_ADE
 		{
 			for (auto& it : Quest::data)
 			{
-				if (it.種類 == クエスト種 && !it.is完了 && it.is受注) 
+				if (it.種類 == クエスト種 && it.進行状況 == QuestState::進行中 ) 
 				{
 					if (it.達成度計算(id)) { クエスト完了(it); }
 				}
@@ -944,9 +944,7 @@ namespace SDX_ADE
 		{
 			MSound::効果音[SE::クエスト完了].Play();
 
-			クエスト.is完了 = true;
-
-
+			クエスト.進行状況 = QuestState::完了;
 		}
 
 		bool SaveLoad(File& ファイル, FileMode 読み書きモード)

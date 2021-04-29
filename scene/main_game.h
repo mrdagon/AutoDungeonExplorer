@@ -236,6 +236,8 @@ namespace SDX_ADE
 			if (UIObject::now_help != nullptr && Game::isヘルプ == true)
 			{
 				UIObject::now_help->DrawHelp();
+				Camera::Get()->position.x = 0;
+				Camera::Get()->position.y = 0;
 			}
 
 			W_Drag::Draw();

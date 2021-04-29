@@ -66,6 +66,21 @@ namespace SDX_ADE
 			return (this == select_now && select_time <= 60);
 		}
 
+		Point GetPos()
+		{
+			return Point(x,y);
+		}
+
+		Point GetPos(int No)
+		{
+			if (No == -1)
+			{
+				return Point(x + 並べx + 改行値 , y + 並べy + 改行値 );
+			}
+
+			return Point(x+並べx * (No % 改行値), y+並べy * (No / 改行値));
+		}
+
 		template< class TUIEnum>
 		static Layout& Data( TUIEnum key )
 		{

@@ -260,6 +260,7 @@ namespace SDX_ADE
 
 	public:
 		static Design* No1;
+		static Design* Help;
 		static Design Green;
 		static Design Blue;
 		static Design Brown;
@@ -471,11 +472,13 @@ namespace SDX_ADE
 			暗字 = { 0x424242 };//Gray 900
 
 			No1 = &BlueGrey;
+			Help = &Blue;
 		}
 
 	};
 
 	Design* Design::No1;
+	Design* Design::Help;
 	Design Design::Green;
 	Design Design::Blue;
 	Design Design::Brown;

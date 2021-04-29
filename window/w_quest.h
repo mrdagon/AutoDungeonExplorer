@@ -49,9 +49,9 @@ namespace SDX_ADE
 	public:
 		UIQuest 依頼[CV::上限依頼数];
 		UIButton 表示ボタン[3];
-		bool is表示未達成 = true;
+		bool is表示受注前 = true;
+		bool is表示進行中 = true;
 		bool is表示完了 = true;
-		bool is表示未発見 = true;
 
 		//新たに発生してチェックしていない
 		//完了してチェックしてない
@@ -77,9 +77,9 @@ namespace SDX_ADE
 				依頼[i].quest = &Quest::data[i];
 			}
 
-			表示ボタン[0].SetUI(LQuest::表示ボタン, "未達成" , 0);
-			表示ボタン[1].SetUI(LQuest::表示ボタン, "完了" , 1);
-			表示ボタン[2].SetUI(LQuest::表示ボタン, "未発見" , 2);
+			表示ボタン[0].SetUI(LQuest::表示ボタン, "完了" , 0);
+			表示ボタン[1].SetUI(LQuest::表示ボタン, "進行中" , 1);
+			表示ボタン[2].SetUI(LQuest::表示ボタン, "受注前" , 2);
 			表示ボタン[0].is押下 = true;
 			表示ボタン[1].is押下 = true;
 			表示ボタン[2].is押下 = true;
@@ -92,17 +92,17 @@ namespace SDX_ADE
 			表示ボタン[0].clickEvent = [&]()
 			{
 				表示ボタン[0].is押下 = !表示ボタン[0].is押下;
-				is表示未達成 = 表示ボタン[0].is押下;
+				is表示完了 = 表示ボタン[1].is押下;
 			};
 			表示ボタン[1].clickEvent = [&]()
 			{
 				表示ボタン[1].is押下 = !表示ボタン[1].is押下;
-				is表示完了 = 表示ボタン[1].is押下;
+				is表示進行中 = 表示ボタン[0].is押下;
 			};
 			表示ボタン[2].clickEvent = [&]()
 			{
 				表示ボタン[2].is押下 = !表示ボタン[2].is押下;
-				is表示未発見 = 表示ボタン[2].is押下;
+				is表示受注前 = 表示ボタン[2].is押下;
 			};
 
 			Update();
@@ -116,7 +116,11 @@ namespace SDX_ADE
 			int cnt = 0;
 			for (int i = 0; i < Quest::data.size(); i++)
 			{
-				if (依頼[i].quest->is受注 == false)
+				if (
+						(依頼[i].quest->進行状況 == QuestState::受注前 && is表示受注前 == true ) ||
+						(依頼[i].quest->進行状況 == QuestState::進行中 && is表示進行中 == true)	||
+						(依頼[i].quest->進行状況 == QuestState::完了 && is表示完了 == true)
+					)
 				{
 					依頼[i].lineID = cnt;
 					依頼[i].is表示 = true;
