@@ -242,7 +242,7 @@ namespace SDX_ADE
 			{
 				if (dungeon->is発見)
 				{
-					UIHelp::Dungeon( dungeon );
+					//UIHelp::Dungeon( dungeon );
 				}
 				else
 				{

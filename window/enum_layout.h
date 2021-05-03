@@ -221,6 +221,7 @@ namespace SDX_ADE
 		H説明,
 		H価格,
 		H所持数,
+		H必要メンバー,
 		COUNT,
 		PAGE = (int)UIPage::素材
 	};
@@ -331,7 +332,8 @@ namespace SDX_ADE
 		習得キースキル,
 		習得Aスキル,
 		習得Pスキル,
-
+		職業,
+		基礎ステータス,
 		COUNT,
 		PAGE = (int)UIPage::Helpエクスプローラ
 	};
@@ -347,6 +349,7 @@ namespace SDX_ADE
 		基礎ステータス,
 		アクティブスキル,
 		パッシブスキル,
+		Lv,
 		COUNT,
 		PAGE = (int)UIPage::Helpモンスター
 	};

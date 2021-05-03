@@ -19,6 +19,8 @@ namespace SDX_ADE
 		EnumArray<std::string, WindowType> Window_略記;//ボタン用の略記
 		EnumArray<std::string, WindowType> Window_ヘルプ;//ウィンドウのヘルプとポップアップ時のテキスト
 
+		EnumArray<std::string, StatusType> ステータス;
+
 		std::string タイトル = "だいじぇすと　ダンジョン　 0.2β";
 		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
 
@@ -211,6 +213,17 @@ namespace SDX_ADE
 			Window_名前[WindowType::Delete] = "除名";
 			Window_略記[WindowType::Delete] = "";
 			Window_ヘルプ[WindowType::Delete] = "本当に除名しますか？\n※除名した探索者は戻せません";
+
+			ステータス[StatusType::HP] = "HP";
+			ステータス[StatusType::力] = "力";
+			ステータス[StatusType::技] = "技";
+			ステータス[StatusType::知] = "知";
+			ステータス[StatusType::物防] = "防御";
+			ステータス[StatusType::魔防] = "抵抗";
+			ステータス[StatusType::命中] = "命中";
+			ステータス[StatusType::回避] = "回避";
+			ステータス[StatusType::会心] = "会心";
+
 			return true;
 		}
 

@@ -15,7 +15,7 @@ namespace SDX_ADE
 		{}
 
 		//探索者、モンスターの簡易表示用
-		static void ASkillChild(ActiveSkill* Aスキル)
+		static void ASkillChild(ActiveSkill* Aスキル , int xdif , int ydif )
 		{
 			auto L1 = LData(LHSkill::Cアイコン);
 			auto L2 = LData(LHSkill::C名前);
@@ -23,53 +23,45 @@ namespace SDX_ADE
 			auto L4 = LData(LHSkill::AC説明);
 
 			//アイコン
-			Design::Help->Draw(UIType::丸フレーム, L1);
-			Aスキル->image->Draw(L1.GetPos());
+			Design::Help->DrawRound(L4.x + xdif , L4.y + ydif , L4.w , L4.h );
+			Aスキル->image->Draw(L1.GetSubPos(xdif, ydif));
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字, Aスキル->名前);
+			MFont::L->DrawRotate(L2.GetSubPos(xdif, ydif), 1, 0, Design::暗字, Aスキル->名前);
 
 			//クールタイム
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			Aスキル->クールタイム;
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字, Aスキル->クールタイム);
+			MFont::L->DrawRotate(L3.GetSubPos(xdif, ydif), 1, 0, Design::暗字, Aスキル->クールタイム);
 
 			//効果
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字, Aスキル->説明);
+			MFont::L->DrawRotate(L4.GetSubPos(xdif, ydif), 1, 0, Design::暗字, Aスキル->説明);
 
 		}
 
 		//装備、探索者、モンスターの簡易表示用
-		static void PSkillChild(PassiveSkill* Pスキル)
+		static void PSkillChild(PassiveSkill* Pスキル , int xdif, int ydif)
 		{
 			auto L1 = LData(LHSkill::Cアイコン);
 			auto L2 = LData(LHSkill::C名前);
 			auto L3 = LData(LHSkill::PCタイミング);
 			auto L4 = LData(LHSkill::PC説明);
 
+			//効果 説明
+			Design::Help->DrawBack(L4.x + xdif, L4.y + ydif, L4.w, L4.h);
+			MFont::L->DrawRotate(L4.GetSubPos(xdif, ydif), 1, 0, Design::暗字, { Pスキル->説明 });
+
 			//アイコン
-			Design::Help->Draw(UIType::丸フレーム, L1);
-			Pスキル->image->Draw(L1.GetPos());
+			//Design::Help->DrawRound(L1.x + xdif, L1.y + ydif, L1.w, L1.h);
+			Pスキル->image->Draw(L1.GetSubPos(xdif,ydif));
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字, { Pスキル->名前 });
+			MFont::L->DrawRotate(L2.GetSubPos(xdif, ydif), 1, 0, Design::暗字, { Pスキル->名前 });
 
-
-			//発動タイミング
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			//Pスキル->タイミング;
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字, { (int)Pスキル->タイミング });
-
-			//効果
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字, { Pスキル->説明 } );
+			//発動タイミング - 説明に付与
+			//MFont::L->DrawRotate(L3.GetSubPos(xdif, ydif), 1, 0, Design::暗字, { (int)Pスキル->タイミング });
 		}
 
 
-		static Point DrawFrame( int w , int h)
+		static Point DrawFrame( int w , int h )
 		{
 			Point pt = Input::mouse.GetPoint();
 
@@ -83,7 +75,7 @@ namespace SDX_ADE
 				pt.y -= h;
 			}
 
-			Design::Help->Draw(UIType::明ボタン, pt.x, pt.y, w, h);
+			Design::Help->Draw(UIType::平ボタン, pt.x, pt.y, w, h);
 
 			//カメラオフセットをセット
 			Camera::Get()->position.x = -pt.x;
@@ -127,7 +119,6 @@ namespace SDX_ADE
 			auto L5 = LData(LHSkill::A隊列);
 
 			auto pt = DrawFrame(LHSkill::Aヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, { "Aスキル説明" });
 
 			//スキルアイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
@@ -135,11 +126,11 @@ namespace SDX_ADE
 
 			//スキル名
 			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ Aスキル->名前 });
+			MFont::L->Draw(L2.GetPos(), Design::暗字,{ Aスキル->名前 });
 
 			//スキル説明
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ Aスキル->説明 });
+			Design::Help->Draw(UIType::グループ明, L3);
+			MFont::L->Draw(L3.GetPos(), Design::暗字,{ Aスキル->説明 });
 
 			//Lv補正、最大Lvボーナス(とりあえず非表示)
 
@@ -161,7 +152,11 @@ namespace SDX_ADE
 			auto L4 = LData(LHSkill::Pタイミング);
 
 			auto pt = DrawFrame(LHSkill::Pヘルプ枠);
-			MFont::L->Draw({0,0}, Design::暗字, { "Pスキル説明" });
+
+			if (Pスキル == nullptr)
+			{
+				return;
+			}
 
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
@@ -172,12 +167,12 @@ namespace SDX_ADE
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ Pスキル->名前 });
 
 			//スキル説明
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ Pスキル->説明 });
+			Design::Help->Draw(UIType::グループ明, L3);
+			MFont::L->Draw(L3.GetPos(), Design::暗字,{ Pスキル->説明 });
 
 			//発動条件
 			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ (int)Pスキル->タイミング });
+			MFont::L->DrawRotate(L4.GetPos(),1,0, Design::暗字,{ (int)Pスキル->タイミング });
 
 			//Lv補正、最大Lvボーナス(とりあえず非表示)
 		}
@@ -193,46 +188,50 @@ namespace SDX_ADE
 			auto L6 = LData(LDungeon::H財宝);
 
 			auto pt = DrawFrame(LDungeon::ヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, { "ダンジョン" });
 
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
 			迷宮->image->Draw(L1.GetPos());;
 
 			//フロア名
-			Design::Help->Draw(UIType::丸フレーム, L2);
+			//Design::Help->Draw(UIType::丸フレーム, L2);
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 迷宮->名前 });
 			
-			//フロア説明
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ 迷宮->説明 });
+			//フロア説明 - テキスト作成するの大変なのでやっぱり削除
+			//Design::Help->Draw(UIType::グループ明, L3);
+			//MFont::L->Draw(L3.GetPos(), Design::暗字,{ 迷宮->説明 });
 
 			//探索率状況
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ (int)迷宮->探索率 , "%"});
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			//MFont::L->DrawBoldRotate(L4.GetPos(), 1, 0, Design::暗字 , Design::明字 , { (int)迷宮->探索率 , "%"});
+			//Design::Help->DrawGauge(L4.x, L4.y, L4.w, L4.h, 迷宮->探索率 + 0.5 );
 
-			//階段位置 ボス位置マーカー
+			//階段位置 ボス位置マーカー、探索率は被るので出さない？
 
 			//雑魚 or ボス
-			for (int i = 0 ; i < 迷宮->雑魚モンスター.size(); i++)
+			if (迷宮->isUIボス表示)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L5);
-				MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ "Lv ?"});
-			}
-
-			//ボス
-			for (int i = 0; i < 迷宮->ボスモンスター.size(); i++)
-			{
-				Design::Help->Draw(UIType::丸フレーム, L5);
-				MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ "Lv ?"});
+				for (int i = 0; i < 迷宮->ボスモンスター.size(); i++)
+				{
+					Design::Help->Draw(UIType::丸フレーム, L5);
+					迷宮->ボスモンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
+					MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
+				}
+			} else {
+				for (int i = 0; i < 迷宮->雑魚モンスター.size(); i++)
+				{
+					Design::Help->Draw(UIType::丸フレーム, L5);
+					迷宮->雑魚モンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
+					MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
+				}
 			}
 
 			//財宝
 			for (int i = 0; i < 迷宮->財宝.size(); i++)
 			{
 				Design::Help->Draw(UIType::丸フレーム, L6);
-				迷宮->財宝[i]->image->Draw(L6.GetPos());
-				MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ 迷宮->財宝[i]->名前});
+				迷宮->財宝[i]->image->Draw(L6.GetPos(i));
+				MFont::L->DrawRotate(L6.GetPos(i), 1, 0, Design::暗字,{ 迷宮->財宝[i]->名前});
 			}
 		}
 
@@ -247,20 +246,23 @@ namespace SDX_ADE
 			auto L6 = LData(LHMonster::基礎ステータス);
 			auto L7 = LData(LHMonster::アクティブスキル);
 			auto L8 = LData(LHMonster::パッシブスキル);
+			auto L9 = LData(LHMonster::Lv);
 
 			auto pt = DrawFrame(LHMonster::ヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, "モンスター");
 
 			//ドット絵
 			Design::Help->Draw(UIType::丸フレーム, L1);
-			魔物->image[0][0]->Draw(L1.GetPos());
+			魔物->image[0][0]->DrawRotate(L1.GetPos(),2,0);
+
+			//Lv
+			MFont::L->DrawRotate(L9.GetPos(), 1, 0, Design::暗字, { "Lv " , Lv});
+
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 魔物->名前 });
+			MFont::L->DrawRotate(L2.GetSubPos(L1.w/2 , L1.h/2), 1, 0, Design::暗字,{ 魔物->名前 });
 
 			//素材種 - アイコンのみ
-			Design::Help->Draw(UIType::丸フレーム, L3);
+
 			//魔物->素材種
 
 			if (魔物->isボス)
@@ -271,25 +273,40 @@ namespace SDX_ADE
 
 				//Boss表示
 				MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字, { "Boss" });
-
 			}
 
 			//基礎ステータス
-			Design::Help->Draw(UIType::丸フレーム, L6);
-			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "ステータス" });
+			for (int i = 0, cnt = 0; i < 魔物->ステ.size(); i++)
+			{
+				StatusType st = (StatusType)i;
+				switch (st)
+				{
+				case StatusType::力:
+				case StatusType::技:
+				case StatusType::知:
+					if (魔物->ステ[st] == 0) { continue; }
+					break;
+				case StatusType::会心:
+					continue;
+				}
+				Design::Help->Draw(UIType::丸フレーム, L6, cnt);
+				MFont::L->DrawRotate(L6.GetSubPos(L6.h + 4, L6.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
+				MFont::L->DrawRotate(L6.GetSubPos(L6.w - L6.h, L6.h / 2, cnt), 1, 0, Design::暗字, { (int)魔物->ステ[st], true });
+				cnt++;
+			}
 
 			//アクティブスキル
 			for (int i = 0; i < 魔物->Aスキル.size(); i++)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L7);
-				MFont::L->DrawRotate(L7.GetPos(), 1, 0, Design::暗字,{ "Aスキル"});
+				auto pos = L7.GetPos(i);
+				ASkillChild(魔物->Aスキル[i], pos.x, pos.y);
 			}
 
 			//パッシブスキル
-			for (int i = 0; i < 魔物->Pスキル.size(); i++)
+			for (int i = 0; i < 魔物->Pスキル.size() && i < 4; i++)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L8);
-				MFont::L->DrawRotate(L8.GetPos(), 1, 0, Design::暗字,{ "Pスキル"});
+				auto pos = L8.GetPos(i);
+				PSkillChild(魔物->Pスキル[i], pos.x, pos.y);
 			}
 		}
 
@@ -303,29 +320,40 @@ namespace SDX_ADE
 			auto L5 = LData(LItem::Hパッシブ);
 			auto L6 = LData(LItem::Hレシピ);
 
+			if (is武器防具 == true)
+			{
+				Layout::Data(LItem::ヘルプ枠).h += Layout::Data(LItem::ヘルプ枠).並べy;
+			}
+
+
 			auto pt = DrawFrame(LItem::ヘルプ枠);
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
 			装備->image->Draw(L1.GetPos());;
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
+			//Design::Help->Draw(UIType::丸フレーム, L2);
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 装備->名前 });
 
 			//説明
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ 装備->説明 });
+			Design::Help->Draw(UIType::グループ明, L3);
+			MFont::L->Draw(L3.GetPos(), Design::暗字,{ 装備->説明 });
 
-			//ステータス上昇量
-			for (int i = 0; i < 装備->ステ.size(); i++)
+			//ステータス変化 - 初期化処理で、説明に付与する
+			//for (int i = 0; i < 装備->ステ.size(); i++)
+			//{
+			//	Design::Help->Draw(UIType::丸フレーム, L4);
+			//	MFont::L->DrawRotate(L4.GetPos(i), 1, 0, Design::暗字,{ "ステータス"});
+			//}
+
+			if (is武器防具 == false)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L4);
-				MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ "ステータス"});
+				//アクセサリーはパッシブがある
+				PSkillChild(装備->Pスキル[0], L5.x, L5.y);
+				return;
 			}
 
-			//パッシブ効果
-			Design::Help->Draw(UIType::丸フレーム, L5);
-			PSkillChild(装備->Pスキル[0]);
+			Layout::Data(LItem::ヘルプ枠).h -= Layout::Data(LItem::ヘルプ枠).並べy;
 
 			//レシピ
 			for (int i = 0; i < 装備->レシピ.size(); i++)
@@ -347,49 +375,78 @@ namespace SDX_ADE
 			auto L7 = LData(LHExplorer::習得キースキル);
 			//auto L8 = LData(LHExplorer::習得Aスキル); 見せない
 			auto L9 = LData(LHExplorer::習得Pスキル);
+			auto L10 = LData(LHExplorer::職業);
+			auto L11 = LData(LHExplorer::基礎ステータス);
 
 			auto pt = DrawFrame(LHExplorer::ヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, "探索者");
 
 			//ドット絵
 			Design::Help->Draw(UIType::丸フレーム, L1);
-			探索者->image[0][1]->Draw(L1.GetPos());;
+			探索者->image[0][1]->DrawRotate(L1.GetPos(),2,0);;
 
 			//名前
 			Design::Help->Draw(UIType::丸フレーム, L2);
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 探索者->名前 });
 
-			//経験値バー
-			Design::Help->Draw(UIType::丸フレーム, L3);			;
-			MFont::L->DrawBold(L3.GetPos(), Design::暗字, Design::明字,{ (int)探索者->Get経験値率() , "%"} , true);
+			//職業
+			Design::Help->Draw(UIType::丸フレーム, L10);
+			MFont::L->DrawRotate(L10.GetSubPos(L10.w/2,L10.h/2), 1, 0, Design::暗字, { 探索者->職業->名前 });
+
+			//経験値バー いらない？
+			//Design::Help->Draw(UIType::丸フレーム, L3);			;
+			//MFont::L->DrawBold(L3.GetPos(), Design::暗字, Design::明字,{ (int)探索者->Get経験値率() , "%"} , true);
 
 			//Lv
 			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{"Lv",探索者->Lv });
 
-			//装備 - アクセサリー
+			//基礎ステータス
+			for (int i = 0,cnt = 0; i < 探索者->基礎ステ.size(); i++)
+			{
+				StatusType st = (StatusType)i;
+				switch (st)
+				{
+				case StatusType::力:
+				case StatusType::技:
+				case StatusType::知:
+					if (探索者->基礎ステ[st] == 0) { continue; }
+					break;
+				case StatusType::会心:
+					continue;
+				}
+				Design::Help->Draw(UIType::丸フレーム, L11, cnt);
+				MFont::L->DrawRotate(L11.GetSubPos(L11.h + 4, L11.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
+				MFont::L->DrawRotate(L11.GetSubPos( L11.w - L11.h , L11.h / 2, cnt), 1, 0, Design::暗字, { (int)探索者->基礎ステ[st], true });
+				cnt++;
+			}
+			//装備 - 武器 - 防具 - アクセサリー
 			for (int i = 0; i < 3; i++)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L5);
-				MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字, { 探索者->装備[i]->名前 });
+				Design::Help->Draw(UIType::丸フレーム, L5 , i);
+				探索者->装備[i]->image->DrawRotate(L5.GetSubPos(L5.h / 2, L5.h / 2,i), 1 ,0);
+				MFont::L->DrawRotate(L5.GetSubPos(L5.w / 2 + 8, L5.h / 2,i),1,0, Design::暗字, { 探索者->装備[i]->名前 });
 			}
 
 			//装備Aスキル
 			for (int i = 0; i < CV::最大Aスキル数; i++)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L6);
-				MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ 探索者->装備Aスキル通常[i]->名前 });
+				Design::Help->Draw(UIType::丸フレーム, L6 , i);
+				探索者->装備Aスキル通常[i]->image->DrawRotate(L6.GetSubPos(L6.h / 2, L6.h / 2 , i),1,0);
+				MFont::L->DrawRotate(L6.GetSubPos(L6.w / 2 + 8, L6.h / 2, i) , 1 , 0 , Design::暗字,{ 探索者->装備Aスキル通常[i]->名前 });
 			}
 
 			//習得キースキル(未実装)
 			Design::Help->Draw(UIType::丸フレーム, L7);
-			MFont::L->DrawRotate(L7.GetPos(), 1, 0, Design::暗字, { "キースキル"});
+			MFont::L->DrawRotate(L7.GetSubPos(L7.w/2,L7.h/2), 1, 0, Design::暗字, { "キースキル"});
+
+			//習得Aスキルは表示しない
 
 			//習得PスキルとLv
 			for (int i = 0; i < 探索者->職業->習得Pスキル.size(); i++)
 			{
-				Design::Help->Draw(UIType::丸フレーム, L9);
+				Design::Help->Draw(UIType::丸フレーム, L9 , i);
 				//探索者->習得PスキルLv;
-				MFont::L->DrawRotate(L9.GetPos(), 1, 0, Design::暗字,{ "Pスキル名"});
+				探索者->職業->習得Pスキル[i]->image->DrawRotate(L9.GetSubPos(L9.h / 2, L9.h / 2, i), 1, 0);
+				MFont::L->DrawRotate(L9.GetSubPos(L9.w/2 + 8, L9.h/2, i), 1, 0, Design::暗字,{ 探索者->職業->習得Pスキル[i]->名前 });
 			}
 		}
 
@@ -403,28 +460,27 @@ namespace SDX_ADE
 			auto L5 = LData(LManagement::HLv);
 
 			auto pt = DrawFrame(LManagement::ヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, "投資プラン");
 
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
 			投資->image->Draw(L1.GetPos());;
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
+			//Design::Help->Draw(UIType::丸フレーム, L2);
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 投資->名前 });
 
 
 			//説明
-			Design::Help->Draw(UIType::丸フレーム, L3);
+			Design::Help->Draw(UIType::グループ明, L3);
 			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ 投資->説明 });
 
 			//消費資金
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 投資->消費資金 });
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 投資->消費資金 , "G" });
 
 			//現在レベル
-			Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ 投資->投資Lv });
+			//Design::Help->Draw(UIType::丸フレーム, L5);
+			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ "Lv" , 投資->投資Lv });
 
 			//投資後レベル
 			//投資後効果
@@ -442,39 +498,36 @@ namespace SDX_ADE
 			auto L7 = LData(LQuest::H報酬説明);
 			auto L8 = LData(LQuest::H受注条件);
 
-			auto pt = DrawFrame(LHSkill::Pヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, "クエスト");
+			auto pt = DrawFrame(LQuest::ヘルプ枠);
 
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
 			依頼->image->Draw(L1.GetPos());;
 
 			//名前
-			Design::Help->Draw(UIType::丸フレーム, L2);
+			//Design::Help->Draw(UIType::丸フレーム, L2);
 			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 依頼->名前 });
 
+			//説明
+			Design::Help->Draw(UIType::グループ明, L5);
+			MFont::L->Draw(L5.GetPos(), Design::暗字, { 依頼->説明 });
+
 			//依頼者ドット
-			Design::Help->Draw(UIType::丸フレーム, L3);
-			依頼->依頼人image;
+			//Design::Help->Draw(UIType::丸フレーム, L3);
+			依頼->依頼人image->DrawRotate(L3.GetPos(),2,0);
 
 			//依頼者名前(未実装)
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ "" });
-
-			//説明
-			Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ 依頼->説明 });
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ "依頼人の名前" });
 
 			//受注状態
-			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "受注状態" });
+			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "状況" });
 
 			//説明 報酬(未実装)
-			Design::Help->Draw(UIType::丸フレーム, L7);
-			MFont::L->DrawRotate(L7.GetPos(), 1, 0, Design::暗字,{ "報酬！"});
+			//MFont::L->DrawRotate(L7.GetPos(), 1, 0, Design::暗字,{ "報酬説明（未実装）"});
 			
 			//受注条件(未実装)
-			Design::Help->Draw(UIType::丸フレーム, L8);
-			MFont::L->DrawRotate(L8.GetPos(), 1, 0, Design::暗字,{ "受注条件"});
+			//MFont::L->DrawRotate(L8.GetPos(), 1, 0, Design::暗字,{ "受注条件（未実装）"});
 		}
 
 		//今回の探索での被ダメージ、与ダメージ、回復量など表示
@@ -513,9 +566,9 @@ namespace SDX_ADE
 			auto L4 = LData(LMaterial::H説明);
 			auto L5 = LData(LMaterial::H価格);
 			auto L6 = LData(LMaterial::H所持数);
+			auto L7 = LData(LMaterial::H必要メンバー);
 
 			auto pt = DrawFrame(LMaterial::ヘルプ枠);
-			MFont::L->Draw({ 0,0 }, Design::暗字, "素材");
 
 			//アイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
@@ -523,25 +576,29 @@ namespace SDX_ADE
 
 			//ランク
 			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ 素材->ランク });
+			MFont::L->DrawRotate(L2.GetPos(), 1, 0, Design::暗字,{ "★ " , 素材->ランク });
 
 			//名前
 			Design::Help->Draw(UIType::丸フレーム, L3);
 			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ 素材->名前 });
 
-			//説明
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 素材->説明 });
+			//説明 - 文章作るのが大変なので非表示
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			//MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 素材->説明 });
 
 			//価格
 			Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ 素材->価格 });
+			MFont::L->Draw(L5.GetPos(), Design::暗字, { "価格 " , 素材->価格 , "G" } );
 
 			//所持数
 			Design::Help->Draw(UIType::丸フレーム, L6);
-			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "所持数" });
+			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "所持数 x " , Guild::P->素材数[素材->ID] });
 
 			//必要とするメンバーと個数
+			Design::Help->Draw(UIType::丸フレーム, L7);
+			MFont::L->DrawRotate(L7.GetPos(), 1, 0, Design::暗字, { "要求表示、未実装" });
+
+
 		}
 
 	};

@@ -966,7 +966,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
+				//UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
 			}
 		};
 
@@ -1058,7 +1058,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
+				//UIHelp::Dungeon(Guild::P->パーティ[パーティID].探索先);
 			}
 		};
 

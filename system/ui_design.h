@@ -287,6 +287,12 @@ namespace SDX_ADE
 			Draw( type, it.x, it.y, it.w, it.h);			
 		}
 
+		template<class TLayout>
+		void Draw(UIType type, TLayout& it , int lineID)
+		{
+			Draw(type, it.x + it.並べx * (lineID % it.改行値) , it.y + it.並べy * (lineID / it.改行値), it.w, it.h);
+		}
+
 		void Draw(UIType type , int x, int y, int w, int h)
 		{
 

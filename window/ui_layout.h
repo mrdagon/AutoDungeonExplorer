@@ -68,17 +68,22 @@ namespace SDX_ADE
 
 		Point GetPos()
 		{
-			return Point(x,y);
+			return Point(x + 並べx,y + 並べy);
 		}
 
 		Point GetPos(int No)
 		{
-			if (No == -1)
-			{
-				return Point(x + 並べx + 改行値 , y + 並べy + 改行値 );
-			}
-
 			return Point(x+並べx * (No % 改行値), y+並べy * (No / 改行値));
+		}
+
+		Point GetSubPos(int xdif, int ydif)
+		{
+			return Point( xdif + x + 並べx, ydif + y + 並べy);
+		}
+
+		Point GetSubPos(int xdif, int ydif, int No)
+		{
+			return Point( xdif + x + 並べx * (No % 改行値), ydif + y + 並べy * (No / 改行値));
 		}
 
 		template< class TUIEnum>

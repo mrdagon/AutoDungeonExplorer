@@ -307,7 +307,7 @@ namespace SDX_ADE
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
 
 				//予約は+表示、予約分は文字色を変える
-				MFont::S->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
+				MFont::L->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
 			}
 
 			void Click() override
@@ -354,7 +354,7 @@ namespace SDX_ADE
 		UIキースキル キースキル[CV::最大キースキル数];
 
 		UIPスキル Pスキル[CV::上限Pスキル種類];
-		UIPスキル Aスキル[CV::上限Aスキル種類];
+		UIAスキル Aスキル[CV::上限Aスキル種類];
 
 		UITextFrame 予約スキル枠;
 		UITextFrame 装備スキル枠;
