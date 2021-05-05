@@ -154,6 +154,7 @@ namespace SDX_ADE
 				Game::is停止 = !Game::is停止;
 			}
 
+			UIObject* prev_help = UIObject::now_help;
 			UIObject::now_help = nullptr;
 
 			toolBar.ObjectInput();
@@ -171,6 +172,13 @@ namespace SDX_ADE
 				}
 			}
 			W_Drag::Drop();
+
+			if (prev_help == UIObject::now_help)
+			{
+				UIObject::over_time++;
+			} else {
+				UIObject::over_time = 0;
+			}
 
 			//F10キーでスクショ//レイアウトはスクショしない
 			if (Input::key.F10.on == true)
@@ -233,7 +241,7 @@ namespace SDX_ADE
 			toolBar.Draw();
 
 			//ポップアップヘルプ表示
-			if (UIObject::now_help != nullptr && Game::isヘルプ == true)
+			if (UIObject::over_time >= CV::ヘルプ待機時間 && UIObject::now_help != nullptr && Game::isヘルプ == true)
 			{
 				UIObject::now_help->DrawHelp();
 				Camera::Get()->position.x = 0;

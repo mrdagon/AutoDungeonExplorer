@@ -475,6 +475,7 @@ namespace SDX_ADE
 
 			//現在の画面を記憶
 			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth() , Window::GetHeight() );
+			UIObject::over_time = 0;
 
 			while (System::Update(true,false))
 			{
@@ -485,7 +486,7 @@ namespace SDX_ADE
 				//ウィンドウの拡大縮小ドラッグ＆ドロップ無し
 				Draw();
 
-				if (UIObject::now_help != nullptr && Game::isヘルプ == true)
+				if ( UIObject::over_time >= CV::ヘルプ待機時間 && UIObject::now_help != nullptr && Game::isヘルプ == true)
 				{
 					UIObject::now_help->DrawHelp();
 					Camera::Get()->position.x = 0;
@@ -510,15 +511,24 @@ namespace SDX_ADE
 					Layout::Input();
 				}
 
+				auto prev_help = UIObject::now_help;
 				UIObject::now_help = nullptr;
 				共通Input();
 				ObjectInput();
+
+				if (prev_help == UIObject::now_help)
+				{
+					UIObject::over_time++;
+				} else {
+					UIObject::over_time = 0;
+				}
 
 				if (is表示 == false){ break; }
 			}
 
 			Input::mouse.Left.on = false;
 			img.Release();
+			UIObject::over_time = 0;
 
 			return ポップアップリザルト;
 		}

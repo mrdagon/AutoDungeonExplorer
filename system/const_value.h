@@ -12,6 +12,8 @@ namespace SDX_ADE
 		bool isレイアウト = true;
 		constexpr bool isデバッグ = true;
 
+		constexpr int ヘルプ待機時間 = 5;//マウスオーバー開始からヘルプ表示までの猶予時間
+
 		//外部データ件数上限
 		constexpr int 上限Aスキル種類 = 200;
 		constexpr int 上限Pスキル種類 = 200;

@@ -10,6 +10,40 @@ namespace SDX_ADE
 	//後でライブラリに追加する候補の描画関数
 	namespace MSystem
 	{
+		static void DrawVLine(const Point& 始点, int 縦高さ , const Color& 色, int 太さ = 1)
+		{
+			点.SetColor(色);
+			if (縦高さ < 0)
+			{
+				縦高さ *= -1;
+				点.DrawExtend({ 始点.x,始点.y - 縦高さ,太さ,縦高さ });
+			} else {
+
+				点.DrawExtend({ 始点.x,始点.y,太さ,縦高さ });
+			}
+
+		}
+
+		static void DrawHLine(const Point& 始点, int 横長さ, const Color& 色, int 太さ = 1)
+		{
+			点.SetColor(色);
+
+			if (横長さ < 0)
+			{
+				横長さ *= -1;
+				点.DrawExtend({ 始点.x - 横長さ , 始点.y , 横長さ , 太さ });
+			} else {
+				点.DrawExtend({ 始点.x,始点.y,横長さ,太さ });
+			}
+
+		}
+
+		static void DrawCircle(const Circle& 円形, const Color& 色)
+		{
+			円.SetColor(色);
+			円.DrawExtend({ 円形.x - 円形.radius, 円形.y - 円形.radius , 円形.radius * 2, 円形.radius * 2 });
+		}
+
 		/*立体が＋なら飛び出す、マイナスならへこむ*/
 		static void DrawWindow(Point 座標, double 横幅, double 縦幅, int 枠No, int 立体 = 0 , int 透過率 = 255)
 		{
@@ -156,10 +190,10 @@ namespace SDX_ADE
 			Drawing::Line(p3, p4, 裏色, (int)裏太さ);
 			Drawing::Line(p4, p1, 裏色, (int)裏太さ);
 
-			Drawing::Circle({ p1.x, p1.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
-			Drawing::Circle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
+			DrawCircle({ p1.x, p1.y, 裏太さ / 2 }, 裏色);
+			DrawCircle({ p2.x, p2.y, 裏太さ / 2 }, 裏色);
+			DrawCircle({ p3.x, p3.y, 裏太さ / 2 }, 裏色);
+			DrawCircle({ p4.x, p4.y, 裏太さ / 2 }, 裏色);
 
 			//表
 			if (ゲージ率 == 0) { return; }
@@ -168,17 +202,17 @@ namespace SDX_ADE
 			{
 				p2.x = 座標.x + 座標.GetW() * ゲージ率 * 4;
 				Drawing::Line(p1, p2, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p2.x, p2.y, 太さ / 2 }, 表色);
 			}
 			else if (ゲージ率 < 0.5)
 			{
 				p3.y = 座標.y + 座標.GetH() * (ゲージ率 - 0.25) * 4;
 				Drawing::Line(p1, p2, 表色, (int)太さ);
 				Drawing::Line(p2, p3, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p3.x, p3.y, 太さ / 2 }, 表色);
 			}
 			else if (ゲージ率 < 0.75)
 			{
@@ -186,10 +220,10 @@ namespace SDX_ADE
 				Drawing::Line(p1, p2, 表色, (int)太さ);
 				Drawing::Line(p2, p3, 表色, (int)太さ);
 				Drawing::Line(p3, p4, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p4.x, p4.y, 太さ / 2 }, 表色);
 			}
 			else
 			{
@@ -198,11 +232,11 @@ namespace SDX_ADE
 				Drawing::Line(p2, p3, 表色, (int)太さ);
 				Drawing::Line(p3, p4, 表色, (int)太さ);
 				Drawing::Line(p4, p5, 表色, (int)太さ);
-				Drawing::Circle({ p1.x, p1.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p2.x, p2.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p3.x, p3.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p4.x, p4.y, 太さ / 2 }, 表色);
-				Drawing::Circle({ p5.x, p5.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p1.x, p1.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p2.x, p2.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p3.x, p3.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p4.x, p4.y, 太さ / 2 }, 表色);
+				MSystem::DrawCircle({ p5.x, p5.y, 太さ / 2 }, 表色);
 			}
 		}
 	}
@@ -243,8 +277,10 @@ namespace SDX_ADE
 				int xa = x + h / 2;
 				int xb = x + w - h / 2;
 
-				Drawing::Circle({ (double)xa,(double)(y + h / 2), (double)h / 2 }, color);
-				Drawing::Circle({ (double)xb,(double)(y + h / 2), (double)h / 2 }, color);
+				MSystem::DrawCircle({ (double)xa,(double)(y + h / 2), (double)h / 2 }, color);
+				MSystem::DrawCircle({ (double)xb,(double)(y + h / 2), (double)h / 2 }, color);
+
+
 				Drawing::Rect({ xa , y , w - h , h }, color);
 			}
 			else
@@ -252,8 +288,8 @@ namespace SDX_ADE
 				int ya = y + w / 2;
 				int yb = y + h - w / 2;
 
-				Drawing::Circle({ (double)(x + w / 2),(double)ya, (double)w / 2 }, color);
-				Drawing::Circle({ (double)(x + w / 2),(double)yb, (double)w / 2 }, color);
+				MSystem::DrawCircle({ (double)(x + w / 2),(double)ya, (double)w / 2 }, color);
+				MSystem::DrawCircle({ (double)(x + w / 2),(double)yb, (double)w / 2 }, color);
 				Drawing::Rect({ x , ya , w  , h - w }, color);
 			}
 		}
@@ -302,9 +338,9 @@ namespace SDX_ADE
 				case UIType::平ボタン: DrawButton(x,y,w,h , 背景色); break;
 				case UIType::凸ボタン: DrawButton凸(x, y, w, h); break;
 				case UIType::凹ボタン: DrawButton凹(x, y, w, h); break;
-				case UIType::グループ明: DrawBack(x, y, w, h); break;
-				case UIType::グループ暗: DrawDarkBack(x, y, w, h); break;
-				case UIType::グループ中: DrawLightBack(x, y, w, h); break;
+				case UIType::グループ明: DrawBack(x, y, w, h, ハイライト); break;
+				case UIType::グループ暗: DrawBack(x, y, w, h, グループ); break;
+				case UIType::グループ中: DrawBack(x, y, w, h,背景色); break;
 				case UIType::タイトル: DrawTitle(x, y, w, h); break;
 				case UIType::ウィンドウ: DrawWindow(x, y, w, h); break;
 				case UIType::フレーム: DrawFrame(x, y, w, h); break;
@@ -321,7 +357,7 @@ namespace SDX_ADE
 		{
 			Drawing::Rect({ x,y,w,h - 4 }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 4 }, 凸色);
-			Drawing::Line({ x + 1,y + h - 5 }, { x + w - 2, y + h - 5 }, グループ);
+			MSystem::DrawHLine({ x + 1 , y + h - 5 }, w - 2, グループ);
 			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
 
 		}
@@ -329,42 +365,26 @@ namespace SDX_ADE
 		//縁有りで凹んだボタン
 		void DrawButton凹(int x, int y, int w, int h)
 		{
-			Drawing::Rect({ x,y,w,h }, エッジ色, false);
+			Drawing::Rect({ x,y,w,h }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1, w - 2, 4 }, 影色);
 			Drawing::Rect({ x + 1,y + 5,w - 2,h - 6 }, 凹色);
-			Drawing::Line({ x + 1,y + h - 2 }, { x + w - 2, y + h - 2 }, 濃色);
+			MSystem::DrawHLine({ x + 1 , y + h - 2 }, w - 1, 濃色);
 		}
 
 		//平面ボタン
 		void DrawButton(int x, int y, int w, int h ,Color& ボタン色)
 		{
-			Drawing::Rect({ x,y,w,h }, エッジ色, false);
+			Drawing::Rect({ x,y,w,h }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, ボタン色);
-			Drawing::Line({ x + 1,y + h - 2 }, { x + w - 2, y + h - 2 }, 凹色);
+			MSystem::DrawHLine({ x + 1 , y + h - 2 }, w - 2, 凹色);
 		}
 
 		//背景色の四角を描画
-		void DrawBack(int x, int y, int w, int h)
+		void DrawBack(int x, int y, int w, int h , Color& 色)
 		{
-			Drawing::Rect({ x  , y + 1 , w , h - 2 }, ハイライト);
-			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, ハイライト);
-			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, ハイライト);
-		}
-
-		//やや濃い縁を1dot丸めた四角を描画
-		void DrawDarkBack(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x  , y + 1 , w , h - 2 }, グループ);
-			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, グループ);
-			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, グループ);
-		}
-
-		//やや濃い縁を1dot丸めた四角を描画
-		void DrawLightBack(int x, int y, int w, int h)
-		{
-			Drawing::Rect({ x  , y + 1 , w , h - 2 }, 背景色);
-			Drawing::Line({ x + 1 , y }, { x + w - 2 , y }, 背景色);
-			Drawing::Line({ x + 1 , y + h - 1 }, { x + w - 2 , y + h - 1 }, 背景色);
+			Drawing::Rect({ x  , y + 1 , w , h - 2 }, 色);
+			MSystem::DrawHLine({ x + 1 , y }, w - 2, 色);
+			MSystem::DrawHLine({ x + 1 , y + h - 1 }, w - 2, 色);
 		}
 
 		//ウィンドウのタイトル部
@@ -372,9 +392,7 @@ namespace SDX_ADE
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色, false);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, グループ);
-			Drawing::Line({ x + 1,y + h - 2 },{ x + w - 2, y + h - 2}, 凹色);
-			//Drawing::Line({ x + w - 2 , y + 1 },{ x + w - 2, y + h - 2}, 凹色);
-
+			MSystem::DrawHLine({ x + 1 , y + h - 1 }, w - 2, 凹色);
 		}
 
 		//タイトル下のウィンドウ部分
@@ -382,10 +400,8 @@ namespace SDX_ADE
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色, false);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, 背景色);
-			Drawing::Line({ x + 1,y + h - 2 }, { x + w - 2, y + h - 2 }, 凸色);
-
+			MSystem::DrawHLine({ x + 1 , y + h - 2 }, w - 1, 凸色);
 			Drawing::Rect({ x + 1,y + h,w - 1 , 2 }, 影色);
-			//Drawing::Line({ x + w - 2 , y + 1 }, { x + w - 2, y + h - 2 }, 凸色);
 		}
 
 		//ヘルプウィンドウ用描画

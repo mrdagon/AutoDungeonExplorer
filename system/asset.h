@@ -456,6 +456,9 @@ namespace SDX_ADE
 	//UI等のシステム画像
 	namespace MSystem
 	{
+		Image 円;
+		Image 点;
+
 		ImagePack ウィンドウ枠;
 		Image ダンジョン背景[5];
 
@@ -486,6 +489,9 @@ namespace SDX_ADE
 			吹き出し.Load("file/system/huki_01.png");
 
 			タイトルロゴ.Load("file/title/titlelogo.png");
+
+			円.Load("file/system/circle.png");
+			点.Load("file/system/dot.png");
 		}
 	}
 

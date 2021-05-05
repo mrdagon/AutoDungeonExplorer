@@ -18,7 +18,7 @@
 //旧レイアウトの実装
 #include "w_dragdrop.h"
 #include "w_guihelp.h"
-#include "w_guiobject.h"
+#include "w_guiobject.h"	
 #include "w_popup.h"
 
 //ゲーム画面用ウィンドウ

@@ -26,6 +26,7 @@ namespace SDX_ADE
 
 	public:
 		static UIObject* now_help;
+		inline static int over_time;//同じ物をマウスオーバーし続けている時間
 
 		Layout* layout;
 		UIObject* 親 = nullptr;

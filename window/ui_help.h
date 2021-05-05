@@ -46,7 +46,7 @@ namespace SDX_ADE
 			auto L4 = LData(LHSkill::PC説明);
 
 			//効果 説明
-			Design::Help->DrawBack(L4.x + xdif, L4.y + ydif, L4.w, L4.h);
+			Design::Help->DrawBack(L4.x + xdif, L4.y + ydif, L4.w, L4.h , Design::Help->ハイライト);
 			MFont::L->DrawRotate(L4.GetSubPos(xdif, ydif), 1, 0, Design::暗字, { Pスキル->説明 });
 
 			//アイコン

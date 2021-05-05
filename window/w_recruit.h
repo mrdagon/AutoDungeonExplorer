@@ -44,11 +44,11 @@ namespace SDX_ADE
 					auto sstr = W_Recruit::This->conv.to_bytes(W_Recruit::This->入力中文字.substr(0, W_Recruit::This->挿入位置));
 					int X変換中文字 = MFont::L->GetDrawStringWidth(sstr.c_str());
 
-					Drawing::Rect({ GetX() + layout->並べx + X変換中文字 + 4 , GetY() + layout->並べy + 4 , W変換中文字 , 32 }, Color::Yellow);
-					MFont::L->DrawBold({ GetX() + layout->並べx + 4,GetY() + layout->並べy + 2 }, Color::White, Color::Black, { str.c_str() });
+					Drawing::Rect({ GetX() + layout->並べx + X変換中文字 + 4 , GetY() + layout->並べy - 2 , W変換中文字 , 32 }, Color::White );
+					MFont::L->DrawBold({ GetX() + layout->並べx + 4,GetY() + layout->並べy }, Color::White, Color::Black, { str.c_str() });
 				}
 				else {
-					MFont::L->DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy + 2 }, Color::White, Color::Black, { W_Recruit::This->求人名前 });
+					MFont::L->DrawBold({ GetX() + layout->並べx + 4, GetY() + layout->並べy }, Color::White, Color::Black, { W_Recruit::This->求人名前 });
 				}
 
 
@@ -263,33 +263,44 @@ namespace SDX_ADE
 				}
 			}
 			static int 入力中文字数 = 1;
+			static bool is変換中 = false;
 
 			//以下は変換前文字がある場合処理しない
 			if (入力中文字数 > 0)
 			{
+				is変換中 = true;
 				入力中文字数 = (int)System::textComposition.size();
 				return;
 			}
+
+			if (is変換中 == true)
+			{
+				is変換中 = false;
+				return;
+			}
+
 			入力中文字数 = (int)System::textComposition.size();
 
-			if (Input::key.Back.on && 挿入位置 > 0)
+			if ( Input::key.Back.IsPush(30,5) && 挿入位置 > 0)
 			{
 				入力中文字.erase(挿入位置 - 1, 1);
 				挿入位置--;
 			}
-			if (Input::key.Delete.on && 挿入位置 < (int)入力中文字.size())
+			if (Input::key.Delete.IsPush(30, 5) && 挿入位置 < (int)入力中文字.size())
 			{
 				入力中文字.erase(挿入位置, 1);
 			}
 
-			if (Input::key.Left.on || (Input::key.Left.holdCount > 30 && Input::key.Left.holdCount % 5 == 0))
+			if (Input::key.Left.IsPush(30, 5) )
 			{
 				挿入位置 = std::max(挿入位置 - 1, 0);
 			}
-			if (Input::key.Right.on || (Input::key.Right.holdCount > 30 && Input::key.Right.holdCount % 5 == 0))
+			if (Input::key.Right.IsPush(30, 5) )
 			{
 				挿入位置 = std::min(挿入位置 + 1, (int)入力中文字.size());
 			}
+
+
 
 		}
 

@@ -43,6 +43,8 @@ namespace SDX_ADE
 		int 最大投資Lv = 10;
 		bool is使用可 = false;
 
+		int 実行予約 = 0;
+
 		/*戦術実行効果*/
 		void Active(Guild* guild)
 		{
@@ -117,6 +119,16 @@ namespace SDX_ADE
 		static bool SaveLoad(File& ファイル, FileMode 読み書きモード)
 		{
 			//増加資金と使用回数
+		}
+
+		void 実行予約設定(int 部位)
+		{
+
+		}
+
+		void 実行予約解除(int 部位)
+		{
+
 		}
 	};
 

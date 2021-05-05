@@ -95,6 +95,7 @@ namespace SDX_ADE
 		int スキルポイント;//余っているスキルポイント
 
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
+		int 装備強化予約[CV::装備部位数];
 
 		ActiveSkill* 装備Aスキル通常[CV::最大Aスキル数];
 		ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
@@ -241,6 +242,16 @@ namespace SDX_ADE
 		void On気絶()
 		{
 			
+		}
+
+		void 強化予約設定(int 部位)
+		{
+
+		}
+
+		void 強化予約解除(int 部位)
+		{
+
 		}
 	};
 }
