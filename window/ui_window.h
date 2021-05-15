@@ -200,7 +200,7 @@ namespace SDX_ADE
 			//ホイール操作
 			if (isスクロールバー表示 && Rect(座標.x, 座標.y + タイトル枠高さ, 横幅, 縦幅).Hit(&Input::mouse.GetPoint()) && Input::mouse.Whell != 0 && !is下拡縮中 && !is上拡縮中 && !isスクロール中)
 			{
-				スクロール位置 -= Input::mouse.Whell * 20;
+				スクロール位置 -= Input::mouse.Whell * CV::スクロール感度;
 
 				if (スクロール位置 > 縦内部幅 - 縦幅) { スクロール位置 = 縦内部幅 - 縦幅; }
 				if (スクロール位置 < 0) { スクロール位置 = 0; }
@@ -477,7 +477,7 @@ namespace SDX_ADE
 			Image img(Renderer::mainRenderer.GetTexture(), Window::GetWidth() , Window::GetHeight() );
 			UIObject::over_time = 0;
 
-			while (System::Update(true,false))
+			do 
 			{
 				img.DrawPartExtend({ 0,0 , Config::解像度W , Config::解像度H }, { 0,0 , Window::GetWidth() , Window::GetHeight() });
 
@@ -524,7 +524,7 @@ namespace SDX_ADE
 				}
 
 				if (is表示 == false){ break; }
-			}
+			} while (System::Update(true, false));
 
 			Input::mouse.Left.on = false;
 			img.Release();

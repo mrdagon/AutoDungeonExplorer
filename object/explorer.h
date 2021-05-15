@@ -39,7 +39,7 @@ namespace SDX_ADE
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
-				装備Aスキル通常[a] = ExplorerClass::data[job].初期Aスキル[a];
+				装備Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
 				装備Aスキルボス[a] = ExplorerClass::data[job].初期Aスキル[a];
 			}
 
@@ -55,7 +55,7 @@ namespace SDX_ADE
 
 		bool is特殊人材;//(解雇不可、イベントに絡む等)
 
-		void スキルリセット(int 低下レベル)
+		void スキルリセット(int 低下Lv)
 		{
 			for (auto& it : AスキルLv)
 			{
@@ -71,7 +71,7 @@ namespace SDX_ADE
 			}
 
 			経験値 = 0;
-			Lv = std::max(1,Lv - 低下レベル);
+			Lv = std::max(1,Lv - 低下Lv);
 
 			スキルポイント = Lv + 10;
 		}
@@ -95,10 +95,12 @@ namespace SDX_ADE
 		int スキルポイント;//余っているスキルポイント
 
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
-		int 装備強化予約[CV::装備部位数];
 
-		ActiveSkill* 装備Aスキル通常[CV::最大Aスキル数];
-		ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
+		inline static int 装備強化リスト[CV::最大強化予約] = {};
+		int 装備強化予約[CV::装備部位数] = {-1,-1,-1};
+
+		ActiveSkill* 装備Aスキル[CV::最大Aスキル数];
+		//ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
 
 		int 探検前Lv;
 		int 探検前経験値;
@@ -177,7 +179,7 @@ namespace SDX_ADE
 			Aスキル数 = 4;
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
-				Aスキル[a] = 装備Aスキル通常[a];
+				Aスキル[a] = 装備Aスキル[a];
 				AスキルLv[a] = 習得AスキルLv[Aスキル[a]->ID];
 				必要クールダウン[a] = Aスキル[a]->クールタイム;
 			}
@@ -244,13 +246,105 @@ namespace SDX_ADE
 			
 		}
 
-		void 強化予約設定(int 部位)
+		//操作スキル
+		void 操作_装備Aスキル変更(int スロット, ActiveSkill* スキル)
+		{
+			for (int i = 0; i < CV::最大Aスキル数; i++)
+			{
+				if ( 装備Aスキル[i] == スキル)
+				{
+					装備Aスキル[i] = 装備Aスキル[スロット];
+					装備Aスキル[スロット] = スキル;
+					return;
+				}
+			}
+
+			装備Aスキル[スロット] = スキル;
+		}
+
+		void 操作_予約解除(int 予約ID)
+		{
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+
+			}
+		}
+
+		void 操作_キースキル習得(int スキルID)
 		{
 
 		}
 
+		void 操作_Pスキル習得(int スキルID)
+		{
+			if (スキルポイント > 0)
+			{
+
+			} else {
+				//Pスキルは正の数
+
+			}
+
+		}
+
+		void 操作_Aスキル習得(int スキルID)
+		{
+			if (スキルポイント > 0)
+			{
+
+			} else {
+				//Aスキルは負の数
+
+			}
+
+		}
+
+		void 操作_スキルリセット()
+		{
+			int 低下Lv = Lv / 10 + 2;
+			if (低下Lv <= 2) { 低下Lv = 0; }
+			スキルリセット(低下Lv);
+		}
+
+		//装備強化予約
+		void 強化予約(int 部位)
+		{
+			//素材足りてたら即時強化
+			
+			//不足してたら予約 or 予約解除
+			if (装備強化予約[部位] == -1)
+			{
+				for (int i = 0; i < CV::最大強化予約; i++)
+				{
+					if (装備強化リスト[i] == -1)
+					{
+						装備強化予約[部位] = i;
+						装備強化リスト[i] = ID * 10 + 部位;
+						break;
+					}
+				}
+			} else {
+				強化予約解除(部位);
+			}
+		}
+
 		void 強化予約解除(int 部位)
 		{
+			for (int i = 0; i < CV::最大強化予約; i++)
+			{
+				if (装備強化リスト[i] == ID * 10 + 部位)
+				{
+					装備強化予約[部位] = -1;
+					装備強化リスト[i] = -1;
+					for (int a = i; a < CV::最大強化予約-1; a++)
+					{
+						装備強化リスト[a] = 装備強化リスト[a + 1];
+					}
+					装備強化リスト[CV::最大強化予約 - 1] = -1;
+					break;
+				}
+			}
+
 
 		}
 	};

@@ -246,6 +246,7 @@ namespace SDX_ADE
 		明ボタン,
 		平ボタン,
 		凸ボタン,
+		凸ハイライト,
 		凹ボタン,
 		グループ明,
 		グループ中,
@@ -295,8 +296,11 @@ namespace SDX_ADE
 		}
 
 	public:
-		static Design* No1;
-		static Design* Help;
+		static Design* No1;//基本的なやつ
+
+		static Design* UI;//操作可能なUI用
+		static Design* Help;//ヘルプ用
+
 		static Design Green;
 		static Design Blue;
 		static Design Brown;
@@ -336,7 +340,8 @@ namespace SDX_ADE
 			{
 				case UIType::明ボタン: DrawButton(x, y, w, h , 凸色); break;
 				case UIType::平ボタン: DrawButton(x,y,w,h , 背景色); break;
-				case UIType::凸ボタン: DrawButton凸(x, y, w, h); break;
+				case UIType::凸ボタン: DrawButton凸(x, y, w, h,背景色); break;
+				case UIType::凸ハイライト: DrawButton凸(x, y, w, h,凸色); break;
 				case UIType::凹ボタン: DrawButton凹(x, y, w, h); break;
 				case UIType::グループ明: DrawBack(x, y, w, h, ハイライト); break;
 				case UIType::グループ暗: DrawBack(x, y, w, h, グループ); break;
@@ -353,13 +358,12 @@ namespace SDX_ADE
 		}
 
 		//縁有りで凸ったボタン
-		void DrawButton凸(int x, int y, int w, int h)
+		void DrawButton凸(int x, int y, int w, int h , Color 色)
 		{
 			Drawing::Rect({ x,y,w,h - 4 }, エッジ色);
-			Drawing::Rect({ x + 1,y + 1,w - 2,h - 4 }, 凸色);
+			Drawing::Rect({ x + 1,y + 1,w - 2,h - 4 }, 色);
 			MSystem::DrawHLine({ x + 1 , y + h - 5 }, w - 2, グループ);
 			Drawing::Rect({ x,y + h - 4,w,4 }, 影色);
-
 		}
 
 		//縁有りで凹んだボタン
@@ -454,8 +458,8 @@ namespace SDX_ADE
 
 			Blue.影色 = { 0x424242 };//Gray 800
 			Blue.エッジ色 = { 0x616161 };//Gray 600
-			Blue.濃色 = { 0x1565C0 };//800
-			Blue.凹色 = { 0x1E88E5 };//600
+			Blue.濃色 = { 0x0d47a1 };//900
+			Blue.凹色 = { 0x1565c0 };//800
 			Blue.グループ = { 0x42A5F5 };//400
 			Blue.背景色 = { 0x90CAF9 };//200
 			Blue.凸色 = { 0xBBDEFB };//100
@@ -494,13 +498,17 @@ namespace SDX_ADE
 			暗字 = { 0x424242 };//Gray 900
 
 			No1 = &BlueGrey;
-			Help = &Blue;
+
+			UI = &Blue;
+			Help = &Green;
 		}
 
 	};
 
 	Design* Design::No1;
 	Design* Design::Help;
+	Design* Design::UI;
+
 	Design Design::Green;
 	Design Design::Blue;
 	Design Design::Brown;

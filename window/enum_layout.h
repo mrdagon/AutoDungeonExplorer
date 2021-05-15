@@ -315,6 +315,7 @@ namespace SDX_ADE
 		探索者職業名,
 		スキルコンボボックス,
 		スキルコンボアイテム,
+		前後ボタン,
 
 		COUNT,
 		PAGE = (int)UIPage::スキルツリー

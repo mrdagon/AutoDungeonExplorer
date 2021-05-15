@@ -146,6 +146,7 @@ namespace SDX_ADE
 		//操作処理
 		void Input()
 		{
+
 			if (Input::key.F1.on && CV::isデバッグ) { Game::isデバッグ大きさ表示 = !Game::isデバッグ大きさ表示; }
 
 			if (Input::mouse.Right.on)

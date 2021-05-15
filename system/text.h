@@ -146,9 +146,9 @@ namespace SDX_ADE
 			Window_略記[WindowType::EventLog] = "ログ";
 			Window_ヘルプ[WindowType::EventLog] = "ログ一覧：\n探索記録の確認";
 
-			Window_名前[WindowType::Item] = "遺物一覧";
-			Window_略記[WindowType::Item] = "遺物";
-			Window_ヘルプ[WindowType::Item] = "遺物一覧：\n探索者にドラッグ＆ドロップで装備変更";
+			Window_名前[WindowType::Item] = "装備一覧";
+			Window_略記[WindowType::Item] = "装備";
+			Window_ヘルプ[WindowType::Item] = "装備一覧：\n探索者にドラッグ＆ドロップで装備変更";
 
 			Window_名前[WindowType::Management] = "設備投資";
 			Window_略記[WindowType::Management] = "設備";

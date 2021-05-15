@@ -20,7 +20,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//枠
-				DrawUI(UIType::明ボタン);
+				DrawUI( isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI );
 
 				//遺物アイコン
 				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);
@@ -37,12 +37,16 @@ namespace SDX_ADE
 			void Click() override
 			{
 				//掴む処理
-
+				W_Drag::所持装備 = &Item::accessory_data[itemID];
 			}
 
 			bool Drop() override
 			{
-				//探索者の遺物と交換
+				//探索者の装備と交換
+				if (W_Drag::ギルメン装備.メンバー != nullptr)
+				{
+					Guild::P->操作_装備在庫(W_Drag::ギルメン装備.メンバー, Item::accessory_data[itemID].ID , W_Drag::ギルメン装備.部位);
+				}
 
 				return false;
 			}
@@ -84,6 +88,15 @@ namespace SDX_ADE
 			AddItem(アイテム,CV::上限アクセサリ種類);
 			AddItem(内枠);
 
+			内枠.dropEvent = [&]()
+			{
+				if (W_Drag::ギルメン装備.メンバー != nullptr)
+				{
+					Guild::P->操作_装備在庫(W_Drag::ギルメン装備.メンバー, 0 , W_Drag::ギルメン装備.部位);
+				}
+				return true;
+			};
+
 			Update();
 		}
 
@@ -97,7 +110,8 @@ namespace SDX_ADE
 			for (auto& it : アイテム)
 			{
 				a++;
-				if (Guild::P->アクセサリー所持数[a] > 0)
+				//0番は装備無しなので表示しない
+				if (Guild::P->アクセサリー所持数[a] > 0 && a != 0)
 				{
 					it.lineID = cnt;
 					cnt++;

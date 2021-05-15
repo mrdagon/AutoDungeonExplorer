@@ -430,8 +430,8 @@ namespace SDX_ADE
 			for (int i = 0; i < CV::最大Aスキル数; i++)
 			{
 				Design::Help->Draw(UIType::丸フレーム, L6 , i);
-				探索者->装備Aスキル通常[i]->image->DrawRotate(L6.GetSubPos(L6.h / 2, L6.h / 2 , i),1,0);
-				MFont::L->DrawRotate(L6.GetSubPos(L6.w / 2 + 8, L6.h / 2, i) , 1 , 0 , Design::暗字,{ 探索者->装備Aスキル通常[i]->名前 });
+				探索者->装備Aスキル[i]->image->DrawRotate(L6.GetSubPos(L6.h / 2, L6.h / 2 , i),1,0);
+				MFont::L->DrawRotate(L6.GetSubPos(L6.w / 2 + 8, L6.h / 2, i) , 1 , 0 , Design::暗字,{ 探索者->装備Aスキル[i]->名前 });
 			}
 
 			//習得キースキル(未実装)

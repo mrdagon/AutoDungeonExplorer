@@ -112,7 +112,7 @@ namespace SDX_ADE
 					ui_now = UIType::選択丸フレーム;
 				}
 
-				DrawUI( ui_now );
+				DrawUI( ui_now , Design::UI);
 
 				auto job = &ExplorerClass::data[lineID];
 

@@ -10,7 +10,6 @@ namespace SDX_ADE
 	/*ギルド*/
 	class Guild
 	{
-	private:
 	public:
 		//内部クラスにして循環参照解決する場合
 		class Party
@@ -183,9 +182,9 @@ namespace SDX_ADE
 				}
 			}
 
-			bool 探索先前後(bool is進む)
+			bool 操作_探索フロア増減(int 変化値)
 			{
-				if (is進む)
+				if (変化値 == -1)
 				{
 					for (auto& it : Dungeon::data)
 					{
@@ -196,7 +195,8 @@ namespace SDX_ADE
 						}
 					}
 				}
-				else {
+				else
+				{
 
 					for (int a = (int)Dungeon::data.size() - 1; a >= 0; a--)
 					{
@@ -209,6 +209,16 @@ namespace SDX_ADE
 				}
 
 				return false;
+			}
+
+			bool 操作_探索指示(int 変化値)
+			{
+				int n = int(探索指示) + 変化値;
+
+				if (n == (int)OrderType::COUNT) { n = 0; }
+				if (n < 0) { n = (int)OrderType::COUNT - 1; }
+
+				探索指示 = OrderType(n);
 			}
 
 			//部屋選択関係の処理
@@ -714,7 +724,6 @@ namespace SDX_ADE
 		//従業員一覧
 		Explorer 探索者[CV::上限探索者登録数];
 
-		//Party test;
 		Party パーティ[CV::上限パーティ数];
 		Explorer* 控え探索者[CV::最大控え人数];
 
@@ -764,21 +773,16 @@ namespace SDX_ADE
 				it = false;
 			}
 
-			for (auto& it : 控え探索者)
-			{
-				it = nullptr;
-			}
-
 			探索者登録(0, "ギルメンA");
 			探索者登録(1, "ギルメンB");
 			探索者登録(2, "ギルメンC");
 			探索者登録(3, "ギルメンD");
 			探索者登録(4, "ギルメンE");
-			探索者登録(5, "ギルメンF");
-			探索者登録(6, "ギルメンG");
-			探索者登録(7, "ギルメンH");
-			探索者登録(8, "ギルメンI");
-			探索者登録(9, "ギルメンJ");
+
+			for (auto& it : 控え探索者)
+			{
+				it = nullptr;
+			}
 
 			//初期、探索者、テスト用
 			for (int a = 0; a < 5; a++)
@@ -786,11 +790,16 @@ namespace SDX_ADE
 				パーティ[0].メンバー[a] = &Guild::P->探索者[a];
 			}
 
-			控え探索者[0] = &Guild::P->探索者[5];
-			控え探索者[1] = &Guild::P->探索者[6];
-			控え探索者[2] = &Guild::P->探索者[7];
-			控え探索者[3] = &Guild::P->探索者[8];
-			控え探索者[4] = &Guild::P->探索者[9];
+			探索者登録(5, "ギルメンF");
+			探索者登録(6, "ギルメンG");
+			探索者登録(7, "ギルメンH");
+			探索者登録(8, "ギルメンI");
+			探索者登録(9, "ギルメンJ");
+
+			for (auto& it : Explorer::装備強化リスト)
+			{
+				it = -1;
+			}
 
 			//パーティ初期化
 			for (int a = 0; a < CV::上限パーティ数; a++)
@@ -800,6 +809,49 @@ namespace SDX_ADE
 			}
 		}
 
+
+		Explorer* GetMember(int パーティID, int 並びID)
+		{
+			if (パーティID < 0)
+			{
+				return 控え探索者[並びID];
+			}
+			else
+			{
+				return パーティ[パーティID].メンバー[並びID];
+			}
+		}
+
+		bool MemberToID(Explorer* メンバー , int& パーティID ,  int& 並びID)
+		{
+			for (int a = 0; a < CV::上限パーティ数; a++)
+			{
+				for (int b = 0; b < CV::パーティ人数; b++)
+				{
+					if (パーティ[a].メンバー[b] == メンバー)
+					{
+						パーティID = a;
+						並びID = b;
+						return true;
+					}
+				}
+			}
+
+			for (int a = 0; a < CV::最大控え人数; a++)
+			{
+				if (控え探索者[a] == メンバー)
+				{
+					パーティID = -1;
+					並びID = a;
+					return true;
+				}
+			}
+
+			パーティID = -2;
+			並びID = -1;
+			return false;
+		}
+
 		void 探索者登録(ID_Job 求人職業 , std::string 求人名前)
 		{
 			for (int i = 0; i < CV::上限探索者登録数; i++)
@@ -807,12 +859,26 @@ namespace SDX_ADE
 				if (探索者[i].is登録済み == false)
 				{
 					探索者[i].登録(i, 求人職業,1, 求人名前);
+					for (auto& it : 控え探索者)
+					{
+						if (it != nullptr) { continue; }
+
+						it = &探索者[i];
+						break;
+					}
+					break;
 				}
 			}
 		}
 
-		void 除名( int パーティID , int 並びID)
+		void 除名(Explorer* メンバー)
 		{
+			bool isHit = false;
+			int パーティID = 0;
+			int 並びID = 0;
+
+			if (MemberToID(メンバー, パーティID, 並びID) == false) { return; }
+
 			if (パーティID >= 0)
 			{
 				//探索パーティから除名
@@ -823,70 +889,145 @@ namespace SDX_ADE
 				//控えから除名
 				アクセサリー所持数[控え探索者[並びID]->装備[2]->ID]++;
 				控え探索者[並びID]->is登録済み = false;
-				控え探索者[並びID] = nullptr;
+
+				for (int a = 並びID; a < CV::最大控え人数 - 1; a++)
+				{
+					控え探索者[a] = 控え探索者[a + 1];
+				}
+				控え探索者[CV::最大控え人数 - 1] = nullptr;
 			}
 
 		}
 
-		void パーティ移動(Explorer* メンバー , int 並びID , Explorer* 移動先メンバー, int 移動先ID)
+		//操作処理
+		void 操作_配置変更(int パーティA , int 並びA , int パーティB , int 並びB)
 		{
-			//控え枠へドロップ
-			if (移動先メンバー == nullptr && 移動先ID == -100)
+			Explorer* メンバーA;
+			Explorer* メンバーB;
+
+			if (パーティA < 0)
 			{
-				if (並びID >= 0)
+				メンバーA = 控え探索者[並びA];
+			} else {
+				メンバーA = パーティ[パーティA].メンバー[並びA];
+			}
+
+			if (パーティB < 0)
+			{
+				メンバーB = 控え探索者[並びB];
+				控え探索者[並びB] = メンバーA;
+			} else {
+				メンバーB = パーティ[パーティB].メンバー[並びB];
+				パーティ[パーティB].メンバー[並びB] = メンバーA;
+			}
+
+			if (パーティA < 0)
+			{
+				控え探索者[並びA] = メンバーB;
+			} else {
+				パーティ[パーティA].メンバー[並びA] = メンバーB;
+			}
+
+			ソート控え();
+		}
+
+		void 操作_装備在庫(Explorer* メンバー , int 新装備ID , int 装備スロット)
+		{
+			//現在の装備を外して、在庫+1
+			アクセサリー所持数[メンバー->装備[装備スロット]->ID]++;
+			
+
+			//装備を変更して、在庫-1
+			メンバー->装備[装備スロット] = &Item::accessory_data[新装備ID];
+			アクセサリー所持数[新装備ID]--;
+		}
+
+		void 操作_装備スワップ(Explorer* メンバーA,int 装備部位A, Explorer* メンバーB, int 装備部位B)
+		{
+			std::swap(メンバーA->装備[装備部位A], メンバーB->装備[装備部位B]);
+		}
+
+		void 操作_武器防具クリック(Explorer* メンバー , int 装備スロット)
+		{
+			メンバー->強化予約(装備スロット);
+		}
+
+		Explorer* 操作_スキル画面前後(Explorer* メンバー , int 前後)
+		{
+			//パーティ1～3、控え
+			int パーティID,並びID;
+
+			if (MemberToID(メンバー, パーティID, 並びID) == false) { return メンバー; }
+
+			int no = 並びID;
+			Explorer* member;
+
+			while (1)
+			{
+				no += 前後;
+				if (no < 0) { no = CV::パーティ人数 - 1; }
+				if (no > CV::パーティ人数 - 1) { no = 0; }
+
+				member = パーティ[パーティID].メンバー[no];
+
+				if (member != nullptr)
 				{
-					//パーティから控え
-					パーティ[並びID / 5].メンバー[並びID % 5] = nullptr;
-					//控え探索者.push_back(メンバー);
-				}
-				else {
-					//控えから控え最後までバブルソート
-					//for (int a = 0; a < 控え探索者.size() - 1; a++)
-					//{
-					//	if (控え探索者[a] == メンバー)
-					//	{
-					//		控え探索者[a] = 控え探索者[a + 1];
-					///		控え探索者[a + 1] = メンバー;
-					//	}
-					//}
+					return member;
 				}
 			}
-			else if (移動先ID >= 0 && 並びID >= 0)
-			{
-				//両方パーティ
-				パーティ[移動先ID / 5].メンバー[移動先ID % 5] = メンバー;
-				パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			}
-			else if (移動先ID < 0 && 並びID < 0) {
-				//両方控え
-				控え探索者[(-移動先ID - 1)] = メンバー;
-				控え探索者[(-並びID - 1)] = 移動先メンバー;
-			}
-			else if (移動先ID < 0) {
-				//移動先が控え
-				控え探索者[(-移動先ID - 1)] = メンバー;
-				パーティ[並びID / 5].メンバー[並びID % 5] = 移動先メンバー;
-			}
-			else {
-				//控えからパーティ
-				パーティ[移動先ID / 5].メンバー[移動先ID % 5] = メンバー;
-				控え探索者[(-並びID - 1)] = 移動先メンバー;
-				//控え探索者.erase(std::remove( 控え探索者.begin(), 控え探索者.end(), nullptr), 控え探索者.end());
-			}
 
-			//控えメンバーは
-			for (auto& it : 控え探索者)
-			{
-				it->基礎ステータス計算();
-			}
 
-			//全パーティメンバーの基礎ステ再計算
-			for (auto& it : パーティ)
-			{
-				it.基礎ステ再計算();
-			}
+		}
 
-			MSound::効果音[SE::配置換え].Play();
+		void 操作_除名(Explorer* メンバー)
+		{
+			除名(メンバー);
+		}
+
+		void 操作_控え移動(int パーティID, int 並びID)
+		{
+			if (パーティID < 0)
+			{
+				//控えから削除
+				//最後に追加
+				for (int a = 0; a < CV::最大控え人数 - 1; a++)
+				{
+					if (控え探索者[a] == nullptr)
+					{
+						控え探索者[a] = 控え探索者[並びID];
+						break;
+					}
+				}
+				控え探索者[並びID] = nullptr;
+
+				ソート控え();
+			}
+			else
+			{
+				//現在パーティから削除
+				//最後に追加
+				for (int a = 0; a < CV::最大控え人数 - 1; a++)
+				{
+					if (控え探索者[a] == nullptr)
+					{
+						控え探索者[a] = パーティ[パーティID].メンバー[並びID];
+						break;
+					}
+				}
+				パーティ[パーティID].メンバー[並びID] = nullptr;
+			}
+		}
+
+		void ソート控え()
+		{
+			for (int a = 0; a < CV::最大控え人数 - 1; a++)
+			{
+				if (控え探索者[a] == nullptr)
+				{
+					控え探索者[a] = 控え探索者[a + 1];
+					控え探索者[a + 1] = nullptr;
+				}
+			}
 		}
 
 		//探索関係処理

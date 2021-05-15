@@ -13,6 +13,7 @@ namespace SDX_ADE
 		constexpr bool isデバッグ = true;
 
 		constexpr int ヘルプ待機時間 = 5;//マウスオーバー開始からヘルプ表示までの猶予時間
+		constexpr int スクロール感度 = 30;
 
 		//外部データ件数上限
 		constexpr int 上限Aスキル種類 = 200;
@@ -79,6 +80,10 @@ namespace SDX_ADE
 		constexpr int 要求経験値 = 200;
 
 		constexpr int 一時間フレーム数 = 720;
+
+		constexpr int 最大投資予約 = 100;
+
+		constexpr int 最大強化予約 = 100;
 
 	}
 }

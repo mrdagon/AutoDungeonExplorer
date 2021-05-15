@@ -43,13 +43,14 @@ namespace SDX_ADE
 		int 最大投資Lv = 10;
 		bool is使用可 = false;
 
-		int 実行予約 = 0;
+		inline static int 予約[CV::最大投資予約];
+		bool is予約;
 
 		/*戦術実行効果*/
-		void Active(Guild* guild)
+		void Active()
 		{
 			//資金消費
-			guild->資金 -= 消費資金;
+			//guild->資金 -= 消費資金;
 			//ログ
 			//EventLog::Add(0, Game::日付, LogType::経営);
 
@@ -121,14 +122,65 @@ namespace SDX_ADE
 			//増加資金と使用回数
 		}
 
-		void 実行予約設定(int 部位)
+		void 操作_クリック()
 		{
+			//資金足りていたら即実行
+			if (Guild::P->資金 >= 消費資金)
+			{
+				Active();
+			}
+			else if( is予約 == true)
+			{
+				is予約 = false;
+				予約ソート(this->ID);
+			}
+			else
+			{
+				is予約 = true;
+				予約追加(this->ID);
+			}
+		}
+
+		//解除したり実行した予約を削除して詰める
+		static void 予約ソート(int ID)
+		{
+			bool is削除済み = false;
+
+			for(int i = 0; i < CV::最大投資予約-1; i++)
+			{
+				if (予約[i] == -1)
+				{
+					break;
+				}
+
+				if (is削除済み)
+				{
+					予約[i] = 予約[i + 1];
+				}
+				else if (予約[i] == ID)
+				{
+					予約[i] = 予約[i+1];
+					is削除済み = true;
+				}
+			}
+
+			if (is削除済み == false)
+			{
+				予約[CV::最大投資予約 - 1] = -1;
+			}
 
 		}
 
-		void 実行予約解除(int 部位)
+		static void 予約追加(int ID)
 		{
-
+			for (int i = 0; i < CV::最大投資予約 - 1; i++)
+			{
+				if (予約[i] == -1)
+				{
+					予約[i] = ID;
+					break;
+				}
+			}
 		}
 	};
 

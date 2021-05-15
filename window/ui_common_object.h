@@ -16,7 +16,7 @@ namespace SDX_ADE
 		std::string テキスト = "";
 		Image* 画像 = nullptr;
 
-		Design** UIデザイン = &Design::No1;
+		Design** UIデザイン = &Design::UI;
 		bool is押下 = false;//押し下げ状態フラグ
 		int 押下状態 = 0;//押下 = true時にどう表示するか
 
@@ -82,7 +82,7 @@ namespace SDX_ADE
 			}
 			else if ((is押下 == true && 押下状態 == 2))
 			{
-				DrawUI(UIType::明ボタン, *UIデザイン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン , *UIデザイン);
 			}
 			else if ((is押下 == true && 押下状態 == 3))
 			{
@@ -91,7 +91,8 @@ namespace SDX_ADE
 			}
 			else if ( isOver )
 			{
-				DrawUI( UIType::平ボタン, *UIデザイン);
+				DrawUI( UIType::凸ハイライト, *UIデザイン);
+				yd = -2;
 			}
 			else
 			{

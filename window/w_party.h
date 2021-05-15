@@ -95,16 +95,13 @@ namespace SDX_ADE
 				//探索指示変更
 				if (Point(px, py).Hit(&Rect(Lp(31), Lp(32), Lp(33), Lp(34))) == true)
 				{
-					int n = int(Guild::P->パーティ[パーティID].探索指示);
+					if (px < Lp(31) + Lp(33) / 2)
+					{
+						Guild::P->パーティ[パーティID].操作_探索指示(-1);
+					} else {
+						Guild::P->パーティ[パーティID].操作_探索指示(+1);
+					}
 
-					if (px < Lp(31) + Lp(33) / 2) { n--; }
-					else { n++; }
-
-
-					if (n == (int)OrderType::COUNT) { n = 0; }
-					if (n <  0) { n = (int)OrderType::COUNT - 1; }
-
-					Guild::P->パーティ[パーティID].探索指示 = OrderType(n);
 					MSound::効果音[SE::ボタンクリック].Play();
 				}
 				//探索先変更
@@ -112,8 +109,8 @@ namespace SDX_ADE
 				{
 					bool result = false;
 
-					if (px < Lp(70) + Lp(72) / 2) { result = 所属->探索先前後(false); }
-					else { result = 所属->探索先前後(true); }
+					if (px < Lp(70) + Lp(72) / 2) { result = 所属->操作_探索フロア増減(false); }
+					else { result = 所属->操作_探索フロア増減(true); }
 
 					if (result) { MSound::効果音[SE::ボタンクリック].Play(); }
 				}
@@ -124,7 +121,6 @@ namespace SDX_ADE
 				if (W_Drag::ダンジョン == nullptr) { return; }
 				if (所属->探索状態 != ExplorerType::編成中 && 所属->探索状態 != ExplorerType::リザルト中)
 				{ 
-					MSound::効果音[SE::配置換え].Play();
 					return;
 				}
 
@@ -211,7 +207,8 @@ namespace SDX_ADE
 				}
 
 				//ギルメン掴む
-				W_Drag::探索メン = ギルメン;
+				W_Drag::探索者.並びID = 並びID;
+				W_Drag::探索者.メンバー = ギルメン;
 				//W_Drag::並びID = 並びID;
 				MSound::効果音[SE::ドラッグ].Play();
 			}
@@ -220,39 +217,39 @@ namespace SDX_ADE
 			{
 				if (所属->探索状態 != ExplorerType::編成中) { return; }
 
-				if (W_Drag::探索メン != nullptr)
+				if (W_Drag::探索者.メンバー != nullptr)
 				{
 					//ギルメン入れ替え
 					//Guild::P->パーティ移動( W_Drag::探索メン, W_Drag::並びID , ギルメン , 並びID);
 				}
-				else if(W_Drag::所持アーティファクト != nullptr && ギルメン != nullptr)
+				else if(W_Drag::所持装備 != nullptr && ギルメン != nullptr)
 				{
 					//装備変更
 					int 部位 = 0;
-					if (W_Drag::所持アーティファクト->種類 == ItemType::アクセサリー)
+					if (W_Drag::所持装備->種類 == ItemType::アクセサリー)
 					{
 						部位 = 2;
-					}else if (W_Drag::所持アーティファクト->種類 == ItemType::外套 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::軽鎧 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::重鎧 ||
-						W_Drag::所持アーティファクト->種類 == ItemType::軽装 )
+					}else if (W_Drag::所持装備->種類 == ItemType::外套 ||
+						W_Drag::所持装備->種類 == ItemType::軽鎧 ||
+						W_Drag::所持装備->種類 == ItemType::重鎧 ||
+						W_Drag::所持装備->種類 == ItemType::軽装 )
 					{
 						部位 = 1;
-						if (W_Drag::所持アーティファクト->種類 != ギルメン->職業->防具種)
+						if (W_Drag::所持装備->種類 != ギルメン->職業->防具種)
 						{
 							return;
 						}
 					}
 
 					//武器は装備種があってないと交換不可
-					if (部位 == 0 && W_Drag::所持アーティファクト->種類 != ギルメン->職業->武器種)
+					if (部位 == 0 && W_Drag::所持装備->種類 != ギルメン->職業->武器種)
 					{
 						return;
 					}
 
 					Guild::P->アクセサリー所持数[ギルメン->装備[部位]->ID]++;
-					Guild::P->アクセサリー所持数[W_Drag::所持アーティファクト->ID]--;
-					ギルメン->装備[部位] = W_Drag::所持アーティファクト;
+					Guild::P->アクセサリー所持数[W_Drag::所持装備->ID]--;
+					ギルメン->装備[部位] = W_Drag::所持装備;
 
 					所属->基礎ステ再計算();
 					MSound::効果音[SE::装備変更].Play();
@@ -726,17 +723,34 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI(UIType::明ボタン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI);
 				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット];
 
 				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
 			}
 
 			void Click() override
-			{}
+			{
+				W_Drag::ギルメン装備.メンバー = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				W_Drag::ギルメン装備.部位 = 装備スロット;			
+			}
 
-			void Over() override
-			{}
+			bool Drop() override
+			{
+				//他ギルメン装備
+				if (W_Drag::ギルメン装備.メンバー != nullptr)
+				{
+					Guild::P->操作_装備スワップ(Guild::P->パーティ[パーティID].メンバー[隊列ID] , 装備スロット , W_Drag::ギルメン装備.メンバー , W_Drag::ギルメン装備.部位);
+				}
+				//装備在庫
+				if (W_Drag::所持装備 != nullptr)
+				{
+					Guild::P->操作_装備在庫(Guild::P->パーティ[パーティID].メンバー[隊列ID], W_Drag::所持装備->ID , 装備スロット);
+				}
+
+				return false;
+			}
+
 			void DrawHelp() override
 			{
 				UIHelp::Item( Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット], false);
@@ -752,20 +766,23 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI(isOver ? UIType::平ボタン : UIType::凸ボタン);
-				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット];
+				auto* member = Guild::P->GetMember(パーティID,隊列ID);
+
+				if (member->装備強化予約[装備スロット] == -1)
+				{
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				} else {
+					DrawUI( UIType::凹ボタン, Design::UI);
+				}
+
+				auto& it = member->装備[装備スロット];
 
 				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
 			}
 
 			void Click() override
 			{
-			
-			}
-
-			void Over() override
-			{
-			
+				Guild::P->操作_武器防具クリック(Guild::P->パーティ[パーティID].メンバー[隊列ID] , 装備スロット);
 			}
 
 			void DrawHelp() override
@@ -788,7 +805,7 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI( isOver ? UIType::平ボタン : UIType::凸ボタン);
+				DrawUI( isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
 				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
 
 				auto& LA = LData(LParty::探索者スキルボタン);
@@ -803,10 +820,6 @@ namespace SDX_ADE
 				スキルツリー.Init();
 				スキルツリー.OpenPopup();
 			}
-
-			void Over() override
-			{
-			}
 		};
 
 		//パーティ子オブジェクト
@@ -818,7 +831,7 @@ namespace SDX_ADE
 			UI装飾品 装飾品ボタン;
 
 			int パーティID;
-			int 隊列ID;
+			int 並びID;
 
 			UI探索者()
 			{
@@ -832,7 +845,10 @@ namespace SDX_ADE
 			void SetID(int パーティID,int 隊列ID)
 			{
 				this->パーティID = パーティID;
-				this->隊列ID = 隊列ID;
+				this->並びID = 隊列ID;
+
+				スキルボタン.パーティID = パーティID;
+				スキルボタン.隊列ID = 並びID;
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -843,18 +859,20 @@ namespace SDX_ADE
 				装飾品ボタン.装備スロット = 2;
 				装飾品ボタン.パーティID = パーティID;
 				装飾品ボタン.隊列ID = 隊列ID;
+
+
 			}
 
 			void Draw派生() override
 			{
-				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				auto& it = Guild::P->パーティ[パーティID].メンバー[並びID];
 
 				auto& LA = Layout::Data(LParty::探索者ドット);
 				auto& LB = Layout::Data(LParty::探索者Lv);
 				auto& LC = Layout::Data(LParty::探索者経験値);
 
 				//全体枠
-				DrawUI(UIType::平ボタン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI);
 
 				//配置している場合の表示
 				if (it == nullptr) { return; }
@@ -880,7 +898,7 @@ namespace SDX_ADE
 
 			bool Check派生(double px, double py) override
 			{
-				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				auto& it = Guild::P->パーティ[パーティID].メンバー[並びID];
 				if (it == nullptr) { return false; }
 
 				if (スキルボタン.CheckInput(px, py) == true){return true; }
@@ -894,25 +912,23 @@ namespace SDX_ADE
 			void Click() override
 			{
 				//探索者掴む
-
-				//探索先変更、探索指示変更
-
-
-
+				W_Drag::探索者.Set(Guild::P->パーティ[パーティID].メンバー[並びID], パーティID, 並びID);
 			}
 
 			bool Drop() override
 			{
 				//探索者入れ替え
-
-				//探索先変更
+				if (W_Drag::探索者.メンバー != nullptr)
+				{
+					Guild::P->操作_配置変更(W_Drag::探索者.パーティID, W_Drag::探索者.並びID, パーティID, 並びID);
+				}
 
 				return false;
 			}
 
 			void DrawHelp() override
 			{
-				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+				auto& it = Guild::P->パーティ[パーティID].メンバー[並びID];
 				if (it != nullptr)
 				{
 					UIHelp::Explorer(it);
@@ -930,7 +946,7 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(UIType::明ボタン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, Design::UI);
 				auto& LA = LData(LParty::探索先変更三角);
 				auto& LD = LData(LParty::探索先階数);
 				auto* it = Guild::P->パーティ[パーティID].探索先;
@@ -953,13 +969,25 @@ namespace SDX_ADE
 			{
 				if (mousePos == 1)
 				{
-
+					Guild::P->パーティ[パーティID].操作_探索フロア増減(-1);
 				}
 				else
 				{
-
+					Guild::P->パーティ[パーティID].操作_探索フロア増減(+1);
 				}
 			}
+
+			bool Drop() override
+			{
+				//ダンジョン
+				if ( W_Drag::ダンジョン != nullptr)
+				{
+					Guild::P->パーティ[パーティID].探索先 = W_Drag::ダンジョン;
+				}
+
+				return false;
+			}
+
 
 			void Over() override
 			{}
@@ -976,7 +1004,7 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(UIType::明ボタン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, Design::UI);
 				GetFont()->DrawRotate( GetCenterPos(), 1, 0, Design::暗字, { "おまかせ" });
 
 				auto& LA = LData(LParty::探索先変更三角);
@@ -1038,21 +1066,8 @@ namespace SDX_ADE
 				GetFont()->DrawRotate( GetPos(LC), 1, 0, Design::暗字, { "財宝 "  , it->発見財宝数 , " / " , it->最大財宝数 });
 			}
 
-			void Click() override
-			{
-				//探索者掴む
-
-				//探索先変更、探索指示変更
-
-			}
-
 			bool Drop() override
 			{
-				//探索者入れ替え
-
-				//探索先変更
-
-
 				return false;
 			}
 
@@ -1150,10 +1165,7 @@ namespace SDX_ADE
 			bool Drop() override
 			{
 				if (パーティ->探索状態 != ExplorerType::編成中) { return false; }
-				//探索者入れ替え
-
-				//探索先変更
-
+				//ドロップ操作無し？
 				return false;
 			}
 
@@ -1172,7 +1184,7 @@ namespace SDX_ADE
 			void Drawダンジョン()
 			{
 				//色々表示
-				DrawUI(UIType::平ボタン);
+				DrawUI(UIType::明ボタン);
 
 			}
 
@@ -1188,7 +1200,7 @@ namespace SDX_ADE
 				auto& lb = Layout::Data(LParty::控えLv);
 
 				//ボタン枠-掴み中だと凹み
-				DrawUI(UIType::明ボタン);
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, Design::UI);
 
 				//キャラ画像
 				探索者->image[0][1]->DrawRotate( { GetCenterX() + la.x , GetCenterY() + la.y }, 2 , 0);
@@ -1200,7 +1212,7 @@ namespace SDX_ADE
 			void Click() override
 			{
 				//掴む
-				W_Drag::探索メン = 探索者;
+				W_Drag::探索者.Set( 探索者 , -1 , lineID-1);
 				MSound::効果音[SE::ドラッグ].Play();
 			}
 
@@ -1208,17 +1220,20 @@ namespace SDX_ADE
 			{
 				//並び替える
 				//探索者->ID;
-				if (W_Drag::探索メン != nullptr)
+				if (W_Drag::探索者.メンバー != nullptr)
 				{
 					//ギルメン入れ替え
+					Guild::P->操作_配置変更(W_Drag::探索者.パーティID, W_Drag::探索者.並びID,-1,lineID-1);
 				}
-				else if(W_Drag::所持アーティファクト != nullptr)
+				else if(W_Drag::所持装備 != nullptr)
 				{
 					//アクセサリー交換
+					Guild::P->操作_装備在庫(探索者, W_Drag::所持装備->ID ,2);
 				}
 				else if (W_Drag::ギルメン装備.メンバー != nullptr)
 				{
 					//パーティメンバーとアクセサリー交換
+					Guild::P->操作_装備スワップ(探索者 , 2 , W_Drag::ギルメン装備.メンバー , W_Drag::ギルメン装備.部位);
 				}
 
 				return false;
@@ -1294,7 +1309,27 @@ namespace SDX_ADE
 			
 			除名.dropEvent = [&]()
 			{
-				除名ウィンドウ.OpenPopup();			
+				if (W_Drag::探索者.メンバー != nullptr)
+				{
+					除名ウィンドウ.OpenPopup();
+					if (除名ウィンドウ.ポップアップリザルト == 1)
+					{
+						Guild::P->操作_除名(W_Drag::探索者.メンバー);
+					}
+					W_Drag::探索者.メンバー = nullptr;
+				}
+
+				return true;
+			};
+
+			控え枠.dropEvent = [&]()
+			{
+				if (W_Drag::探索者.メンバー != nullptr)
+				{
+					//ギルメン入れ替え
+					Guild::P->操作_控え移動(W_Drag::探索者.パーティID, W_Drag::探索者.並びID);
+				}
+				return true;
 			};
 
 			//●ヘルプ設定
@@ -1314,8 +1349,11 @@ namespace SDX_ADE
 				it.is表示 = it.lineID < Guild::P->最大パーティ数;
 			}
 
+			a = -1;
 			for (auto& it : 控え)
 			{
+				a++;
+				it.探索者 = Guild::P->控え探索者[a];
 				it.is表示 = (it.探索者 != nullptr);
 			}
 			//控え枠の位置はパーティ数で変化			

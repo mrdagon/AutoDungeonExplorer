@@ -14,9 +14,24 @@ namespace SDX_ADE
 		//掴めるのは４種類
 		static Dungeon* ダンジョン = nullptr;
 
-		static Item* 所持アーティファクト = nullptr;
+		static Item* 所持装備 = nullptr;
 
-		static Explorer* 探索メン = nullptr;
+		struct Member
+		{
+			int 並びID;
+			int パーティID;//0以上パーティ、-1控え
+			Explorer* メンバー = nullptr;
+
+			void Set(Explorer* メンバー,int パーティID , int 並びID)
+			{
+				this->並びID = 並びID;
+				this->パーティID = パーティID;
+				this->メンバー = メンバー;
+			}
+		};
+
+		static Member 探索者;
+
 
 		struct EquipItem
 		{
@@ -24,7 +39,7 @@ namespace SDX_ADE
 			int 部位 = 0;
 		};
 		
-		inline static EquipItem ギルメン装備;
+		static EquipItem ギルメン装備;
 
 		/*ドラッグ中の物を表示*/
 		void Draw()
@@ -33,13 +48,13 @@ namespace SDX_ADE
 			{
 				ダンジョン->image->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
-			else if ( 所持アーティファクト != nullptr )
+			else if ( 所持装備 != nullptr )
 			{
-				所持アーティファクト->image->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
+				所持装備->image->DrawRotate({ Input::mouse.x,Input::mouse.y }, 1, 0);
 			}
-			else if ( 探索メン != nullptr )
+			else if ( 探索者.メンバー != nullptr )
 			{
-				探索メン->image[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
+				探索者.メンバー->image[0][1]->DrawRotate({ Input::mouse.x,Input::mouse.y }, 2, 0);
 			}
 
 			else if ( ギルメン装備.メンバー != nullptr )
@@ -54,8 +69,8 @@ namespace SDX_ADE
 			if (Input::mouse.Left.off)
 			{
 				ダンジョン = nullptr;
-				探索メン = nullptr;
-				所持アーティファクト = nullptr;
+				探索者.メンバー = nullptr;
+				所持装備 = nullptr;
 				ギルメン装備.メンバー = nullptr;
 			}
 

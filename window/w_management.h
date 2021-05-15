@@ -75,14 +75,16 @@ namespace SDX_ADE
 				auto& LC = LData(LManagement::プラン費用);
 				auto& LD = LData(LManagement::プランアイコン);
 
-				//使用可能、不可で表示変化
-				if (isOver == true)
+				if (manage->is予約 == true)
 				{
-					DrawUI(UIType::平ボタン);
-					Camera::Get()->position.y -= 2;
-				} else {
-					DrawUI(UIType::凸ボタン);
+					DrawUI(UIType::凹ボタン, Design::UI);
+					Camera::Get()->position.y -= 2;					
 				}
+				else
+				{
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
+
 
 				//投資名 Lv
 				Design::No1->Draw(UIType::丸フレーム, GetX() + LB.x, GetY() + LB.y, LB.w, LB.h);
@@ -95,26 +97,15 @@ namespace SDX_ADE
 				//投資アイコン
 				manage->image->DrawRotate(GetPos(LD), 2, 0);
 
-				if (isOver == true)
+				if (manage->is予約 == true)
 				{
 					Camera::Get()->position.y += 2;
 				}
-
 			}
 
 			void Click() override
 			{
-				//街レベル不足で使用不可
-				if ( manage->is使用可 == false )
-				{
-					return;
-				}
-
-				//資金不足で使用不可
-				if ( manage->消費資金 < Guild::P->資金)
-				{
-					return;
-				}
+				manage->操作_クリック();
 			}
 
 			void Over() override
@@ -131,6 +122,7 @@ namespace SDX_ADE
 
 	public:
 		inline static Management* over戦術 = nullptr;
+
 		UIGold 資金;//資金と消費G
 		UILv 街Lv;//街Lv
 		//投資案

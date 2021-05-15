@@ -43,7 +43,7 @@ namespace SDX_ADE
 
 		std::function<void()> clickEvent = []() {};
 		std::function<void()> drawEvent = []() {};
-		std::function<void()> dropEvent = []() {};
+		std::function<bool()> dropEvent = []() { return false; };
 		std::function<void()> overEvent = []() {};
 
 		template<class T>
@@ -260,8 +260,7 @@ namespace SDX_ADE
 		/*ドロップ操作*/
 		virtual bool Drop()
 		{
-			dropEvent();
-			return true;
+			return dropEvent();
 		}
 
 		/*マウスオーバー時の処理*/

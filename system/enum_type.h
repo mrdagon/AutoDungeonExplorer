@@ -549,6 +549,7 @@ namespace SDX_ADE
 		Help,
 		Popup,
 		Delete,
+		ResetSkill,
 		COUNT
 	};
 

@@ -132,7 +132,9 @@ namespace SDX_ADE
 				}
 
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
-				DrawUI(UIType::平ボタン);
+
+
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI);
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
@@ -178,8 +180,11 @@ namespace SDX_ADE
 			void Click() override
 			{
 				//ボス/ザコ表示切り替えボタン
-				W_Drag::ダンジョン = dungeon;
-				MSound::効果音[SE::ドラッグ].Play();
+				if (dungeon->is発見 == true)
+				{
+					W_Drag::ダンジョン = dungeon;
+					MSound::効果音[SE::ドラッグ].Play();
+				}
 			}
 
 			bool Check派生(double px, double py)
