@@ -149,11 +149,12 @@ namespace SDX_ADE
 
 			if (Input::key.F1.on && CV::isデバッグ) { Game::isデバッグ大きさ表示 = !Game::isデバッグ大きさ表示; }
 
-			if (Input::mouse.Right.on)
-			{
-				MSound::効果音[SE::ボタンクリック].Play();
-				Game::is停止 = !Game::is停止;
-			}
+			//スペースキーとかにする
+			//if (Input::mouse.Right.on)
+			//{
+			//	MSound::効果音[SE::ボタンクリック].Play();
+			//	Game::is停止 = !Game::is停止;
+			//}
 
 			UIObject* prev_help = UIObject::now_help;
 			UIObject::now_help = nullptr;

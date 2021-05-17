@@ -196,7 +196,6 @@ namespace SDX_ADE
 					Drawing::Line({ GetCenterX(),GetCenterY() + 30 }, { GetCenterX(),GetCenterY() - 30 }, Color::Red, 3);
 				}
 			}
-
 			isOver = false;
 		}
 

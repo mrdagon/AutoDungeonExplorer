@@ -291,6 +291,8 @@ namespace SDX_ADE
 	//文字データ
 	namespace MFont
 	{
+		constexpr int フォント数 = 2;
+
 		Font* F[3];
 
 		Font* S;
@@ -305,18 +307,28 @@ namespace SDX_ADE
 		Font MAlias;
 		Font LAlias;
 
+		//Font SMaru;
+		//Font MMaru;
+		//Font LMaru;
+
 		static void Load()
 		{
-			std::string f1 = "file/font/PixelMplus12-Regular.ttf";
-			std::string f1b = "file/font/mplus-1m-Regular.ttf";
+			std::string fa = "file/font/PixelMplus12-Regular.ttf";
+			std::string fb = "file/font/mplus-1m-Regular.ttf";
+			//std::string fc = "file/font/x12y16pxMaruMonica.ttf";
 
 			//ドットフォントとエイリアスフォントの描画位置が近くなるよう、Y座標に補正を入れる
-			SDot.Load(f1.c_str(), 12 , 2 );
-			MDot.Load(f1.c_str(), 18 , 3 );
-			LDot.Load(f1.c_str(), 24 , 4 );
-			SAlias.Load(f1b.c_str(), 12 , 2, 1);
-			MAlias.Load(f1b.c_str(), 18 , 3, 2);
-			LAlias.Load(f1b.c_str(), 24 , 4, 3);
+			SDot.Load(fa.c_str(), 12 , 2 );
+			MDot.Load(fa.c_str(), 18 , 3 );
+			LDot.Load(fa.c_str(), 24 , 4 );
+
+			SAlias.Load(fb.c_str(), 12 , 2, 1);
+			MAlias.Load(fb.c_str(), 18 , 3, 2);
+			LAlias.Load(fb.c_str(), 24 , 4, 3);
+			
+			//SMaru.Load(fc.c_str(), 12, 2, 1);
+			//MMaru.Load(fc.c_str(), 18, 3, 2);
+			//LMaru.Load(fc.c_str(), 24, 4, 3);
 
 			//0を０(オー)にする
 			bool iszeroswap = true;

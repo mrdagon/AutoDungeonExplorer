@@ -19,6 +19,7 @@ namespace SDX_ADE
 		Design** UIデザイン = &Design::UI;
 		bool is押下 = false;//押し下げ状態フラグ
 		int 押下状態 = 0;//押下 = true時にどう表示するか
+		int 押下アニメ = 0;//
 
 		int テキスト位置 = 5;//1~9、テンキーの位置関係と対応
 		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
@@ -64,19 +65,24 @@ namespace SDX_ADE
 			テキスト位置 = 2;
 		}
 
-		void Draw派生()
+		void Draw派生() override
 		{
 			//凸ボタン、マウスオーバー時は平
 			int yd = 0;
 			bool push = false;
-
+			押下アニメ--;
 			if (is押下 == true && 押下状態 == 0)
+			{
+				押下アニメ = 0;
+			}
+
+			if( is押下 == true && 押下状態 == 0 )
 			{
 				DrawUI(UIType::凹ボタン, *UIデザイン);
 				yd = 2;
 				push = true;
 			}
-			else if ((is押下 == true && 押下状態 == 1))
+			else if ( 押下アニメ > 0 || (is押下 == true && 押下状態 == 1))
 			{
 				DrawUI(UIType::平ボタン, *UIデザイン);
 			}
@@ -161,6 +167,12 @@ namespace SDX_ADE
 
 				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, push ? Design::明字 : Design::暗字, テキスト, false);
 			}
+		}
+
+		void Click() override
+		{
+			押下アニメ = CV::ボタンアニメ時間;
+			clickEvent();
 		}
 	};
 

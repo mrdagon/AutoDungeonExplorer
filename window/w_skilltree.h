@@ -52,21 +52,36 @@ namespace SDX_ADE
 		class UI装備スキルコンボアイテム : public UIObject
 		{
 		public:
-			ActiveSkill* askill;
+			
 
 			void Draw派生() override
 			{
+				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				int Lv = W_Skilltree::ギルメン->習得AスキルLv[skill->ID];
+				auto& LA = LData(LSkill::スキルLv);
+
 				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				skill->image->DrawRotate(GetCenterPos(),2,0);
+				MFont::L->DrawBold(GetPos(LA), Design::暗字 , Design::明字 , { Lv } );
 			}
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->操作_装備Aスキル変更(lineID, askill);
+				int 装備スロット = W_Skilltree::This->スキルコンボボックス.装備スロット;
+
+				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				int slot = W_Skilltree::ギルメン->操作_装備Aスキル変更(装備スロット, skill);
+
+				W_Skilltree::This->装備Aスキル[slot].押下アニメ = CV::ボタンアニメ時間;
+				W_Skilltree::This->装備Aスキル[装備スロット].押下アニメ = CV::ボタンアニメ時間;
+
+				W_Skilltree::This->スキルコンボボックス.is表示 = false;
 			}
 
 			void DrawHelp() override
 			{
-				UIHelp::ASkill(askill);
+				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				UIHelp::ASkill(skill);
 			}
 		};
 
@@ -75,7 +90,7 @@ namespace SDX_ADE
 		public:
 			std::vector<UI装備スキルコンボアイテム> item;
 			int 装備スロット = 0;
-
+			
 			void Init()
 			{
 				auto* it = W_Skilltree::ギルメン;
@@ -85,7 +100,6 @@ namespace SDX_ADE
 				for (int i = 0; i < item.size(); i++)
 				{
 					item[i].SetUI(LSkill::スキルコンボアイテム, i , this);
-					item[i].askill = it->職業->習得Aスキル[i];
 				}
 
 				is表示 = false;
@@ -97,15 +111,33 @@ namespace SDX_ADE
 				DrawUI(UIType::明ボタン);
 				this->layout->h = layout->並べy + item[0].layout->並べy * item.size();
 
+				bool now_over = false;
+
+				for (int i = 0; i < item.size(); i++)
+				{
+					if (item[i].isOver == true)
+					{
+						now_over = true;
+						break;
+					}
+				}
 
 				for (int i = 0; i < item.size(); i++)
 				{
 					item[i].Draw();
 				}
 
-				if (Input::mouse.Left.on == true)
+				if (Input::mouse.Left.on == true && now_over == false)
 				{
-					W_Skilltree::This->スキルコンボボックス.is表示 = false;
+					if (						
+						W_Skilltree::This->装備Aスキル[0].isOver == false && 
+						W_Skilltree::This->装備Aスキル[1].isOver == false &&
+						W_Skilltree::This->装備Aスキル[2].isOver == false &&
+						W_Skilltree::This->装備Aスキル[3].isOver == false )
+					{
+						W_Skilltree::This->スキルコンボボックス.is表示 = false;
+					}
+
 				}
 			}
 
@@ -163,6 +195,7 @@ namespace SDX_ADE
 		class UI装備Aスキル : public UIObject
 		{
 		public:
+			int 押下アニメ = 0;
 
 			void Draw派生() override
 			{
@@ -172,23 +205,32 @@ namespace SDX_ADE
 				auto& LB = LData(LSkill::装備スキルスロット);
 
 				//Lv Maxで押せなくする
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
-				it->image->DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
+				if (押下アニメ > 0)
+				{
+					//スワップや変更があった場合のアニメーション
+					押下アニメ--;
+					DrawUI( UIType::凹ボタン, Design::UI);
+				} else {
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
+
+
+				it->image->DrawRotate({ GetX() + GetW() / 2  , GetY() + GetW() / 2 + layout->並べy }, 2, 0);
 
 				switch (lineID)
 				{
-					case 0:MFont::L->Draw(GetPos(LB), Design::暗字, { "1st" }); break;
-					case 1:MFont::L->Draw(GetPos(LB), Design::暗字, { "2nd" }); break;
-					case 2:MFont::L->Draw(GetPos(LB), Design::暗字, { "3rd" }); break;
-					case 3:MFont::L->Draw(GetPos(LB), Design::暗字, { "4th" }); break;
+					case 0:MFont::L->DrawBold(GetPos(LB), Design::暗字 , Design::明字, { "1st" }); break;
+					case 1:MFont::L->DrawBold(GetPos(LB), Design::暗字, Design::明字, { "2nd" }); break;
+					case 2:MFont::L->DrawBold(GetPos(LB), Design::暗字, Design::明字, { "3rd" }); break;
+					case 3:MFont::L->DrawBold(GetPos(LB), Design::暗字, Design::明字, { "4th" }); break;
 				}
 
-				MFont::L->Draw(GetPos(LA), Design::暗字, { "Lv " , Lv },true);
+				MFont::L->DrawBold(GetPos(LA), Design::暗字, Design::明字, { Lv },true);
 			}
 
 			void Click() override
 			{
-				if (W_Skilltree::This->スキルコンボボックス.is表示 == true)
+				if (W_Skilltree::This->スキルコンボボックス.装備スロット == lineID && W_Skilltree::This->スキルコンボボックス.is表示 == true)
 				{
 					W_Skilltree::This->スキルコンボボックス.is表示 = false;
 				} else {
@@ -197,7 +239,6 @@ namespace SDX_ADE
 					W_Skilltree::This->スキルコンボボックス.layout->x = this->GetX();
 					W_Skilltree::This->スキルコンボボックス.layout->y = this->GetY() + this->GetH();
 				}
-				Input::mouse.Left.on = false;
 			}
 
 			void DrawHelp() override
@@ -210,11 +251,20 @@ namespace SDX_ADE
 		class UI予約スキル : public UIObject
 		{
 		public:
+			int 追加アニメ = 0;
+
 			void Draw派生() override
 			{
 				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
 				auto& LA = LData(LSkill::スキルLv);
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+
+				if (追加アニメ > 0)
+				{
+					追加アニメ--;
+					DrawUI(UIType::凹ボタン, Design::UI);
+				} else {
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
 
 				if( no > 0 )
 				{
@@ -250,11 +300,19 @@ namespace SDX_ADE
 
 		class UIキースキル : public UIObject
 		{
+			int 押下アニメ = 0;
 		public:
 			void Draw派生() override
 			{
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
 				auto& LB = LData(LSkill::キースキル名前);
+
+				if (押下アニメ > 0)
+				{
+					押下アニメ--;
+					DrawUI(UIType::平ボタン, Design::UI);
+				} else {
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
 
 				MIcon::UI[IconType::ヘルプ].DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
 				MFont::L->DrawRotate(GetCenterPos(LB),1,0, Design::暗字, { "キースキル未実装" });
@@ -273,24 +331,42 @@ namespace SDX_ADE
 
 		class UIPスキル : public UIObject
 		{
+			int 押下アニメ = 0;
 		public:
 			void Draw派生() override
 			{
 				auto* it = W_Skilltree::ギルメン->職業->習得Pスキル[lineID];
 				int Lv = W_Skilltree::ギルメン->習得PスキルLv[it->ID];
+				int 予約Lv = W_Skilltree::ギルメン->Pスキル予約Lv(it->ID);
 				auto& LA = LData(LSkill::スキルLv);
 
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				if (押下アニメ > 0)
+				{
+					押下アニメ--;
+					DrawUI(UIType::平ボタン, Design::UI);
+				} else {
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
 
 				//予約は+表示、予約分は文字色を変える
-				MFont::L->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
+
+				MFont::L->DrawBold(GetPos(LA), Design::暗字, Design::明字, { Lv });
+				if (Lv != 予約Lv)
+				{
+					MFont::L->DrawBold({ GetPos(LA).x + LA.並べx,  GetPos(LA).y}, Design::暗字, Design::明字, { ">", });
+					MFont::L->DrawBold({ GetPos(LA).x + LA.並べx * 2,  GetPos(LA).y }, Design::Green.凹色, Design::明字, { 予約Lv });
+				}
+
 			}
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->操作_Pスキル習得(lineID);
+				if (W_Skilltree::ギルメン->操作_Pスキル習得(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID) != Explorer::Resultスキル強化::限界 )
+				{
+					押下アニメ = CV::ボタンアニメ時間;
+				}
 			}
 
 			void DrawHelp() override
@@ -301,24 +377,40 @@ namespace SDX_ADE
 
 		class UIAスキル : public UIObject
 		{
+			int 押下アニメ = 0;
 		public:
 			void Draw派生() override
 			{
 				auto* it = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
 				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
+				int 予約Lv = W_Skilltree::ギルメン->Aスキル予約Lv(it->ID);
 				auto& LA = LData(LSkill::スキルLv);
 
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				if (押下アニメ > 0)
+				{
+					押下アニメ--;
+					DrawUI(UIType::平ボタン, Design::UI);
+				} else {
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
 
 				//予約は+表示、予約分は文字色を変える
-				MFont::L->Draw( GetPos(LA) , Design::暗字, { "Lv " , Lv });
+				MFont::L->DrawBold(GetPos(LA), Design::暗字, Design::明字, { Lv });
+				if (Lv != 予約Lv)
+				{
+					MFont::L->DrawBold({ GetPos(LA).x + LA.並べx,  GetPos(LA).y }, Design::暗字, Design::明字, { ">", });
+					MFont::L->DrawBold({ GetPos(LA).x + LA.並べx * 2,  GetPos(LA).y }, Design::Green.凹色, Design::明字, { 予約Lv });
+				}
 			}
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->操作_Aスキル習得(lineID);
+				if (W_Skilltree::ギルメン->操作_Aスキル習得(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID) != Explorer::Resultスキル強化::限界)
+				{
+					押下アニメ = CV::ボタンアニメ時間;
+				}
 			}
 
 			void DrawHelp() override
@@ -436,7 +528,6 @@ namespace SDX_ADE
 				{
 					ギルメン->操作_スキルリセット();
 				}
-
 			};
 			確定.clickEvent = [&]()
 			{
@@ -455,12 +546,12 @@ namespace SDX_ADE
 			item.clear();
 			AddItem(探索者);
 
-			AddItem(スキルコンボボックス);
 
 			AddItem(リセット);
 			AddItem(確定);
 
 			AddItem(装備Aスキル , CV::最大Aスキル数);
+			AddItem(スキルコンボボックス);
 			AddItem(キースキル , CV::最大キースキル数);
 
 			AddItem(予約スキル, CV::最大スキル予約数);
@@ -518,8 +609,19 @@ namespace SDX_ADE
 			for (int i = 0; i < CV::最大スキル予約数; i++)
 			{
 				if (ギルメン->スキル習得予約[i] == 0) { break; }
+
 				予約スキル[i].is表示 = true;
 				cnt++;
+			}
+
+			//予約スキル16個以上で調整を入れる
+			//63*15 = 合計 945になるよう調整
+
+			if (cnt <= 16)
+			{
+				Layout::Data(LSkill::予約スキル).並べx = 63;
+			} else {
+				Layout::Data(LSkill::予約スキル).並べx = 945.0 / (cnt-1);
 			}
 
 		}

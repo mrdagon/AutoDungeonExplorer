@@ -122,7 +122,7 @@ namespace SDX_ADE
 
 			//スキルアイコン
 			Design::Help->Draw(UIType::丸フレーム, L1);
-			Aスキル->image->Draw(L1.GetPos());;
+			Aスキル->image->Draw(L1.GetPos());
 
 			//スキル名
 			Design::Help->Draw(UIType::丸フレーム, L2);

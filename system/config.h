@@ -18,7 +18,7 @@ namespace SDX_ADE
 		static bool isボス戦時等速 = true;
 		static bool is夜加速 = true;
 		static bool is超加速 = false;
-		static bool isドットフォント = true;
+		static int フォントID = 0;
 
 		//設定値から計算するやつ
 		static double BGM音量;//設定値の２乗/100になる
@@ -50,7 +50,7 @@ namespace SDX_ADE
 			file.ReadWrite(Config::isボス戦時等速);
 			file.ReadWrite(Config::is夜加速);
 			file.ReadWrite(Config::is超加速);
-			file.ReadWrite(Config::isドットフォント);
+			file.ReadWrite(Config::フォントID);
 
 			return true;
 		}
@@ -107,15 +107,18 @@ namespace SDX_ADE
 				Game::ゲームスピード = 1;
 			}
 
-			if (isドットフォント)
+			switch (Config::フォントID)
 			{
+			default:
 				MFont::S = &MFont::SDot;
 				MFont::M = &MFont::MDot;
 				MFont::L = &MFont::LDot;
-			} else {
+				break;
+			case 1:
 				MFont::S = &MFont::SAlias;
 				MFont::M = &MFont::MAlias;
 				MFont::L = &MFont::LAlias;
+				break;
 			}
 
 			MFont::F[0] = MFont::S;

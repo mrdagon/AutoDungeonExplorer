@@ -14,6 +14,7 @@ namespace SDX_ADE
 
 		constexpr int ヘルプ待機時間 = 5;//マウスオーバー開始からヘルプ表示までの猶予時間
 		constexpr int スクロール感度 = 30;
+		constexpr int ボタンアニメ時間 = 10;//
 
 		//外部データ件数上限
 		constexpr int 上限Aスキル種類 = 200;
@@ -58,6 +59,11 @@ namespace SDX_ADE
 
 		constexpr int 気絶スタン値 = 100;
 
+		//設定関連
+		constexpr int 最低解像度 = 9;
+		constexpr int 最大解像度 = 20;
+
+
 		//外部データ最大数//
 
 		constexpr int 最大装備ランク = 99;//+99まで
@@ -71,6 +77,7 @@ namespace SDX_ADE
 
 		constexpr int 最大キースキル数 = 3;
 
+		constexpr int スキル未予約 = 0;
 		constexpr int 最大スキル予約数 = 100;
 
 		constexpr int 装備部位数 = 3;

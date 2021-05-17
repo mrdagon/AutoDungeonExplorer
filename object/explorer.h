@@ -40,7 +40,6 @@ namespace SDX_ADE
 			{
 				Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
 				装備Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
-				装備Aスキルボス[a] = ExplorerClass::data[job].初期Aスキル[a];
 			}
 
 
@@ -67,13 +66,16 @@ namespace SDX_ADE
 			}
 			for (auto& it : スキル習得予約)
 			{
-				it = 0;
+				it = CV::スキル未予約;
 			}
 
-			経験値 = 0;
-			Lv = std::max(1,Lv - 低下Lv);
+			if (低下Lv > 0)
+			{
+				経験値 = 0;
+				Lv = std::max(1, Lv - 低下Lv);
+			}
 
-			スキルポイント = Lv + 10;
+			スキルポイント = Lv + 0;
 		}
 
 		//●人事関連
@@ -87,6 +89,7 @@ namespace SDX_ADE
 		//●スキル習得状況
 		std::array<int, CV::上限Aスキル種類> 習得AスキルLv;
 		std::array<int, CV::上限Pスキル種類> 習得PスキルLv;
+
 		int スキル習得予約[CV::最大スキル予約数];//0は未予約 -はAスキル、+はPスキル
 
 		//●Lvアップ時等更新ステータス
@@ -246,8 +249,79 @@ namespace SDX_ADE
 			
 		}
 
+		//
+		enum class Resultスキル強化
+		{
+			強化,
+			予約,
+			限界
+		};
+
+		int Pスキル予約Lv(int スキルID)
+		{
+			int 現在Lv = 習得PスキルLv[スキルID];
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				if (スキル習得予約[i] == スキルID)
+				{
+					現在Lv++;
+				}
+			}
+			return 現在Lv;
+		}
+
+		int Aスキル予約Lv(int スキルID)
+		{
+			int 現在Lv = 習得AスキルLv[スキルID];
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				if (スキル習得予約[i] == -スキルID)
+				{
+					現在Lv++;
+				}
+			}
+			return 現在Lv;
+		}
+
+
+		Resultスキル強化 Pスキル強化予約(int スキルID)
+		{
+			//現在Lvと合計予約数を計算
+			int 現在Lv = Pスキル予約Lv(スキルID);
+
+			//合計が5以上なら強化不可
+			if (現在Lv >= 5) { return Resultスキル強化::限界; }
+
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				if (スキル習得予約[i] == 0)
+				{
+					スキル習得予約[i] = スキルID;
+					break;
+				}
+			}
+		}
+
+		Resultスキル強化 Aスキル強化予約(int スキルID)
+		{
+			//現在Lvと合計予約数を計算
+			int 現在Lv = Aスキル予約Lv(スキルID);
+
+			//合計が5以上なら強化不可
+			if (現在Lv >= 5) { return Resultスキル強化::限界; }
+
+			for (int i = 0; i < CV::最大スキル予約数; i++)
+			{
+				if (スキル習得予約[i] == 0)
+				{
+					スキル習得予約[i] = -スキルID;
+					break;
+				}
+			}
+		}
+
 		//操作スキル
-		void 操作_装備Aスキル変更(int スロット, ActiveSkill* スキル)
+		int 操作_装備Aスキル変更(int スロット, ActiveSkill* スキル)
 		{
 			for (int i = 0; i < CV::最大Aスキル数; i++)
 			{
@@ -255,19 +329,24 @@ namespace SDX_ADE
 				{
 					装備Aスキル[i] = 装備Aスキル[スロット];
 					装備Aスキル[スロット] = スキル;
-					return;
+					return i;
 				}
 			}
 
 			装備Aスキル[スロット] = スキル;
+			return スロット;
 		}
 
 		void 操作_予約解除(int 予約ID)
 		{
-			for (int i = 0; i < CV::最大スキル予約数; i++)
-			{
 
+
+			for (int i = 予約ID ; i < CV::最大スキル予約数 - 1; i++)
+			{
+				スキル習得予約[i] = スキル習得予約[i+1];
 			}
+			スキル習得予約[CV::最大スキル予約数 - 1] = CV::スキル未予約;
+
 		}
 
 		void 操作_キースキル習得(int スキルID)
@@ -275,28 +354,30 @@ namespace SDX_ADE
 
 		}
 
-		void 操作_Pスキル習得(int スキルID)
+
+		Resultスキル強化 操作_Pスキル習得(int スキルID)
 		{
 			if (スキルポイント > 0)
 			{
-
+				スキルポイント--;
+				習得PスキルLv[スキルID]++;
+				return Resultスキル強化::強化;
 			} else {
-				//Pスキルは正の数
-
+				return Pスキル強化予約(スキルID);
 			}
 
 		}
 
-		void 操作_Aスキル習得(int スキルID)
+		Resultスキル強化 操作_Aスキル習得(int スキルID)
 		{
 			if (スキルポイント > 0)
 			{
-
+				スキルポイント--;
+				習得AスキルLv[スキルID]++;
+				return Resultスキル強化::強化;
 			} else {
-				//Aスキルは負の数
-
+				return Aスキル強化予約(スキルID);
 			}
-
 		}
 
 		void 操作_スキルリセット()

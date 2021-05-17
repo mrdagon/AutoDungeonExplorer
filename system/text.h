@@ -50,7 +50,7 @@ namespace SDX_ADE
 		std::string Config_ボス戦速度_設定[2] = { "等速で見る" , "倍速のまま" , };
 		std::string Config_夜間加速_設定[2] = { "４倍速" , "そのまま" };
 		std::string Config_超加速_設定[2] = { "64倍速" , "16倍速" };
-		std::string Config_フォント設定[2] = { "ドット" , "なめらか" };
+		std::string Config_フォント設定[3] = { "ドット" , "なめらか" , "ﾏﾙﾓﾆｶ"};
 
 		////Dungeon Window
 		std::string Dungeon_タブ名[5] = { "I層","II層","III層","IV層","V層" };
