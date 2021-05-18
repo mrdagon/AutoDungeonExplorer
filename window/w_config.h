@@ -131,6 +131,7 @@ namespace SDX_ADE
 			//基本Window設定
 			Set(WindowType::Config, IconType::情報);
 			SetPos(LConfig::ウィンドウ, true, false , true);
+			is閉じるボタン = false;
 
 			//●仮数値に現在の設定を代入
 			仮_BGM設定 = Config::BGM設定;

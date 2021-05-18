@@ -257,13 +257,14 @@ namespace SDX_ADE
 			{
 				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
 				auto& LA = LData(LSkill::スキルLv);
+				Design* design = lineID < W_Skilltree::ギルメン->スキルポイント ? &Design::Green : Design::UI;
 
 				if (追加アニメ > 0)
 				{
 					追加アニメ--;
-					DrawUI(UIType::凹ボタン, Design::UI);
+					DrawUI(UIType::凹ボタン, design );
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, design );
 				}
 
 				if( no > 0 )
@@ -280,7 +281,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->操作_予約解除(lineID);
+				W_Skilltree::ギルメン->予約解除(lineID);
 			}
 
 			void DrawHelp() override
@@ -363,7 +364,19 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				if (W_Skilltree::ギルメン->操作_Pスキル習得(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID) != Explorer::Resultスキル強化::限界 )
+				auto result = W_Skilltree::ギルメン->Pスキル予約(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID);
+
+				if ( result != Explorer::Resultスキル強化::予約失敗)
+				{
+					押下アニメ = CV::ボタンアニメ時間;
+				}
+			}
+
+			void RightClick() override
+			{
+				auto result = W_Skilltree::ギルメン->Pスキル解除(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID);
+
+				if (result != Explorer::Resultスキル強化::解除失敗)
 				{
 					押下アニメ = CV::ボタンアニメ時間;
 				}
@@ -407,7 +420,19 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				if (W_Skilltree::ギルメン->操作_Aスキル習得(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID) != Explorer::Resultスキル強化::限界)
+				auto result = W_Skilltree::ギルメン->Aスキル予約(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID);
+
+				if ( result != Explorer::Resultスキル強化::予約失敗)
+				{
+					押下アニメ = CV::ボタンアニメ時間;
+				}
+			}
+
+			void RightClick() override
+			{
+				auto result = W_Skilltree::ギルメン->Aスキル解除(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID);
+
+				if (result != Explorer::Resultスキル強化::解除失敗)
 				{
 					押下アニメ = CV::ボタンアニメ時間;
 				}
@@ -482,6 +507,7 @@ namespace SDX_ADE
 
 			static W_Popup Hウィンドウ;
 			Hウィンドウ.Init(WindowType::Help);
+			is閉じるボタン = false;
 			ヘルプウィンドウ = &Hウィンドウ;
 			リセット確認.Init(WindowType::ResetSkill);
 

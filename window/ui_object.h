@@ -237,6 +237,11 @@ namespace SDX_ADE
 					Click();
 					return true;
 				}
+				else if (Input::mouse.Right.on == true)
+				{
+					RightClick();
+					return true;
+				}
 				else if (Input::mouse.Left.off == true)
 				{
 					if (Drop() == true) { return true; };
@@ -254,6 +259,11 @@ namespace SDX_ADE
 		virtual void Click()
 		{
 			clickEvent();		
+		}
+
+		virtual void RightClick()
+		{
+
 		}
 
 		/*ドロップ操作*/

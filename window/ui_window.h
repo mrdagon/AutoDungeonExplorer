@@ -25,6 +25,7 @@ namespace SDX_ADE
 		std::vector<UIObject*> 固定item;//スクロールしないオブジェクト
 
 		bool is閉じるボタン = true;
+		bool isヘルプボタン = true;
 		bool is固定 = false;//大きさ変更と掴み移動可能フラグ
 
 		//状態
@@ -148,13 +149,15 @@ namespace SDX_ADE
 				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 25, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
 				MIcon::UI[IconType::閉じる].DrawRotate({ 座標.x + 横幅 - 16 ,座標.y + 15 }, 1, 0);
 
-				//ヘルプボタン
-				if (ヘルプウィンドウ != nullptr )
-				{
-					de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 55, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
-					MIcon::UI[IconType::ヘルプ].DrawRotate({ 座標.x + 横幅 - 46 ,座標.y + 15 }, 1, 0);
-				}
 			}
+
+			//ヘルプボタン
+			if (ヘルプウィンドウ != nullptr)
+			{
+				de->Draw(UIType::グループ明, (int)座標.x + 横幅 - 55, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);
+				MIcon::UI[IconType::ヘルプ].DrawRotate({ 座標.x + 横幅 - 46 ,座標.y + 15 }, 1, 0);
+			}
+
 
 			//メイン部分描画
 			de->Draw(UIType::ウィンドウ, (int)座標.x, (int)座標.y + タイトル枠高さ, 横幅, 縦幅);
