@@ -88,7 +88,7 @@ namespace SDX_ADE
 		{
 			File file_data("file/data/dungeon.dat", FileMode::Read, true);
 			File file_csv("file/data/dungeon.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -110,23 +110,24 @@ namespace SDX_ADE
 				it.層 = i / 10;
 				it.image = &MIcon::ダンジョン[i/10];
 
-				file_data.Read(dummy);
-				it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);
-				file_data.Read(it.ボスLv);
 
-				for (int b = 0; b < 5; b++)
+				for (int b = 0; b < 6; b++)
 				{
 					file_data.Read(dummy);
+					it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);
+					file_data.Read(it.ボスLv);
+
+					file_data.Read(dummy);
 					it.雑魚モンスター.emplace_back(&MonsterClass::data[dummy]);
+					file_data.Read(it.雑魚Lv);
 				}
-				file_data.Read(it.雑魚Lv);
 				
 				file_data.Read(it.ボス地図ID);
 
 				file_data.Read(it.探索地図ID[0]);//探索地図番号
 				file_data.Read(it.探索地図ID[1]);
 
-				for (int b = 0; b < 5; b++)
+				for (int b = 0; b < 6; b++)
 				{
 					file_data.Read(dummy);
 					if (dummy > 0)
@@ -143,7 +144,7 @@ namespace SDX_ADE
 				file_data.Read(it.地図発見探索率[0]);
 				file_data.Read(it.地図発見探索率[1]);
 
-				//部屋の設定
+				//部屋の設定//
 				for (int i = 0; i < dummy; i++)
 				{
 					it.部屋.emplace_back( i % 2==0 ? RoomType::ザコ : RoomType::素材 );

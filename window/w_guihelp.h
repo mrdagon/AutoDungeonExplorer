@@ -308,7 +308,7 @@ namespace SDX_ADE
 			MFont::SAlias.DrawBold({ 座標.x + Lph(32),座標.y + Lph(33) }, Color::White, Color::Black, "Monster");
 		}
 
-		void InfoManagement(Management* it, Point 座標)
+		void InfoManagement(Guild::Facility* it, Point 座標)
 		{
 			help_csv_page = 12;
 

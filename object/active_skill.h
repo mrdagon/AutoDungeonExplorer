@@ -42,6 +42,8 @@ namespace SDX_ADE
 		std::string 名前;
 		std::string 説明;
 
+		int レアリティ;
+
 		int 戦闘エフェクト;//IDで管理
 
 		int 習得Lv;
@@ -72,8 +74,8 @@ namespace SDX_ADE
 
 		bool is自己バフ = false;//補助効果の対象が命中した相手でなく自分になる
 		
-		ASkillLvType レベル補正_種類[2];
-		int レベル補正_数値[2][9];
+		ASkillLvType レベル補正_種類[2];//0がレベル1毎の補正、1が5毎の補正
+		int レベル補正_数値[2];
 
 		//関数
 		ActiveSkill() {}
@@ -82,7 +84,7 @@ namespace SDX_ADE
 		{
 			File file_data("file/data/askill.dat",FileMode::Read,true);
 			File file_csv("file/data/askill.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -114,6 +116,8 @@ namespace SDX_ADE
 
 				file_data.Read(it.スキルタグ , (int)SkillType::COUNT);
 				
+				file_data.Read(it.レアリティ);
+
 				file_data.Read(it.基礎ダメージ);
 				file_data.Read(it.反映率);
 				file_data.Read(it.命中);
@@ -155,9 +159,9 @@ namespace SDX_ADE
 
 				//レベル補正
 				file_data.Read(it.レベル補正_種類[0]);
-				file_data.Read(it.レベル補正_数値[0],9);
+				file_data.Read(it.レベル補正_数値[0]);
 				file_data.Read(it.レベル補正_種類[1]);
-				file_data.Read(it.レベル補正_数値[1], 9);
+				file_data.Read(it.レベル補正_数値[1]);
 
 				file_data.Read(it.is自己バフ);
 
@@ -279,32 +283,35 @@ namespace SDX_ADE
 			//レベル補正２スロット
 			for (int i = 0; i < 2; i++)
 			{
-				if (base->レベル補正_数値[i][Lv] == 0) { continue; }
+				if (i == 1) { Lv = (Lv+1)/5; }
+
+				if (Lv == 0) { continue; }
 
 				switch ( base->レベル補正_種類[i])
 				{
 				case ASkillLvType::基礎ダメージ:
-					基礎ダメージ += base->レベル補正_数値[i][Lv];
+					基礎ダメージ += base->レベル補正_数値[i] * Lv;
 					break;
 				case ASkillLvType::反映率:
-					反映率 += base->レベル補正_数値[i][Lv];
+					反映率 += base->レベル補正_数値[i] * Lv;
 					break;
 				case ASkillLvType::命中:
-					命中 += base->レベル補正_数値[i][Lv];
+					命中 += base->レベル補正_数値[i] * Lv;
 					break;
 				case ASkillLvType::会心率:
-					会心率 += base->レベル補正_数値[i][Lv];
+					会心率 += base->レベル補正_数値[i] * Lv;
 					break;
 				case ASkillLvType::会心倍率:
-					会心倍率 += base->レベル補正_数値[i][Lv];
+					会心倍率 += base->レベル補正_数値[i] * Lv;
 					break;
 				case ASkillLvType::クールタイム:
+
 					break;
 				case ASkillLvType::範囲:
-					範囲 += base->レベル補正_数値[i][Lv];
+					範囲 += base->レベル補正_数値[i] * Lv;;
 					break;
 				case ASkillLvType::Hit数:
-					Hit数 += base->レベル補正_数値[i][Lv];
+					Hit数 += base->レベル補正_数値[i] * Lv;;
 					break;
 				case ASkillLvType::追加効果:
 					for (int i = 0; i < base->追加効果.size(); i++)
@@ -313,32 +320,32 @@ namespace SDX_ADE
 
 						if (base->追加効果[tp] != 0)
 						{
-							追加効果[tp] += base->レベル補正_数値[i][Lv];
+							追加効果[tp] += base->レベル補正_数値[i] * Lv;;
 						}
 					}
 					break;
 				case ASkillLvType::バフ固定値:
 					for (int i = 0; i < 補助効果.size(); i++)
 					{
-						補助効果[i].基礎値 += base->レベル補正_数値[i][Lv];
+						補助効果[i].基礎値 += base->レベル補正_数値[i] * Lv;;
 					}
 					break;
 				case ASkillLvType::バフ反映率:
 					for (int i = 0; i < 補助効果.size(); i++)
 					{
-						補助効果[i].反映率 += base->レベル補正_数値[i][Lv];
+						補助効果[i].反映率 += base->レベル補正_数値[i] * Lv;;
 					}
 					break;
 				case ASkillLvType::バフ発動率:
 					for (int i = 0; i < 補助効果.size(); i++)
 					{
-						補助効果[i].確率 += base->レベル補正_数値[i][Lv];
+						補助効果[i].確率 += base->レベル補正_数値[i] * Lv;;
 					}
 					break;
 				case ASkillLvType::バフ持続:
 					for (int i = 0; i < 補助効果.size(); i++)
 					{
-						補助効果[i].持続 += base->レベル補正_数値[i][Lv];
+						補助効果[i].持続 += base->レベル補正_数値[i] * Lv;;
 					}
 					break;
 				default:

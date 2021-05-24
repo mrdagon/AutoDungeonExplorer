@@ -43,13 +43,18 @@ namespace SDX_ADE
 		ID_Item 報酬アクセサリ = 0;
 		int 報酬ゴールド = 0;
 
+		bool is重要クエスト;
+		int 対象フロア;
+		int 目標日数;
+		int 獲得ポイント;
+
 		Quest(){}
 
 		static void LoadData()
 		{
 			File file_data("file/data/quest.dat", FileMode::Read, true);
 			File file_csv("file/data/quest.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -74,8 +79,16 @@ namespace SDX_ADE
 				file_data.Read( it.報酬ゴールド );
 				file_data.Read( it.報酬アクセサリ );
 
+
+				file_data.Read(it.is重要クエスト);
+				file_data.Read(it.対象フロア);
+				file_data.Read(it.目標日数);
+				file_data.Read(it.獲得ポイント);
+
+				int 依頼人ID;
+				file_data.Read(依頼人ID);
 				it.image = &MIcon::クエスト[it.種類];
-				it.依頼人image = MJob::ちび[0][0];
+				it.依頼人image = MJob::ちび[依頼人ID][0];
 			}
 		}
 

@@ -472,7 +472,7 @@ namespace SDX
 		}
 
 		/** カンマ区切りのCSVファイルを二次元配列に文字列として一括読込.*/
-		std::vector<std::vector<std::string>> GetCsvToString2()
+		std::vector<std::vector<std::string>> GetCsvToString2(char split_char)
 		{
 			std::vector<std::vector<std::string>> lineS;
 
@@ -499,7 +499,7 @@ namespace SDX
 					std::istringstream iss2(buf);					
 					lineS.push_back(std::vector<std::string>());
 
-					while (std::getline(iss2, buf2, ','))
+					while (std::getline(iss2, buf2, split_char))
 					{
 						lineS[lineNo].push_back(buf2);
 					}

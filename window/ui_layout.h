@@ -105,7 +105,7 @@ namespace SDX_ADE
 		{
 			//ページ名一覧とページ毎の選択中indexを読み込み
 			File file("file/layout/index.csv",FileMode::Read,false);
-			auto csv = file.GetCsvToString2();
+			auto csv = file.GetCsvToString2(',');
 			file.Close();
 
 			now_page = std::stoi(csv[0][0]);
@@ -121,7 +121,7 @@ namespace SDX_ADE
 				file_name += ".csv";
 
 				File page_file( file_name.c_str() ,FileMode::Read,false);
-				auto csv2 = page_file.GetCsvToString2();
+				auto csv2 = page_file.GetCsvToString2(',');
 				page_file.Close();
 
 				data[a].reserve(256);//最領域確保時参照が崩れるので多めに確保

@@ -40,6 +40,8 @@ namespace SDX_ADE
 
 		constexpr int 素材系統 = 6;
 
+		constexpr int 投資コスト最大枠数 = 4;
+
 		//探索エフェクト、待ち時間用
 		constexpr int 探索移動速度 = 2;
 		constexpr int 収集待機A = 160;//素材が流れてくる時間
@@ -72,7 +74,7 @@ namespace SDX_ADE
 
 		constexpr int 最大Aスキル数 = 4;//一人が戦闘中に装備出来るスキル数
 
-		constexpr int 最大敵Aスキル数 = 4;
+		constexpr int 最大敵Aスキル数 = 8;
 		constexpr int 最大敵Pスキル数 = 8;
 
 		constexpr int 最大キースキル数 = 3;

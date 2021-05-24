@@ -25,7 +25,7 @@ namespace SDX_ADE
 		CraftType 素材種;
 
 		int レア素材率 = 0;
-		int ボスドロップ = 0;
+		int ボスドロップ[2] = {};
 		bool isボス;
 
 		//基礎ステータスーLvでスケーリングする
@@ -33,17 +33,17 @@ namespace SDX_ADE
 
 		EnumArray<int, StatusType> ステ;
 
-		std::vector<ActiveSkill*> Aスキル;//最大４個
+		std::vector<ActiveSkill*> Aスキル;//最大８個
 		std::vector<int> AスキルLv;
 
-		std::vector<PassiveSkill*> Pスキル;//覚えるPスキル
+		std::vector<PassiveSkill*> Pスキル;//最大８個
 		std::vector<int> PスキルLv;
 
 		static void LoadData()
 		{
 			File file_data("file/data/monster.dat", FileMode::Read, true);
 			File file_csv("file/data/monster.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -71,7 +71,8 @@ namespace SDX_ADE
 				file_data.Read(it.素材種);
 				file_data.Read(it.隊列);
 				file_data.Read(it.isボス);
-				file_data.Read(it.ボスドロップ);
+				file_data.Read(it.ボスドロップ[0]);
+				file_data.Read(it.ボスドロップ[1]);
 				file_data.Read(it.レア素材率);
 
 				file_data.Read(it.ステ[StatusType::HP]);

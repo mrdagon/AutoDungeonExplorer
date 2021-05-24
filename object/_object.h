@@ -12,6 +12,8 @@
 
 #include "monster_class.h"
 
+#include "recipe.h"
+
 #include "item.h"
 
 #include "explorer_class.h"
@@ -30,4 +32,4 @@
 
 #include "guild.h"
 
-#include "management.h"
+#include "facility.h";

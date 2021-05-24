@@ -33,7 +33,7 @@ namespace SDX_ADE
 		file.Read(bom);
 		file.Read(bom);
 
-		auto strS = file.GetCsvToString2();
+		auto strS = file.GetCsvToString2('\t');
 		CSV::memo.resize(CSV::page_max);
 
 		for (int a = 0; a < CSV::page_max; a++)
@@ -94,7 +94,7 @@ namespace SDX_ADE
 		file.Read(bom);
 		file.Read(bom);
 		
-		auto strS = file.GetCsvToString2();
+		auto strS = file.GetCsvToString2(',');
 
 		CSV::line = std::stoi(strS[0][0]);
 		CSV::page = std::stoi(strS[0][1]);

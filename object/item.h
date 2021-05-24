@@ -7,18 +7,6 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	class Recipe
-	{
-	public:
-		Recipe(ID_Material ID , int 必要数):
-			ID(ID),
-			必要数(必要数)
-		{}
-
-		ID_Material ID;
-		int 必要数;
-	};
-
 	/*装備品、アイテム*/
 	class Item
 	{
@@ -43,8 +31,10 @@ namespace SDX_ADE
 		//攻撃力等のステータス、追加されるスキル等
 		EnumArray<int, StatusType> ステ;
 
-		//強化レシピ
-		std::vector<Recipe> レシピ;
+		int レアリティ;
+		int 開放ポイント;
+		int 目標日数;
+		int 持越ポイント;
 
 		Item(){}
 
@@ -52,8 +42,6 @@ namespace SDX_ADE
 		{
 			//品質と経験値を読込
 		}
-
-
 
 		//外部データ読込
 		static void LoadData()
@@ -68,7 +56,7 @@ namespace SDX_ADE
 			//装備品の読み込み
 			File file_data("file/data/item.dat", FileMode::Read, true);
 			File file_csv("file/data/item.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -149,66 +137,6 @@ namespace SDX_ADE
 					case ItemType::外套:mct = CraftType::革材; sct = CraftType::魔材;
 						break;
 				}
-
-				//メイン素材
-				if (it.ランク == 1)
-				{
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 2 && it2.種類 == mct)
-						{
-							it.レシピ.emplace_back( it2.ID, 3 );
-							break;
-						}
-					}
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 1 && it2.種類 == mct)
-						{
-							it.レシピ.emplace_back(it2.ID, 10);
-							break;
-						}
-					}
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 1 && it2.種類 == sct)
-						{
-							it.レシピ.emplace_back(it2.ID, 10);
-							break;
-						}
-					}
-				}
-				if (it.ランク == 2)
-				{
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 3 && it2.種類 == mct)
-						{
-							it.レシピ.emplace_back(it2.ID, 5);
-							break;
-						}
-					}
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 2 && it2.種類 == mct)
-						{
-							it.レシピ.emplace_back(it2.ID, 15);
-							break;
-						}
-					}
-					for (auto it2 : Material::data)
-					{
-						if (it2.ランク == 2 && it2.種類 == sct)
-						{
-							it.レシピ.emplace_back(it2.ID, 15);
-							break;
-						}
-					}
-				}
-				if (it.ランク == 3)
-				{
-					//強化不可
-				}
 			}
 		}
 
@@ -217,7 +145,7 @@ namespace SDX_ADE
 			//装備品の読み込み
 			File file_data("file/data/accessory.dat", FileMode::Read, true);
 			File file_csv("file/data/accessory.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -258,6 +186,10 @@ namespace SDX_ADE
 				file_data.Read(it.ステ[StatusType::回避]);
 				file_data.Read(it.ステ[StatusType::会心]);
 
+				file_data.Read(it.レアリティ);
+				file_data.Read(it.開放ポイント);
+				file_data.Read(it.目標日数);
+				file_data.Read(it.持越ポイント);
 				//アクセサリーはレシピ無し
 			}
 		}

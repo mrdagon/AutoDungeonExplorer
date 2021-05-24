@@ -41,11 +41,13 @@ void LoadAndInitData()
 	Item::LoadData();
 	MonsterClass::LoadData();
 	ExplorerClass::LoadData();
-	Management::LoadData();
+	Guild::Facility::LoadData();
 
 	Quest::LoadData();
 	Dungeon::LoadData();
 	Layout::LoadData();
+
+	Recipe::LoadRecipeData();
 
 
 	SDL_StartTextInput();//デバッグ用、テキスト入力可能に

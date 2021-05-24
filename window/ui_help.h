@@ -356,11 +356,11 @@ namespace SDX_ADE
 			Layout::Data(LItem::ヘルプ枠).h -= Layout::Data(LItem::ヘルプ枠).並べy;
 
 			//レシピ
-			for (int i = 0; i < 装備->レシピ.size(); i++)
-			{
-				Design::Help->Draw(UIType::丸フレーム, L6);
-				MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "レシピ" });
-			}
+			//for (int i = 0; i < 装備->レシピ.size(); i++)
+			//{
+			//	Design::Help->Draw(UIType::丸フレーム, L6);
+			//	MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "レシピ" });
+			//}
 		}
 
 		//パーティメンバー、控えメンバー
@@ -451,7 +451,7 @@ namespace SDX_ADE
 		}
 
 		//クエスト詳細
-		static void Management(Management* 投資)
+		static void Management(Guild::Facility* 投資)
 		{
 			auto L1 = LData(LManagement::Hアイコン);
 			auto L2 = LData(LManagement::H名前);

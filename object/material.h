@@ -32,7 +32,7 @@ namespace SDX_ADE
 		{
 			File file_data("file/data/material.dat", FileMode::Read, true);
 			File file_csv("file/data/material.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);

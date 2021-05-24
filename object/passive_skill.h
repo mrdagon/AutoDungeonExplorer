@@ -29,11 +29,12 @@ namespace SDX_ADE
 		std::string 名前;
 		std::string 説明;
 
+		int レアリティ;
 		bool isキースキル = false;
 
 		bool スキルタグ[(int)SkillType::COUNT];
 
-		ID_PSkill 習得前提PスキルID;
+		ID_PSkill 習得前提PスキルID;//MOD用、今回は使わない
 		int 習得前提PスキルLv;
 		int 習得必要Lv;
 
@@ -49,7 +50,7 @@ namespace SDX_ADE
 		int 効果量[2];
 
 		PSkillLvType レベル補正_種類[2];
-		int レベル補正_数値[2][9];
+		int レベル補正_数値[2];
 
 		int Get条件値(int Lv)
 		{
@@ -62,7 +63,8 @@ namespace SDX_ADE
 			{
 				if (レベル補正_種類[i] == PSkillLvType::条件値)
 				{
-					value += レベル補正_数値[i][Lv];
+					if (i == 1) { Lv = (Lv + 1) / 5; }
+					value += レベル補正_数値[i] * Lv;
 				}
 			}
 
@@ -81,7 +83,8 @@ namespace SDX_ADE
 			{
 				if (レベル補正_種類[i] == PSkillLvType::発動率)
 				{
-					value += レベル補正_数値[i][Lv];
+					if (i == 1) { Lv = (Lv + 1) / 5; }
+					value += レベル補正_数値[i]*Lv;
 				}
 			}
 
@@ -100,7 +103,8 @@ namespace SDX_ADE
 				{
 					if (レベル補正_種類[i] == PSkillLvType::効果値1)
 					{
-						value += レベル補正_数値[i][Lv];
+						if (i == 1) { Lv = (Lv + 1) / 5; }
+						value += レベル補正_数値[i] * Lv;
 					}
 				}
 			} else {
@@ -108,7 +112,8 @@ namespace SDX_ADE
 				{
 					if (レベル補正_種類[i] == PSkillLvType::効果値2)
 					{
-						value += レベル補正_数値[i][Lv];
+						if (i == 1) { Lv = (Lv + 1) / 5; }
+						value += レベル補正_数値[i] * Lv;
 					}
 				}
 			}
@@ -127,7 +132,8 @@ namespace SDX_ADE
 			{
 				if (レベル補正_種類[i] == PSkillLvType::持続時間)
 				{
-					value += レベル補正_数値[i][Lv];
+					if (i == 1) { Lv = (Lv + 1) / 5; }
+					value += レベル補正_数値[i] * Lv;
 				}
 			}
 
@@ -138,7 +144,7 @@ namespace SDX_ADE
 		{
 			File file_data("file/data/pskill.dat", FileMode::Read, true);
 			File file_csv("file/data/pskill.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -180,17 +186,13 @@ namespace SDX_ADE
 				file_data.Read(it.効果量[1]);
 
 				file_data.Read(it.レベル補正_種類[0]);
+				file_data.Read(it.レベル補正_数値[0]);
 
-				for (int b = 0; b < 9; b++)
-				{
-					file_data.Read(it.レベル補正_数値[0][b]);
-				}
 
 				file_data.Read(it.レベル補正_種類[1]);
-				for (int b = 0; b < 9; b++)
-				{
-					file_data.Read(it.レベル補正_数値[1][b]);
-				}
+				file_data.Read(it.レベル補正_数値[1]);
+
+				file_data.Read(it.レアリティ);
 			}
 		}
 	};

@@ -21,7 +21,7 @@ namespace SDX_ADE
 		W_Item win_item;//装備品
 		W_Dungeon  win_dungeon;//ダンジョン
 		W_EventLog win_eventLog;//ログ
-		W_Management win_management;//経営戦術
+		W_Facility win_management;//経営戦術
 		W_Material win_material;//素材
 		W_Party win_party;//ギルメン
 		W_Quest win_quest;//クエスト
@@ -109,7 +109,7 @@ namespace SDX_ADE
 			//ダンジョン初期化
 			Dungeon::ResetData();
 			Quest::ResetData();
-			Management::ResetData();
+			Guild::Facility::ResetData();
 
 			Game::is停止 = true;
 		}
@@ -295,15 +295,16 @@ namespace SDX_ADE
 					EndDay();
 				}
 
-				//探索＆製造中
+				//探索処理
 				Guild::P->探索処理();
 				Game::時間++;
 			}
 		}
 
-		//業務開始の処理
+		//探索開始の処理
 		void StartWork()
 		{
+			//BGM変更
 			MMusic::BGM[BGMType::探検中].Play();
 			MSound::効果音[SEType::探索開始].Play();
 
@@ -311,12 +312,14 @@ namespace SDX_ADE
 			Guild::P->探索開始();
 		}
 
-		//業務終了の処理
+		//探索終了の処理
 		void EndWork()
 		{
 			MMusic::BGM[BGMType::準備中].Play();
 			MSound::効果音[SEType::探索終了].Play();
 			Game::is仕事中 = false;
+
+			Guild::P->探索終了();
 		}
 
 		//一日終了の処理
@@ -324,6 +327,8 @@ namespace SDX_ADE
 		{
 			Game::日付++;
 			Game::時間 = 0;
+
+			Guild::P->一日終了();
 		}
 
 		//投資処理
@@ -344,7 +349,7 @@ namespace SDX_ADE
 			Dungeon::SaveLoad(file, FileMode::Write);
 			EventLog::SaveLoad(file, FileMode::Write);
 			Item::SaveLoad(file, FileMode::Write);
-			Management::SaveLoad(file, FileMode::Write);
+			Guild::Facility::SaveLoad(file, FileMode::Write);
 			Quest::SaveLoad(file, FileMode::Write);
 			Effect::SaveLoad(file, FileMode::Write);
 			Guild::P->SaveLoad(file, FileMode::Write);
@@ -362,7 +367,7 @@ namespace SDX_ADE
 			Dungeon::SaveLoad(file, FileMode::Read);
 			EventLog::SaveLoad(file, FileMode::Read);
 			Item::SaveLoad(file, FileMode::Read);
-			Management::SaveLoad(file, FileMode::Read);
+			Guild::Facility::SaveLoad(file, FileMode::Read);
 			Quest::SaveLoad(file, FileMode::Read);
 			Effect::SaveLoad(file, FileMode::Read);
 			Guild::P->SaveLoad(file, FileMode::Read);

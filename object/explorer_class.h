@@ -25,6 +25,8 @@ namespace SDX_ADE
 		std::vector<ActiveSkill*> 習得Aスキル;
 		std::vector<PassiveSkill*> 習得Pスキル;
 
+		std::vector<PassiveSkill*> 習得キースキル;
+
 		//
 		ID_Job ID;
 
@@ -45,7 +47,7 @@ namespace SDX_ADE
 		{
 			File file_data("file/data/job.dat", FileMode::Read, true);
 			File file_csv("file/data/job.csv", FileMode::Read, false);
-			auto strs = file_csv.GetCsvToString2();//空の場合、Vectorのサイズが1になる
+			auto strs = file_csv.GetCsvToString2('\t');//空の場合、Vectorのサイズが1になる
 
 			int data_count = 0;
 			file_data.Read(data_count);
@@ -108,6 +110,14 @@ namespace SDX_ADE
 					}
 				}
 
+				for (int i = 0; i < 3; i++)
+				{
+					int id;
+					file_data.Read(id);
+					it.習得キースキル.emplace_back(&PassiveSkill::data[id]);
+				}
+
+
 				//初期装備 - 同じ系統で一番indexが小さいものをとりあえず装備
 				for (int i = 0; i < Item::equip_data.size(); i++)
 				{
@@ -132,6 +142,8 @@ namespace SDX_ADE
 				{
 					it.初期Aスキル[i] = it.習得Aスキル[i];
 				}
+
+
 			}
 
 		}
