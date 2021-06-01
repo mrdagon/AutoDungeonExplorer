@@ -22,7 +22,7 @@ namespace SDX_ADE
 
 			RoomType 種類;
 			bool is探索 = false;//探索し終わったかどうか
-			bool is入場 = false;//同時に２パーティ探索するのを防ぐ
+			bool is入場 = false;//同時に２パーティ探索するのを防ぐ - お宝探索用
 		};
 
 		inline static std::vector<Dungeon> data;//Guild等から参照するので、static
@@ -36,15 +36,15 @@ namespace SDX_ADE
 
 		std::vector<Room>部屋;
 
-		int ボスLv;
-		int 雑魚Lv;
+		int ボスLv[CV::最大魔物出現数];
+		int 雑魚Lv[CV::最大魔物出現数];
 
+		bool isボス発見 = false;
 		bool isボス生存 = true;
-		bool isボス発見 = false;//朝に探索率が一定以上でボス発見フラグが立つ
 
 		int 発見財宝数 = 0;
 		int 最大財宝数;
-		bool is地図発見[2] = {false,false};
+		bool is地図発見[CV::最大地図数] = { false,false };
 
 		std::vector<Item*> 財宝;
 
@@ -59,8 +59,8 @@ namespace SDX_ADE
 		int ボス地図ID;//0ならボス地図なし
 		int ボス発見探索率;
 
-		int 探索地図ID[2];//0なら地図なし
-		int 地図発見探索率[2];
+		int 探索地図ID[CV::最大地図数];//0なら地図なし
+		int 地図発見探索率[CV::最大地図数];
 
 		//UI用
 		bool isUIボス表示 = false;
@@ -111,23 +111,25 @@ namespace SDX_ADE
 				it.image = &MIcon::ダンジョン[i/10];
 
 
-				for (int b = 0; b < 6; b++)
+				for (int b = 0; b < CV::最大魔物出現数 ; b++)
 				{
 					file_data.Read(dummy);
 					it.ボスモンスター.emplace_back(&MonsterClass::data[dummy]);
-					file_data.Read(it.ボスLv);
+					file_data.Read(it.ボスLv[b]);
 
 					file_data.Read(dummy);
 					it.雑魚モンスター.emplace_back(&MonsterClass::data[dummy]);
-					file_data.Read(it.雑魚Lv);
+					file_data.Read(it.雑魚Lv[b]);
 				}
 				
 				file_data.Read(it.ボス地図ID);
 
-				file_data.Read(it.探索地図ID[0]);//探索地図番号
-				file_data.Read(it.探索地図ID[1]);
+				for (int b = 0; b < CV::最大地図数; b++)
+				{
+					file_data.Read(it.探索地図ID[b]);//探索地図番号
+				}
 
-				for (int b = 0; b < 6; b++)
+				for (int b = 0; b < CV::最大財宝配置数; b++)
 				{
 					file_data.Read(dummy);
 					if (dummy > 0)
@@ -141,8 +143,11 @@ namespace SDX_ADE
 
 
 				file_data.Read(it.ボス発見探索率);
-				file_data.Read(it.地図発見探索率[0]);
-				file_data.Read(it.地図発見探索率[1]);
+
+				for (int b = 0; b < CV::最大地図数; b++)
+				{
+					file_data.Read(it.地図発見探索率[b]);
+				}
 
 				//部屋の設定//
 				for (int i = 0; i < dummy; i++)
@@ -163,8 +168,11 @@ namespace SDX_ADE
 			{
 				it.isボス生存 = true;
 				it.isボス発見 = false;
-				it.is地図発見[0] = false;
-				it.is地図発見[1] = false;
+
+				for (int b = 0; b < CV::最大地図数; b++)
+				{
+					it.is地図発見[b] = false;
+				}
 				it.is新規 = false;
 				it.is発見 = false;
 				it.探索率 = 0;

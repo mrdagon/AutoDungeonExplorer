@@ -10,7 +10,7 @@ namespace SDX_ADE
 	class Recipe
 	{
 	public:
-		inline static std::vector<std::array<int,10>> 必要数;
+		inline static std::vector<std::array<int, CV::上限素材ランク>> 必要数;
 		static EnumArray<Recipe,ItemType> 素材種;
 
 		CraftType メイン素材;
@@ -26,7 +26,7 @@ namespace SDX_ADE
 			{
 				必要数.emplace_back();
 
-				for (int a = 0; a < 10; a++)
+				for (int a = 0; a < CV::上限素材ランク; a++)
 				{
 					file_必要数.Read(必要数[i][a]);//画像ID
 				}			

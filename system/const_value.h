@@ -30,7 +30,8 @@ namespace SDX_ADE
 
 		constexpr int 上限依頼数 = 200;
 
-		constexpr int 上限素材ランク = 20;
+		constexpr int 上限素材ランク = 10;
+		constexpr double サブ素材必要数 = 0.5;
 
 		constexpr int パーティ人数 = 5;
 		constexpr int 上限パーティ数 = 3;//データ上増やせるパーティの限界
@@ -41,6 +42,11 @@ namespace SDX_ADE
 		constexpr int 素材系統 = 6;
 
 		constexpr int 投資コスト最大枠数 = 4;
+
+		constexpr int 最大魔物出現数 = 6;
+		constexpr int 最大財宝配置数 = 6;
+
+		constexpr int 最大地図数 = 2;
 
 		//探索エフェクト、待ち時間用
 		constexpr int 探索移動速度 = 2;

@@ -109,7 +109,7 @@ namespace SDX_ADE
 			//ダンジョン初期化
 			Dungeon::ResetData();
 			Quest::ResetData();
-			Guild::Facility::ResetData();
+			Management::ResetData();
 
 			Game::is停止 = true;
 		}
@@ -263,8 +263,6 @@ namespace SDX_ADE
 		//各種処理
 		void Process()
 		{			
-			UseManagement();
-
 			if (Game::is停止) { return; }
 
 			int 加速度;
@@ -309,6 +307,8 @@ namespace SDX_ADE
 			MSound::効果音[SEType::探索開始].Play();
 
 			Game::is仕事中 = true;
+
+			Management::予約使用();
 			Guild::P->探索開始();
 		}
 
@@ -328,13 +328,8 @@ namespace SDX_ADE
 			Game::日付++;
 			Game::時間 = 0;
 
+			Management::予約使用();
 			Guild::P->一日終了();
-		}
-
-		//投資処理
-		void UseManagement()
-		{
-			
 		}
 
 		//●セーブ処理
@@ -349,7 +344,7 @@ namespace SDX_ADE
 			Dungeon::SaveLoad(file, FileMode::Write);
 			EventLog::SaveLoad(file, FileMode::Write);
 			Item::SaveLoad(file, FileMode::Write);
-			Guild::Facility::SaveLoad(file, FileMode::Write);
+			Management::SaveLoad(file, FileMode::Write);
 			Quest::SaveLoad(file, FileMode::Write);
 			Effect::SaveLoad(file, FileMode::Write);
 			Guild::P->SaveLoad(file, FileMode::Write);
@@ -367,7 +362,7 @@ namespace SDX_ADE
 			Dungeon::SaveLoad(file, FileMode::Read);
 			EventLog::SaveLoad(file, FileMode::Read);
 			Item::SaveLoad(file, FileMode::Read);
-			Guild::Facility::SaveLoad(file, FileMode::Read);
+			Management::SaveLoad(file, FileMode::Read);
 			Quest::SaveLoad(file, FileMode::Read);
 			Effect::SaveLoad(file, FileMode::Read);
 			Guild::P->SaveLoad(file, FileMode::Read);

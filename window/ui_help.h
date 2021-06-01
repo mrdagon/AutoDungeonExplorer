@@ -318,7 +318,10 @@ namespace SDX_ADE
 			auto L3 = LData(LItem::H説明);
 			auto L4 = LData(LItem::Hステータス);
 			auto L5 = LData(LItem::Hパッシブ);
-			auto L6 = LData(LItem::Hレシピ);
+			auto L6 = LData(LItem::Hレシピ枠);
+			auto L7 = LData(LItem::Hレシピアイコン);
+			auto L8 = LData(LItem::Hレシピ数);
+			auto L9 = LData(LItem::HレシピLv);
 
 			if (is武器防具 == true)
 			{
@@ -342,25 +345,46 @@ namespace SDX_ADE
 			//ステータス変化 - 初期化処理で、説明に付与する
 			//for (int i = 0; i < 装備->ステ.size(); i++)
 			//{
-			//	Design::Help->Draw(UIType::丸フレーム, L4);
+			//Design::Help->Draw(UIType::丸フレーム, L4);
 			//	MFont::L->DrawRotate(L4.GetPos(i), 1, 0, Design::暗字,{ "ステータス"});
 			//}
 
 			if (is武器防具 == false)
 			{
-				//アクセサリーはパッシブがある
+				//アクセサリーはパッシブを表示
 				PSkillChild(装備->Pスキル[0], L5.x, L5.y);
 				return;
 			}
 
+			//装備はRecipeを表示
 			Layout::Data(LItem::ヘルプ枠).h -= Layout::Data(LItem::ヘルプ枠).並べy;
 
-			//レシピ
-			//for (int i = 0; i < 装備->レシピ.size(); i++)
-			//{
-			//	Design::Help->Draw(UIType::丸フレーム, L6);
-			//	MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "レシピ" });
-			//}
+			std::array<int, CV::上限素材ランク> メイン必要数;
+			std::array<int, CV::上限素材ランク> サブ必要数;
+
+			CraftType メイン素材種 = 装備->GetMainRecipe(メイン必要数);
+			CraftType サブ素材種 = 装備->GetMainRecipe(サブ必要数);
+
+			Design::Help->Draw(UIType::グループ明, L6);
+
+			for (int i = 0 , cnt = 0; i < CV::上限素材ランク; i++)
+			{
+				if (メイン必要数[i] <= 0) { continue; }
+				MIcon::素材[メイン素材種].DrawRotate(L7.GetPos(cnt * 2 + 1), 1, 0);
+				MFont::L->Draw(L8.GetPos(cnt*2), Design::暗字,{ "x" , メイン必要数[cnt]});
+				MFont::S->DrawBold(L9.GetPos(cnt * 2), Design::明字, Design::暗字, { "Lv " , i + 1 });
+				cnt++;
+			}
+
+			for (int i = 0, cnt = 0; i < CV::上限素材ランク; i++)
+			{
+				if (サブ必要数[i] <= 0) { continue; }
+				MIcon::素材[サブ素材種].DrawRotate(L7.GetPos(cnt * 2 + 1), 1, 0);
+				MFont::L->Draw(L8.GetPos(cnt*2+1), Design::暗字, { " x" , int(サブ必要数[cnt] * CV::サブ素材必要数) });
+				MFont::S->DrawBold(L9.GetPos(cnt * 2 + 1),Design::明字, Design::暗字, { "Lv " , i + 1 });
+				cnt++;
+			}
+
 		}
 
 		//パーティメンバー、控えメンバー
@@ -451,7 +475,7 @@ namespace SDX_ADE
 		}
 
 		//クエスト詳細
-		static void Management(Guild::Facility* 投資)
+		static void Management(Management* 投資)
 		{
 			auto L1 = LData(LManagement::Hアイコン);
 			auto L2 = LData(LManagement::H名前);

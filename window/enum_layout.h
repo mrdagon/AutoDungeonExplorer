@@ -108,7 +108,10 @@ namespace SDX_ADE
 		H説明,
 		Hステータス,
 		Hパッシブ,
-		Hレシピ,
+		Hレシピ枠,
+		Hレシピアイコン,
+		Hレシピ数,
+		HレシピLv,
 		COUNT,
 		PAGE = (int)UIPage::アイテム
 	};

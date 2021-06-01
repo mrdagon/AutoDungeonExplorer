@@ -50,6 +50,25 @@ namespace SDX_ADE
 			LoadEquipData();
 			LoadAccessoryData();
 		}
+
+		CraftType GetMainRecipe(std::array<int, CV::上限素材ランク>& 必要数)
+		{
+			for (int i = 0; i < CV::上限素材ランク; i++)
+			{
+				必要数[i] = Recipe::必要数[ランク][i];
+			}
+			return Recipe::素材種[種類].メイン素材;
+		}
+
+		CraftType GetSubRecipe(std::array<int, CV::上限素材ランク>& 必要数)
+		{
+
+			for (int i = 0; i < CV::上限素材ランク; i++)
+			{
+				必要数[i] = Recipe::必要数[std::min(ランク - 1, 0)][i];
+			}
+			return Recipe::素材種[種類].サブ素材;
+		}
 	private:
 		static void LoadEquipData()
 		{

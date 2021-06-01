@@ -41,7 +41,7 @@ void LoadAndInitData()
 	Item::LoadData();
 	MonsterClass::LoadData();
 	ExplorerClass::LoadData();
-	Guild::Facility::LoadData();
+	Management::LoadData();
 
 	Quest::LoadData();
 	Dungeon::LoadData();

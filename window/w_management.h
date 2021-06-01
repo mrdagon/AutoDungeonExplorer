@@ -17,7 +17,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//街経験値 - 現在値、使用後
-				double rate = (double)Guild::P->街経験値 / Guild::Facility::必要経験値[Guild::P->街Lv];
+				double rate = (double)Guild::P->街経験値 / Management::必要経験値[Guild::P->街Lv];
 				Design::No1->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
 
 				//街 Lv 現在値のみ
@@ -66,7 +66,7 @@ namespace SDX_ADE
 		class UIPlan : public UIObject
 		{
 		public:
-			Guild::Facility* manage;
+			Management* manage;
 
 			void Draw派生() override
 			{
@@ -121,7 +121,7 @@ namespace SDX_ADE
 		};
 
 	public:
-		inline static Guild::Facility* over戦術 = nullptr;
+		inline static Management* over戦術 = nullptr;
 
 		UIGold 資金;//資金と消費G
 		UILv 街Lv;//街Lv
@@ -141,17 +141,17 @@ namespace SDX_ADE
 			資金.SetUI(LManagement::資金枠);
 			街Lv.SetUI(LManagement::街Lv枠);
 
-			for (int i = 0; i < Guild::Facility::data.size(); i++)
+			for (int i = 0; i < Management::data.size(); i++)
 			{
 				投資案[i].SetUI(LManagement::プラン枠, i );
-				投資案[i].manage = &Guild::Facility::data[i];
+				投資案[i].manage = &Management::data[i];
 			}
 
 			//●登録
 			item.clear();
 			AddItem(資金,true);
 			AddItem(街Lv,true);
-			AddItem(投資案, Guild::Facility::data.size());
+			AddItem(投資案, Management::data.size());
 
 			//●ヘルプ
 			街Lv.SetHelp(&TH::Management::街Lv);
