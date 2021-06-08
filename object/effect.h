@@ -35,6 +35,7 @@ namespace SDX_ADE
 
 		TextType 種類;
 		int ダメージ量;
+		int 座標X = 0;
 		int 座標Y = 10;
 		const int 表示終了Y = -10;
 		const int 移動Y = -1;
@@ -138,6 +139,7 @@ namespace SDX_ADE
 		int 隠れ時間;
 		int 配置ID;//敵ドロップの場合0以上にする
 
+		int 座標X = 0;
 		int 座標Y = 0;
 
 		const int 表示終了Y = -20;

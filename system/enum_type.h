@@ -619,7 +619,7 @@ namespace SDX_ADE
 	};
 
 	//探検中の状態
-	enum class ExplorerType
+	enum class ExplorType
 	{
 		編成中,
 		戦闘中,
@@ -628,6 +628,7 @@ namespace SDX_ADE
 		撤退中,
 		全滅中,
 		リザルト中,
+		階段発見中,
 		COUNT
 		//宝箱開封、地図発見、戦闘後ドロップ、ボス演出などは未実装
 	};

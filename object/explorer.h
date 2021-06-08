@@ -109,7 +109,7 @@ namespace SDX_ADE
 		int 探検前経験値;
 
 		//UI表示用
-		bool isレベルアップ演出;
+		int レベルアップ演出 = 0;
 		bool isスキル習得演出;
 
 		//●再計算ステータス、戦闘以外
@@ -136,7 +136,7 @@ namespace SDX_ADE
 			経験値 -= 要求exp;
 			Lv += 1;
 			スキルポイント += 1;
-			isレベルアップ演出 = true;
+			レベルアップ演出 = true;
 
 			レベルアップ判定();//2レベ以上上がった時用の再起呼び出し
 
@@ -235,7 +235,7 @@ namespace SDX_ADE
 			//
 			探検前Lv = Lv;
 			探検前経験値 = (int)経験値;
-			isレベルアップ演出 = false;
+			レベルアップ演出 = false;
 			isスキル習得演出 = false;		}
 
 		void 探索終了()

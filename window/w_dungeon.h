@@ -53,10 +53,11 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
+				auto& LA = Layout::Data(LDungeon::魔物Lv);
+
 				DrawUI(UIType::丸フレーム);
 				種族->image[0][1]->DrawRotate( GetCenterPos() , 2, 0);
-				//ボスは２倍表示？
-
+				MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { Lv } , true);
 			}
 
 			void Over() override
@@ -78,11 +79,11 @@ namespace SDX_ADE
 			std::vector<UIMonster> 出現モンスター;
 			std::vector<UI財宝> 出現財宝;
 
-			UIButton ボス雑魚表示;
+			//UIButton ボス雑魚表示;
 
 			UIDungeon()
 			{
-				ボス雑魚表示.SetHelp(&TH::Dungeon::ボス表示切り替え);
+				//ボス雑魚表示.SetHelp(&TH::Dungeon::ボス表示切り替え);
 			}
 
 			void SetDungeon(Dungeon* 参照ダンジョン)
@@ -93,11 +94,18 @@ namespace SDX_ADE
 				{
 					出現モンスター.emplace_back(dungeon->雑魚モンスター[i], 0 , false);
 					出現モンスター.back().SetUI(LDungeon::モンスター, i, this);
+					出現モンスター[i].Lv = dungeon->雑魚Lv[i];
 				}
 				for (int i = 0; i < dungeon->ボスモンスター.size(); i++)
 				{
+					if (dungeon->ボスモンスター[i]->ID == 0)
+					{
+						continue;
+					}
+
 					出現ボス.emplace_back(dungeon->ボスモンスター[i] , 0 , true);
-					出現ボス.back().SetUI(LDungeon::モンスター, i, this);
+					出現ボス.back().SetUI(LDungeon::モンスター, i + 6, this);
+					出現ボス.back().Lv = dungeon->ボスLv[i];
 				}
 				for (int i = 0; i < dungeon->財宝.size(); i++)
 				{
@@ -105,21 +113,10 @@ namespace SDX_ADE
 					出現財宝.back().SetUI(LDungeon::財宝, i, this);
 					出現財宝[i].dungeon = dungeon;
 				}
-
-				ボス雑魚表示.SetUI(LDungeon::雑魚ボスボタン, &MIcon::UI[IconType::ボス],"ボ\nス", 0, this);
-
-				ボス雑魚表示.is押下 = dungeon->isUIボス表示;
-
-				ボス雑魚表示.clickEvent = [&]()
-				{
-					dungeon->isUIボス表示 = !dungeon->isUIボス表示;
-					ボス雑魚表示.is押下 = dungeon->isUIボス表示;
-				};
 			}
 
 			void Draw派生() override
 			{
-				auto &LA = Layout::Data(LDungeon::フロアLv);
 				auto &LB = Layout::Data(LDungeon::フロアアイコン);
 				auto &LC = Layout::Data(LDungeon::探索率);
 
@@ -134,39 +131,30 @@ namespace SDX_ADE
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
 
 
-				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI);
+				DrawUI(isOver ? UIType::平ボタン : UIType::暗ボタン , Design::UI);
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
 				MFont::M->Draw({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
 
 				//探索率
-				Design::No1->DrawGauge(LC.x, LC.y, LC.w, LC.h, dungeon->探索率 + 0.5);
+				Design::No1->DrawGauge(GetX() + LC.x, GetY()+ LC.y, LC.w, LC.h, dungeon->探索率 );
 				MFont::M->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字 , Design::明字 , { (int)(dungeon->探索率 * 100) , "%" }, true);
 
 				//階段位置、ボス位置マーク
 
 				//ボス雑魚ボタン - ボス撃破済みだと表示される
-				ボス雑魚表示.Draw();
+				//ボス雑魚表示.Draw();
 
 				//出現モンスター or 出現ボス
-				if (dungeon->isUIボス表示 == true)
+				for (auto& it : 出現モンスター)
 				{
-					//レベル
-					//MFont::M->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv",dungeon->ボスLv }, false);
+					it.Draw();
+				}
 
-					for (auto& it : 出現ボス)
-					{
-						it.Draw();
-					}
-				} else {
-					//レベル
-					//MFont::M->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv",dungeon->雑魚Lv }, false);
-
-					for (auto& it : 出現モンスター)
-					{
-						it.Draw();
-					}
+				for (auto& it : 出現ボス)
+				{
+					it.Draw();
 				}
 
 				//財宝表示
@@ -192,30 +180,22 @@ namespace SDX_ADE
 				//子オブジェクトの当たり判定
 				if (dungeon->is発見 == true)
 				{
-					if (ボス雑魚表示.CheckInput(px, py) == true)
+					for (auto& it : 出現ボス)
 					{
-						return true;
+						if (it.CheckInput(px, py) == true)
+						{
+							return true;
+						}
 					}
 
-					if (dungeon->isUIボス表示 == true)
+					for (auto& it : 出現モンスター)
 					{
-						for (auto& it : 出現ボス)
+						if (it.CheckInput(px, py) == true)
 						{
-							if (it.CheckInput(px, py) == true)
-							{
-								return true;
-							}
+							return true;
 						}
 					}
-					else {
-						for (auto& it : 出現モンスター)
-						{
-							if (it.CheckInput(px, py) == true)
-							{
-								return true;
-							}
-						}
-					}
+					
 					for (auto& it : 出現財宝)
 					{
 						if (it.CheckInput(px, py) == true)

@@ -22,8 +22,7 @@ namespace SDX_ADE
 		private:
 
 		public:
-			Party() :
-				isボス戦中(false)
+			Party()
 			{
 				魔物.reserve(6);
 
@@ -33,6 +32,7 @@ namespace SDX_ADE
 				}
 			}
 
+			int 探索部屋数 = 0;//今回の探索での探索した部屋数
 			int パーティID;
 
 			Dungeon* 探索先 = nullptr;
@@ -44,26 +44,66 @@ namespace SDX_ADE
 			std::vector<Battler*> 味方;
 			std::vector<Battler*> 敵;
 
-			CraftType 発見素材種;
 			double 獲得経験値;
 			int 獲得素材[CV::上限素材種類];
-			int 獲得財宝[10];//最大で10個まで、-は地図、0は未発見
+			int 獲得財宝[10];//最大で10個まで、0は未発見
+			int 地図発見数 = 0;
+			int ボス撃破数 = 0;
 
-			ExplorerType 探索状態 = ExplorerType::編成中;
+			ExplorType 探索状態 = ExplorType::編成中;
 			int 待ち時間 = 0;//移動、戦闘後、素材回収中などの待ち時間
 
-			bool isボス戦中 = false;
-
-			int 部屋ID = 0;//探索,戦闘中の
+			int 部屋ID = 0;//探索,戦闘中の部屋番号
 
 			//★探索中演出用
+			CraftType 発見素材種;
 			int 移動量 = 0;
 			int 暗転 = 0;
 			Image* 発見物 = nullptr;//地図、宝箱、鉱脈、木
 			int 発見物X座標 = 0;
 
 			int 戦闘中行動待機 = 0;
+			//編成画面の処理
+			bool 編成_探索フロア増減(int 変化値)
+			{
+				if (変化値 == -1)
+				{
+					for (auto& it : Dungeon::data)
+					{
+						if (it.ID > 探索先->ID && it.is発見)
+						{
+							探索先 = &it;
+							return true;
+						}
+					}
+				}
+				else
+				{
 
+					for (int a = (int)Dungeon::data.size() - 1; a >= 0; a--)
+					{
+						if (Dungeon::data[a].ID < 探索先->ID && Dungeon::data[a].is発見)
+						{
+							探索先 = &Dungeon::data[a];
+							return true;
+						}
+					}
+				}
+
+				return false;
+			}
+
+			bool 編成_探索指示(int 変化値)
+			{
+				int n = int(探索指示) + 変化値;
+
+				if (n == (int)OrderType::COUNT) { n = 0; }
+				if (n < 0) { n = (int)OrderType::COUNT - 1; }
+
+				探索指示 = OrderType(n);
+			}
+			
+			//
 			void 基礎ステ再計算()
 			{
 				味方.clear();
@@ -95,7 +135,7 @@ namespace SDX_ADE
 				発見物X座標 = 0;
 				発見物 = nullptr;
 
-				探索状態 = ExplorerType::移動中;
+				探索状態 = ExplorType::移動中;
 				待ち時間 = CV::探索開始時待ち時間;
 
 				//獲得素材数リセット
@@ -106,7 +146,7 @@ namespace SDX_ADE
 				基礎ステ再計算();
 
 				//０人パーティは全滅扱いにする
-				if (味方.size() == 0) { 探索状態 = ExplorerType::全滅中; }
+				if (味方.size() == 0) { 探索状態 = ExplorType::全滅中; }
 			}
 
 			void 探索終了()
@@ -152,78 +192,39 @@ namespace SDX_ADE
 				}
 				if (Game::時間 == Game::起床時間)
 				{
-					探索状態 = ExplorerType::編成中;
+					探索状態 = ExplorType::編成中;
 				}
 
 				//待機中(収集中、戦闘後待機、宝部屋etc)				
 				switch (探索状態)
 				{
-				case ExplorerType::戦闘中:
+				case ExplorType::戦闘中:
 					戦闘処理();
 					break;
-				case ExplorerType::移動中:
+				case ExplorType::移動中:
 					待ち時間--;
 					移動量 += CV::探索移動速度;
-					if (待ち時間 == 0) { 部屋選び(); }
+					if (待ち時間 == 0) { 部屋抽選(); }
 					break;
-				case ExplorerType::収集中:
+				case ExplorType::収集中:
 					収集処理();
 					break;
-				case ExplorerType::撤退中:
+				case ExplorType::撤退中:
 					撤退処理();
 					break;
-				case ExplorerType::全滅中:
+				case ExplorType::全滅中:
 					if (暗転 > CV::全滅暗さ)
 					{
 						暗転--;
 					}
-				case ExplorerType::リザルト中:
+				case ExplorType::リザルト中:
 					//特に処理しない
 					break;
 				}
 			}
 
-			bool 操作_探索フロア増減(int 変化値)
-			{
-				if (変化値 == -1)
-				{
-					for (auto& it : Dungeon::data)
-					{
-						if (it.ID > 探索先->ID&& it.is発見)
-						{
-							探索先 = &it;
-							return true;
-						}
-					}
-				}
-				else
-				{
-
-					for (int a = (int)Dungeon::data.size() - 1; a >= 0; a--)
-					{
-						if (Dungeon::data[a].ID < 探索先->ID && Dungeon::data[a].is発見)
-						{
-							探索先 = &Dungeon::data[a];
-							return true;
-						}
-					}
-				}
-
-				return false;
-			}
-
-			bool 操作_探索指示(int 変化値)
-			{
-				int n = int(探索指示) + 変化値;
-
-				if (n == (int)OrderType::COUNT) { n = 0; }
-				if (n < 0) { n = (int)OrderType::COUNT - 1; }
-
-				探索指示 = OrderType(n);
-			}
-
 			//部屋選択関係の処理
-			void 部屋選び()
+			void 部屋抽選()
 			{
 				std::vector<int> room_deck;
 				room_deck.clear();
@@ -232,21 +233,24 @@ namespace SDX_ADE
 
 				//抽選
 				部屋ID = room_deck[Rand::Get((int)room_deck.size() - 1)];
-				部屋選択後処理();
+				部屋選択処理();
 			}
 
 			void Set部屋抽選リスト(std::vector<int>& room_deck, bool isボス戦)
 			{
-				if (探索先->isボス発見 && 探索先->部屋[0].種類 == RoomType::ボス && isボス戦 && !探索先->部屋[0].is入場)
+				//階段発見済み
+				int no = 探索先->Is階段発見可能();
+				if ( no >= 0)
 				{
-					room_deck.push_back(0);
+					room_deck.push_back( no );
 					return;
 				}
 
-				//地図部屋確定
-				if (探索先->探索率 > Game::地図発見探索率 && !探索先->部屋[1].is入場)
+
+				//ボス発見済み
+				if ( 探索先->Isボス戦闘可能(探索部屋数) )
 				{
-					room_deck.push_back(1);
+					room_deck.push_back(CV::ボス部屋ID);
 					return;
 				}
 
@@ -255,17 +259,22 @@ namespace SDX_ADE
 				{
 					for (int a = 1; a < 探索先->部屋.size(); a++)
 					{
-						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索) { continue; }
+						if (探索先->部屋[a].is入場 || 探索先->部屋[a].is探索 || 
+							探索先->部屋[a].種類 == RoomType::ボス ||
+							探索先->部屋[a].種類 == RoomType::階段 ) { continue; }
 						room_deck.push_back(a);
 					}
 				}
 
 				if (room_deck.size() > 0) { return; }
 
-				//未探索部屋0の場合
+				//未探索部屋0 or 未開探索パッシブ無しの場合
 				for (int a = 1; a < 探索先->部屋.size(); a++)
 				{
-					if (探索先->部屋[a].is入場)
+					if (探索先->部屋[a].is入場 ||
+						探索先->部屋[a].種類 == RoomType::ボス ||
+						探索先->部屋[a].種類 == RoomType::階段						
+						)
 					{
 						continue;
 					}
@@ -274,7 +283,7 @@ namespace SDX_ADE
 				}
 			}
 
-			void 部屋選択後処理()
+			void 部屋選択処理()
 			{
 				//入室フラグON
 				探索先->部屋[部屋ID].is入場 = true;
@@ -282,28 +291,24 @@ namespace SDX_ADE
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ザコ:
-					探索状態 = ExplorerType::戦闘中;
-					isボス戦中 = false;
-					戦闘開始(5);
+					探索状態 = ExplorType::戦闘中;
+					戦闘開始(0);//とりあえず戦闘スキップ
 					break;
 				case RoomType::素材:
-					探索状態 = ExplorerType::収集中;
+					探索状態 = ExplorType::収集中;
 					収集開始();
 					break;
 				case RoomType::財宝:
-					探索状態 = ExplorerType::戦闘中;
-					isボス戦中 = false;
-					戦闘開始(6);
+					探索状態 = ExplorType::戦闘中;
+					戦闘開始(0);//とりあえず戦闘スキップ
 					break;
 				case RoomType::階段:
-					探索状態 = ExplorerType::戦闘中;
-					isボス戦中 = false;
-					戦闘開始(6);
+					探索状態 = ExplorType::収集中;
+					階段発見();
 					break;
 				case RoomType::ボス:
-					探索状態 = ExplorerType::戦闘中;
-					isボス戦中 = true;
-					戦闘開始(1);
+					探索状態 = ExplorType::戦闘中;
+					ボス戦開始();
 					break;
 				}
 
@@ -312,9 +317,7 @@ namespace SDX_ADE
 			//素材収集関係
 			void 収集開始()
 			{
-				部屋探索完了();
-
-				探索状態 = ExplorerType::収集中;
+				部屋探索完了共通();
 
 				double coin = Rand::Get(3);
 
@@ -357,7 +360,7 @@ namespace SDX_ADE
 				if (待ち時間 == 0)
 				{
 					発見物 = nullptr;
-					探索状態 = ExplorerType::移動中;
+					探索状態 = ExplorType::移動中;
 					待ち時間 = CV::収集待機B;
 				}
 			}
@@ -435,19 +438,10 @@ namespace SDX_ADE
 				魔物.clear();
 
 				//敵の生成
-				if (isボス戦中 == true)
+				for (int a = 0; a < 敵数; a++)
 				{
-					MMusic::BGM[BGMType::通常ボス].Play();
-					敵数 = 1;
-					//魔物.emplace_back(探索先->ボスモンスター[0]);
-				}
-				else
-				{
-					for (int a = 0; a < 敵数; a++)
-					{
-						int mn = Rand::Get(2);
-						//魔物.emplace_back(探索先->雑魚モンスター[mn]);
-					}
+					int mn = Rand::Get(2);
+					//魔物.emplace_back(探索先->雑魚モンスター[mn]);
 				}
 
 				敵.resize(敵数);
@@ -469,8 +463,17 @@ namespace SDX_ADE
 				{
 					it->戦闘開始(敵, 味方);
 				}
-
 				戦闘中行動待機 = CV::戦闘開始後待ち時間;
+			}
+
+			void ボス戦開始()
+			{
+				if (Config::isボス戦時等速 == true)
+				{
+					Game::ゲームスピード = 1;
+				}
+
+				戦闘開始(0);
 			}
 
 			void 戦闘処理()
@@ -507,7 +510,8 @@ namespace SDX_ADE
 					for (auto& it : 敵)
 					{
 						it->ターン経過();
-					}				
+					}
+					break;
 				}
 
 				for (auto& it : 魔物)
@@ -567,38 +571,27 @@ namespace SDX_ADE
 				//クエスト処理
 				Guild::P->クエスト進行(QuestType::魔物討伐, (int)敵.size());
 
-				//特殊部屋攻略
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ボス:
-					if (Config::isボス戦時等速 == true)
-					{
-						Game::ゲームスピード = 1;
-					}
-
 					MMusic::BGM[BGMType::探検中].Play();
 					探索先->isボス生存 = false;
-					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
 					Guild::P->総討伐++;
 					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
 					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
-					EventLog::Add(0, Game::日付, LogType::探索 );
-					//if (探索先->部屋[部屋ID].地図 < 0)
-					//{
-					//	財宝獲得();
-					//}
+					EventLog::Add("ボス勝利", Game::日付, LogType::探索 );
 					break;
 				case RoomType::階段:
-					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
+					階段発見();
 					break;
 				case RoomType::財宝:
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
+					探索先->発見財宝数++;
 					財宝獲得();
 					break;
 				}
 
-				階段発見();
-				部屋探索完了();
+				部屋探索完了共通();
 
 				//体力回復
 				for (int a = 0; a < (int)味方.size(); a++)
@@ -608,7 +601,7 @@ namespace SDX_ADE
 					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]));
 				}
 
-				探索状態 = ExplorerType::収集中;
+				探索状態 = ExplorType::収集中;
 				待ち時間 = CV::戦闘終了後待ち時間;
 			}
 
@@ -627,28 +620,31 @@ namespace SDX_ADE
 				Guild::P->クエスト進行(QuestType::魔物討伐, ザコ討伐数);
 
 				探索先->部屋[部屋ID].is入場 = false;
-				探索状態 = ExplorerType::全滅中;
+				探索状態 = ExplorType::全滅中;
 				MSound::効果音[SE::全滅].Play();
 				Guild::P->総全滅++;
 			}
 
 			void 階段発見()
 			{
-				//if (探索先->部屋[部屋ID].地図 <= 0) { return; }
-
-				//探索先->発見地図++;
 				発見物 = &MIcon::UI[IconType::地図];
+				探索先->is地図発見[部屋ID] = true;
 
-				/*if (!Dungeon::data[探索先->部屋[部屋ID].地図].is発見)
+				//新たなダンジョンを開放
+				Dungeon::data[探索先->探索地図ID[部屋ID]].is発見 = true;
+
+				MSound::効果音[SE::地図発見].Play();
+
+				for (int i = 0; i < 10; i++)
 				{
-					Dungeon::data[探索先->部屋[部屋ID].地図].is発見 = true;
-					MSound::効果音[SE::地図発見].Play();
-					Guild::P->総地図++;
-					Guild::P->クエスト進行(QuestType::ダンジョン発見, 探索先->ID);
-					EventLog::Add(0, Game::日付, LogDetailType::地図発見, 探索先->ID);
-				}*/
+					if ( 獲得財宝[i] == 0)
+					{
+						獲得財宝[i] = -2;
+					}
 
-				//探索先->部屋[部屋ID].地図 = -1;
+				}
+
+				//Todoイベント追加
 			}
 
 			void 財宝獲得()
@@ -659,7 +655,7 @@ namespace SDX_ADE
 
 			void 撤退開始()
 			{
-				if (探索状態 == ExplorerType::戦闘中)
+				if (探索状態 == ExplorType::戦闘中)
 				{
 					int ザコ討伐数 = 0;
 					for (auto& it : 敵)
@@ -679,7 +675,7 @@ namespace SDX_ADE
 					it->エフェクト移動(-3, 10000);
 				}
 
-				探索状態 = ExplorerType::撤退中;
+				探索状態 = ExplorType::撤退中;
 				探索先->部屋[部屋ID].is入場 = false;
 				待ち時間 = CV::撤退後待ち時間;
 			}
@@ -690,21 +686,22 @@ namespace SDX_ADE
 				if (待ち時間 == 0)
 				{
 					探索終了();
-					探索状態 = ExplorerType::リザルト中;
+					探索状態 = ExplorType::リザルト中;
 				}
 			}
 
-			void 部屋探索完了()
+			void 部屋探索完了共通()
 			{
+				探索部屋数++;
 				探索先->部屋[部屋ID].is探索 = true;
 				探索先->部屋[部屋ID].is入場 = false;
 				探索先->探索率計算();
 
-				if (探索先->探索率 > Game::ボス発見探索率 && 探索先->isボス発見 == false)
+				if (探索先->探索率*100 > Game::ボス発見探索率 && 探索先->isボス発見 == false)
 				{
 					MSound::効果音[SE::ボス発見].Play();
 					探索先->isボス発見 = true;
-					EventLog::Add(0, Game::日付, LogType::探索);
+					EventLog::Add("ボス登場！", Game::日付, LogType::探索);
 				}
 			}
 

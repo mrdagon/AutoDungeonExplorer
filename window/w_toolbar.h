@@ -33,10 +33,8 @@ namespace SDX_ADE
 				case 0:
 					DrawUI(UIType::グループ明, *UIデザイン );
 					break;
-					break;
 				case 1:
 					DrawUI(UIType::グループ中, *UIデザイン );
-					break;
 					break;
 				default:
 					DrawUI(UIType::グループ暗, *UIデザイン );
@@ -46,7 +44,8 @@ namespace SDX_ADE
 				auto& it = Layout::Data(LToolBar::ツールバー_日付文字);
 
 				MFont::F[layout->フォントID]->Draw({ GetX() + it.x, GetY() + it.y }, Design::Blue.暗字 , { 日 , "日" }, true);
-				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べx, GetY() + it.y + it.並べy }, Design::Blue.暗字, { 時 , ":" , 分 }, true);
+				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べx, GetY() + it.y }, Design::Blue.暗字, { 時 , ":"  }, true);
+				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べy + it.w, GetY() + it.y }, Design::Blue.暗字, { 分 }, true);
 			}
 		};
 
@@ -110,15 +109,39 @@ namespace SDX_ADE
 					Game::is停止 = !Game::is停止;
 					break;
 				case 3:
+					if (Game::ゲームスピード == 1)
+					{
+						Game::is停止 = !Game::is停止;
+					} else {
+						Game::is停止 = false;
+					}
 					Game::ゲームスピード = 1;
 					break;
 				case 2://x4
+					if (Game::ゲームスピード == 4)
+					{
+						Game::is停止 = !Game::is停止;
+					} else {
+						Game::is停止 = false;
+					}
 					Game::ゲームスピード = 4;
 					break;
 				case 1://x16
+					if (Game::ゲームスピード == 16)
+					{
+						Game::is停止 = !Game::is停止;
+					} else {
+						Game::is停止 = false;
+					}
 					Game::ゲームスピード = 16;
 					break;
 				case 0://x64
+					if (Game::ゲームスピード == 64)
+					{
+						Game::is停止 = !Game::is停止;
+					} else {
+						Game::is停止 = false;
+					}
 					Game::ゲームスピード = 64;
 					break;
 				}

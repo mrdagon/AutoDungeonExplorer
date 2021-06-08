@@ -52,28 +52,28 @@ namespace SDX_ADE
 			int data_count = 0;
 			file_data.Read(data_count);
 
-			for (int i = 0; i < data_count; i++)
+			for (int a = 0; a < data_count; a++)
 			{
 				data.emplace_back();
 				auto& it = data.back();
 
-				it.ID = i;
-				it.名前 = strs[i][0];
-				if (strs[i].size() == 2)
+				it.ID = a;
+				it.名前 = strs[a][0];
+				if (strs[a].size() == 2)
 				{
-					int first = (int)strs[i][1].find('\t');
+					int first = (int)strs[a][1].find('\t');
 					//最初の行が概説
-					it.概説 = strs[i][1].substr(0,first);
+					it.概説 = strs[a][1].substr(0,first);
 					//tabを改行に置き換え
-					if (strs[i][1].length() > first)
+					if (strs[a][1].length() > first)
 					{
-						it.説明 = strs[i][1].substr(first);
+						it.説明 = strs[a][1].substr(first);
 						std::replace(it.説明.begin(), it.説明.end(), '\t', '\n');
 					}
 				}
 
-				it.立ち絵image = &MJob::立ち絵[i];
-				it.ちびimage = &MJob::ちび[i];
+				it.立ち絵image = &MJob::立ち絵[a];
+				it.ちびimage = &MJob::ちび[a];
 
 				file_data.Read(it.武器種);
 				file_data.Read(it.防具種);
@@ -114,12 +114,15 @@ namespace SDX_ADE
 				{
 					int id;
 					file_data.Read(id);
-					it.習得キースキル.emplace_back(&PassiveSkill::data[id]);
+					if (id > 0)
+					{
+						it.習得キースキル.emplace_back(&PassiveSkill::data[id]);
+					}
 				}
 
 
 				//初期装備 - 同じ系統で一番indexが小さいものをとりあえず装備
-				for (int i = 0; i < Item::equip_data.size(); i++)
+				for (int i = 2; i < Item::equip_data.size(); i++)
 				{
 					if (Item::equip_data[i].種類 == it.武器種)
 					{
@@ -127,7 +130,7 @@ namespace SDX_ADE
 						break;
 					}
 				}
-				for (int i = 0; i < Item::equip_data.size(); i++)
+				for (int i = 2; i < Item::equip_data.size(); i++)
 				{
 					if (Item::equip_data[i].種類 == it.防具種)
 					{
@@ -138,12 +141,13 @@ namespace SDX_ADE
 
 				it.初期装備[2] = &Item::accessory_data[0];//アクセサリーは無し
 
-				for (int i = 0; i < 4; i++)
+				if (it.習得Aスキル.size() >= 4)
 				{
-					it.初期Aスキル[i] = it.習得Aスキル[i];
+					for (int i = 0; i < 4; i++)
+					{
+						it.初期Aスキル[i] = it.習得Aスキル[i];
+					}
 				}
-
-
 			}
 
 		}

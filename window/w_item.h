@@ -20,7 +20,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//枠
-				DrawUI( isOver ? UIType::明ボタン : UIType::平ボタン , Design::UI );
+				DrawUI( isOver ? UIType::平ボタン : UIType::暗ボタン , Design::UI );
 
 				//遺物アイコン
 				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);

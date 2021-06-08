@@ -40,6 +40,7 @@ namespace SDX_ADE
 		int 雑魚Lv[CV::最大魔物出現数];
 
 		bool isボス発見 = false;
+		bool isボス戦闘中 = false;
 		bool isボス生存 = true;
 
 		int 発見財宝数 = 0;
@@ -62,9 +63,6 @@ namespace SDX_ADE
 		int 探索地図ID[CV::最大地図数];//0なら地図なし
 		int 地図発見探索率[CV::最大地図数];
 
-		//UI用
-		bool isUIボス表示 = false;
-
 		/*暫定処理*/
 		void 探索率計算()
 		{
@@ -82,6 +80,29 @@ namespace SDX_ADE
 			}
 
 			探索率 = n / 部屋.size();
+		}
+
+		bool Isボス戦闘可能(int 探索部屋数)
+		{
+			return 探索部屋数 == 0 &&
+				isボス発見 &&
+				isボス生存 &&
+				部屋[CV::ボス部屋ID].is入場 == false;
+		}
+
+		int Is階段発見可能()
+		{
+			for (int i = 0; i < CV::最大地図数; i++)
+			{
+				if ( is地図発見[i] == false &&
+					 地図発見探索率[i] <= 探索率 * 100
+					)
+				{
+					return i;
+				}
+			}
+
+			return -1;
 		}
 
 		static void LoadData()
@@ -143,10 +164,19 @@ namespace SDX_ADE
 
 
 				file_data.Read(it.ボス発見探索率);
+				if (it.ボス発見探索率 == 0)
+				{
+					it.ボス発見探索率 = 9999;
+					it.isボス生存 = false;
+				}
 
 				for (int b = 0; b < CV::最大地図数; b++)
 				{
 					file_data.Read(it.地図発見探索率[b]);
+					if (it.地図発見探索率[b] == 0)
+					{
+						it.地図発見探索率[b] = 9999;
+					}
 				}
 
 				//部屋の設定//
@@ -155,10 +185,24 @@ namespace SDX_ADE
 					it.部屋.emplace_back( i % 2==0 ? RoomType::ザコ : RoomType::素材 );
 				}
 
-				for (int i = 0; i < it.財宝.size(); i++)
+				for (int i = 10; i < it.財宝.size(); i++)
 				{
 					it.部屋[i].種類 = RoomType::財宝;
 				}
+
+				for (int b = 0 ; b < CV::最大地図数; b++)
+				{
+					if (it.地図発見探索率[b] < 100)
+					{
+						it.部屋[b].種類 = RoomType::階段;
+					}
+				}
+
+				if (it.ボス発見探索率 < 100)
+				{
+					it.部屋[CV::ボス部屋ID].種類 = RoomType::ボス;
+				}
+
 			}
 		}
 

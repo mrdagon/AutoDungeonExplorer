@@ -65,7 +65,7 @@ namespace SDX_ADE
 
 			for (int i = 0; i < CV::上限素材ランク; i++)
 			{
-				必要数[i] = Recipe::必要数[std::min(ランク - 1, 0)][i];
+				必要数[i] = int(Recipe::必要数[std::min(ランク - 1, 0)][i] * CV::サブ素材必要数);
 			}
 			return Recipe::素材種[種類].サブ素材;
 		}

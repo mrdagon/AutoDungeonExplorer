@@ -209,22 +209,20 @@ namespace SDX_ADE
 			//階段位置 ボス位置マーカー、探索率は被るので出さない？
 
 			//雑魚 or ボス
-			if (迷宮->isUIボス表示)
+			for (int i = 0; i < 迷宮->ボスモンスター.size(); i++)
 			{
-				for (int i = 0; i < 迷宮->ボスモンスター.size(); i++)
-				{
-					Design::Help->Draw(UIType::丸フレーム, L5);
-					迷宮->ボスモンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
-					MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
-				}
-			} else {
-				for (int i = 0; i < 迷宮->雑魚モンスター.size(); i++)
-				{
-					Design::Help->Draw(UIType::丸フレーム, L5);
-					迷宮->雑魚モンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
-					MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
-				}
+				Design::Help->Draw(UIType::丸フレーム, L5);
+				迷宮->ボスモンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
+				MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
 			}
+		
+			for (int i = 0; i < 迷宮->雑魚モンスター.size(); i++)
+			{
+				Design::Help->Draw(UIType::丸フレーム, L5);
+				迷宮->雑魚モンスター[i]->image[0][1]->DrawRotate(L5.GetPos(i), 1, 0);
+				MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
+			}
+			
 
 			//財宝
 			for (int i = 0; i < 迷宮->財宝.size(); i++)
@@ -370,18 +368,18 @@ namespace SDX_ADE
 			for (int i = 0 , cnt = 0; i < CV::上限素材ランク; i++)
 			{
 				if (メイン必要数[i] <= 0) { continue; }
-				MIcon::素材[メイン素材種].DrawRotate(L7.GetPos(cnt * 2 + 1), 1, 0);
-				MFont::L->Draw(L8.GetPos(cnt*2), Design::暗字,{ "x" , メイン必要数[cnt]});
-				MFont::S->DrawBold(L9.GetPos(cnt * 2), Design::明字, Design::暗字, { "Lv " , i + 1 });
+				MIcon::素材[メイン素材種].DrawRotate(L7.GetPos(cnt ), 1, 0);
+				MFont::M->DrawRotate(L8.GetPos(cnt ),1,0, Design::暗字,{ "x" , メイン必要数[cnt]});
+				MFont::M->DrawBold(L9.GetPos(cnt), Design::明字, Design::暗字, { "★",i + 1 });
 				cnt++;
 			}
 
 			for (int i = 0, cnt = 0; i < CV::上限素材ランク; i++)
 			{
 				if (サブ必要数[i] <= 0) { continue; }
-				MIcon::素材[サブ素材種].DrawRotate(L7.GetPos(cnt * 2 + 1), 1, 0);
-				MFont::L->Draw(L8.GetPos(cnt*2+1), Design::暗字, { " x" , int(サブ必要数[cnt] * CV::サブ素材必要数) });
-				MFont::S->DrawBold(L9.GetPos(cnt * 2 + 1),Design::明字, Design::暗字, { "Lv " , i + 1 });
+				MIcon::素材[サブ素材種].DrawRotate(L7.GetPos(cnt + 10), 1, 0);
+				MFont::M->DrawRotate(L8.GetPos(cnt + 10),1,0, Design::暗字, { "x" , サブ必要数[cnt] });
+				MFont::M->DrawBold(L9.GetPos(cnt + 10),Design::明字, Design::暗字, {  "★",i + 1 });
 				cnt++;
 			}
 

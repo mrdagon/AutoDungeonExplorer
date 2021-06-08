@@ -89,15 +89,21 @@ namespace SDX_ADE
 				{
 					file_data.Read(dummyA);
 					file_data.Read(dummyB);//スキルLv
-					it.Aスキル.emplace_back(&ActiveSkill::data[dummyA]);	
+					if (dummyA > 0)
+					{
+						it.Aスキル.emplace_back(&ActiveSkill::data[dummyA]);
+					}
 				}
 				for (int b = 0; b < CV::最大敵Pスキル数; b++)
 				{
 
 					file_data.Read(dummyA);
 					file_data.Read(dummyB);//スキルLv
-					it.Pスキル.emplace_back(&PassiveSkill::data[dummyA]);
-					it.PスキルLv.emplace_back(dummyB);
+					if (dummyA > 0)
+					{
+						it.Pスキル.emplace_back(&PassiveSkill::data[dummyA]);
+						it.PスキルLv.emplace_back(dummyB);
+					}
 				}
 
 			}

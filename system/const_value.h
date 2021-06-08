@@ -62,6 +62,10 @@ namespace SDX_ADE
 		constexpr int 探索開始時待ち時間 = 120;
 		constexpr int 撤退後待ち時間 = 120;
 
+		//
+		constexpr int ボス部屋ID = CV::最大地図数;
+		constexpr int 財宝部屋ID = 10;
+
 		//戦闘関係の定数
 		constexpr int 初期CT乱数 = 50;
 

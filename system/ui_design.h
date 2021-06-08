@@ -245,8 +245,9 @@ namespace SDX_ADE
 	{
 		明ボタン,
 		平ボタン,
-		凸ボタン,
+		暗ボタン,
 		凸ハイライト,
+		凸ボタン,
 		凹ボタン,
 		グループ明,
 		グループ中,
@@ -338,10 +339,11 @@ namespace SDX_ADE
 
 			switch ( type )
 			{
-				case UIType::明ボタン: DrawButton(x, y, w, h , 凸色); break;
-				case UIType::平ボタン: DrawButton(x,y,w,h , 背景色); break;
-				case UIType::凸ボタン: DrawButton凸(x, y, w, h,背景色); break;
-				case UIType::凸ハイライト: DrawButton凸(x, y, w, h,凸色); break;
+				case UIType::明ボタン: DrawButton(x, y, w, h , ハイライト); break;
+				case UIType::平ボタン: DrawButton(x,y,w,h , 凸色); break;
+				case UIType::暗ボタン: DrawButton(x, y, w, h, 背景色); break;
+				case UIType::凸ボタン: DrawButton凸(x, y, w, h,凸色); break;
+				case UIType::凸ハイライト: DrawButton凸(x, y, w, h,ハイライト); break;
 				case UIType::凹ボタン: DrawButton凹(x, y, w, h); break;
 				case UIType::グループ明: DrawBack(x, y, w, h, ハイライト); break;
 				case UIType::グループ暗: DrawBack(x, y, w, h, グループ); break;
