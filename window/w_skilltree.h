@@ -60,7 +60,7 @@ namespace SDX_ADE
 				int Lv = W_Skilltree::ギルメン->習得AスキルLv[skill->ID];
 				auto& LA = LData(LSkill::スキルLv);
 
-				DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				skill->image->DrawRotate(GetCenterPos(),2,0);
 				MFont::L->DrawBold(GetPos(LA), Design::暗字 , Design::明字 , { Lv } );
 			}
@@ -211,7 +211,7 @@ namespace SDX_ADE
 					押下アニメ--;
 					DrawUI( UIType::凹ボタン, Design::UI);
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				}
 
 
@@ -264,7 +264,7 @@ namespace SDX_ADE
 					追加アニメ--;
 					DrawUI(UIType::凹ボタン, design );
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, design );
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, design );
 				}
 
 				if( no > 0 )
@@ -312,7 +312,7 @@ namespace SDX_ADE
 					押下アニメ--;
 					DrawUI(UIType::平ボタン, Design::UI);
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				}
 
 				MIcon::UI[IconType::ヘルプ].DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
@@ -346,7 +346,7 @@ namespace SDX_ADE
 					押下アニメ--;
 					DrawUI(UIType::平ボタン, Design::UI);
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
@@ -404,7 +404,7 @@ namespace SDX_ADE
 					押下アニメ--;
 					DrawUI(UIType::平ボタン, Design::UI);
 				} else {
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);

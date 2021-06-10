@@ -82,7 +82,7 @@ namespace SDX_ADE
 				}
 				else
 				{
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸ボタン : UIType::凸暗ボタン, Design::UI);
 				}
 
 
@@ -91,9 +91,7 @@ namespace SDX_ADE
 				MFont::L->Draw({ GetX() + LB.並べx , GetY() + LB.並べy }, Design::暗字, { manage->名前 });
 				MFont::L->Draw({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv" , manage->投資Lv });
 				//費用
-				Design::No1->Draw(UIType::丸フレーム, GetX() + LC.x, GetY() + LC.y, LC.w, LC.h);
-				MFont::L->Draw({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字, { manage->Get費用() , "G" } , true);
-
+				
 				//投資アイコン
 				manage->image->DrawRotate(GetPos(LD), 2, 0);
 

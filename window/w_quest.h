@@ -24,7 +24,7 @@ namespace SDX_ADE
 				auto& LD = LData(LQuest::ステータス);
 
 				//全体の枠
-				DrawUI(UIType::グループ明);//完了したら暗くする、クリア後未チェック
+				DrawUI(UIType::丸フレーム);//完了したら暗くする、クリア後未チェック
 
 				//依頼者見た目
 				quest->依頼人image->DrawRotate(GetPos( LA ), 2, 0);

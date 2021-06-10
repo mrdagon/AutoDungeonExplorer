@@ -455,7 +455,7 @@ namespace SDX_ADE
 			MFont::SAlias.DrawBold({ 座標.x + Lph(4) ,座標.y + Lph(5) }, Color::White, Color::Black, { "Lv" , it->ランク }, true);
 
 			//所持数
-			MFont::MAlias.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->ID] },true);
+			MFont::MAlias.DrawBold({ 座標.x + Lph(8) , 座標.y + Lph(9) }, Color::White, Color::Black, { "x",Guild::P->素材数[it->種類][it->ランク] },true);
 
 			//素材名
 			MFont::MAlias.DrawBold({ 座標.x + Lph(10) , 座標.y + Lph(11) }, Color::White, Color::Black, it->名前, true);

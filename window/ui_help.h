@@ -614,7 +614,7 @@ namespace SDX_ADE
 
 			//所持数
 			Design::Help->Draw(UIType::丸フレーム, L6);
-			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "所持数 x " , Guild::P->素材数[素材->ID] });
+			MFont::L->DrawRotate(L6.GetPos(), 1, 0, Design::暗字,{ "所持数 x " , Guild::P->素材数[素材->種類][素材->ランク] });
 
 			//必要とするメンバーと個数
 			Design::Help->Draw(UIType::丸フレーム, L7);

@@ -210,10 +210,10 @@ namespace SDX_ADE
 	enum class LManagement
 	{
 		ウィンドウ,
-		資金枠,
-		資金アイコン,
-		資金現在,
-		資金消費,
+		素材アイコン,
+		素材ランク,
+		素材必要数,
+		素材枠,
 		街Lv枠,
 		街Lv数値,
 		街グループ枠,
@@ -248,6 +248,7 @@ namespace SDX_ADE
 		H価格,
 		H所持数,
 		H必要メンバー,
+		素材ランク文字,
 		COUNT,
 		PAGE = (int)UIPage::素材
 	};

@@ -45,7 +45,7 @@ namespace SDX_ADE
 			std::vector<Battler*> 敵;
 
 			double 獲得経験値;
-			int 獲得素材[CV::上限素材種類];
+			EnumArray<std::array<int, CV::上限素材ランク>, CraftType> 入手素材;
 			int 獲得財宝[10];//最大で10個まで、0は未発見
 			int 地図発見数 = 0;
 			int ボス撃破数 = 0;
@@ -140,7 +140,13 @@ namespace SDX_ADE
 
 				//獲得素材数リセット
 				獲得経験値 = 0;
-				for (auto& it : 獲得素材) { it = 0; }
+				for (auto& itA : 入手素材)
+				{
+					for (auto& itB : itA)
+					{
+						itB = 0;
+					}				
+				}
 
 				//パーティメンバーの体力回復、ステータス再計算等
 				基礎ステ再計算();
@@ -154,13 +160,15 @@ namespace SDX_ADE
 				//素材獲得
 				for (int a = 0; a < CV::素材系統; a++)
 				{
-					if (獲得素材[a] > 0)
+					for (int b = 0; b < CV::上限素材ランク; b++)
 					{
-						Guild::P->素材数[a] += 獲得素材[a];
-						Guild::P->資金 += Material::data[a].価格 * 獲得素材[a];
-						Guild::P->総素材 += 獲得素材[a];
-						Guild::P->is素材発見[a] = true;
+						CraftType ct = (CraftType)a;
+						Guild::P->素材数[ct][b] += 入手素材[ct][b];
+						Guild::P->資金 += Material::data[ct][b].価格 * 入手素材[ct][b];
+						Guild::P->総素材 += 入手素材[ct][b];
+						Guild::P->is素材発見[ct][b] = true;
 					}
+
 				}
 
 				//経験値獲得とレベルアップ
@@ -368,7 +376,6 @@ namespace SDX_ADE
 			void 素材収集処理()
 			{
 				//素材数とレア率を計算
-				int 素材ID = 0;
 				int 素材数 = Rand::Get(2,3);
 
 				double レア素材確率 = 0;
@@ -389,25 +396,19 @@ namespace SDX_ADE
 
 				for (int a = 0; a < 素材数; a++)
 				{
-					int id = Rand::Get(2);
+					int ランク = Rand::Get(2);
 
-					if (発見素材種 == CraftType::木材)
-					{
-						//素材ID = 探索先->伐採素材[id];
-					} else {
-						//素材ID = 探索先->採掘素材[id];
-					}
+					入手素材[発見素材種][ランク]++;
 
-					獲得素材[素材ID] += 素材数;
-
-					Effect::素材[パーティID].emplace_back(Material::data[素材ID].image , a);
+					Effect::素材[パーティID].emplace_back(Material::data[発見素材種][ランク].image , a);
 				}
 			}
 
 			void 素材剥取処理(Monster& it)
 			{
 				//素材獲得処理
-				int 素材ID = 0;
+				int ランク = 0;
+				CraftType 素材種 = CraftType::骨材;
 				double レア率 = it.種族->レア素材率;
 				double 素材数増加率 = 0;
 
@@ -423,9 +424,9 @@ namespace SDX_ADE
 				{
 					if (Rand::Coin(0.5) && !it.isボス) { continue; }//とりあえず基本ドロップ率50%
 
-					獲得素材[素材ID]++;
+					入手素材[素材種][ランク]++;
 					
-					Effect::素材[パーティID].emplace_back( Material::data[素材ID].image,a,it.隊列ID);
+					Effect::素材[パーティID].emplace_back( Material::data[素材種][ランク].image,a,it.隊列ID);
 				}
 
 				獲得経験値 += it.経験値;
@@ -712,12 +713,10 @@ namespace SDX_ADE
 
 		};
 
+		int 資金 = 0;
 
-		int 素材数[CV::上限素材種類];
-		bool is素材発見[CV::素材系統];
-
-		double 資金 = 1000;
-		int 名声 = 100;
+		EnumArray<int[CV::上限素材ランク], CraftType> 素材数;
+		EnumArray<bool[CV::上限素材ランク], CraftType> is素材発見;
 
 		//従業員一覧
 		Explorer 探索者[CV::上限探索者登録数];
@@ -727,19 +726,16 @@ namespace SDX_ADE
 
 		int 最大パーティ数 = 3;
 
-		//パーティーと配属人員
 		int 街Lv = 0;
 		int 街経験値 = 0;
 
 		//経営戦術効果
 		double 戦闘経験補正 = 1.0;
-		double 素材節約 = 0.0;//確率で素材消費0
+		double 素材節約 = 1.0;//素材消費倍率
 		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
 
 		//装備品
 		int アクセサリー所持数[CV::上限アクセサリ種類] = { 0 };
-
-		EnumArray < bool, ItemType> is新開発タブ;
 
 		//各種記録_Record
 		int 総石版 = 0;
@@ -766,9 +762,12 @@ namespace SDX_ADE
 				アクセサリー所持数[a] = 3;
 			}
 
-			for (auto& it : is素材発見)
+			for (auto& itA : is素材発見)
 			{
-				it = false;
+				for (auto& itB : itA)
+				{
+					itB = false;
+				}
 			}
 
 			探索者登録(0, "ギルメンA");

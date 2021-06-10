@@ -82,10 +82,7 @@ namespace SDX_ADE
 			return false;
 		}
 
-		int Get費用()
-		{
-			return 消費資金;
-		}
+
 
 		static void LoadData()
 		{

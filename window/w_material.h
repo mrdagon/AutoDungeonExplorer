@@ -20,6 +20,11 @@ namespace SDX_ADE
 			{
 				auto& LB = LData(LMaterial::素材所持数);
 
+				if (material->image == nullptr)
+				{
+					return;
+				}
+
 				//枠の描画
 				DrawUI(UIType::丸フレーム);
 
@@ -30,7 +35,7 @@ namespace SDX_ADE
 
 				//所持数
 				MFont::S->Draw({ GetCenterX() + LB.並べx , GetCenterY() + LB.並べy }, Design::暗字, "x");
-				MFont::S->Draw({ GetCenterPos(LB) }, Design::暗字, Guild::P->素材数[material->ID], true);
+				MFont::S->Draw({ GetCenterPos(LB) }, Design::暗字, Guild::P->素材数[material->種類][material->ランク], true);
 			}
 
 			void Over() override
@@ -50,11 +55,12 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				auto& LA = LData(LMaterial::素材ランク);
+				auto& LB = LData(LMaterial::素材ランク文字);
 
 				//枠の描画
-				DrawUI(UIType::グループ明);
+				DrawUI(UIType::丸フレーム);
 				//ランク
-				MFont::L->DrawRotate({ GetCenterPos() },1,0, Design::暗字, { "★" , rank }, true);
+				MFont::L->DrawRotate({ GetPos( LB ) },1,0, Design::暗字, { "★" , rank+1 }, true);
 			}
 
 			void Over() override
@@ -63,7 +69,7 @@ namespace SDX_ADE
 
 	public:
 		//素材一覧表示６列、高ランクを上に表示
-		UIMaterial 素材[CV::上限素材種類];
+		EnumArray<UIMaterial[CV::上限素材ランク], CraftType> 素材;
 		UIRank ランク[CV::上限素材ランク];
 
 		void Init()
@@ -76,20 +82,35 @@ namespace SDX_ADE
 			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
-			for (int i = 0; i < Material::data.size(); i++)
+
+			for (int b = 0, cnt = 0; b < CV::上限素材ランク; b++)
 			{
-				素材[i].SetUI(LMaterial::素材枠, i);
-				素材[i].material = &Material::data[i];
+				for (int a = 0; a < CV::素材系統; a++)
+				{
+					auto ct = CraftType(a);
+					素材[ct][b].SetUI(LMaterial::素材枠, cnt);
+					素材[ct][b].material = &Material::data[ct][b];
+					cnt++;
+				}
+
 			}
+
 			for (int i = 0; i < CV::上限素材ランク; i++)
 			{
 				ランク[i].SetUI(LMaterial::素材ランク, i);
-				ランク[i].rank = CV::上限素材ランク - i;
+				ランク[i].rank = i;
 			}
 
 			//●登録
 			item.clear();
-			AddItem(素材, Material::data.size());
+			for (int a = 0 ; a < CV::素材系統; a++)
+			{
+				auto ct = CraftType(a);
+				for (int b = 0; b < CV::上限素材ランク; b++)
+				{
+					AddItem(素材[ct][b]);
+				}
+			}
 			AddItem(ランク, CV::上限素材ランク);
 		}
 

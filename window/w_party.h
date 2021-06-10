@@ -68,7 +68,7 @@ namespace SDX_ADE
 
 				if (member->装備強化予約[装備スロット] == -1)
 				{
-					DrawUI(isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				} else {
 					DrawUI( UIType::凹ボタン, Design::UI);
 				}
@@ -103,7 +103,7 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI( isOver ? UIType::凸ハイライト : UIType::凸ボタン, Design::UI);
+				DrawUI( isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
 				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
 
 				auto& LA = LData(LParty::探索者スキルボタン);
@@ -630,18 +630,22 @@ namespace SDX_ADE
 				//素材
 				for (int a = 0; a < CV::素材系統; a++)
 				{
-					if (パーティ->獲得素材[a] <= 0) { continue; }
+					CraftType ct = CraftType(a);
+					for (int b = 0; b < CV::上限素材ランク; b++)
+					{
+						if (パーティ->入手素材[ct][b] <= 0) { continue; }
 
-					auto ptb = LE.GetPos(cnt);
-					auto& it = Material::data[a];
+						auto ptb = LE.GetPos(cnt);
+						auto& it = Material::data[CraftType::木材][0];
 
-					it.image->DrawRotate({ GetX() + ptb.x , GetY() + ptb.y }, 1, 0);
-					//Lv表示
-					MFont::S->DrawBold({ GetX() + ptb.x + LF.x , GetY() + ptb.y + LF.y }, Design::明字 , Design::暗字 , { "★" , it.ランク });
+						it.image->DrawRotate({ GetX() + ptb.x , GetY() + ptb.y }, 1, 0);
+						//Lv表示
+						MFont::S->DrawBold({ GetX() + ptb.x + LF.x , GetY() + ptb.y + LF.y }, Design::明字, Design::暗字, { "★" , it.ランク });
 
-					//素材数表示
-					MFont::S->DrawBold({ GetX() + ptb.x + LF.w, GetY() + ptb.y + LF.h }, Design::明字 , Design::暗字, { "x", パーティ->獲得素材[a] });
-					cnt++;
+						//素材数表示
+						MFont::S->DrawBold({ GetX() + ptb.x + LF.w, GetY() + ptb.y + LF.h }, Design::明字, Design::暗字, { "x", パーティ->入手素材[ct][b] });
+						cnt++;
+					}
 				}
 			}
 

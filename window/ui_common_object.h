@@ -97,7 +97,7 @@ namespace SDX_ADE
 			}
 			else if ( isOver )
 			{
-				DrawUI( UIType::凸ハイライト, *UIデザイン);
+				DrawUI( UIType::凸明ボタン, *UIデザイン);
 				yd = -2;
 			}
 			else
@@ -171,7 +171,6 @@ namespace SDX_ADE
 
 		void Click() override
 		{
-			押下アニメ = CV::ボタンアニメ時間;
 			clickEvent();
 		}
 	};
