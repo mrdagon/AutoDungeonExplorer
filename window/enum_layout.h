@@ -90,6 +90,8 @@ namespace SDX_ADE
 		ツールバー_その他ボタン,
 		ツールバー_日付,
 		ツールバー_日付文字,
+		ツールバー_時刻,
+		ツールバー_時刻文字,
 		COUNT,
 		PAGE = (int)UIPage::ツールバー
 	};
@@ -135,6 +137,8 @@ namespace SDX_ADE
 		H探索率,
 		Hモンスター,
 		H財宝,
+		地図ボスマーカー,
+		種別テキスト,
 		COUNT,
 		PAGE = (int)UIPage::ダンジョン
 	};
@@ -167,6 +171,8 @@ namespace SDX_ADE
 
 		探索者スキルボタン,
 		探索先内枠,
+
+		ボス地図マーカー,
 
 		COUNT,
 		PAGE = (int)UIPage::パーティ編成

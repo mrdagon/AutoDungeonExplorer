@@ -199,7 +199,7 @@ namespace SDX_ADE
 			isOver = false;
 		}
 
-		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::No1 )
+		void DrawUI(UIType UI枠種 , IDesign* UIデザイン = Design::Base )
 		{
 			UIデザイン->Draw(UI枠種, GetX(), GetY(), GetW(), GetH());
 		}

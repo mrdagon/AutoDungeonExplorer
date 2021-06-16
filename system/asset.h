@@ -315,16 +315,17 @@ namespace SDX_ADE
 		{
 			std::string fa = "file/font/PixelMplus12-Regular.ttf";
 			std::string fb = "file/font/mplus-1m-Regular.ttf";
-			//std::string fc = "file/font/x12y16pxMaruMonica.ttf";
+			std::string fc = "file/font/PixelMplus10-Regular.ttf";
+			//std::string fc = "file/font/misaki_gothic_2nd.ttf";
 
 			//ドットフォントとエイリアスフォントの描画位置が近くなるよう、Y座標に補正を入れる
-			SDot.Load(fa.c_str(), 12 , 2 );
-			MDot.Load(fa.c_str(), 18 , 3 );
-			LDot.Load(fa.c_str(), 24 , 4 );
+			SDot.Load(fa.c_str(), 12 , 2,0 ,false);
+			MDot.Load(fc.c_str(), 20 , 3,0 ,false);
+			LDot.Load(fa.c_str(), 24 , 4,0 ,false);
 
-			SAlias.Load(fb.c_str(), 12 , 2, 1);
-			MAlias.Load(fb.c_str(), 18 , 3, 2);
-			LAlias.Load(fb.c_str(), 24 , 4, 3);
+			SAlias.Load(fb.c_str(), 12 , 2, 1,false);
+			MAlias.Load(fb.c_str(), 20 , 3, 2, false);
+			LAlias.Load(fb.c_str(), 24 , 4, 3, false);
 			
 			//SMaru.Load(fc.c_str(), 12, 2, 1);
 			//MMaru.Load(fc.c_str(), 18, 3, 2);

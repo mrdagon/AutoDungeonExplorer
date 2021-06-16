@@ -182,9 +182,9 @@ namespace SDX_ADE
 
 		if (CSV::input_mode == 0)
 		{
-			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, "数値入力モード");
+			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, { "数値入力モード" });
 		} else {
-			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, "メモ入力モード");
+			MFont::SDot.DrawBold({ 10,50 }, Color::White, Color::Black, { "メモ入力モード" });
 		}
 
 		for (int a = 0; a < std::min(30,CSV::page_count[CSV::page]- p_no*30); a++)

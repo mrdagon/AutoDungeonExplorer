@@ -32,7 +32,7 @@ namespace SDX_ADE
 						continue;
 					}
 					//枠
-					Design::No1->Draw(UIType::丸フレーム, LA.x, LA.y + y差分, LA.w, LA.h);
+					Design::Base->Draw(UIType::丸フレーム, LA.x, LA.y + y差分, LA.w, LA.h);
 
 					//アイコン
 					switch ( it.種類)

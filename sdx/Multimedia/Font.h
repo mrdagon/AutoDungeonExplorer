@@ -25,6 +25,9 @@ namespace SDX
     class Font : public IFont
     {
     private:
+        static inline Color dark_edge_color;
+        static inline Color white_edge_color;
+
         TTF_Font* handle = nullptr;//!<
         bool isBlendRender;
         int size = 0;//!<
@@ -140,7 +143,7 @@ namespace SDX
                 SDL_Surface* surface = nullptr;
 
 #ifndef OMIT_SDL2_TTF
-                if (isBlendRender)
+                if (isBlendRender == true)
                 {
                     surface = TTF_RenderUTF8_Blended(handle, 文字, { 255, 255, 255 });
                 }
@@ -177,6 +180,12 @@ namespace SDX
         Font(const char *フォント名, int 大きさ, int 行間 = 0 , bool 高品質レンダリングフラグ = true )
         {
             Load(フォント名, 大きさ, 行間, 高品質レンダリングフラグ);
+        }
+
+        static void SetEdgeColor(Color 暗縁色 , Color 明縁色)
+        {
+            dark_edge_color = 暗縁色;
+            white_edge_color = 明縁色;
         }
 
         /** フォントを作成する.*/
@@ -642,6 +651,48 @@ namespace SDX
             return true;
         }
 
+        /** 事前に指定した色で縁取り文字描画*/
+        bool DrawEdge(const Point& 座標, const Color& 描画色, const VariadicStream& 描画する文字列, bool 右揃え = false) const
+        {
+
+            Color ec;
+            if (描画色.GetRed() > 128)
+            {
+                ec = dark_edge_color;
+            } else {
+                ec = white_edge_color;
+            }
+
+            Point 位置 = 座標;
+            double x = 位置.x;
+
+            位置.y -= differenceHeight;
+
+            for (auto it : 描画する文字列.StringS)
+            {
+                if (右揃え)
+                {
+                    位置.x = x - GetDrawStringWidth(it);
+                }
+                位置.x++;
+                DrawUTFString(位置, it, ec );
+                位置.x--;
+                位置.y++;
+                DrawUTFString(位置, it, ec );
+                位置.x--;
+                位置.y--;
+                DrawUTFString(位置, it, ec );
+                位置.x++;
+                位置.y--;
+                DrawUTFString(位置, it, ec );
+                位置.y++;
+                DrawUTFString(位置, it, 描画色);
+                位置.y += this->enterHeight;
+            }
+
+            return true;
+        }
+
         bool DrawBold(const Point& 座標, const Color& 描画色, const Color& 縁色, const VariadicStream& 描画する文字列, bool 右揃え = false) const
         {
             Point 位置 = 座標;
@@ -674,6 +725,7 @@ namespace SDX
             return true;
         }
 
+
         /** 文字を影付きで描画.*/
         bool DrawShadow(const Point &座標, Color 表色, Color 影色, const VariadicStream &描画する文字列) const
         {
@@ -700,20 +752,40 @@ namespace SDX
             return true;
         }
 
+        bool DrawRotateEdge(const Point& 座標, double 拡大率, double 角度, const Color& 描画色, const VariadicStream& 描画する文字列, bool 反転フラグ = false) const 
+        {
+            Color ec;
+            if (描画色.GetRed() > 128)
+            {
+                ec = dark_edge_color;
+            }
+            else {
+                ec = white_edge_color;
+            }
+
+            DrawBoldRotate(座標, 拡大率, 角度, 描画色, ec, 描画する文字列, 反転フラグ);
+
+
+            return true;
+        }
+
+
         /** 縁付き文字を回転して描画.*/
         /**@todo 反転描画無効*/
         bool DrawBoldRotate(const Point& 座標, double 拡大率, double 角度, const Color& 描画色, const Color& 縁色, const VariadicStream& 描画する文字列, bool 反転フラグ = false) const
         {
-            if (角度 == 0 && 拡大率 == 0)
-            {
-                return DrawBold(座標,描画色,縁色, 描画する文字列);
-            }
-
             int 行数 = (int)描画する文字列.StringS.size();
 
             int X補正 = int(-GetDrawStringWidth(描画する文字列) * 拡大率 * 0.5);
-            int Y補正 = int(-enterHeight * 拡大率 * (0.5 * 行数 - 0.5));
+            int Y補正 = int(-enterHeight * 拡大率 * (1.0 * 行数 - 0.5));
             Y補正 += differenceHeight;
+
+            if (角度 == 0 && 拡大率 == 1)
+            {
+                return DrawBold({ 座標.x + X補正 , 座標.y + Y補正 }, 描画色, 縁色, 描画する文字列);
+            }
+
+
 
             for (auto& it : 描画する文字列.StringS)
             {

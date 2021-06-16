@@ -11,10 +11,10 @@ namespace SDX_ADE
 	class W_ToolBar : public UIWindow
 	{
 	private:
-		class UITime : public UIObject
+		class UIDate : public UIObject
 		{
 		public:
-			Design** UIデザイン = &Design::No1;
+			Design** UIデザイン = &Design::Base;
 
 			template<class T>
 			void SetUI( T レイアウト)
@@ -25,8 +25,6 @@ namespace SDX_ADE
 			void Draw派生()
 			{
 				int 日 = Game::日付 + 1;
-				int 時 = Game::時間 / CV::一時間フレーム数;
-				int 分 = (Game::時間 / (CV::一時間フレーム数 / 60)) % 60;
 
 				switch (layout->画像ID)
 				{
@@ -41,11 +39,45 @@ namespace SDX_ADE
 					break;
 				}
 
-				auto& it = Layout::Data(LToolBar::ツールバー_日付文字);
+				auto& LA = Layout::Data(LToolBar::ツールバー_日付文字);
 
-				MFont::F[layout->フォントID]->Draw({ GetX() + it.x, GetY() + it.y }, Design::Blue.暗字 , { 日 , "日" }, true);
-				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べx, GetY() + it.y }, Design::Blue.暗字, { 時 , ":"  }, true);
-				MFont::F[layout->フォントID]->Draw({ GetX() + it.x + it.並べy + it.w, GetY() + it.y }, Design::Blue.暗字, { 分 }, true);
+				MFont::F[layout->フォントID]->DrawRotateEdge( { GetX() + LA.x, GetY() + LA.y },1,0, Design::暗字 , { 日 , "日" }, true);
+			}
+		};
+
+		class UITime : public UIObject
+		{
+		public:
+			Design** UIデザイン = &Design::Base;
+
+			template<class T>
+			void SetUI(T レイアウト)
+			{
+				layout = &Layout::Data(レイアウト);
+			}
+
+			void Draw派生()
+			{
+				int 時 = Game::時間 / CV::一時間フレーム数;
+				int 分 = (Game::時間 / (CV::一時間フレーム数 / 60)) % 60;
+
+				switch (layout->画像ID)
+				{
+				case 0:
+					DrawUI(UIType::グループ明, *UIデザイン);
+					break;
+				case 1:
+					DrawUI(UIType::グループ中, *UIデザイン);
+					break;
+				default:
+					DrawUI(UIType::グループ暗, *UIデザイン);
+					break;
+				}
+
+				auto& LA = Layout::Data(LToolBar::ツールバー_時刻文字);
+
+				MFont::F[layout->フォントID]->DrawEdge({ GetX() + LA.x + LA.並べx, GetY() + LA.y }, Design::暗字, { 時 , ":" }, true);
+				MFont::F[layout->フォントID]->DrawEdge({ GetX() + LA.x + LA.並べy + LA.w, GetY() + LA.y }, Design::暗字, { 分 }, true);
 			}
 		};
 
@@ -91,7 +123,7 @@ namespace SDX_ADE
 				//倍速値、アイコン、現在設定と同じなら凹ませる
 
 
-				if (lineID == 4) { is押下 = Game::is停止; }
+				if (lineID >= 4) { is押下 = Game::is停止; }
 				if (lineID == 3) { is押下 = (Game::ゲームスピード == 1); }
 				if (lineID == 2) { is押下 = (Game::ゲームスピード == 4); }
 				if (lineID == 1) { is押下 = (Game::ゲームスピード == 16); }
@@ -105,7 +137,7 @@ namespace SDX_ADE
 			{
 				switch (lineID)
 				{
-				case 4:
+				default:
 					Game::is停止 = !Game::is停止;
 					break;
 				case 3:
@@ -149,7 +181,8 @@ namespace SDX_ADE
 		};
 
 	public:
-		UITime 日付表示;
+		UIDate 日付表示;
+		UITime 時刻表示;
 
 		UIWindowButton ウィンドウボタン[CV::ウィンドウ数];
 
@@ -167,16 +200,23 @@ namespace SDX_ADE
 			Update();
 			//●UI初期化
 			日付表示.SetUI(LToolBar::ツールバー_日付);
+			時刻表示.SetUI(LToolBar::ツールバー_時刻);
 
 			for(int i=0;i<CV::ウィンドウ数;i++)
 			{ 
 				ウィンドウボタン[i].SetUI( LToolBar::ツールバー_ウィンドウボタン,i);
-				ウィンドウボタン[i].layout->改行値 = 100;
-				ウィンドウボタン[i].画像位置 = 5;
-				//ウィンドウボタン[i].テキスト位置 = 2;
+				ウィンドウボタン[i].画像位置 = 8;
+				ウィンドウボタン[i].テキスト位置 = 2;
 			}
+			ウィンドウボタン[0].テキスト = TX::Window_略記[WindowType::Item];
+			ウィンドウボタン[1].テキスト = TX::Window_略記[WindowType::Party];
+			ウィンドウボタン[2].テキスト = TX::Window_略記[WindowType::Dungeon];
+			ウィンドウボタン[3].テキスト = TX::Window_略記[WindowType::Management];
+			ウィンドウボタン[4].テキスト = TX::Window_略記[WindowType::Material];
+			ウィンドウボタン[5].テキスト = TX::Window_略記[WindowType::Quest];
+			ウィンドウボタン[6].テキスト = TX::Window_略記[WindowType::EventLog];
 
-			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",4);//一時停止時凹む仕様
+			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",5);//一時停止時凹む仕様
 			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "x 1" ,3);//左右でクリック時の処理が異なる仕様
 			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , "x 4", 2);//左右でクリック時の処理が異なる仕様
 			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , "x16", 1);//左右でクリック時の処理が異なる仕様
@@ -205,6 +245,7 @@ namespace SDX_ADE
 
 			//●ヘルプ設定
 			日付表示.SetHelp(&TH::Bar::日付);
+			時刻表示.SetHelp(&TH::Bar::日付);
 			停止ボタン.SetHelp(&TH::Bar::停止);
 			速度ボタンA.SetHelp(&TH::Bar::速度変更);
 			速度ボタンB.SetHelp(&TH::Bar::速度変更);
@@ -223,6 +264,7 @@ namespace SDX_ADE
 			}
 
 			AddItem(日付表示);
+			AddItem(時刻表示);
 			AddItem(停止ボタン);
 			AddItem(速度ボタンA);
 			AddItem(速度ボタンB);
@@ -251,7 +293,7 @@ namespace SDX_ADE
 		void Draw()
 		{
 			//枠無しウィンドウ
-			Design::No1->Draw(UIType::ウィンドウ, Layout::Data(LToolBar::ツールバー_全体));
+			Design::Base->Draw(UIType::ウィンドウ, Layout::Data(LToolBar::ツールバー_全体));
 
 			//日付と時刻、各種ボタンの表示
 			for (int a = (int)item.size() - 1; a >= 0; a--)
@@ -263,11 +305,11 @@ namespace SDX_ADE
 		void Update()
 		{
 			//画面サイズに合わせてツールバー大きさ変更
-			auto& it = Layout::Data(LToolBar::ツールバー_全体);
-			it.x = 0;
-			it.y = 0;
-			it.w = Config::解像度W;
-			UIWindow::ツールバー高さ = it.h;
+			auto& LA = Layout::Data(LToolBar::ツールバー_全体);
+			LA.x = 0;
+			LA.y = 0;
+			LA.w = Config::解像度W;
+			UIWindow::ツールバー高さ = LA.h;
 		}
 
 	};

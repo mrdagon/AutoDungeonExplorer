@@ -23,6 +23,8 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				DrawUI(UIType::丸フレーム);
+
+				dungeon->財宝[lineID]->image->DrawRotate(GetCenterPos(), 1, 0);
 			}
 
 			void Over() override
@@ -57,7 +59,7 @@ namespace SDX_ADE
 
 				DrawUI(UIType::丸フレーム);
 				種族->image[0][1]->DrawRotate( GetCenterPos() , 2, 0);
-				MFont::M->DrawBold(GetPos(LA), Design::明字, Design::暗字, { Lv } , true);
+				//MFont::M->DrawBold(GetPos(LA), Design::暗字, Design::明字, { Lv } , true);//Lv表示しない
 			}
 
 			void Over() override
@@ -90,11 +92,13 @@ namespace SDX_ADE
 			{
 				dungeon = 参照ダンジョン;
 
+				出現財宝.reserve(dungeon->財宝.size());
+
 				for (int i = 0; i < dungeon->雑魚モンスター.size() ; i++)
 				{
 					出現モンスター.emplace_back(dungeon->雑魚モンスター[i], 0 , false);
 					出現モンスター.back().SetUI(LDungeon::モンスター, i, this);
-					出現モンスター[i].Lv = dungeon->雑魚Lv[i];
+					出現モンスター.back().Lv = dungeon->雑魚Lv[i];
 				}
 				for (int i = 0; i < dungeon->ボスモンスター.size(); i++)
 				{
@@ -107,11 +111,13 @@ namespace SDX_ADE
 					出現ボス.back().SetUI(LDungeon::モンスター, i + 6, this);
 					出現ボス.back().Lv = dungeon->ボスLv[i];
 				}
+
+
 				for (int i = 0; i < dungeon->財宝.size(); i++)
 				{
 					出現財宝.emplace_back();
 					出現財宝.back().SetUI(LDungeon::財宝, i, this);
-					出現財宝[i].dungeon = dungeon;
+					出現財宝.back().dungeon = dungeon;
 				}
 			}
 
@@ -119,29 +125,49 @@ namespace SDX_ADE
 			{
 				auto &LB = Layout::Data(LDungeon::フロアアイコン);
 				auto &LC = Layout::Data(LDungeon::探索率);
+				auto &LE = Layout::Data(LDungeon::地図ボスマーカー);
+				auto &LF = Layout::Data(LDungeon::種別テキスト);
+
 
 				if (dungeon->is発見 == false)
 				{
 					DrawUI(UIType::グループ暗);
 					//未発見
-					MFont::L->DrawBoldRotate( GetCenterPos() , 1, 0, Design::明字, Design::暗字, { "未発見" }, false);
+					MFont::L->DrawBoldRotate( GetCenterPos() , 1, 0, Design::暗字, Design::明字, { "未発見" }, false);
 					return;
 				}
 
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
 
 
-				DrawUI(isOver ? UIType::平ボタン : UIType::暗ボタン , Design::UI);
+				DrawUI(isOver ? UIType::平ボタン : UIType::暗ボタン , Design::Input);
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
-				MFont::M->Draw({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
+				MFont::M->DrawEdge({ GetX() + LB.w , GetY() + LB.h }, Design::暗字, { dungeon->ID + 1 , "F" }, true);
 
 				//探索率
-				Design::No1->DrawGauge(GetX() + LC.x, GetY()+ LC.y, LC.w, LC.h, dungeon->探索率 );
+				Design::Base->DrawGauge(GetX() + LC.x, GetY()+ LC.y, LC.w, LC.h, dungeon->探索率 );
 				MFont::M->DrawBold({ GetX() + LC.並べx , GetY() + LC.並べy }, Design::暗字 , Design::明字 , { (int)(dungeon->探索率 * 100) , "%" }, true);
 
 				//階段位置、ボス位置マーク
+
+				if (dungeon->地図発見探索率[0] > 0)
+				{
+					int xbuf = dungeon->地図発見探索率[0] * LE.w / 100;
+
+					MIcon::UI[IconType::三角].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y - LE.h }, 2, 3.14 / 2);
+					MIcon::UI[IconType::地図].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y }, 2, 0);
+
+				}
+
+				if (dungeon->ボス発見探索率 > 0)
+				{
+					int xbuf = dungeon->ボス発見探索率 * LE.w / 100;
+
+					MIcon::UI[IconType::三角].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y - LE.h }, 2, 3.14 / 2);
+					MIcon::UI[IconType::ボス].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y }, 2, 0);
+				}
 
 				//ボス雑魚ボタン - ボス撃破済みだと表示される
 				//ボス雑魚表示.Draw();
@@ -162,6 +188,17 @@ namespace SDX_ADE
 				{
 					it.Draw();
 				}
+				//Enemy F.O.E treasure 
+				auto pA = LF.GetPos(0);
+				auto pB = LF.GetPos(1);
+				auto pC = LF.GetPos(2);
+
+				MFont::M->DrawEdge({ GetX() + pA.x , GetY() + pA.y }, Design::明字, "Enemy");
+				if (出現ボス.size() > 0)
+				{
+					MFont::M->DrawEdge({ GetX() + pB.x , GetY() + pB.y }, Design::明字, "F.O.E");
+				}
+				MFont::M->DrawEdge({ GetX() + pC.x , GetY() + pC.y }, Design::明字, "Treasure");
 
 			}
 
@@ -256,12 +293,12 @@ namespace SDX_ADE
 			ヘルプウィンドウ = &Hウィンドウ;
 
 			//●初期化
-			枠.SetUI(LDungeon::内枠,"");
-			タブ[0].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::森], "一層",  0);
-			タブ[1].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::洞窟], "二層",  1);
-			タブ[2].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::砂漠], "三層",  2);
-			タブ[3].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::滝], "四層", 3);
-			タブ[4].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::城], "五層",  4);
+			枠.SetUI(LDungeon::内枠,"",&Design::Input);
+			タブ[0].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::森], "I層",  0);
+			タブ[1].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::洞窟], "II層",  1);
+			タブ[2].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::砂漠], "III層",  2);
+			タブ[3].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::滝], "IV層", 3);
+			タブ[4].SetUI(LDungeon::タブ, &現在タブ, &MIcon::UI[IconType::城], "V層",  4);
 
 			for (int i = 0; i < Dungeon::data.size(); i++)
 			{

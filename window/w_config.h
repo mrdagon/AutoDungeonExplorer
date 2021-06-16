@@ -67,7 +67,7 @@ namespace SDX_ADE
 				auto posC = Layout::Data(LConfig::設定数値);
 
 				//UIDesign::Brown.Draw(UIType::背景, UILayout::Data(UIコンフィグ::設定ボタン));
-				DrawUI(UIType::丸フレーム, Design::No1);
+				DrawUI(UIType::丸フレーム, Design::Base);
 
 				MIcon::UI[アイコン].DrawRotate({ GetX() + posA.x , GetY() + posA.y },2,0);//アイコン表示削除
 
@@ -156,7 +156,7 @@ namespace SDX_ADE
 			解像度X倍.Set(TX::Config_解像度X倍.c_str(), IconType::解像度, ConfigType::BGM音量, this);
 
 			ボス戦等速.Set(TX::Config_ボス戦速度.c_str(), IconType::ボス, ConfigType::ボス戦等速, this);
-			夜加速.Set(TX::Config_夜間加速.c_str(), IconType::時間, ConfigType::夜加速, this);
+			夜加速.Set(TX::Config_編成中加速.c_str(), IconType::時間, ConfigType::夜加速, this);
 			超加速.Set(TX::Config_超加速.c_str(), IconType::時間, ConfigType::超加速, this);
 			フォント種.Set(TX::Config_フォント種.c_str(), IconType::ヘルプ, ConfigType::フォント, this);
 

@@ -20,18 +20,18 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//枠
-				DrawUI( isOver ? UIType::平ボタン : UIType::暗ボタン , Design::UI );
+				DrawUI( isOver ? UIType::平ボタン : UIType::暗ボタン , Design::Input );
 
 				//遺物アイコン
 				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);
 
 				//所持数
 				auto& itA = Layout::Data(LItem::アイテム数);
-				GetFont()->Draw({ GetX() + itA.x ,GetY() + itA.y }, Design::暗字, { "x" , Guild::P->アクセサリー所持数[itemID] },true);
+				GetFont()->DrawEdge({ GetX() + itA.x ,GetY() + itA.y }, Design::暗字, {  Guild::P->アクセサリー所持数[itemID] },true);
 
 				auto& itB = Layout::Data(LItem::アイテムレア度);
 				//レアリティ
-				MFont::S->Draw({ GetX() + itB.x ,GetY() + itB.y}, Design::暗字, { "★" , Item::accessory_data[itemID].ランク }, false);
+				MFont::S->DrawEdge({ GetX() + itB.x ,GetY() + itB.y}, Design::暗字, { "★" , Item::accessory_data[itemID].ランク }, false);
 			}
 
 			void Click() override

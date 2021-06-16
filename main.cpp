@@ -28,11 +28,11 @@ void LoadAndInitData()
 	System::Initialise( TX::タイトル.c_str() , Config::解像度W, Config::解像度H);//ライブラリの初期化
 	static Camera camera({ 0,0 }, 1);
 	SDX::Camera::Set(&camera);
-	Config::Update();
 
 	//各種リソース読み込み
 	LoadAsset();
 	Design::Load();
+	Config::Update();
 
 	//外部データ読込
 	PassiveSkill::LoadData();

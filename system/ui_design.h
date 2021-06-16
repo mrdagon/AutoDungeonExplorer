@@ -298,16 +298,18 @@ namespace SDX_ADE
 		}
 
 	public:
-		static Design* No1;//基本的なやつ
+		static Design* Base;//基本的なやつ
 
-		static Design* UI;//操作可能なUI用
+		static Design* Input;//操作可能なUI用
 		static Design* Help;//ヘルプ用
 
 		static Design Green;
 		static Design Blue;
 		static Design Brown;
+		static Design Brown2;
 		static Design Wood;
 		static Design BlueGrey;
+		static Design Grey;
 
 		Color 影色;//ほぼ黒色
 
@@ -364,6 +366,23 @@ namespace SDX_ADE
 		//縁有りで凸ったボタン
 		void DrawButton凸(int x, int y, int w, int h , Color 色)
 		{
+			Drawing::Rect({ x,y,w,h - 2 }, エッジ色);
+			Drawing::Rect({ x + 1,y + 1,w - 2,h - 2 }, 色);
+			MSystem::DrawHLine({ x + 1 , y + h - 3 }, w - 2, グループ);
+			Drawing::Rect({ x,y + h - 2,w,2 }, 影色);
+		}
+
+		//縁有りで凹んだボタン
+		void DrawButton凹(int x, int y, int w, int h)
+		{
+			Drawing::Rect({ x,y,w,h }, エッジ色);
+			Drawing::Rect({ x + 1,y + 1, w - 2, 2 }, 影色);
+			Drawing::Rect({ x + 1,y + 3,w - 2,h - 4 }, 凹色);
+			MSystem::DrawHLine({ x + 1 , y + h - 2 }, w - 1, 濃色);
+		}
+
+		void DrawButton高凸(int x, int y, int w, int h, Color 色)
+		{
 			Drawing::Rect({ x,y,w,h - 4 }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1,w - 2,h - 4 }, 色);
 			MSystem::DrawHLine({ x + 1 , y + h - 5 }, w - 2, グループ);
@@ -371,7 +390,7 @@ namespace SDX_ADE
 		}
 
 		//縁有りで凹んだボタン
-		void DrawButton凹(int x, int y, int w, int h)
+		void DrawButton低凹(int x, int y, int w, int h)
 		{
 			Drawing::Rect({ x,y,w,h }, エッジ色);
 			Drawing::Rect({ x + 1,y + 1, w - 2, 4 }, 影色);
@@ -422,17 +441,19 @@ namespace SDX_ADE
 		void DrawRound(int x , int y , int w , int h )
 		{
 			DrawRoundColor(x, y, w, h, 凸色);
-			DrawRoundColor(x+1, y+1, w-2, h-2, ハイライト);
+			DrawRoundColor(x+2, y+2, w-4, h-4, ハイライト);
 		}
 
 		void DrawSelectRound(int x, int y, int w, int h)
 		{
 			DrawRoundColor(x, y, w, h, 凹色);
-			DrawRoundColor(x + 1, y + 1, w - 2, h - 2, 凸色);
+			DrawRoundColor(x + 2, y + 2, w - 4, h - 4, 凸色);
 		}
 
 		void DrawGauge(int x, int y, int w, int h, double rate)
 		{
+			//static Color white(255,255,255);
+
 			DrawRoundColor(x, y, w, h , ハイライト);
 
 			if (rate > 0)
@@ -483,39 +504,63 @@ namespace SDX_ADE
 			BlueGrey.濃色 = { 0x37474F };//800
 			BlueGrey.凹色 = { 0x546E7A };//600
 			BlueGrey.グループ = { 0x78909C };//400
-			BlueGrey.背景色 = { 0xB0BEC5 };//200
-			BlueGrey.凸色 = { 0xCFD8DC };//100
-			BlueGrey.ハイライト = { 0xECEFF1 };////50
+			BlueGrey.背景色 = { 0x90A4AE };//300
+			BlueGrey.凸色 = { 0xB0BEC5 };//200
+			BlueGrey.ハイライト = { 0xCFD8DC };//100
+			
 
 			//オリジナル配色
 			Wood.影色 = { 0x424242 };//Gray 800
 			Wood.エッジ色 = { 0x616161 };//Gray 600
-			Wood.濃色 = { 82,45,20 };//Blue 800
-			Wood.凹色 = { 135,95,60 };//Blue 600
-			Wood.グループ = { 175,135,92 };//Blue 400
-			Wood.背景色 = { 195,165,132 };//Blue 200
-			Wood.凸色 = { 225,205,172 };//Blue 100
-			Wood.ハイライト = { 247,235,214 };////Blue 50
+			Wood.濃色 = { 82,45,20 };//800
+			Wood.凹色 = { 135,95,60 };//600
+			Wood.グループ = { 175,135,92 };//400
+			Wood.背景色 = { 195,165,132 };//200
+			Wood.凸色 = { 225,205,172 };//100
+			Wood.ハイライト ={ 247,235,214 };////50
 
-			明字 = { 0xEEEEEE };//Gray 200
+			明字 = { 0xFAFAFA };//Gray 50
 			灰字 = { 0x9E9E9E };//Gray 500
-			暗字 = { 0x424242 };//Gray 900
+			暗字 = { 0x212121 };//Gray 900
 
-			No1 = &BlueGrey;
 
-			UI = &Blue;
+			Brown2.影色 = { 0x424242 };//Gray 800
+			Brown2.エッジ色 = { 0x616161 };//Gray 600
+			Brown2.濃色 = { 0x5d4037 };//800
+			Brown2.凹色 = { 0x6D4C41 };//600
+			Brown2.グループ = { 0x8D6E63 };//400
+			Brown2.背景色 = { 0xA1887F };//300
+			Brown2.凸色 = { 0xBCAAA4 };//200
+			Brown2.ハイライト = { 0xD7CCC8 };////100
+
+			Grey.影色 = { 0x424242 };//Gray 800
+			Grey.エッジ色 = { 0x616161 };//Gray 600
+			Grey.濃色 = { 0x424242 };//800
+			Grey.凹色 = { 0x616161 };//700
+			Grey.グループ = { 0x757575 };//600
+			Grey.背景色 = { 0x9E9E9E };//500
+			Grey.凸色 = { 0xBDBDBD };//400
+			Grey.ハイライト = { 0xE0E0E0 };//300
+
+
+			Base = &Grey;
+			Input = &Brown2;
 			Help = &Green;
+
+			Font::SetEdgeColor(暗字,明字);
 		}
 
 	};
 
-	Design* Design::No1;
+	Design* Design::Base;
 	Design* Design::Help;
-	Design* Design::UI;
+	Design* Design::Input;
 
 	Design Design::Green;
 	Design Design::Blue;
 	Design Design::Brown;
+	Design Design::Brown2;
 	Design Design::Wood;
 	Design Design::BlueGrey;
+	Design Design::Grey;
 }

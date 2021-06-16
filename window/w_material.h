@@ -34,8 +34,8 @@ namespace SDX_ADE
 				//必要としてる人がいるマーク？ 1,2,3パーティ
 
 				//所持数
-				MFont::S->Draw({ GetCenterX() + LB.並べx , GetCenterY() + LB.並べy }, Design::暗字, "x");
-				MFont::S->Draw({ GetCenterPos(LB) }, Design::暗字, Guild::P->素材数[material->種類][material->ランク], true);
+				//MFont::S->DrawEdge({ GetCenterX() + LB.並べx , GetCenterY() + LB.並べy }, Design::暗字, "x");
+				MFont::M->DrawEdge({ GetCenterPos(LB) }, Design::暗字, Guild::P->素材数[material->種類][material->ランク], true);
 			}
 
 			void Over() override
@@ -60,7 +60,7 @@ namespace SDX_ADE
 				//枠の描画
 				DrawUI(UIType::丸フレーム);
 				//ランク
-				MFont::L->DrawRotate({ GetPos( LB ) },1,0, Design::暗字, { "★" , rank+1 }, true);
+				MFont::L->DrawRotateEdge({ GetPos( LB ) },1,0, Design::明字, { "★" , rank+1 }, true);
 			}
 
 			void Over() override

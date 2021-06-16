@@ -36,8 +36,16 @@ namespace SDX_ADE
 			ボタン[4].SetUI(LTitle::ボタン, "アンケート",  4);
 			ボタン[5].SetUI(LTitle::ボタン,"終了", 5);
 
+			ボタン[0].is縁描画 = false;
+			ボタン[1].is縁描画 = false;
+			ボタン[2].is縁描画 = false;
+			ボタン[3].is縁描画 = false;
+			ボタン[4].is縁描画 = false;
+			ボタン[5].is縁描画 = false;
+
 			ボタン[0].clickEvent = [&]()
 			{
+				Input::mouse.Left.on = false;
 				Win_NewGame.Init();
 
 				if (Win_NewGame.OpenPopup() >= 1)
@@ -50,6 +58,7 @@ namespace SDX_ADE
 
 			ボタン[1].clickEvent = [&]()
 			{
+				Input::mouse.Left.on = false;
 				Win_Conitnue.Init();
 
 				if ( Win_Conitnue.OpenPopup() == 1)
@@ -62,18 +71,21 @@ namespace SDX_ADE
 
 			ボタン[2].clickEvent = [&]()
 			{
+				Input::mouse.Left.on = false;
 				Win_Config.Init();
 				Win_Config.OpenPopup();
 			};
 
 			ボタン[3].clickEvent = [&]()
 			{
+				Input::mouse.Left.on = false;
 				Win_Credit.Init();
 				Win_Credit.OpenPopup();
 			};
 
 			ボタン[4].clickEvent = [&]()
 			{
+				Input::mouse.Left.on = false;
 				ShellExecute(NULL, L"open", TX::アンケURL, NULL, L"", SW_SHOW);
 			};
 
@@ -97,6 +109,10 @@ namespace SDX_ADE
 
 				//座標初期化
 				Input();
+				if (isゲーム開始 || Game::isゲーム終了)
+				{
+					break;
+				}
 				Draw();
 
 				//60fpsの調整
@@ -105,10 +121,6 @@ namespace SDX_ADE
 					if (Time::GetNowCount() - time > frame * 50 / 3.0) { break; }
 				}
 
-				if (isゲーム開始 || Game::isゲーム終了 )
-				{
-					break;
-				}
 			}
 		}
 

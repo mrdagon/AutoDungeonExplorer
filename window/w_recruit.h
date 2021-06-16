@@ -22,7 +22,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//名前と入力状態の表示
-				DrawUI(UIType::グループ暗);
+				DrawUI(UIType::グループ暗,Design::Base);
 
 				//MSystem::DrawWindow({ px , py }, 位置.GetW(), 位置.GetH(), 枠No, 凹み);
 				//MSystem::DrawWindow({ px + Lp(30)     , py + Lp(31) }, Lp(32), Lp(33), 12);
@@ -112,7 +112,7 @@ namespace SDX_ADE
 					ui_now = UIType::選択丸フレーム;
 				}
 
-				DrawUI( ui_now , Design::UI);
+				DrawUI( ui_now , Design::Base);
 
 				auto job = &ExplorerClass::data[lineID];
 

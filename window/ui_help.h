@@ -75,7 +75,7 @@ namespace SDX_ADE
 				pt.y -= h;
 			}
 
-			Design::Help->Draw(UIType::平ボタン, pt.x, pt.y, w, h);
+			Design::Help->Draw(UIType::暗ボタン, pt.x, pt.y, w, h);
 
 			//カメラオフセットをセット
 			Camera::Get()->position.x = -pt.x;

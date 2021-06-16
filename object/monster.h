@@ -15,7 +15,6 @@ namespace SDX_ADE
 		//固定ステータス
 		MonsterClass* 種族;
 		int Lv = 0;
-		double 経験値 = 0;
 
 		bool isボス = false;
 
@@ -24,19 +23,26 @@ namespace SDX_ADE
 		Monster(const Monster& コピー元):
 			種族(コピー元.種族),
 			isボス(コピー元.isボス),
-			Lv(コピー元.Lv),
-			経験値(コピー元.経験値)
+			Lv(コピー元.Lv)
 		{
 			image = this->種族->image;
 			基礎ステータス計算();
 		}
 
-		Monster(ID_Monster 種族, int Lv, bool isボス)
+		Monster(Monster* コピー元) :
+			種族(コピー元->種族),
+			isボス(コピー元->isボス),
+			Lv(コピー元->Lv)
 		{
-			this->種族 = &MonsterClass::data[種族];
-			this->Lv = Lv;
-			this->isボス = isボス;
-			経験値 = std::pow((double)Lv,1.5) * 10;
+			image = this->種族->image;
+			基礎ステータス計算();
+		}
+
+		Monster(MonsterClass* 種族, int Lv)
+		{
+			this->種族 = 種族;
+			this->Lv = Lv;			
+			this->isボス = 種族->isボス;
 
 			image = this->種族->image;
 
@@ -63,7 +69,6 @@ namespace SDX_ADE
 			if (isボス)
 			{
 				基礎ステ[StatusType::HP] *= 20;
-				経験値 *= 50;
 			}
 
 			Reset一時補正ステータス();
@@ -94,6 +99,11 @@ namespace SDX_ADE
 			}
 
 			現在HP = 補正ステ[StatusType::HP];
+		}
+
+		int Get経験値()
+		{
+			return 1;
 		}
 	};
 }

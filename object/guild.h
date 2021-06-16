@@ -32,23 +32,28 @@ namespace SDX_ADE
 				}
 			}
 
-			int 探索部屋数 = 0;//今回の探索での探索した部屋数
 			int パーティID;
 
 			Dungeon* 探索先 = nullptr;
 			OrderType 探索指示 = OrderType::なし;
 
 			Explorer* メンバー[CV::パーティ人数];
+
+			//★戦闘用
 			std::vector<Monster> 魔物;//戦闘中の相手
 
 			std::vector<Battler*> 味方;
 			std::vector<Battler*> 敵;
 
+			int 戦闘中行動待機 = 0;
+
+			//★探検一時ステータス
 			double 獲得経験値;
 			EnumArray<std::array<int, CV::上限素材ランク>, CraftType> 入手素材;
 			int 獲得財宝[10];//最大で10個まで、0は未発見
 			int 地図発見数 = 0;
 			int ボス撃破数 = 0;
+			int 探索部屋数 = 0;//今回の探索での探索した部屋数
 
 			ExplorType 探索状態 = ExplorType::編成中;
 			int 待ち時間 = 0;//移動、戦闘後、素材回収中などの待ち時間
@@ -62,7 +67,6 @@ namespace SDX_ADE
 			Image* 発見物 = nullptr;//地図、宝箱、鉱脈、木
 			int 発見物X座標 = 0;
 
-			int 戦闘中行動待機 = 0;
 			//編成画面の処理
 			bool 編成_探索フロア増減(int 変化値)
 			{
@@ -103,7 +107,6 @@ namespace SDX_ADE
 				探索指示 = OrderType(n);
 			}
 			
-			//
 			void 基礎ステ再計算()
 			{
 				味方.clear();
@@ -138,8 +141,11 @@ namespace SDX_ADE
 				探索状態 = ExplorType::移動中;
 				待ち時間 = CV::探索開始時待ち時間;
 
-				//獲得素材数リセット
+				//各種リセット
 				獲得経験値 = 0;
+				地図発見数 = 0;
+				ボス撃破数 = 0;
+				探索部屋数 = 0;
 				for (auto& itA : 入手素材)
 				{
 					for (auto& itB : itA)
@@ -300,7 +306,7 @@ namespace SDX_ADE
 				{
 				case RoomType::ザコ:
 					探索状態 = ExplorType::戦闘中;
-					戦闘開始(0);//とりあえず戦闘スキップ
+					戦闘開始(5);
 					break;
 				case RoomType::素材:
 					探索状態 = ExplorType::収集中;
@@ -308,7 +314,7 @@ namespace SDX_ADE
 					break;
 				case RoomType::財宝:
 					探索状態 = ExplorType::戦闘中;
-					戦闘開始(0);//とりあえず戦闘スキップ
+					戦闘開始(6);
 					break;
 				case RoomType::階段:
 					探索状態 = ExplorType::収集中;
@@ -336,11 +342,11 @@ namespace SDX_ADE
 					発見物 = &MIcon::UI[IconType::探索_伐採];
 					break;
 				case 1:
-					発見素材種 = CraftType::木材;
+					発見素材種 = CraftType::鉄材;
 					発見物 = &MIcon::UI[IconType::探索_採掘];
 					break;
 				case 2:
-					発見素材種 = CraftType::木材;
+					発見素材種 = CraftType::石材;
 					発見物 = &MIcon::UI[IconType::探索_採掘];
 					break;
 				default:
@@ -360,7 +366,7 @@ namespace SDX_ADE
 
 					if (発見物X座標 == 0)
 					{
-						素材収集処理();
+						素材精算処理();
 					}
 				}
 
@@ -373,13 +379,15 @@ namespace SDX_ADE
 				}
 			}
 
-			void 素材収集処理()
+			void 素材精算処理()
 			{
 				//素材数とレア率を計算
-				int 素材数 = Rand::Get(2,3);
+				int 素材数 = 1;
 
 				double レア素材確率 = 0;
 				double 素材数増加率 = 0;
+				double 上位チャンス = (探索先->ID - 探索先->層 * 10) * 0.05;
+				int ランク = Rand::Get(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
 
 				//パッシブ補正
 				for (auto& it : 味方)
@@ -388,15 +396,26 @@ namespace SDX_ADE
 					素材数増加率 += it->素材収集量;
 				}
 
-				//素材獲得処理
+				//素材増加パッシブ
 				if (Rand::Coin(素材数増加率))
 				{
 					素材数++;
 				}
 
+				//パッシブ効果
+				if (Rand::Coin(レア素材確率))
+				{
+					ランク++;
+				}
+
+				//幸運効果
+				if (Rand::Coin(0.2))
+				{
+					ランク++;
+				}
+
 				for (int a = 0; a < 素材数; a++)
 				{
-					int ランク = Rand::Get(2);
 
 					入手素材[発見素材種][ランク]++;
 
@@ -404,32 +423,67 @@ namespace SDX_ADE
 				}
 			}
 
-			void 素材剥取処理(Monster& it)
+			void 魔物精算処理(Monster& it)
 			{
-				//素材獲得処理
-				int ランク = 0;
-				CraftType 素材種 = CraftType::骨材;
+				//素材獲得と経験値獲得処理
+				int 素材数 = 1;
+
+				double 上位チャンス = (探索先->ID - 探索先->層 * 10) * 0.05;
+				int ランク = Rand::Get(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
+
 				double レア率 = it.種族->レア素材率;
 				double 素材数増加率 = 0;
+				CraftType 素材種 = CraftType::革材;
 
+				switch (Rand::Get(2))
+				{
+					case 0: 素材種 = CraftType::革材; break;
+					case 1: 素材種 = CraftType::骨材; break;
+					case 2: 素材種 = CraftType::魔材; break;
+				}
+
+				//パッシブ計算
 				for (auto& it : 味方)
 				{
 					レア率 += it->レア素材剥取補正;
 					素材数増加率 += it->素材剥取量;
 				}
 
-				int 素材数 = Rand::Coin(素材数増加率) ? 2 : 1;
-			
+				//素材増加パッシブ
+				if (Rand::Coin(素材数増加率))
+				{
+					素材数++;
+				}
+
+				//パッシブ効果
+				if (Rand::Coin(レア率))
+				{
+					ランク++;
+				}
+
+				//幸運補正
+				if (Rand::Coin(it.種族->レア素材率))
+				{
+					ランク++;
+				}
+
+				if (it.isボス == true)
+				{
+					ランク++;
+					素材数 += 9;
+				}
+
+				//素材獲得
 				for (int a = 0; a < 素材数; a++)
 				{
-					if (Rand::Coin(0.5) && !it.isボス) { continue; }//とりあえず基本ドロップ率50%
-
 					入手素材[素材種][ランク]++;
-					
 					Effect::素材[パーティID].emplace_back( Material::data[素材種][ランク].image,a,it.隊列ID);
 				}
 
-				獲得経験値 += it.経験値;
+				//経験値
+				獲得経験値 += it.Get経験値();
+
+				//ボスアイテム獲得
 			}
 
 			//戦闘関係
@@ -438,16 +492,37 @@ namespace SDX_ADE
 				敵.clear();
 				魔物.clear();
 
+				int 抽選回数[CV::最大魔物出現数] = {0};
+				int 残り抽選数 = 敵数;
+
 				//敵の生成
-				for (int a = 0; a < 敵数; a++)
+				//6枠から抽選、同じ物は２回まで、大型は一回まで
+				//大型モンスターは２枠使う、最後の抽選で選んだら再抽選
+				while (true)
 				{
-					int mn = Rand::Get(2);
-					//魔物.emplace_back(探索先->雑魚モンスター[mn]);
+					int rng = Rand::Get((int)探索先->雑魚モンスター.size()-1);
+
+					if (抽選回数[rng] == 2)
+					{
+						continue;
+					}
+
+					抽選回数[rng]++;
+					残り抽選数--;
+					if (残り抽選数 <= 0) { break; }
 				}
 
-				敵.resize(敵数);
+				for (int a = 0; a < CV::最大魔物出現数; a++)
+				{
+					for (int b = 0; b < 抽選回数[a]; b++)
+					{
+						魔物.emplace_back(探索先->雑魚モンスター[b], 探索先->雑魚Lv[b]);
+					}
+				}
 
-				for (int a = 0; a < 敵数; a++)
+				敵.resize(魔物.size());
+
+				for (int a = 0; a < (int)魔物.size(); a++)
 				{
 					敵[a] = &魔物[a];
 					敵[a]->隊列ID = a;
@@ -464,6 +539,7 @@ namespace SDX_ADE
 				{
 					it->戦闘開始(敵, 味方);
 				}
+
 				戦闘中行動待機 = CV::戦闘開始後待ち時間;
 			}
 
@@ -474,7 +550,39 @@ namespace SDX_ADE
 					Game::ゲームスピード = 1;
 				}
 
-				戦闘開始(0);
+
+				敵.clear();
+				魔物.clear();
+
+				for (int b = 0; b < (int)探索先->ボスモンスター.size() ; b++)
+				{
+					魔物.emplace_back(探索先->ボスモンスター[b],探索先->ボスLv[b]);
+				}
+
+				敵.resize(魔物.size());
+
+				for (int a = 0; a < 魔物.size(); a++)
+				{
+					敵[a] = &魔物[a];
+					敵[a]->隊列ID = a;
+					敵[a]->パーティID = パーティID;
+				}
+
+				//BGM変更
+				//SEを鳴らしたりする
+
+				//戦闘開始時のパッシブ
+				for (auto& it : 味方)
+				{
+					it->戦闘開始(味方, 敵);
+				}
+
+				for (auto& it : 敵)
+				{
+					it->戦闘開始(敵, 味方);
+				}
+
+				戦闘中行動待機 = CV::戦闘開始後待ち時間;
 			}
 
 			void 戦闘処理()
@@ -520,7 +628,7 @@ namespace SDX_ADE
 					if (it.is気絶 == false && it.現在HP <= 0)
 					{
 						it.is気絶 = true;
-						素材剥取処理(it);
+						魔物精算処理(it);
 					}
 				}
 
@@ -1030,8 +1138,11 @@ namespace SDX_ADE
 		//探索関係処理
 		void 探索開始()
 		{
+			//探索指示変更
 			装備強化チェック();
 			投資予約チェック();
+			探索指示チェック();
+			予約スキルチェック();
 
 			//エフェクト初期化
 			for (int a = 0; a < CV::上限パーティ数; a++)
@@ -1074,33 +1185,32 @@ namespace SDX_ADE
 			
 			//戦利品の回収
 
+			装備強化チェック();
+			投資予約チェック();
+			探索指示チェック();
 			予約スキルチェック();
 		}
 
-		void 一日終了()
-		{
 
-			装備強化チェック();
-			投資予約チェック();
-		}
-
-		//
+		//探索開始前後に行う処理
 		void 予約スキルチェック()
 		{
-			//探索後のみ
+			
 
 		}
 
 		void 装備強化チェック()
 		{
-			//深夜と探索前
+
+		}
+
+		void 探索指示チェック()
+		{
 
 		}
 
 		void 投資予約チェック()
 		{
-			//深夜と探索前
-
 
 		}
 

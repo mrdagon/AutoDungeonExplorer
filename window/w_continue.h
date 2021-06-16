@@ -64,9 +64,9 @@ namespace SDX_ADE
 				データ.ファイル名 = name;
 				SetUI(LTitle::続きから_セーブデータ枠 , id );
 
-				日数.SetUI(LTitle::続きから_日数, "日数", &Design::No1 , 0, this);
-				フロア.SetUI(LTitle::続きから_階層, "フロア", &Design::No1 , 0, this);
-				難易度.SetUI(LTitle::続きから_難易度, "難易度", &Design::No1 , 0, this);
+				日数.SetUI(LTitle::続きから_日数, "日数", &Design::Base , 0, this);
+				フロア.SetUI(LTitle::続きから_階層, "フロア", &Design::Base , 0, this);
+				難易度.SetUI(LTitle::続きから_難易度, "難易度", &Design::Base , 0, this);
 				パーティ.SetUI( LTitle::続きから_パーティ, 0, this);
 				削除.SetUI( LTitle::続きから_削除, 0, this);
 

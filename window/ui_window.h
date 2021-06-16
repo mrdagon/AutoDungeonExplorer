@@ -14,10 +14,10 @@ namespace SDX_ADE
 		bool is最小縮小;
 	public:
 		static const int タイトル枠高さ = 30;
-		inline static int ツールバー高さ = 90;
+		inline static int ツールバー高さ = 120;
 
 		WindowType 種類;
-		Design** デザイン = &Design::No1;
+		Design** デザイン = &Design::Base;
 		UIWindow* ヘルプウィンドウ = nullptr;
 
 		//描画および操作可能なオブジェクト
@@ -64,7 +64,7 @@ namespace SDX_ADE
 		virtual void Update(){}
 
 		//基本情報を代入
-		void Set(WindowType 種類 , IconType アイコン, Design** デザイン = &Design::No1)
+		void Set(WindowType 種類 , IconType アイコン, Design** デザイン = &Design::Base)
 		{
 			this->種類 = 種類;
 			this->デザイン = デザイン;
@@ -136,7 +136,7 @@ namespace SDX_ADE
 			de->Draw(UIType::タイトル, (int)座標.x, (int)座標.y, 横幅, タイトル枠高さ);
 
 			//ウィンドウ名
-			MFont::L->Draw({ (int)座標.x + 34,(int)座標.y + 1 }, Color::White, { TX::Window_名前[種類] });
+			MFont::L->DrawEdge({ (int)座標.x + 34,(int)座標.y + 1 }, Design::明字, { TX::Window_名前[種類] });
 
 			//ウィンドウアイコン
 			de->Draw(UIType::グループ明, (int)座標.x + 6, (int)座標.y + 6, タイトル枠高さ - 12, タイトル枠高さ - 12);

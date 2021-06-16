@@ -16,13 +16,15 @@ namespace SDX_ADE
 		std::string テキスト = "";
 		Image* 画像 = nullptr;
 
-		Design** UIデザイン = &Design::UI;
+		Design** UIデザイン = &Design::Input;
 		bool is押下 = false;//押し下げ状態フラグ
 		int 押下状態 = 0;//押下 = true時にどう表示するか
 		int 押下アニメ = 0;//
 
 		int テキスト位置 = 5;//1~9、テンキーの位置関係と対応
 		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
+
+		bool is縁描画 = false;//縁描画を押下状態で切り替える
 
 		//クリック時の処理はオーバーライド
 		//ラムダ式でも良さそう
@@ -79,7 +81,7 @@ namespace SDX_ADE
 			if( is押下 == true && 押下状態 == 0 )
 			{
 				DrawUI(UIType::凹ボタン, *UIデザイン);
-				yd = 2;
+				yd = 1;
 				push = true;
 			}
 			else if ( 押下アニメ > 0 || (is押下 == true && 押下状態 == 1))
@@ -93,17 +95,17 @@ namespace SDX_ADE
 			else if ((is押下 == true && 押下状態 == 3))
 			{
 				DrawUI(UIType::凸ボタン, *UIデザイン);
-				yd = -2;
+				yd = -1;
 			}
 			else if ( isOver )
 			{
 				DrawUI( UIType::凸明ボタン, *UIデザイン);
-				yd = -2;
+				yd = -1;
 			}
 			else
 			{
 				DrawUI( UIType::凸ボタン, *UIデザイン);
-				yd = -2;
+				yd = -1;
 			}
 
 			if (画像 != nullptr)
@@ -162,10 +164,24 @@ namespace SDX_ADE
 				else if (テキスト位置 == 1 || テキスト位置 == 2 || テキスト位置 == 3)
 				{
 					//↓
-					ydd += MFont::F[layout->フォントID]->GetSize() - 4;
+					ydd += MFont::F[layout->フォントID]->GetSize() - 12;
 				}
 
-				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, push ? Design::明字 : Design::暗字, テキスト, false);
+
+				if (is縁描画 == true)
+				{
+					if (push)
+					{
+						GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, Design::暗字, Design::明字, テキスト, false);
+					}
+					else {
+						GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, Design::明字, Design::暗字, テキスト, false);
+					}
+				} else {
+					GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + ydd }, 1, 0, Design::暗字 , Design::明字, テキスト, false);
+				}
+
+
 			}
 		}
 
@@ -180,10 +196,10 @@ namespace SDX_ADE
 	{
 	public:
 		std::string テキスト;
-		Design** UIデザイン = &Design::No1;
+		Design** UIデザイン = &Design::Base;
 
 		template<class T>
-		void SetUI( T レイアウト,std::string 初期テキスト, Design** デザイン = &Design::No1, int 整列ID = 0, UIObject* 親object = nullptr)
+		void SetUI( T レイアウト,std::string 初期テキスト, Design** デザイン = &Design::Base, int 整列ID = 0, UIObject* 親object = nullptr)
 		{
 			テキスト = 初期テキスト;
 			UIデザイン = デザイン;
@@ -220,7 +236,8 @@ namespace SDX_ADE
 		int tabID;
 		Image* 画像;
 		std::string テキスト;
-		Design** UIデザイン = &Design::No1;
+		Design** UIデザイン = &Design::Input;
+		bool is縁描画 = true;
 
 		int テキスト位置 = 5;//1~9、テンキーの位置関係と対応
 		int 画像位置 = 5;//1~9、テンキーの位置関係と対応
@@ -319,7 +336,20 @@ namespace SDX_ADE
 					yd += MFont::F[layout->フォントID]->GetSize() - 4;
 				}
 
-				GetFont()->DrawRotate({ GetCenterX() + xd, GetCenterY() + yd },1,0, push ? Design::明字 : Design::暗字 , テキスト, false);
+				if (is縁描画 == true)
+				{
+					if (push)
+					{
+						MFont::M->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, Design::暗字, Design::明字, テキスト, false);
+					}
+					else {
+						MFont::M->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, Design::暗字, Design::明字, テキスト, false);
+						//GetFont()->DrawBoldRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, Design::明字, Design::暗字, テキスト, false);
+					}
+				} else {
+					MFont::M->DrawRotate({ GetCenterX() + xd, GetCenterY() + yd }, 1, 0, Design::暗字, テキスト, false);
+				}
+
 			}
 
 		}

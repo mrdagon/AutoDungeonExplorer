@@ -127,6 +127,7 @@ namespace SDX_ADE
 				toolBar.Update();
 
 				Input();
+				if (Game::isゲーム終了 == true) { Game::isゲーム終了 = false; break; }
 				Process();
 				Draw();
 
@@ -136,7 +137,6 @@ namespace SDX_ADE
 					if (Time::GetNowCount() - time > frame * 50 / 3.0) { break; }
 				}
 
-				if (Game::isゲーム終了 == true) { Game::isゲーム終了 = false; break; }
 
 			}
 
@@ -269,7 +269,7 @@ namespace SDX_ADE
 
 			加速度 = Game::ゲームスピード;
 
-			if ((Game::時間 > Game::就寝時間 || Game::時間 < Game::起床時間) && Config::is夜加速) { 加速度 = Game::ゲームスピード * 4; }
+			if ((Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間) && Config::is夜加速) { 加速度 = Game::ゲームスピード * 4; }
 
 			for (int a = 0; a < 加速度; a++)
 			{
@@ -327,9 +327,6 @@ namespace SDX_ADE
 		{
 			Game::日付++;
 			Game::時間 = 0;
-
-			Management::予約使用();
-			Guild::P->一日終了();
 		}
 
 		//●セーブ処理

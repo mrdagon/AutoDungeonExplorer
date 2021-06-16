@@ -60,7 +60,7 @@ namespace SDX_ADE
 				int Lv = W_Skilltree::ギルメン->習得AスキルLv[skill->ID];
 				auto& LA = LData(LSkill::スキルLv);
 
-				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
+				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				skill->image->DrawRotate(GetCenterPos(),2,0);
 				MFont::L->DrawBold(GetPos(LA), Design::暗字 , Design::明字 , { Lv } );
 			}
@@ -170,7 +170,7 @@ namespace SDX_ADE
 				auto& LE = LData(LSkill::探索者スキルP);
 				auto& LF = LData(LSkill::探索者職業名);
 
-				DrawUI(UIType::グループ明, Design::UI);
+				DrawUI(UIType::グループ明, Design::Input);
 
 				//キャラドット絵
 				it->image[0][1]->DrawRotate(GetPos(LA) , 2 , 0);
@@ -209,9 +209,9 @@ namespace SDX_ADE
 				{
 					//スワップや変更があった場合のアニメーション
 					押下アニメ--;
-					DrawUI( UIType::凹ボタン, Design::UI);
+					DrawUI( UIType::凹ボタン, Design::Input);
 				} else {
-					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				}
 
 
@@ -257,7 +257,7 @@ namespace SDX_ADE
 			{
 				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
 				auto& LA = LData(LSkill::スキルLv);
-				Design* design = lineID < W_Skilltree::ギルメン->スキルポイント ? &Design::Green : Design::UI;
+				Design* design = lineID < W_Skilltree::ギルメン->スキルポイント ? &Design::Green : Design::Input;
 
 				if (追加アニメ > 0)
 				{
@@ -310,9 +310,9 @@ namespace SDX_ADE
 				if (押下アニメ > 0)
 				{
 					押下アニメ--;
-					DrawUI(UIType::平ボタン, Design::UI);
+					DrawUI(UIType::平ボタン, Design::Input);
 				} else {
-					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				}
 
 				MIcon::UI[IconType::ヘルプ].DrawRotate({ GetX() + GetH() / 2 , GetY() + GetH() / 2 }, 2, 0);
@@ -344,9 +344,9 @@ namespace SDX_ADE
 				if (押下アニメ > 0)
 				{
 					押下アニメ--;
-					DrawUI(UIType::平ボタン, Design::UI);
+					DrawUI(UIType::平ボタン, Design::Input);
 				} else {
-					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);
@@ -402,9 +402,9 @@ namespace SDX_ADE
 				if (押下アニメ > 0)
 				{
 					押下アニメ--;
-					DrawUI(UIType::平ボタン, Design::UI);
+					DrawUI(UIType::平ボタン, Design::Input);
 				} else {
-					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::UI);
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				}
 
 				it->image->DrawRotate(GetCenterPos(), 2, 0);

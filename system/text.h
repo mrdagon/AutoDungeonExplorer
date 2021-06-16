@@ -41,7 +41,7 @@ namespace SDX_ADE
 		std::string Config_効果音 = "効果音";
 
 		std::string Config_ボス戦速度 = "ボス戦時";
-		std::string Config_夜間加速 = "夜の時間";
+		std::string Config_編成中加速 = "非探索中";
 		std::string Config_超加速 = "速度上限";
 		std::string Config_フォント種 = "フォント";
 
@@ -178,7 +178,7 @@ namespace SDX_ADE
 			Window_略記[WindowType::Skilltree] = "技術";
 			Window_ヘルプ[WindowType::Skilltree] = "スキルの習得と確認";
 
-			Window_名前[WindowType::Recruit] = "探索者の登録";
+			Window_名前[WindowType::Recruit] = "探索者登録";
 			Window_略記[WindowType::Recruit] = "登録";
 			Window_ヘルプ[WindowType::Recruit] = "";
 

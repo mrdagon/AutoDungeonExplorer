@@ -24,7 +24,7 @@ namespace SDX_ADE
 
 		CraftType 素材種;
 
-		int レア素材率 = 0;
+		double レア素材率 = 0;
 		int ボスドロップ[2] = {};
 		bool isボス;
 
@@ -73,7 +73,9 @@ namespace SDX_ADE
 				file_data.Read(it.isボス);
 				file_data.Read(it.ボスドロップ[0]);
 				file_data.Read(it.ボスドロップ[1]);
-				file_data.Read(it.レア素材率);
+
+				file_data.Read(dummyA);
+				it.レア素材率 = (double)dummyA / 100;
 
 				file_data.Read(it.ステ[StatusType::HP]);
 				file_data.Read(it.ステ[StatusType::力]);
@@ -88,10 +90,11 @@ namespace SDX_ADE
 				for (int b = 0; b < CV::最大敵Aスキル数; b++)
 				{
 					file_data.Read(dummyA);
-					file_data.Read(dummyB);//スキルLv
+					file_data.Read(dummyB);
 					if (dummyA > 0)
 					{
 						it.Aスキル.emplace_back(&ActiveSkill::data[dummyA]);
+						it.AスキルLv.emplace_back(dummyB);
 					}
 				}
 				for (int b = 0; b < CV::最大敵Pスキル数; b++)
