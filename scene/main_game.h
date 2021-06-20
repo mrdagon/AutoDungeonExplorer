@@ -111,7 +111,7 @@ namespace SDX_ADE
 			Quest::ResetData();
 			Management::ResetData();
 
-			Game::is停止 = true;
+			Game::ゲームスピード = 0;
 		}
 
 		//メインループ処理
@@ -262,12 +262,15 @@ namespace SDX_ADE
 
 		//各種処理
 		void Process()
-		{			
-			if (Game::is停止) { return; }
+		{
+			Guild::P->エフェクト更新();
+
+			if (Game::ゲームスピード == 0) { return; }
 
 			int 加速度;
 
 			加速度 = Game::ゲームスピード;
+
 
 			if ((Game::時間 < Game::始業時間 || Game::時間 > Game::終業時間) && Config::is夜加速) { 加速度 = Game::ゲームスピード * 4; }
 
@@ -275,7 +278,7 @@ namespace SDX_ADE
 			{
 				if (Game::時間 == Game::始業時間 - 1 && Game::is直前スキル自動習得 == true)
 				{
-					Game::is停止 = true;
+					Game::ゲームスピード == 0;
 					Game::is直前スキル自動習得 = false;
 					break;
 				}
@@ -291,6 +294,7 @@ namespace SDX_ADE
 				if (Game::時間 >= Game::日没時間) 
 				{
 					EndDay();
+					break;
 				}
 
 				//探索処理
@@ -327,6 +331,11 @@ namespace SDX_ADE
 		{
 			Game::日付++;
 			Game::時間 = 0;
+			if (Game::is停止予約 == true)
+			{
+				Game::ゲームスピード = 0;
+				Game::is停止予約 = false;
+			}
 		}
 
 		//●セーブ処理

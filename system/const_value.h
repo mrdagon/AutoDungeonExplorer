@@ -52,15 +52,16 @@ namespace SDX_ADE
 		constexpr int 探索移動速度 = 2;
 		constexpr int 収集待機A = 160;//素材が流れてくる時間
 		constexpr int 収集待機B = 200;//素材収集中の時間
+		constexpr int 地図発見待機 = 240;
 		constexpr int 全滅暗さ = 128;
 
 		constexpr int 戦闘開始後待ち時間 = 120;
-		constexpr int 戦闘1ターン待ち時間 = 40;
+		constexpr int 戦闘1ターン待ち時間 = 30;
 		constexpr int 戦闘終了後待ち時間 = 120;
 
 		constexpr int 探索開始時移動時間 = 60;//移動アニメ用
-		constexpr int 探索開始時待ち時間 = 120;
-		constexpr int 撤退後待ち時間 = 120;
+		constexpr int 探索開始時待ち時間 = 240;
+		constexpr int 撤退後待ち時間 = 240;
 
 		//
 		constexpr int ボス部屋ID = CV::最大地図数;

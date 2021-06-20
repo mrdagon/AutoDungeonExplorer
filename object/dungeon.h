@@ -173,7 +173,7 @@ namespace SDX_ADE
 				for (int b = 0; b < CV::最大地図数; b++)
 				{
 					file_data.Read(it.地図発見探索率[b]);
-					if (it.地図発見探索率[b] == 0)
+					if (it.地図発見探索率[b] == 0 || b == 1)
 					{
 						it.地図発見探索率[b] = 9999;
 					}
@@ -185,7 +185,7 @@ namespace SDX_ADE
 					it.部屋.emplace_back( i % 2==0 ? RoomType::ザコ : RoomType::素材 );
 				}
 
-				for (int i = 10; i < it.財宝.size(); i++)
+				for (int i = 10; i < it.財宝.size()+10; i++)
 				{
 					it.部屋[i].種類 = RoomType::財宝;
 				}

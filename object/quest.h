@@ -89,6 +89,7 @@ namespace SDX_ADE
 				file_data.Read(依頼人ID);
 				it.image = &MIcon::クエスト[it.種類];
 				it.依頼人image = MJob::ちび[依頼人ID][0];
+				it.進行状況 = QuestState::受注前;
 			}
 		}
 

@@ -573,7 +573,7 @@ namespace SDX_ADE
 			AddItem(探索者);
 
 
-			AddItem(リセット);
+			//AddItem(リセット);
 			AddItem(確定);
 
 			AddItem(装備Aスキル , CV::最大Aスキル数);

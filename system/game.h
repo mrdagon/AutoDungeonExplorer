@@ -16,7 +16,7 @@ namespace SDX_ADE
 		static int 時間 = CV::一時間フレーム数 *6;//初回は6時スタート(仮)
 		static int ゲームスピード = 1;
 		
-		static bool is停止 = false;
+		static bool is停止予約 = false;
 		static int アニメーション時間 = 0;
 		static bool isヘルプ = true;
 		static bool isゲーム終了 = false;

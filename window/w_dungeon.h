@@ -92,7 +92,9 @@ namespace SDX_ADE
 			{
 				dungeon = 参照ダンジョン;
 
-				出現財宝.reserve(dungeon->財宝.size());
+				出現財宝.clear();
+				出現ボス.clear();
+				出現財宝.clear();
 
 				for (int i = 0; i < dungeon->雑魚モンスター.size() ; i++)
 				{
@@ -138,9 +140,11 @@ namespace SDX_ADE
 				}
 
 				//ダンジョン毎の枠 - 未発見 - ボス発生中は色替え
+				Design* dt = Design::Input;
+				if (W_Drag::ダンジョン != nullptr && W_Drag::ダンジョン == dungeon) { dt = Design::Draging; }
 
 
-				DrawUI(isOver ? UIType::平ボタン : UIType::暗ボタン , Design::Input);
+				DrawUI(isOver ? UIType::平ボタン : UIType::暗ボタン , dt );
 
 				//ダンジョンの外観
 				dungeon->image->DrawRotate({ GetX() + LB.x , GetY() + LB.y }, 1, 0);
@@ -319,6 +323,9 @@ namespace SDX_ADE
 		{
 			SetPos(LDungeon::ウィンドウ, false, true, false);
 			this->固定縦 = Layout::Data(LDungeon::内枠).並べy;
+
+			縦内部幅 = Layout::Data(LDungeon::フロア枠).並べy * 10 + 固定縦 + 16;
+
 
 			int cnt = 0;
 			for (int i = 0; i < Dungeon::data.size(); i++)

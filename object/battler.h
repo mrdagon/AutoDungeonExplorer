@@ -11,14 +11,49 @@ namespace SDX_ADE
 	class Battler
 	{
 	private:
-		void Get生存リスト(std::vector<Battler*>& 生存リスト, const std::vector<Battler*>& 敵)
+		void Get対象リスト(std::vector<Battler*>& 対象リスト, const std::vector<Battler*>& 対象 , const ASkillEffect& Aスキル, bool is挑発有効 , bool is隠密有効 , FormationType 隊列)
 		{
-			生存リスト.reserve(6);
-			生存リスト.clear();
-			for (auto& it : 敵)
+			対象リスト.reserve(6);
+			対象リスト.clear();
+			
+			int 位置 = 0;
+
+			if (is挑発有効)
 			{
-				if (it->現在HP > 0) { 生存リスト.push_back(it); }
+				if (隊列 == FormationType::前列)
+				{
+					for (auto& it : 対象)
+					{
+						if (it->現在HP > 0)
+						{
+							位置++;
+							if( it->バフ[BuffType::挑発].効果 > 0 && 位置 <= Aスキル.範囲) { 対象リスト.push_back(it); }
+						}
+					}
+				} else {
+					for (int i = 対象.size()-1;i>=0 ;i--)
+					{
+						if (対象[i]->現在HP > 0)
+						{
+							位置++;
+							if( 対象[i]->バフ[BuffType::挑発].効果 > 0 && 位置 <= Aスキル.範囲 ) { 対象リスト.push_back(対象[i]); }
+						}
+					}
+
+				}
+
+				if (対象リスト.size() > 0)
+				{
+					return;
+				}
 			}
+
+
+			for (auto& it : 対象)
+			{
+				if (it->現在HP > 0) { 対象リスト.push_back(it); }
+			}
+			//隠密効果により、リストから除外
 		}
 
 
@@ -28,9 +63,8 @@ namespace SDX_ADE
 		int パーティID;
 
 		//●基礎ステータス
-		int Aスキル数 = 4;
-		ActiveSkill* Aスキル[CV::最大Aスキル数] = {nullptr};
-		int AスキルLv[CV::最大Aスキル数];
+		std::vector<ActiveSkill*> Aスキル = {nullptr};
+		std::vector<int> AスキルLv;
 
 		//Pスキルは発動タイミングでコンテナ分ければ多少高速化になるかも
 		std::vector<PassiveSkill*> Pスキル;//本人のパッシブ、装備パッシブを格納
@@ -57,7 +91,7 @@ namespace SDX_ADE
 		//スキルクールダウン
 		int 現在スキルスロット = 0;
 		int 現在クールダウン;
-		int 必要クールダウン[CV::最大Aスキル数];
+		std::vector<int> 必要クールダウン;
 
 		SEType 気絶時SE = SE::敵気絶;
 
@@ -229,24 +263,27 @@ namespace SDX_ADE
 			}
 		}
 
-		//エフェクト関係
+		//■エフェクト関係
 		void エフェクト更新()
 		{
-			if (E速度 != 0)
+			for (int i = 0; i < Game::ゲームスピード; i++)
 			{
-				E座標 += E速度;
-				E反転残り--;
-				if (E反転残り == 0)
+				if (E速度 != 0)
 				{
-					if (E反転時間 > 0)
+					E座標 += E速度;
+					E反転残り--;
+					if (E反転残り == 0)
 					{
-						E速度 *= -1;
-						E反転残り = E反転時間;
-						E反転時間 = 0;
-					}else{
-						E座標 = 0;
-						E速度 = 0;
-									
+						if (E反転時間 > 0)
+						{
+							E速度 *= -1;
+							E反転残り = E反転時間;
+							E反転時間 = 0;
+						}
+						else {
+							E座標 = 0;
+							E速度 = 0;
+						}
 					}
 				}
 			}
@@ -288,13 +325,29 @@ namespace SDX_ADE
 			Effect::アニメ[パーティID].emplace_back(ID, is味方, 隊列ID);
 		}
 
-		void 戦闘開始(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
+		void エフェクトリセット()
 		{
 			//初期化
-			for (int a = 0; a < CV::最大Aスキル数; a++)
-			{
+			現在スキルスロット = 0;
+			現在クールダウン = 0;
 
-			}
+			//エフェクト初期化
+			E速度 = 0;
+			E反転残り = 0;
+			E反転時間 = 0;
+			E座標 = 0;
+			E光強さ = 0;
+
+			//ログ用
+			与ダメージログ = 0;
+			受ダメージログ = 0;
+			回復ログ = 0;
+		}
+
+		//■戦闘中処理
+		void 戦闘開始(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
+		{
+			エフェクトリセット();
 
 			//バフ初期化
 			for (auto& it : バフ) { it.効果 = 0; it.持続 = 0; }
@@ -307,12 +360,9 @@ namespace SDX_ADE
 		{
 			if (現在HP <= 0) { return ; }
 
-			//スキル発動チェック
-			for (int a = 0; a < CV::最大Aスキル数; a++)
-			{
-			}
+			現在クールダウン += 1;
 
-			//バフ持続などの処理
+			//バフ効果時間処理
 			for (auto& it : バフ) {
 				if (it.持続 > 0)
 				{
@@ -326,51 +376,38 @@ namespace SDX_ADE
 		{
 			if (現在HP <= 0) { return false; }
 
-			//スキル発動チェック
-			for (int a = 0; a < CV::最大Aスキル数; a++)
+			if (必要クールダウン[現在スキルスロット] <= 現在クールダウン)
 			{
-				if (Aスキル[a] == nullptr) { continue; }
+				//スキルの発動
+				Aスキル使用(Aスキル[現在スキルスロット], 味方, 敵);
+					
+				現在クールダウン -= 必要クールダウン[現在スキルスロット];
+				現在スキルスロット = (現在スキルスロット+1) % Aスキル.size();
 
+				return true;
 			}
 
 			return false;
 		}
 
-		Battler* is挑発敵(std::vector<Battler*>& 敵 , int 範囲 ,bool is前)
-		{
-			if (範囲 > (int)敵.size()) { 範囲 = (int)敵.size(); }
-
-			if (is前)
-			{
-				for (int a = 0; a < 範囲; a++)
-				{
-					if (敵[a]->バフ[BuffType::挑発].効果 > 0) { return 敵[a]; }
-				}
-			} else {
-				for (int a = (int)敵.size() -1 ; a >= (int)敵.size() - 範囲; a--)
-				{
-					if (敵[a]->バフ[BuffType::挑発].効果 > 0) { return 敵[a]; }
-				}
-			}
-
-			return nullptr;
-		}
-
-		void 対象選択(const ASkillEffect &Aスキル, std::vector<Battler*>& 対象, std::vector<Battler*>&味方,std::vector<Battler*> &敵)
+		void 対象選択(const ASkillEffect &Aスキル, std::vector<Battler*>& 対象結果, std::vector<Battler*>&味方,std::vector<Battler*> &敵)
 		{
 			//攻撃or回復対象を選択
-			static std::vector<Battler*> 生存リスト;
+			static std::vector<Battler*> 対象リスト;
 			Battler* 暫定対象 = nullptr;
+			int 暫定数値 = 1000;
 			int max = 0;
-			/*
+			int rng = 0;
+			
 			switch (Aスキル.対象)
 			{
+			//味方対象
 			case ASkillTarget::自分:
 				Hit数+= Aスキル.Hit数;
 				break;
-			case ASkillTarget::味方弱者:
-				暫定数値 = 100;
-				for (auto& it : 味方)
+			case ASkillTarget::弱者:
+				Get対象リスト(対象リスト, 味方 , Aスキル , false, false , FormationType::前列);
+				for (auto& it : 対象リスト)
 				{
 					double HP割合 = (double)it->現在HP / it->補正ステ[StatusType::HP];
 					if (暫定数値 > HP割合)
@@ -381,121 +418,103 @@ namespace SDX_ADE
 				}
 				if (暫定対象 != nullptr) { 暫定対象->Hit数 += Aスキル.Hit数; }
 				break;
-			case ASkillTarget::味方全員:
-				for (auto& it : 味方)
+			case ASkillTarget::前列:
+				Get対象リスト(対象リスト, 味方, Aスキル,false,false, FormationType::前列);
+
+				rng = Rand::Get((int)対象リスト.size() - 1);
+				対象リスト[rng]->Hit数 += Aスキル.Hit数;
+				break;
+			case ASkillTarget::後列:
+				Get対象リスト(対象リスト, 味方, Aスキル, false, false, FormationType::後列);
+
+				rng = Rand::Get((int)対象リスト.size() - 1);
+				対象リスト[rng]->Hit数 += Aスキル.Hit数;
+
+				break;
+			case ASkillTarget::前列範囲:
+				Get対象リスト(対象リスト, 味方, Aスキル,false,false, FormationType::前列);
+
+				for (auto& it : 対象リスト)
 				{
 					it->Hit数 += Aスキル.Hit数;
 				}
 				break;
-			case ASkillTarget::敵ランダム:
-				Get生存リスト(生存リスト, 敵);
-				暫定対象 = is挑発敵(生存リスト,99,true);
-
-				if (暫定対象 != nullptr)
+			case ASkillTarget::後列範囲:
+				Get対象リスト(対象リスト, 味方, Aスキル, false, false, FormationType::後列);
+				for (auto& it : 対象リスト)
 				{
-					暫定対象->Hit数 += Aスキル.Hit数;
-					break;
-				}
-
-				for (int a = 0; a < Aスキル.Hit数; a++)
-				{
-					生存リスト[Rand::Get((int)生存リスト.size() - 1)]->Hit数++;
-				}
-			case ASkillTarget::敵前ランダム:
-				Get生存リスト(生存リスト, 敵);
-				暫定対象 = is挑発敵(生存リスト, Aスキル.範囲,true);
-
-				if (暫定対象 != nullptr)
-				{
-					暫定対象->Hit数 += Aスキル.Hit数;
-					break;
-				}
-
-				max = std::min(Aスキル.範囲, (int)生存リスト.size()) - 1;
-				for (int a = 0; a < Aスキル.Hit数; a++)
-				{
-					生存リスト[Rand::Get(max)]->Hit数++;
+					it->Hit数 += Aスキル.Hit数;
 				}
 				break;
-			case ASkillTarget::敵後ランダム:
-				Get生存リスト(生存リスト, 敵);
-				暫定対象 = is挑発敵(生存リスト,Aスキル.範囲,false);
-
-				if (暫定対象 != nullptr)
-				{
-					暫定対象->Hit数 += Aスキル.Hit数;
-					break;
-				}
-
-				max = std::min(Aスキル.範囲, (int)生存リスト.size()) - 1;
+			//敵対象
+			case ASkillTarget::敵前列:
+				Get対象リスト(対象リスト, 敵, Aスキル,true,true, FormationType::前列);
+				
 				for (int a = 0; a < Aスキル.Hit数; a++)
 				{
-					生存リスト[((int)生存リスト.size() - 1) - Rand::Get(max)]->Hit数++;
+					対象リスト[Rand::Get((int)対象リスト.size() - 1)]->Hit数++;
+				}
+			case ASkillTarget::敵後列:
+				Get対象リスト(対象リスト, 敵, Aスキル, true, true, FormationType::後列);
+
+				max = std::min(Aスキル.範囲, (int)対象リスト.size()) - 1;
+				for (int a = 0; a < Aスキル.Hit数; a++)
+				{
+					対象リスト[Rand::Get(max)]->Hit数++;
 				}
 				break;
-			case ASkillTarget::敵前:
-				Get生存リスト(生存リスト, 敵);
-				for (int a = 0 ; a < (int)生存リスト.size() ; a++)
+			case ASkillTarget::敵前列範囲:
+				Get対象リスト(対象リスト, 敵, Aスキル, false, false, FormationType::前列);
+				for (int a = 0 ; a < (int)対象リスト.size() ; a++)
 				{
 					if (a > Aスキル.範囲) { break; }
-					生存リスト[a]->Hit数+= Aスキル.Hit数;
+					対象リスト[a]->Hit数+= Aスキル.Hit数;
 				}
 				break;
-			case ASkillTarget::敵後:
-				Get生存リスト(生存リスト, 敵);
+			case ASkillTarget::敵後列範囲:
+				Get対象リスト(対象リスト, 敵, Aスキル, false, false, FormationType::後列);
 				for (int a = (int)敵.size() - 1; a >= 0; a--)
 				{
-					if (a < (int)生存リスト.size() - Aスキル.範囲 ) { break; }
-					生存リスト[a]->Hit数+= Aスキル.Hit数;
-				}
-				break;
-			case ASkillTarget::敵全:
-				for (auto& it : 敵)
-				{
-					it->Hit数+= Aスキル.Hit数;
+					if (a < (int)対象リスト.size() - Aスキル.範囲 ) { break; }
+					対象リスト[a]->Hit数+= Aスキル.Hit数;
 				}
 				break;
 			case ASkillTarget::敵弱者:
 				//挑発チェック
-				Get生存リスト(生存リスト, 敵);
-				暫定対象 = is挑発敵(生存リスト,99,true);
-
-				if (暫定対象 == nullptr)
+				Get対象リスト(対象リスト, 敵, Aスキル, false, false, FormationType::後列);
+				
+				for (auto& it : 対象リスト)
 				{
-					暫定数値 = 100;
-					for (auto& it : 生存リスト)
+					double HP割合 = it->現在HP / it->補正ステ[StatusType::HP];
+					if (暫定数値 > HP割合)
 					{
-						double HP割合 = it->現在HP / it->補正ステ[StatusType::HP];
-						if (暫定数値 > HP割合)
-						{
-							暫定対象 = it;
-							暫定数値 = HP割合;
-						}
+						暫定対象 = it;
+						暫定数値 = HP割合;
 					}
 				}
-
+				
 				暫定対象->Hit数+= Aスキル.Hit数;
 				break;
 			}
-			*/
+			
 			for (auto& it : 敵)
 			{
 				if (it->Hit数 > 0) {
-					対象.push_back(it); 
+					対象結果.push_back(it); 
 				}
 			}
 			for (auto& it : 味方)
 			{
 				if (it->Hit数 > 0) { 
-					対象.push_back(it); 
+					対象結果.push_back(it); 
 				}
 			}
 		}
 
-		void Aスキル処理(const ActiveSkill* スキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
+		void Aスキル使用(const ActiveSkill* スキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
 			//攻撃エフェクト
-			エフェクト移動(10, 2);
+			エフェクト移動(5, 6);
 
 			//スキル処理
 			ASkillEffect ase(スキル,1);

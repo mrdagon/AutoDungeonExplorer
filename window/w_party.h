@@ -21,7 +21,11 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン , Design::Input);
+				Design* dt = Design::Input;
+				if ( W_Drag::ギルメン装備.部位 == 装備スロット && W_Drag::ギルメン装備.メンバー == Guild::P->パーティ[パーティID].メンバー[隊列ID] ) { dt = Design::Draging; }
+				else if (W_Drag::ギルメン装備.メンバー != nullptr || W_Drag::所持装備 != nullptr) { dt = Design::CanDrop; }
+
+				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン , dt);
 				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット];
 
 				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
@@ -75,7 +79,9 @@ namespace SDX_ADE
 
 				auto& it = member->装備[装備スロット];
 
-				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
+				it->image->DrawRotate({ GetCenterX() - 24 , GetCenterY() }, 1, 0);
+
+				GetFont()->DrawRotateEdge({ GetCenterX() + 12 , GetCenterY() }, 1, 0, Design::明字, { "★ " , it->ランク });
 			}
 
 			void Click() override
@@ -172,12 +178,18 @@ namespace SDX_ADE
 				if (it == nullptr)
 				{
 					//全体枠
-					DrawUI(isOver && W_Drag::探索者.メンバー != nullptr ? UIType::平ボタン : UIType::暗ボタン, Design::Input);
+					DrawUI(
+						isOver && W_Drag::探索者.メンバー != nullptr ? UIType::平ボタン : UIType::暗ボタン,
+						(W_Drag::探索者.メンバー != nullptr) ? Design::CanDrop : Design::Input);
 					return;
 				}
 
 				//全体枠
-				DrawUI(isOver ? UIType::暗ボタン : UIType::暗ボタン, Design::Input);
+				Design* dt = Design::Input;
+				if (W_Drag::探索者.メンバー == Guild::P->パーティ[パーティID].メンバー[並びID]) { dt = Design::Draging; }
+				else if (W_Drag::探索者.メンバー != nullptr) { dt = Design::CanDrop; }
+
+				DrawUI(isOver ? UIType::暗ボタン : UIType::暗ボタン, dt );
 
 				it->image[0][4]->DrawRotate({ GetX() + LA.x ,GetY() + LA.y }, 2, 0);
 
@@ -248,23 +260,37 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				auto& LA = LData(LParty::探索先変更三角);
 				auto& LD = LData(LParty::探索先階数);
 				auto* it = Guild::P->パーティ[パーティID].探索先;
 
-				//探索先画像
-				it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
+				if (Guild::P->パーティ[パーティID].探索状態 == ExplorType::編成中)
+				{
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, (W_Drag::ダンジョン == nullptr) ? Design::Input : Design::CanDrop);
 
-				//階層
-				MFont::M->DrawRotateEdge(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
+					//探索先画像
+					it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
 
-				//三角表示
-				Font* fr = mousePos == 2 ? MFont::L : MFont::S;
-				Font* fl = mousePos == 1 ? MFont::L : MFont::S;
+					//階層
+					MFont::M->DrawRotateEdge(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
 
-				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h } , 1 , 0, Design::暗字, { "<" });
-				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
+					//三角表示
+					Font* fr = mousePos == 2 ? MFont::L : MFont::S;
+					Font* fl = mousePos == 1 ? MFont::L : MFont::S;
+
+					fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
+					fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
+				} else {
+					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Base);
+
+					//探索先画像
+					it->image->DrawRotate({ GetCenterX() + LA.並べx , GetCenterY() + LA.並べy }, 1, 0);
+
+					//階層
+					MFont::M->DrawRotateEdge(GetPos(LD), 1, 0, Design::暗字, { it->ID + 1 , "F" });
+				}
+
+
 			}
 
 			void Click() override
@@ -306,15 +332,25 @@ namespace SDX_ADE
 			int パーティID;
 			void Draw派生() override
 			{
-				DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Input);
-				GetFont()->DrawBoldRotate( GetCenterPos(), 1, 0, Design::暗字 , Design::明字, { "おまかせ" });
+				auto& it = Guild::P->パーティ[パーティID];
 
-				auto& LA = LData(LParty::探索先変更三角);
-				//三角表示
-				Font* fr = mousePos == 2 ? MFont::L : MFont::S;
-				Font* fl = mousePos == 1 ? MFont::L : MFont::S;
-				fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
-				fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
+				if ( it.探索状態 == ExplorType::編成中)
+				{
+					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Input);
+					GetFont()->DrawBoldRotate(GetCenterPos(), 1, 0, Design::暗字, Design::明字, { TX::Party_探索方針[(int)it.探索指示] });
+
+					auto& LA = LData(LParty::探索先変更三角);
+					//三角表示
+					Font* fr = mousePos == 2 ? MFont::L : MFont::S;
+					Font* fl = mousePos == 1 ? MFont::L : MFont::S;
+					fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
+					fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
+				} else {
+					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Base);
+					GetFont()->DrawBoldRotate(GetCenterPos(), 1, 0, Design::暗字, Design::明字, { TX::Party_探索方針[(int)it.探索指示] });
+				}
+
+
 			}
 
 			void Click() override
@@ -333,7 +369,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Text(&TH::Party::探索指示[OrderType::なし]);
+				UIHelp::Text(&TH::Party::探索指示);
 			}
 		};
 
@@ -415,10 +451,6 @@ namespace SDX_ADE
 				探索フロア.SetUI(LParty::探索先フロア, 0, &探索先);
 				探索指示.SetUI(LParty::探索先指示, 0, &探索先);
 
-				探索先.パーティID = lineID;
-				探索フロア.パーティID = lineID;
-				探索指示.パーティID = lineID;
-
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
 					探索者[i].SetUI(LParty::探索者枠, i,this);
@@ -429,6 +461,10 @@ namespace SDX_ADE
 			{
 				this->パーティ = パーティ;
 				探索先.パーティID = パーティ->パーティID;
+				探索フロア.パーティID = lineID;
+				探索指示.パーティID = lineID;
+
+
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
 					探索者[i].SetID(パーティ->パーティID, i);
@@ -456,7 +492,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 
-				if (パーティ->探索状態 == ExplorType::編成中)
+				if (パーティ->探索状態 == ExplorType::編成中 || パーティ->探索状態 == ExplorType::リザルト中)
 				{
 					Draw街();
 				}
@@ -469,14 +505,19 @@ namespace SDX_ADE
 				探索先.Draw();
 				探索フロア.Draw();
 				探索指示.Draw();
+
+				if (パーティ->探索状態 == ExplorType::リザルト中)
+				{
+					Drawリザルト();
+				}
 			}
 
 			void Click() override
 			{
 				if(パーティ->探索状態 == ExplorType::リザルト中)
 				{
-					//探索完了後にクリックで街モードに即帰還
-					パーティ->探索状態 = ExplorType::編成中;
+					//探索完了後にクリックでリザルトから編成へ
+					Guild::P->リザルト解除();
 				}
 			}
 
@@ -497,6 +538,7 @@ namespace SDX_ADE
 				{
 					it.Draw();
 				}
+
 			}
 
 			void Drawダンジョン()
@@ -509,6 +551,7 @@ namespace SDX_ADE
 				auto& LA = Layout::Data(LBattle::背景);
 				//Screen::SetClip({GetX()+LA.x,GetY()+LA.y,LA.w,LA.h});
 
+				Screen::SetBright(Color(パーティ->暗転, パーティ->暗転, パーティ->暗転));
 				Draw背景();
 
 				//味方表示
@@ -545,10 +588,8 @@ namespace SDX_ADE
 				//素材、財宝、地図の表示
 				Drawオブジェクト();
 
-				if (パーティ->探索状態 == ExplorType::リザルト中)
-				{
-					Drawリザルト();
-				}
+				Screen::SetBright();
+
 
 				//Screen::SetClip();
 			}
@@ -581,7 +622,7 @@ namespace SDX_ADE
 
 				//リザルト枠
 				Screen::SetBlendMode(BlendMode::Alpha, 128);
-				Design::Blue.Draw(UIType::平ボタン , LA);
+				Design::Blue.Draw(UIType::平ボタン , GetX() + LA.x , GetY() + LA.y , LA.w , LA.h);
 				Screen::SetBlendMode();
 
 
@@ -736,10 +777,11 @@ namespace SDX_ADE
 
 				//ライフバー
 				int バー幅 = 0;
-				Design::Input->DrawGauge( px + LA.x - LA.w / 2 , py + LA.y, LA.w, LA.h, (double)it->現在HP / it->補正ステ[StatusType::HP] );
+				Design::Blue.DrawGauge( px + LA.x - LA.w / 2 , py + LA.y, LA.w, LA.h, (double)it->現在HP / it->補正ステ[StatusType::HP] );
 
 				//行動バー
-				Design::Green.DrawGauge(px + LB.x - LB.w / 2, py + LB.y, LB.w, LB.h, 0.5 );
+				double rate = (double)it->現在クールダウン / it->必要クールダウン[it->現在スキルスロット];
+				Design::Green.DrawGauge(px + LB.x - LB.w / 2, py + LB.y, LB.w, LB.h, std::min(rate, 1.0));
 			}
 
 			void Draw敵(Monster& it, Layout& layout)
@@ -755,7 +797,7 @@ namespace SDX_ADE
 				{
 					if (it.消滅中 <= 0) { return; }
 					Screen::SetDrawMode(Color(it.消滅中, it.消滅中, it.消滅中), BlendMode::Add);
-					if (Game::is停止 == false) { it.消滅中 -= 10 * Game::ゲームスピード; }
+					if (Game::ゲームスピード != 0) { it.消滅中 -= 10 * Game::ゲームスピード; }
 				}
 
 
@@ -793,14 +835,15 @@ namespace SDX_ADE
 
 				Screen::SetDrawMode();
 				Screen::SetBright(Color(パーティ->暗転, パーティ->暗転, パーティ->暗転));
-
 				//ライフバー
-				Design::Base->DrawGauge(px + LA.x - gageW / 2, py + LA.y, LA.w, LA.h, (double)it.現在HP / it.補正ステ[StatusType::HP]);
+				Design::Blue.DrawGauge(px + LA.x - gageW / 2, py + LA.y, LA.w, LA.h, (double)it.現在HP / it.補正ステ[StatusType::HP]);
 
 				//行動バー
-				Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y, LB.w, LB.h, 0.5);
+				double rate = (double)it.現在クールダウン / it.必要クールダウン[it.現在スキルスロット];
+				Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y, LB.w, LB.h, std::min(rate,1.0));
 			}
 
+			//スキルエフェクトとダメージ回復のエフェクト表示
 			void Drawエフェクト()
 			{
 				auto& L味方A = Layout::Data(LBattle::味方A);
@@ -843,7 +886,7 @@ namespace SDX_ADE
 						}
 
 					}
-					it.Draw( GetX() + PL->x , GetX() + PL->x, 0.4);
+					it.Draw( GetX() + PL->x , GetY() + PL->y, 0.4);
 				}
 
 				//文字エフェクト
@@ -875,22 +918,10 @@ namespace SDX_ADE
 
 					}
 
-					int px = GetX() + PL->x + it.座標X;
-					int py = GetY() + PL->y + it.座標Y;
+					int px = GetX() + PL->x +it.座標X;
+					int py = GetY() + PL->y +it.座標Y;
 
-					switch (it.種類)
-					{
-					case TextEffect::TextType::ダメージ:
-						MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, it.ダメージ色, Color::Black, it.ダメージ量);
-						break;
-					case TextEffect::TextType::回復:
-						MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, it.回復色, Color::Black, it.ダメージ量);
-						break;
-					case TextEffect::TextType::回避:
-						MFont::SAlias.DrawBoldRotate({ px , py }, 1, 0, Color::White, Color::Black, "miss");
-						break;
-					}
-
+					it.Draw(px, py);
 				}
 			}
 
@@ -941,7 +972,7 @@ namespace SDX_ADE
 						py = GetY() + PL->y + it.座標Y;
 					}
 
-					it.image->DrawRotate({ px , py }, 2, 0);
+					it.Draw(px, py);
 				}
 			}
 
@@ -957,7 +988,11 @@ namespace SDX_ADE
 				auto& LB = Layout::Data(LParty::控えLv);
 
 				//ボタン枠-掴み中だと凹み
-				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, Design::Input);
+				Design* dt = Design::Input;
+				if (W_Drag::探索者.メンバー == 探索者) { dt = Design::Draging; }
+				else if ((W_Drag::探索者.メンバー != nullptr) || (W_Drag::所持装備 != nullptr) || (W_Drag::ギルメン装備.メンバー != nullptr)) { dt = Design::CanDrop; }
+
+				DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, dt);
 
 				//キャラ画像
 				探索者->image[0][1]->DrawRotate( { GetCenterX() + LA.x , GetCenterY() + LA.y }, 2 , 0);
@@ -969,6 +1004,12 @@ namespace SDX_ADE
 			void Click() override
 			{
 				//掴む
+				if (Guild::P->パーティ[0].探索状態 == ExplorType::リザルト中)
+				{
+					//探索完了後にクリックでリザルトから編成へ
+					Guild::P->リザルト解除();
+				}
+
 				W_Drag::探索者.Set( 探索者 , -1 , lineID-1);
 				MSound::効果音[SE::ドラッグ].Play();
 			}
@@ -1003,12 +1044,26 @@ namespace SDX_ADE
 				UIHelp::Explorer( 探索者);
 			}
 		};
+
+		class UI控え枠 : public UITextFrame
+		{
+
+			void Draw派生() override
+			{
+				if (W_Drag::探索者.メンバー == nullptr)
+				{
+					DrawUI(UIType::グループ明, Design::Base);
+				} else {
+					DrawUI(UIType::グループ中, Design::CanDrop);
+				}
+			}
+		};
 	public:
 		W_Recruit 求人ウィンドウ;
 		W_Popup 除名ウィンドウ;
 
 		UIパーティ パーティ[CV::上限パーティ数];
-		UITextFrame 控え枠;
+		UI控え枠 控え枠;
 		UI控え探検者 控え[CV::最大控え人数];
 		UIButton 除名;
 		UIButton 登録;
@@ -1060,6 +1115,12 @@ namespace SDX_ADE
 			//●イベント
 			登録.clickEvent = [&]()
 			{
+				if (Guild::P->パーティ[0].探索状態 == ExplorType::リザルト中)
+				{
+					//探索完了後にクリックでリザルトから編成へ
+					Guild::P->リザルト解除();
+				}
+
 				求人ウィンドウ.OpenPopup();
 				登録.isOver = false;
 			};

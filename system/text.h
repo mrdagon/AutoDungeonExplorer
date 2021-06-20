@@ -91,19 +91,12 @@ namespace SDX_ADE
 
 		//Party Window		
 		//後で調整
-		std::string Party_探索方針 = "クリックでボスと戦うか切り替え";
-
-		std::string Party_ボス回避 = "ボス\n回避";
-		std::string Party_ボス討伐 = "ボス\n討伐";
-
-		std::string Party_スキル未予約 = "スキル";
-		std::string Party_スキル予約 = "予約済み";
-
+		std::string Party_探索方針[5] = { "自動無し" , "ご安全に" , "最深部へ" , "お宝探し" , "ボス探し" };
 
 		//スキルツリー
 	
 		//Recruit Window
-		std::string Recruit_採用 = "！採用！";
+		std::string Recruit_採用 = "採用";
 		std::string Recruit_抽選 = "ランダム";
 
 		//Tool Bar
@@ -236,7 +229,7 @@ namespace SDX_ADE
 		namespace Bar
 		{
 			std::string 日付 = "経過日数と現在時刻";
-			std::string 停止 = "一時停止ON/OFF\n右クリックでショートカット操作";
+			std::string 停止 = "日付変更時にストップ";
 			std::string 速度変更 = "時間経過スピードを変更";
 			std::string ヘルプ = "ヘルプを閲覧する(未実装)";
 			std::string 設定 = "各種設定の変更";
@@ -250,7 +243,7 @@ namespace SDX_ADE
 			std::string 登録 = "探索者を無料で登録";
 			std::string 除名 = "ドロップで探索者を除名";
 			std::string スキルボタン = "使用スキルの変更\nスキル習得と習得予約";
-			EnumArray<std::string, OrderType> 探索指示;
+			std::string 探索指示 = { "探索先を自動で更新します\n未実装" };
 		}
 
 		namespace Dungeon
@@ -279,12 +272,6 @@ namespace SDX_ADE
 
 		bool Load()
 		{
-			Party::探索指示[OrderType::なし] = "探索指示：\n探索先を自分で指定";
-			Party::探索指示[OrderType::お宝探して] = "探索指示：\n未発見の財宝がある階層を探索";
-			Party::探索指示[OrderType::ガンガン進め] = "探索指示：\n一番深い階層を探索";
-			Party::探索指示[OrderType::命大事に] = "探索指示：\n全滅したら一つ下のフロアを探索";
-			Party::探索指示[OrderType::強敵探して] = "探索指示：\n未討伐のボスがいるフロアを探索";
-
 			Quest::表示ボタン[0] = "";
 			Quest::表示ボタン[1] = "";
 			Quest::表示ボタン[2] = "";

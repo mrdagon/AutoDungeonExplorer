@@ -73,22 +73,17 @@ namespace SDX_ADE
 
 			Reset一時補正ステータス();
 
-			//とりあえずアクティブスキルは固定
-			Aスキル数 = 0;
-
-			for (int a = 0; a < CV::最大Aスキル数; a++)
+			Aスキル.clear();
+			for (int a = 0; a < 種族->Aスキル.size() ; a++)
 			{
 				if ( 種族->Aスキル[a]->ID == 0)
 				{
 					continue;
 				}
 
-				Aスキル[a] = 種族->Aスキル[a];
-				AスキルLv[a] = 種族->AスキルLv[a];
-
-				必要クールダウン[a] = Aスキル[a]->クールタイム;
-
-				Aスキル数++;
+				Aスキル.push_back( 種族->Aスキル[a]);
+				AスキルLv.push_back(種族->AスキルLv[a]);
+				必要クールダウン.push_back(Aスキル[a]->クールタイム);
 			}
 
 			Pスキル.clear();

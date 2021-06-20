@@ -117,6 +117,7 @@ namespace SDX_ADE
 		void Update()
 		{
 			SetPos(LMaterial::ウィンドウ, false, true, false);
+			縦内部幅 = Layout::Data(LMaterial::ウィンドウ).並べy;
 		}
 	};
 }

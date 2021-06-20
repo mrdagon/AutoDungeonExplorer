@@ -302,6 +302,8 @@ namespace SDX_ADE
 
 		static Design* Input;//操作可能なUI用
 		static Design* Help;//ヘルプ用
+		static Design* CanDrop;
+		static Design* Draging;
 
 		static Design Green;
 		static Design Blue;
@@ -546,6 +548,8 @@ namespace SDX_ADE
 			Base = &Grey;
 			Input = &Brown2;
 			Help = &Green;
+			CanDrop = &Blue;
+			Draging = &Green;
 
 			Font::SetEdgeColor(暗字,明字);
 		}
@@ -555,6 +559,8 @@ namespace SDX_ADE
 	Design* Design::Base;
 	Design* Design::Help;
 	Design* Design::Input;
+	Design* Design::CanDrop;
+	Design* Design::Draging;
 
 	Design Design::Green;
 	Design Design::Blue;

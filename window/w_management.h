@@ -18,7 +18,7 @@ namespace SDX_ADE
 			{
 				//街経験値 - 現在値、使用後
 				double rate = (double)Guild::P->街経験値 / Management::必要経験値[Guild::P->街Lv];
-				Design::Input->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
+				Design::Base->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
 
 				//街 Lv 現在値のみ
 				MFont::L->Draw({ GetX() + layout->並べx , GetY() + layout->並べy }, Design::暗字, { " Lv ",Guild::P->街Lv } , true );
@@ -126,10 +126,15 @@ namespace SDX_ADE
 			//●初期化
 			街Lv.SetUI(LManagement::街Lv枠);
 
+			for (int i = 0; i < CV::上限投資案; i++)
+			{
+				投資案[i].is表示 = false;
+			}
 			for (int i = 0; i < Management::data.size(); i++)
 			{
 				投資案[i].SetUI(LManagement::プラン枠, i );
 				投資案[i].manage = &Management::data[i];
+				投資案[i].is表示 = true;
 			}
 
 			//●登録
@@ -147,6 +152,16 @@ namespace SDX_ADE
 		{
 			SetPos(LManagement::ウィンドウ, false, true, false);
 			固定縦 = 50;
+			縦内部幅 = 50;
+			for (int i = 0; i < CV::上限投資案 ; i++)
+			{
+				if (投資案[i].is表示 == true)
+				{
+					縦内部幅 += 92;
+				}
+
+			}
+
 			over戦術 = nullptr;
 		}
 	};

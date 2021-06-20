@@ -133,6 +133,18 @@ namespace SDX_ADE
 		{
 			SetPos(LLog::ウィンドウ, false, true, false);
 			固定縦 = 40;
+			縦内部幅 = 48;
+
+			for (int i = EventLog::logs.size() - 1; i >= 0; i--)
+			{
+				auto& it = EventLog::logs[i];
+
+				if (W_EventLog::is分類表示[(int)it.種類] == false)
+				{
+					continue;
+				}
+				縦内部幅 += 40;
+			}
 		}
 	};
 }

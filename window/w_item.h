@@ -20,7 +20,11 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//枠
-				DrawUI( isOver ? UIType::平ボタン : UIType::暗ボタン , Design::Input );
+				Design* dt = Design::Input;
+				if (W_Drag::所持装備 != nullptr && W_Drag::所持装備->ID == itemID) { dt = Design::Draging; }
+				if (W_Drag::ギルメン装備.メンバー != nullptr) { dt = Design::CanDrop; }
+
+				DrawUI( isOver ? UIType::明ボタン : UIType::平ボタン , dt );
 
 				//遺物アイコン
 				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);
@@ -57,9 +61,31 @@ namespace SDX_ADE
 			}
 		};
 
+		class UIItem枠 : public UITextFrame
+		{
+
+			void Draw派生() override
+			{
+				UIデザイン = (W_Drag::ギルメン装備.メンバー != nullptr) ? &Design::CanDrop : &Design::Base;
+
+				switch (layout->画像ID)
+				{
+				case 0:
+					DrawUI(UIType::グループ明, *UIデザイン);
+					break;
+				case 1:
+					DrawUI(UIType::グループ中, *UIデザイン);
+					break;
+				default:
+					DrawUI(UIType::グループ暗, *UIデザイン);
+					break;
+				}
+			}
+		};
+
 	public:
 		UIItem アイテム[CV::上限アクセサリ種類];
-		UITextFrame 内枠;
+		UIItem枠 内枠;
 
 		int 装備数 = 0;
 		int 現在タブ = 0;

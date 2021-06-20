@@ -50,8 +50,25 @@ namespace SDX_ADE
 		//破棄する場合 trueを返す
 		bool Update()
 		{
-			座標Y += 移動Y;
 			return (座標Y < 表示終了Y);
+		}
+
+		void Draw(int px, int py)
+		{
+			switch (種類)
+			{
+			case TextEffect::TextType::ダメージ:
+				MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, ダメージ色, Color::Black, ダメージ量);
+				break;
+			case TextEffect::TextType::回復:
+				MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, 回復色, Color::Black, ダメージ量);
+				break;
+			case TextEffect::TextType::回避:
+				MFont::SAlias.DrawBoldRotate({ px , py }, 1, 0, Color::White, Color::Black, "miss");
+				break;
+			}
+			座標Y += 移動Y * (int)std::sqrt(Game::ゲームスピード);
+
 		}
 
 		TextEffect& operator=(const TextEffect& コピー元)
@@ -75,6 +92,7 @@ namespace SDX_ADE
 		int 加算減産;
 		int フレーム番号 = 0;
 		int アニメ時間 = 0;
+		bool isEnd = false;
 
 	public:
 
@@ -93,18 +111,11 @@ namespace SDX_ADE
 		//破棄する場合 trueを返す
 		bool Update()
 		{
-			アニメ時間++;
-			if (アニメ時間 >= フレーム時間)
+			if ( isEnd == true)
 			{
-				フレーム番号++;
-				アニメ時間 = 0;
-
-				if (フレーム番号 >= スキルエフェクト.GetSize())
-				{
-					return true;
-				}
+				return true;
 			}
-
+			
 			return false;
 		}
 
@@ -122,9 +133,24 @@ namespace SDX_ADE
 
 		bool Draw(int x ,int y , double 拡大率)
 		{
+
+
 			if (加算減産 == 1 ) { Screen::SetBlendMode(BlendMode::Add); }
 			スキルエフェクト[フレーム番号]->DrawRotate({ x,y }, 拡大率, 0);
 			if (加算減産 != 0) { Screen::SetBlendMode(); }
+
+			アニメ時間 += (int)std::sqrt(Game::ゲームスピード);
+			if (アニメ時間 >= フレーム時間)
+			{
+				フレーム番号++;
+				アニメ時間 = 0;
+			}
+			if (フレーム番号 >= スキルエフェクト.GetSize())
+			{
+				フレーム番号 = スキルエフェクト.GetSize() - 1;
+				isEnd = true;
+			}
+
 			return false;
 		}
 	};
@@ -160,9 +186,15 @@ namespace SDX_ADE
 				return false;
 			}
 
-			座標Y += 移動Y;
 
 			return (座標Y < 表示終了Y);
+		}
+
+		//描画時に座標を少し移動
+		void Draw(int px,int py)
+		{
+			image->DrawRotate({ px , py }, 1, 0);
+			座標Y += 移動Y * (int)std::sqrt(Game::ゲームスピード);
 		}
 
 		MaterialEffect& operator=(const MaterialEffect& コピー元)

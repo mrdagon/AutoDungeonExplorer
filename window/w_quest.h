@@ -29,14 +29,14 @@ namespace SDX_ADE
 				//依頼者見た目
 				quest->依頼人image->DrawRotate(GetPos( LA ), 2, 0);
 
-				//クリア済み、New表示
-				MFont::S->Draw(GetPos(LD), Design::暗字, { "Clear" });
-
 				//クエスト名
-				MFont::L->Draw(GetPos( LB ), Design::暗字, {quest->名前});
+				MFont::L->DrawEdge(GetPos( LB ), Design::暗字, {quest->名前});
 
 				//対象フロア(無い場合は表示しない)
-				MFont::L->Draw(GetPos(LC), Design::暗字, { "10F" } , true);
+				MFont::L->DrawEdge(GetPos(LC), Design::暗字, { "10F" } , true);
+
+				//クリア済み、New表示
+				MFont::M->DrawEdge(GetPos(LD), Design::明字, { "Clear" });
 			}
 
 			void DrawHelp() override
@@ -116,6 +116,8 @@ namespace SDX_ADE
 			SetPos(LQuest::ウィンドウ, false, true, false);
 			固定縦 = 40;
 
+			縦内部幅 = 56;
+
 			int cnt = 0;
 			for (int i = 0; i < Quest::data.size(); i++)
 			{
@@ -127,7 +129,10 @@ namespace SDX_ADE
 				{
 					依頼[i].lineID = cnt;
 					依頼[i].is表示 = true;
+					縦内部幅 += 54;
 					cnt++;
+				} else {
+					依頼[i].is表示 = false;
 				}
 			}
 		}

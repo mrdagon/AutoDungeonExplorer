@@ -123,10 +123,11 @@ namespace SDX_ADE
 				//倍速値、アイコン、現在設定と同じなら凹ませる
 
 
-				if (lineID >= 4) { is押下 = Game::is停止; }
-				if (lineID == 3) { is押下 = (Game::ゲームスピード == 1); }
-				if (lineID == 2) { is押下 = (Game::ゲームスピード == 4); }
-				if (lineID == 1) { is押下 = (Game::ゲームスピード == 16); }
+				if (lineID == 12) { is押下 = Game::is停止予約; }
+				if (lineID == 9) { is押下 = (Game::ゲームスピード == 0); }
+				if (lineID == 6) { is押下 = (Game::ゲームスピード == 1); }
+				if (lineID == 4) { is押下 = (Game::ゲームスピード == 4); }
+				if (lineID == 2) { is押下 = (Game::ゲームスピード == 16); }
 				if (lineID == 0) { is押下 = (Game::ゲームスピード == 64); }
 
 
@@ -137,43 +138,22 @@ namespace SDX_ADE
 			{
 				switch (lineID)
 				{
-				default:
-					Game::is停止 = !Game::is停止;
+				case 12:
+					Game::is停止予約 = !Game::is停止予約;
 					break;
-				case 3:
-					if (Game::ゲームスピード == 1)
-					{
-						Game::is停止 = !Game::is停止;
-					} else {
-						Game::is停止 = false;
-					}
+				case 9:
+					Game::ゲームスピード = 0;
+					break;
+				case 6:
 					Game::ゲームスピード = 1;
 					break;
-				case 2://x4
-					if (Game::ゲームスピード == 4)
-					{
-						Game::is停止 = !Game::is停止;
-					} else {
-						Game::is停止 = false;
-					}
+				case 4://x4
 					Game::ゲームスピード = 4;
 					break;
-				case 1://x16
-					if (Game::ゲームスピード == 16)
-					{
-						Game::is停止 = !Game::is停止;
-					} else {
-						Game::is停止 = false;
-					}
+				case 2://x16
 					Game::ゲームスピード = 16;
 					break;
 				case 0://x64
-					if (Game::ゲームスピード == 64)
-					{
-						Game::is停止 = !Game::is停止;
-					} else {
-						Game::is停止 = false;
-					}
 					Game::ゲームスピード = 64;
 					break;
 				}
@@ -186,6 +166,7 @@ namespace SDX_ADE
 
 		UIWindowButton ウィンドウボタン[CV::ウィンドウ数];
 
+		UISpeedButton 停止予約ボタン;//一時停止時凹む仕様
 		UISpeedButton 停止ボタン;//一時停止時凹む仕様
 		UISpeedButton 速度ボタンA;//左右でクリック時の処理が異なる仕様
 		UISpeedButton 速度ボタンB;//左右でクリック時の処理が異なる仕様
@@ -216,10 +197,11 @@ namespace SDX_ADE
 			ウィンドウボタン[5].テキスト = TX::Window_略記[WindowType::Quest];
 			ウィンドウボタン[6].テキスト = TX::Window_略記[WindowType::EventLog];
 
-			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",5);//一時停止時凹む仕様
-			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "x 1" ,3);//左右でクリック時の処理が異なる仕様
-			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , "x 4", 2);//左右でクリック時の処理が異なる仕様
-			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , "x16", 1);//左右でクリック時の処理が異なる仕様
+			停止予約ボタン.SetUI(LToolBar::ツールバー_速度ボタン, "Stop", 12);//一時停止時凹む仕様
+			停止ボタン.SetUI( LToolBar::ツールバー_速度ボタン, "＝",9);//一時停止時凹む仕様
+			速度ボタンA.SetUI(  LToolBar::ツールバー_速度ボタン, "x 1" ,6);//左右でクリック時の処理が異なる仕様
+			速度ボタンB.SetUI(  LToolBar::ツールバー_速度ボタン , "x 4", 4);//左右でクリック時の処理が異なる仕様
+			速度ボタンC.SetUI(  LToolBar::ツールバー_速度ボタン , "x16", 2);//左右でクリック時の処理が異なる仕様
 			速度ボタンD.SetUI( LToolBar::ツールバー_速度ボタン, "x64", 0);//左右でクリック時の処理が異なる仕様
 
 			ヘルプボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "ヘルプ",  2);
@@ -227,6 +209,7 @@ namespace SDX_ADE
 			タイトルボタン.SetUI(LToolBar::ツールバー_その他ボタン, &MIcon::UI[IconType::BGM], "終了",  0);
 
 			//基準座標を左上にする
+			停止予約ボタン.isLeftDock = false;
 			停止ボタン.isLeftDock = false;
 			速度ボタンA.isLeftDock = false;
 			速度ボタンB.isLeftDock = false;
@@ -246,7 +229,8 @@ namespace SDX_ADE
 			//●ヘルプ設定
 			日付表示.SetHelp(&TH::Bar::日付);
 			時刻表示.SetHelp(&TH::Bar::日付);
-			停止ボタン.SetHelp(&TH::Bar::停止);
+			停止予約ボタン.SetHelp(&TH::Bar::停止);
+			停止ボタン.SetHelp(&TH::Bar::速度変更);
 			速度ボタンA.SetHelp(&TH::Bar::速度変更);
 			速度ボタンB.SetHelp(&TH::Bar::速度変更);
 			速度ボタンC.SetHelp(&TH::Bar::速度変更);
@@ -265,6 +249,7 @@ namespace SDX_ADE
 
 			AddItem(日付表示);
 			AddItem(時刻表示);
+			AddItem(停止予約ボタン);
 			AddItem(停止ボタン);
 			AddItem(速度ボタンA);
 			AddItem(速度ボタンB);

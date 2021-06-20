@@ -36,6 +36,8 @@ namespace SDX_ADE
 			スキルポイント = Lv + 10;
 			経験値 = 0;
 
+			Aスキル.resize(CV::最大Aスキル数);
+
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				Aスキル[a] = ExplorerClass::data[job].初期Aスキル[a];
@@ -109,7 +111,7 @@ namespace SDX_ADE
 		int 探検前経験値;
 
 		//UI表示用
-		int レベルアップ演出 = 0;
+		int レベルアップ演出 = -1;
 		bool isスキル習得演出;
 
 		//●再計算ステータス、戦闘以外
@@ -179,7 +181,10 @@ namespace SDX_ADE
 			}
 
 			//Aスキルセット
-			Aスキル数 = 4;
+			Aスキル.resize(CV::最大Aスキル数);
+			AスキルLv.resize(CV::最大Aスキル数);
+			必要クールダウン.resize(CV::最大Aスキル数);
+
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				Aスキル[a] = 装備Aスキル[a];
@@ -220,23 +225,18 @@ namespace SDX_ADE
 			素材剥取量 = 0.0;
 			素材収集量 = 0.0;
 
-			//エフェクトとログのリセット
-			E速度 = 0;//前出たり、ノックバック
-			E反転残り = 0;
-			E反転時間 = 0;
-			E座標 = 0;
-			E光強さ = 0;
-
-			//ログ用
-			与ダメージログ = 0;
-			受ダメージログ = 0;
-			回復ログ = 0;
-
 			//
 			探検前Lv = Lv;
 			探検前経験値 = (int)経験値;
-			レベルアップ演出 = false;
-			isスキル習得演出 = false;		}
+			レベルアップ演出 = -1;
+			isスキル習得演出 = false;		
+		}
+		
+		void 探索開始()
+		{
+			//経験値の獲得、素材の獲得等の処理
+			レベルアップ演出 = -1;
+		}
 
 		void 探索終了()
 		{
@@ -249,7 +249,7 @@ namespace SDX_ADE
 			
 		}
 
-		//
+		//スキル画面用
 		enum class Resultスキル強化
 		{
 			強化,
@@ -284,7 +284,6 @@ namespace SDX_ADE
 			}
 			return 現在Lv;
 		}
-
 
 		Resultスキル強化 Pスキル予約(int スキルID)
 		{
@@ -353,8 +352,6 @@ namespace SDX_ADE
 			return Resultスキル強化::解除失敗;			
 		}
 
-
-		//操作スキル
 		int 操作_装備Aスキル変更(int スロット, ActiveSkill* スキル)
 		{
 			for (int i = 0; i < CV::最大Aスキル数; i++)
@@ -395,7 +392,7 @@ namespace SDX_ADE
 			スキルリセット(低下Lv);
 		}
 
-		//装備強化予約
+		//装備強化予約用
 		void 強化予約(int 部位)
 		{
 			//素材足りてたら即時強化
