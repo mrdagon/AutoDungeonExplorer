@@ -197,7 +197,20 @@ namespace SDX_ADE
 						Guild::P->総素材 += 入手素材[ct][b];
 						Guild::P->is素材発見[ct][b] = true;
 					}
+				}
 
+				//アクセサリー獲得
+				for (int i = 0; i < 10; i++)
+				{
+					if( 獲得財宝[i] == 0)
+					{
+						break;
+					}
+					else if (獲得財宝[i] == 1)
+					{
+						//特殊アイテム石版
+						Guild::P->アクセサリー所持数[獲得財宝[i]]++;
+					}
 				}
 
 				//経験値獲得とレベルアップ
@@ -748,6 +761,31 @@ namespace SDX_ADE
 					MMusic::BGM[BGMType::探検中].Play();
 					探索先->isボス生存 = false;
 					//ボスレアドロップ取得
+					for (auto& it : 魔物)
+					{
+						if (it.種族->ボスドロップ[0] != 0)
+						{
+							for (int i = 0; i < 10; i++)
+							{
+								if (獲得財宝[i] == 0)
+								{
+									獲得財宝[i] = it.種族->ボスドロップ[0];
+									break;
+								}
+							}
+						}
+						if (it.種族->ボスドロップ[1] != 0)
+						{
+							for (int i = 0; i < 10; i++)
+							{
+								if (獲得財宝[i] == 0)
+								{
+									獲得財宝[i] = it.種族->ボスドロップ[1];
+									break;
+								}
+							}
+						}
+					}
 
 					Guild::P->総討伐++;
 					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
@@ -803,6 +841,14 @@ namespace SDX_ADE
 			void 財宝獲得()
 			{
 				//探索先->発見財宝++;
+				for (int i = 0; i < 10; i++)
+				{
+					if (獲得財宝[i] == 0)
+					{
+						獲得財宝[i] = 探索先->財宝[10 - 部屋ID]->ID;
+						break;
+					}
+				}
 				発見物 = &MIcon::UI[IconType::宝箱];
 			}
 
@@ -944,11 +990,6 @@ namespace SDX_ADE
 			探索者登録(7, "ギルメンH");
 			探索者登録(8, "ギルメンI");
 			探索者登録(9, "ギルメンJ");
-
-			for (auto& it : Explorer::装備強化リスト)
-			{
-				it = -1;
-			}
 
 			//パーティ初期化
 			for (int a = 0; a < CV::上限パーティ数; a++)
@@ -1096,9 +1137,9 @@ namespace SDX_ADE
 			std::swap(メンバーA->装備[装備部位A], メンバーB->装備[装備部位B]);
 		}
 
-		void 操作_武器防具クリック(Explorer* メンバー , int 装備スロット)
+		bool 操作_武器防具クリック(Explorer* メンバー , int 装備スロット)
 		{
-			メンバー->強化予約(装備スロット);
+			return メンバー->装備強化(装備スロット);
 		}
 
 		Explorer* 操作_スキル画面前後(Explorer* メンバー , int 前後)

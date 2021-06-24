@@ -535,6 +535,7 @@ namespace SDX_ADE
 			Brown2.凸色 = { 0xBCAAA4 };//200
 			Brown2.ハイライト = { 0xD7CCC8 };////100
 
+
 			Grey.影色 = { 0x424242 };//Gray 800
 			Grey.エッジ色 = { 0x616161 };//Gray 600
 			Grey.濃色 = { 0x424242 };//800
@@ -548,8 +549,8 @@ namespace SDX_ADE
 			Base = &Grey;
 			Input = &Brown2;
 			Help = &Green;
-			CanDrop = &Blue;
-			Draging = &Green;
+			CanDrop = &Brown;
+			Draging = &Blue;
 
 			Font::SetEdgeColor(暗字,明字);
 		}

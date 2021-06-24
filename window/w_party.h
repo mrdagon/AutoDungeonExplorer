@@ -65,13 +65,15 @@ namespace SDX_ADE
 			int 装備スロット = 0;
 			int パーティID;
 			int 隊列ID;
+			int 押下timer = 0;
 
 			void Draw派生() override
 			{
 				auto* member = Guild::P->GetMember(パーティID,隊列ID);
 
-				if (member->装備強化予約[装備スロット] == -1)
+				if (押下timer > 0)
 				{
+					押下timer--;
 					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
 				} else {
 					DrawUI( UIType::凹ボタン, Design::Input);
@@ -86,7 +88,11 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				Guild::P->操作_武器防具クリック(Guild::P->パーティ[パーティID].メンバー[隊列ID] , 装備スロット);
+				if (Guild::P->操作_武器防具クリック(Guild::P->パーティ[パーティID].メンバー[隊列ID], 装備スロット) == true)
+				{
+					//SE鳴らして装備強化
+					押下timer = 3;
+				}
 			}
 
 			void DrawHelp() override
@@ -1054,7 +1060,7 @@ namespace SDX_ADE
 				{
 					DrawUI(UIType::グループ明, Design::Base);
 				} else {
-					DrawUI(UIType::グループ中, Design::CanDrop);
+					DrawUI(UIType::グループ明, Design::CanDrop);
 				}
 			}
 		};

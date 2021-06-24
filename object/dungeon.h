@@ -114,6 +114,8 @@ namespace SDX_ADE
 			int data_count = 0;
 			file_data.Read(data_count);
 
+			data.clear();
+
 			for (int i = 0; i < data_count; i++)
 			{
 				int dummy;
@@ -208,6 +210,8 @@ namespace SDX_ADE
 
 		static void ResetData()
 		{
+			LoadData();
+
 			for (auto& it : data)
 			{
 				it.isボス生存 = true;

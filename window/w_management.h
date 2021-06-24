@@ -46,7 +46,7 @@ namespace SDX_ADE
 				auto& LG = LData(LManagement::素材必要数);
 				auto& LH = LData(LManagement::素材アイコン);
 
-				if (manage->is予約 == true)
+				if (manage->is使用済み == true)
 				{
 					DrawUI(UIType::凹ボタン, Design::Input);
 					Camera::Get()->position.y -= 2;					
@@ -84,7 +84,7 @@ namespace SDX_ADE
 				//投資アイコン
 				manage->image->DrawRotate(GetPos(LD), 2, 0);
 
-				if (manage->is予約 == true)
+				if (manage->is使用済み == true)
 				{
 					Camera::Get()->position.y += 2;
 				}

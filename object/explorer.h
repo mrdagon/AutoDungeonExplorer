@@ -101,9 +101,6 @@ namespace SDX_ADE
 
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
-		inline static int 装備強化リスト[CV::最大強化予約] = {};
-		int 装備強化予約[CV::装備部位数] = {-1,-1,-1};
-
 		ActiveSkill* 装備Aスキル[CV::最大Aスキル数];
 		//ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
 
@@ -249,6 +246,16 @@ namespace SDX_ADE
 			
 		}
 
+		bool 装備強化(int 装備スロット)
+		{
+			return true;
+		}
+
+		bool 素材チェック(int 装備スロット)
+		{
+			return true;
+		}
+
 		//スキル画面用
 		enum class Resultスキル強化
 		{
@@ -329,7 +336,7 @@ namespace SDX_ADE
 			{
 				if (スキル習得予約[i] == スキルID)
 				{
-					予約解除(i);
+					スキル予約解除(i);
 					return Resultスキル強化::解除;
 				}
 			}
@@ -344,7 +351,7 @@ namespace SDX_ADE
 			{
 				if (スキル習得予約[i] == -スキルID)
 				{
-					予約解除(i);
+					スキル予約解除(i);
 					return Resultスキル強化::解除;
 				}
 			}
@@ -368,10 +375,8 @@ namespace SDX_ADE
 			return スロット;
 		}
 
-		void 予約解除(int 予約ID)
+		void スキル予約解除(int 予約ID)
 		{
-
-
 			for (int i = 予約ID ; i < CV::最大スキル予約数 - 1; i++)
 			{
 				スキル習得予約[i] = スキル習得予約[i+1];
@@ -390,48 +395,6 @@ namespace SDX_ADE
 			int 低下Lv = Lv / 10 + 2;
 			if (低下Lv <= 2) { 低下Lv = 0; }
 			スキルリセット(低下Lv);
-		}
-
-		//装備強化予約用
-		void 強化予約(int 部位)
-		{
-			//素材足りてたら即時強化
-			
-			//不足してたら予約 or 予約解除
-			if (装備強化予約[部位] == -1)
-			{
-				for (int i = 0; i < CV::最大強化予約; i++)
-				{
-					if (装備強化リスト[i] == -1)
-					{
-						装備強化予約[部位] = i;
-						装備強化リスト[i] = ID * 10 + 部位;
-						break;
-					}
-				}
-			} else {
-				強化予約解除(部位);
-			}
-		}
-
-		void 強化予約解除(int 部位)
-		{
-			for (int i = 0; i < CV::最大強化予約; i++)
-			{
-				if (装備強化リスト[i] == ID * 10 + 部位)
-				{
-					装備強化予約[部位] = -1;
-					装備強化リスト[i] = -1;
-					for (int a = i; a < CV::最大強化予約-1; a++)
-					{
-						装備強化リスト[a] = 装備強化リスト[a + 1];
-					}
-					装備強化リスト[CV::最大強化予約 - 1] = -1;
-					break;
-				}
-			}
-
-
 		}
 	};
 }

@@ -312,7 +312,6 @@ namespace SDX_ADE
 
 			Game::is仕事中 = true;
 
-			Management::予約使用();
 			Guild::P->探索開始();
 		}
 

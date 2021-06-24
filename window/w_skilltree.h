@@ -281,7 +281,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->予約解除(lineID);
+				W_Skilltree::ギルメン->スキル予約解除(lineID);
 			}
 
 			void DrawHelp() override

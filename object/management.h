@@ -51,28 +51,40 @@ namespace SDX_ADE
 		int 投資Lv = 0;
 		int 最大投資Lv = 10;
 		bool is使用可 = false;
-
-		inline static int 予約[CV::最大投資予約];
-		bool is予約;
-
+		bool is使用済み = false;
+		
 		/*戦術実行効果*/
-		void static 予約使用()
-		{
-
-		}
 
 		void Active()
 		{
-			//資金消費
-			//guild->資金 -= 消費資金;
+			//素材消費
+			for (int i = 0; i < CV::投資コスト最大枠数; i++)
+			{
+				Guild::P->素材数[コスト[i].必要素材種][コスト[i].必要素材ランク] -= コスト[i].必要素材数;
+			}
+
 			//ログ
 			//EventLog::Add(0, Game::日付, LogType::経営);
+
+			is使用済み = true;
 
 			//部門Lv上昇判定
 			if (!Lv上昇判定()) {
 
 				MSound::効果音[SE::投資実行].Play();
 			}
+		}
+
+		bool 素材チェック()
+		{
+			for (int i = 0; i < CV::投資コスト最大枠数; i++)
+			{
+				if (Guild::P->素材数[コスト[i].必要素材種][コスト[i].必要素材ランク] < コスト[i].必要素材数)
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 
 		bool Lv上昇判定()
@@ -143,61 +155,13 @@ namespace SDX_ADE
 		void 操作_クリック()
 		{
 			//資金足りていたら即実行
-			if (Guild::P->資金 >= 消費資金)
+			if (素材チェック() == true)
 			{
 				Active();
 			}
-			else if (is予約 == true)
-			{
-				is予約 = false;
-				予約ソート(this->ID);
-			}
 			else
 			{
-				is予約 = true;
-				予約追加(this->ID);
-			}
-		}
 
-		//解除したり実行した予約を削除して詰める
-		static void 予約ソート(int ID)
-		{
-			bool is削除済み = false;
-
-			for (int i = 0; i < CV::最大投資予約 - 1; i++)
-			{
-				if (予約[i] == -1)
-				{
-					break;
-				}
-
-				if (is削除済み)
-				{
-					予約[i] = 予約[i + 1];
-				}
-				else if (予約[i] == ID)
-				{
-					予約[i] = 予約[i + 1];
-					is削除済み = true;
-				}
-			}
-
-			if (is削除済み == false)
-			{
-				予約[CV::最大投資予約 - 1] = -1;
-			}
-
-		}
-
-		static void 予約追加(int ID)
-		{
-			for (int i = 0; i < CV::最大投資予約 - 1; i++)
-			{
-				if (予約[i] == -1)
-				{
-					予約[i] = ID;
-					break;
-				}
 			}
 		}
 	};
