@@ -42,7 +42,7 @@ namespace SDX_ADE
 						break;
 					}
 					//日付
-					MFont::L->Draw({ LD.x,LD.y + y差分 }, Design::暗字, { it.日付 , "日" },true);
+					MFont::L->Draw({ LD.x,LD.y + y差分 }, Design::暗字, { it.日付+1 , "日" },true);
 
 					//文章
 					MFont::L->Draw({ LC.x,LC.y + y差分 }, Design::暗字, { it.テキスト });
@@ -120,13 +120,6 @@ namespace SDX_ADE
 			item.clear();
 			AddItem(表示ボタン, 4, true);
 			AddItem(ログ);
-
-			EventLog::Add("Test1", 1, LogType::ボス);
-			EventLog::Add("Test2", 2, LogType::依頼);
-			EventLog::Add("Test3", 3, LogType::投資);
-			EventLog::Add("Test4", 4, LogType::探索);
-			EventLog::Add("Test5", 15, LogType::探索);
-			EventLog::Add("Test6", 126, LogType::探索);
 		}
 
 		void Update()

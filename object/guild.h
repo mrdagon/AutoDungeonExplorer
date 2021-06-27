@@ -50,7 +50,7 @@ namespace SDX_ADE
 			//★探検一時ステータス
 			double 獲得経験値;
 			EnumArray<std::array<int, CV::上限素材ランク>, CraftType> 入手素材;
-			int 獲得財宝[10];//最大で10個まで、0は未発見
+			std::vector<int> 獲得財宝;//最大で10個まで、0は未発見
 			int 地図発見数 = 0;
 			int ボス撃破数 = 0;
 			int 探索部屋数 = 0;//今回の探索での探索した部屋数
@@ -106,7 +106,7 @@ namespace SDX_ADE
 
 				探索指示 = OrderType(n);
 			}
-			
+
 			void 基礎ステ再計算()
 			{
 				味方.clear();
@@ -157,10 +157,8 @@ namespace SDX_ADE
 						itB = 0;
 					}
 				}
-				for (int i = 0; i < 10; i++)
-				{
-					獲得財宝[i] = 0;
-				}
+				
+				獲得財宝.clear();
 
 				//パーティメンバーの体力回復、ステータス再計算等
 				//経験値獲得とレベルアップ
@@ -200,16 +198,12 @@ namespace SDX_ADE
 				}
 
 				//アクセサリー獲得
-				for (int i = 0; i < 10; i++)
+				for (auto& it : 獲得財宝)
 				{
-					if( 獲得財宝[i] == 0)
+					if (it > 0)
 					{
-						break;
-					}
-					else if (獲得財宝[i] == 1)
-					{
-						//特殊アイテム石版
-						Guild::P->アクセサリー所持数[獲得財宝[i]]++;
+						Guild::P->アクセサリー所持数[it]++;
+
 					}
 				}
 
@@ -219,7 +213,7 @@ namespace SDX_ADE
 					if (メンバー[a] == nullptr) { continue; }
 
 					メンバー[a]->探索終了();
-					メンバー[a]->経験値 += 獲得経験値 * Guild::P->戦闘経験補正;
+					メンバー[a]->経験値 += 獲得経験値 * Guild::P->経験値倍率;
 					メンバー[a]->レベルアップ判定();
 				}
 			}
@@ -295,15 +289,15 @@ namespace SDX_ADE
 			{
 				//階段発見済み
 				int no = 探索先->Is階段発見可能();
-				if ( no >= 0)
+				if (no >= 0)
 				{
-					room_deck.push_back( no );
+					room_deck.push_back(no);
 					return;
 				}
 
 
 				//ボス発見済み
-				if ( 探索先->Isボス戦闘可能(探索部屋数) )
+				if (探索先->Isボス戦闘可能(探索部屋数))
 				{
 					room_deck.push_back(CV::ボス部屋ID);
 					return;
@@ -315,9 +309,11 @@ namespace SDX_ADE
 					for (int a = 0; a < 探索先->部屋.size(); a++)
 					{
 						if (探索先->部屋[a].is入場 ||
-							探索先->部屋[a].is探索 || 
+							探索先->部屋[a].is探索 ||
 							探索先->部屋[a].種類 == RoomType::ボス ||
-							探索先->部屋[a].種類 == RoomType::階段 ) { continue; }
+							探索先->部屋[a].種類 == RoomType::階段) {
+							continue;
+						}
 						room_deck.push_back(a);
 					}
 				}
@@ -329,7 +325,7 @@ namespace SDX_ADE
 				{
 					if (探索先->部屋[a].is入場 ||
 						探索先->部屋[a].種類 == RoomType::ボス ||
-						探索先->部屋[a].種類 == RoomType::階段						
+						探索先->部屋[a].種類 == RoomType::階段
 						)
 					{
 						continue;
@@ -409,23 +405,26 @@ namespace SDX_ADE
 
 				MSound::効果音[SE::地図発見].Play();
 
-				for (int i = 0; i < 10; i++)
-				{
-					if (獲得財宝[i] == 0)
-					{
-						獲得財宝[i] = -2;
-						break;
-					}
+				獲得財宝.push_back(-2);//-2は階段
 
-				}
+				Quest::達成チェック(QuestType::ダンジョン発見, 探索先->探索地図ID[部屋ID] + 1, Guild::P->アクセサリー所持数);
+				Quest::開始チェック(探索先->探索地図ID[部屋ID] + 1);
+
 				//
 				待ち時間 = CV::収集待機A;
 				発見物X座標 = CV::収集待機A;
+
+
+				std::string text = "";
+				text += std::to_string((探索先->探索地図ID[部屋ID] + 1));
+				text += "Fへの地図を発見";
+
+				EventLog::Add(text.c_str(), Game::日付, LogType::探索);
 			}
 
 			void 収集処理()
 			{
-				if (発見物X座標 > 0 )
+				if (発見物X座標 > 0)
 				{
 					移動量 += CV::探索移動速度;
 					発見物X座標 -= CV::探索移動速度;
@@ -485,7 +484,7 @@ namespace SDX_ADE
 
 					入手素材[発見素材種][ランク]++;
 
-					Effect::素材[パーティID].emplace_back(Material::data[発見素材種][ランク].image , a);
+					Effect::素材[パーティID].emplace_back(Material::data[発見素材種][ランク].image, a);
 				}
 			}
 
@@ -503,9 +502,9 @@ namespace SDX_ADE
 
 				switch (Rand::Get(2))
 				{
-					case 0: 素材種 = CraftType::革材; break;
-					case 1: 素材種 = CraftType::骨材; break;
-					case 2: 素材種 = CraftType::魔材; break;
+				case 0: 素材種 = CraftType::革材; break;
+				case 1: 素材種 = CraftType::骨材; break;
+				case 2: 素材種 = CraftType::魔材; break;
 				}
 
 				//パッシブ計算
@@ -543,7 +542,7 @@ namespace SDX_ADE
 				for (int a = 0; a < 素材数; a++)
 				{
 					入手素材[素材種][ランク]++;
-					Effect::素材[パーティID].emplace_back( Material::data[素材種][ランク].image,a,it.隊列ID);
+					Effect::素材[パーティID].emplace_back(Material::data[素材種][ランク].image, a, it.隊列ID);
 				}
 
 				//レアアイテムは勝利時に精算
@@ -556,7 +555,7 @@ namespace SDX_ADE
 				敵.clear();
 				魔物.clear();
 
-				int 抽選回数[CV::最大魔物出現数] = {0};
+				int 抽選回数[CV::最大魔物出現数] = { 0 };
 				int 残り抽選数 = 敵数;
 
 				//敵の生成
@@ -564,7 +563,7 @@ namespace SDX_ADE
 				//大型モンスターは２枠使う、最後の抽選で選んだら再抽選
 				while (true)
 				{
-					int rng = Rand::Get((int)探索先->雑魚モンスター.size()-1);
+					int rng = Rand::Get((int)探索先->雑魚モンスター.size() - 1);
 
 					if (抽選回数[rng] == 2)
 					{
@@ -618,14 +617,14 @@ namespace SDX_ADE
 				敵.clear();
 				魔物.clear();
 
-				for (int b = 0; b < (int)探索先->ボスモンスター.size() ; b++)
+				for (int b = 0; b < (int)探索先->ボスモンスター.size(); b++)
 				{
 					if (探索先->ボスモンスター[b]->ID <= 0)
 					{
 						continue;
 					}
 
-					魔物.emplace_back(探索先->ボスモンスター[b],探索先->ボスLv[b]);
+					魔物.emplace_back(探索先->ボスモンスター[b], 探索先->ボスLv[b]);
 				}
 
 				敵.resize(魔物.size());
@@ -671,7 +670,7 @@ namespace SDX_ADE
 				{
 					if (it->Aスキル使用チェック(味方, 敵) == true)
 					{
-						isBreak = true; 
+						isBreak = true;
 						戦闘中行動待機 = CV::戦闘1ターン待ち時間;
 						break;
 					}
@@ -752,12 +751,16 @@ namespace SDX_ADE
 
 			void 戦闘勝利()
 			{
-				//クエスト処理
-				Guild::P->クエスト進行(QuestType::魔物討伐, (int)敵.size());
+				std::string text = "";
 
+				//クエスト処理
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ボス:
+					text = 魔物[0].種族->名前;
+					text += "を討伐";
+					EventLog::Add(text.c_str(), Game::日付, LogType::ボス);
+
 					MMusic::BGM[BGMType::探検中].Play();
 					探索先->isボス生存 = false;
 					//ボスレアドロップ取得
@@ -765,35 +768,22 @@ namespace SDX_ADE
 					{
 						if (it.種族->ボスドロップ[0] != 0)
 						{
-							for (int i = 0; i < 10; i++)
-							{
-								if (獲得財宝[i] == 0)
-								{
-									獲得財宝[i] = it.種族->ボスドロップ[0];
-									break;
-								}
-							}
+							獲得財宝.push_back(it.種族->ボスドロップ[0]);
 						}
 						if (it.種族->ボスドロップ[1] != 0)
 						{
-							for (int i = 0; i < 10; i++)
-							{
-								if (獲得財宝[i] == 0)
-								{
-									獲得財宝[i] = it.種族->ボスドロップ[1];
-									break;
-								}
-							}
+							獲得財宝.push_back(it.種族->ボスドロップ[1]);
 						}
 					}
 
+					if (探索先->ボス地図ID != 0)
+					{
+						探索先->地図発見探索率[0] = 探索先->ボス発見探索率;
+					}
+
 					Guild::P->総討伐++;
-					Guild::P->クエスト進行(QuestType::ボス討伐, 探索先->ID);
-					Guild::P->クエスト進行(QuestType::固定ボス討伐, 探索先->ID);
-					EventLog::Add("ボス勝利", Game::日付, LogType::探索 );
-					break;
-				case RoomType::階段:
-					階段発見();
+					Quest::達成チェック(QuestType::累計FOE討伐, Guild::P->総討伐 , Guild::P->アクセサリー所持数);
+					Quest::達成チェック(QuestType::固定FOE討伐, 探索先->ID , Guild::P->アクセサリー所持数);
 					break;
 				case RoomType::財宝:
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
@@ -807,7 +797,7 @@ namespace SDX_ADE
 				//体力回復
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->現在HP += (int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]);
+					味方[a]->現在HP += (int)((味方[a]->戦闘後回復 + Guild::P->戦闘後回復) * 味方[a]->補正ステ[StatusType::HP]);
 					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->補正ステ[StatusType::HP]);
 					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]));
 					味方[a]->現在クールダウン = 0;
@@ -829,7 +819,6 @@ namespace SDX_ADE
 				{
 					ザコ討伐数++;
 				}
-				Guild::P->クエスト進行(QuestType::魔物討伐, ザコ討伐数);
 
 				探索先->部屋[部屋ID].is入場 = false;
 				探索状態 = ExplorType::全滅中;
@@ -841,15 +830,15 @@ namespace SDX_ADE
 			void 財宝獲得()
 			{
 				//探索先->発見財宝++;
-				for (int i = 0; i < 10; i++)
-				{
-					if (獲得財宝[i] == 0)
-					{
-						獲得財宝[i] = 探索先->財宝[10 - 部屋ID]->ID;
-						break;
-					}
-				}
+				獲得財宝.push_back(探索先->財宝[部屋ID - 10]->ID);
+				探索先->is財宝発見[部屋ID - 10] = true;
 				発見物 = &MIcon::UI[IconType::宝箱];
+
+				std::string text = "";
+				text = 探索先->財宝[部屋ID - 10]->名前;
+				text += "を入手";
+
+				EventLog::Add(text.c_str(), Game::日付, LogType::探索);
 			}
 
 			void 撤退開始()
@@ -864,8 +853,6 @@ namespace SDX_ADE
 							ザコ討伐数++;
 						}
 					}
-
-					Guild::P->クエスト進行(QuestType::魔物討伐, ザコ討伐数);
 				}
 
 				for (auto& it : 味方)
@@ -896,11 +883,14 @@ namespace SDX_ADE
 				探索先->部屋[部屋ID].is入場 = false;
 				探索先->探索率計算();
 
-				if (探索先->探索率*100 >= 探索先->ボス発見探索率 && 探索先->isボス発見 == false)
+				if (探索先->探索率 * 100 >= 探索先->ボス発見探索率 && 探索先->isボス発見 == false)
 				{
+					std::string text = "";
+					text += std::to_string((探索先->ID + 1));
+					text += "FでF.O.Eが姿を表す";
 					MSound::効果音[SE::ボス発見].Play();
 					探索先->isボス発見 = true;
-					EventLog::Add("ボス登場！", Game::日付, LogType::探索);
+					EventLog::Add(text.c_str(), Game::日付, LogType::ボス);
 				}
 			}
 
@@ -924,19 +914,24 @@ namespace SDX_ADE
 
 		int 最大パーティ数 = 3;
 
-		int 街Lv = 0;
+		int 街Lv = 1;
 		int 街経験値 = 0;
 
 		//経営戦術効果
-		double 戦闘経験補正 = 1.0;
-		double 素材節約 = 1.0;//素材消費倍率
-		double 未開探索 = Game::基礎未探索部屋発見率;//未探索部屋抽選補正
+		double 戦闘後回復 = 0.1;
+		double 経験値倍率 = 1.0;
+		double 素材消費倍率 = 1.0;//素材消費倍率
+		double 未開探索 = 0.0;//未探索部屋抽選補正
 
 		//装備品
-		int アクセサリー所持数[CV::上限アクセサリ種類] = { 0 };
-
+		std::array<int, CV::上限アクセサリ種類> アクセサリー所持数 = { 0 };
 		//各種記録_Record
 		int 総石版 = 0;
+
+		int 累計ボス撃破 = 0;
+		int 累計財宝獲得 = 0;
+		int 累計素材発見 = 0;
+		int 累計魔物撃破 = 0;
 
 		int 総素材 = 0;
 		int 総フロア = 0;//全探索フロア数
@@ -1139,7 +1134,48 @@ namespace SDX_ADE
 
 		bool 操作_武器防具クリック(Explorer* メンバー , int 装備スロット)
 		{
-			return メンバー->装備強化(装備スロット);
+			//素材チェック
+			std::array<int, CV::上限素材ランク> メイン素材;
+			std::array<int, CV::上限素材ランク> サブ素材;
+
+			CraftType メイン種 = メンバー->装備[装備スロット]->GetMainRecipe(メイン素材);
+			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(メイン素材);
+
+			//素材数チェック
+			for (int i = 0; i < CV::上限素材ランク ; i++)
+			{
+				if (素材数[メイン種][i] < メイン素材[i]) { return false; }
+				if (素材数[サブ種][i] < サブ素材[i] / 2) { return false; }
+			}
+
+			//素材を消費
+			for (int i = 0; i < CV::上限素材ランク; i++)
+			{
+				素材数[メイン種][i] -= メイン素材[i];
+				素材数[サブ種][i] -= サブ素材[i] / 2;
+			}
+
+			メンバー->装備強化(装備スロット);
+			return true;
+		}
+
+		bool 操作_装備素材チェック(Explorer* メンバー, int 装備スロット)
+		{
+			//素材チェック
+			std::array<int, CV::上限素材ランク> メイン素材;
+			std::array<int, CV::上限素材ランク> サブ素材;
+
+			CraftType メイン種 = メンバー->装備[装備スロット]->GetMainRecipe(メイン素材);
+			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(メイン素材);
+
+			//素材数チェック
+			for (int i = 0; i < CV::上限素材ランク; i++)
+			{
+				if (素材数[メイン種][i] < メイン素材[i]) { return false; }
+				if (素材数[サブ種][i] < サブ素材[i] / 2) { return false; }
+			}
+
+			return true;
 		}
 
 		Explorer* 操作_スキル画面前後(Explorer* メンバー , int 前後)
@@ -1302,24 +1338,6 @@ namespace SDX_ADE
 		}
 
 		//クエスト関係
-		void クエスト進行(QuestType クエスト種, int id)
-		{
-			for (auto& it : Quest::data)
-			{
-				if (it.種類 == クエスト種 && it.進行状況 == QuestState::進行中 ) 
-				{
-					if (it.達成度計算(id)) { クエスト完了(it); }
-				}
-			}
-		}
-
-		void クエスト完了(Quest &クエスト)
-		{
-			MSound::効果音[SE::クエスト完了].Play();
-
-			クエスト.進行状況 = QuestState::完了;
-		}
-
 		void リザルト解除()
 		{
 			for (int i = 0; i < 最大パーティ数; i++)

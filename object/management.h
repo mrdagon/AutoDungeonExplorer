@@ -61,12 +61,33 @@ namespace SDX_ADE
 			for (int i = 0; i < CV::投資コスト最大枠数; i++)
 			{
 				Guild::P->素材数[コスト[i].必要素材種][コスト[i].必要素材ランク] -= コスト[i].必要素材数;
+				Guild::P->街経験値 += コスト[i].必要素材数 * (10 + コスト[i].必要素材ランク * 5);
 			}
 
 			//ログ
-			//EventLog::Add(0, Game::日付, LogType::経営);
+			std::string text = "";
+			text = 名前;
+			text += "を実行";
+
+			EventLog::Add(text.c_str(), Game::日付, LogType::投資);
 
 			is使用済み = true;
+			switch (ID)
+			{
+			default:
+				break;
+			case 1:
+				Guild::P->最大パーティ数++;
+				break;
+			case 2:
+				Guild::P->経験値倍率 += 0.1;
+				break;
+			case 3:
+				Guild::P->戦闘後回復 += 0.01;
+				break;
+			}
+
+
 
 			//部門Lv上昇判定
 			if (!Lv上昇判定()) {
@@ -132,8 +153,6 @@ namespace SDX_ADE
 					file_data.Read(it.コスト[i].必要素材数);
 					file_data.Read(it.コスト[i].必要素材ランク);
 				}
-
-				file_data.Read(it.消費資金);
 			}
 		}
 
@@ -158,10 +177,6 @@ namespace SDX_ADE
 			if (素材チェック() == true)
 			{
 				Active();
-			}
-			else
-			{
-
 			}
 		}
 	};

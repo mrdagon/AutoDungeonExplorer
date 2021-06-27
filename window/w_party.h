@@ -74,9 +74,15 @@ namespace SDX_ADE
 				if (押下timer > 0)
 				{
 					押下timer--;
-					DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
+					DrawUI(UIType::凹ボタン, Design::Input);
 				} else {
-					DrawUI( UIType::凹ボタン, Design::Input);
+					if (Guild::P->操作_装備素材チェック(member, 装備スロット) == true)
+					{
+						DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
+					}
+					else {
+						DrawUI(isOver ? UIType::明ボタン : UIType::平ボタン, Design::Base);
+					}
 				}
 
 				auto& it = member->装備[装備スロット];

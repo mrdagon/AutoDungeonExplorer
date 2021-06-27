@@ -32,11 +32,19 @@ namespace SDX_ADE
 				//クエスト名
 				MFont::L->DrawEdge(GetPos( LB ), Design::暗字, {quest->名前});
 
-				//対象フロア(無い場合は表示しない)
-				MFont::L->DrawEdge(GetPos(LC), Design::暗字, { "10F" } , true);
 
 				//クリア済み、New表示
-				MFont::M->DrawEdge(GetPos(LD), Design::明字, { "Clear" });
+				if (quest->対象フロア > 0)
+				{
+					//対象フロア(無い場合は表示しない)
+					MFont::L->DrawEdge(GetPos(LC), Design::暗字, { quest->対象フロア , "F" }, true);
+				}
+				
+				if (quest->進行状況 == QuestState::完了)
+				{
+					MFont::M->DrawEdge(GetPos(LD), Design::明字, { "Clear" });
+				}
+
 			}
 
 			void DrawHelp() override
@@ -92,13 +100,13 @@ namespace SDX_ADE
 			表示ボタン[0].clickEvent = [&]()
 			{
 				表示ボタン[0].is押下 = !表示ボタン[0].is押下;
-				is表示完了 = 表示ボタン[1].is押下;
+				is表示完了 = 表示ボタン[0].is押下;
 				表示ボタン[0].押下アニメ = 0;
 			};
 			表示ボタン[1].clickEvent = [&]()
 			{
 				表示ボタン[1].is押下 = !表示ボタン[1].is押下;
-				is表示進行中 = 表示ボタン[0].is押下;
+				is表示進行中 = 表示ボタン[1].is押下;
 				表示ボタン[1].押下アニメ = 0;
 			};
 			表示ボタン[2].clickEvent = [&]()
@@ -122,9 +130,9 @@ namespace SDX_ADE
 			for (int i = 0; i < Quest::data.size(); i++)
 			{
 				if (
-						(依頼[i].quest->進行状況 == QuestState::受注前 && is表示受注前 == true ) ||
-						(依頼[i].quest->進行状況 == QuestState::進行中 && is表示進行中 == true)	||
-						(依頼[i].quest->進行状況 == QuestState::完了 && is表示完了 == true)
+						(Quest::data[i].進行状況 == QuestState::受注前 && is表示受注前 == true ) ||
+						(Quest::data[i].進行状況 == QuestState::進行中 && is表示進行中 == true)	||
+						(Quest::data[i].進行状況 == QuestState::完了 && is表示完了 == true)
 					)
 				{
 					依頼[i].lineID = cnt;

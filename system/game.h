@@ -21,11 +21,6 @@ namespace SDX_ADE
 		static bool isヘルプ = true;
 		static bool isゲーム終了 = false;
 
-		static double 自動回復 = 0.1;//自動回復基準値(仮)
-		static double 地図発見探索率 = 0.5;
-		static double ボス発見探索率 = 0.7;
-		static double 基礎未探索部屋発見率 = 0.1;
-
 		static int 最大解像度W = 1600, 最大解像度H = 900;
 		//
 		static bool isメインクエスト = false;//メインクエスト終了フラグ

@@ -48,6 +48,7 @@ namespace SDX_ADE
 		bool is地図発見[CV::最大地図数] = { false,false };
 
 		std::vector<Item*> 財宝;
+		bool is財宝発見[CV::最大財宝配置数];
 
 		std::vector<MonsterClass*> ボスモンスター;
 		std::vector<MonsterClass*> 雑魚モンスター;

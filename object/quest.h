@@ -89,7 +89,12 @@ namespace SDX_ADE
 				file_data.Read(依頼人ID);
 				it.image = &MIcon::クエスト[it.種類];
 				it.依頼人image = MJob::ちび[依頼人ID][0];
-				it.進行状況 = QuestState::受注前;
+				if (it.開放フロア <= 1)
+				{
+					it.進行状況 = QuestState::進行中;
+				} else {
+					it.進行状況 = QuestState::未発見;
+				}
 			}
 		}
 
@@ -100,7 +105,12 @@ namespace SDX_ADE
 			{
 				if (it.進行状況 != QuestState::未発見)
 				{
-					it.進行状況 = QuestState::受注前;
+					if (it.開放フロア <= 1)
+					{
+						it.進行状況 = QuestState::進行中;
+					} else {
+						it.進行状況 = QuestState::受注前;
+					}
 				}
 				it.is新規 = false;
 			}
@@ -111,36 +121,93 @@ namespace SDX_ADE
 			//達成度、is受注、is完了
 		}
 
+		static bool 達成チェック(QuestType 判定種, int id , std::array<int, CV::上限アクセサリ種類> &アクセ所持数 )
+		{
+			bool isClear = false;
+
+			for (auto& it : data)
+			{
+				if (it.達成判定(判定種, id ,アクセ所持数) == true)
+				{
+					isClear = true;
+				}
+			}
+
+			return isClear;
+		}
+
+		static void 開始チェック(int 階層)
+		{
+			std::string text = "";
+
+			for (int i = 0; i < data.size(); i++)
+			{
+				if (data[i].開放フロア == 階層)
+				{
+					data[i].進行状況 = QuestState::進行中;
+					text = data[i].名前;
+					text += "が開始";
+					EventLog::Add(text.c_str(), Game::日付, LogType::依頼);
+				}
+			}
+
+		}
+
+		void 報酬獲得(std::array<int, CV::上限アクセサリ種類>& アクセ所持数)
+		{
+			進行状況 = QuestState::完了;
+			if (報酬アクセサリ > 0)
+			{
+				アクセ所持数[報酬アクセサリ]++;
+			}
+		}
+
 		/*idはボスIDやら倒した敵数やら*/
-		bool 達成度計算(int id)
+		bool 達成判定(QuestType 判定種 ,int id , std::array<int, CV::上限アクセサリ種類>& アクセ所持数)
 		{
 			int 達成度 = 0;
 
+			if (進行状況 != QuestState::進行中)
+			{
+				return false;
+			}
+
+			if (種類 != 判定種)
+			{
+				return false;
+			}
+
+			std::string text = "";
+			text = 名前;
+			text += "を完了";
+			EventLog::Add(text.c_str(), Game::日付, LogType::依頼);
+
 			switch (種類)
 			{
-			case QuestType::素材売却:
+			case QuestType::ダンジョン発見://特定階層到達
+				if (id != 条件数値)
+				{
+					return false;
+				}
+				報酬獲得(アクセ所持数);
 				break;
-			case QuestType::アクセサリー発見:
+			case QuestType::累計FOE討伐://FOEを累計、X体討伐
+				if (id < 条件数値)
+				{
+					return false;
+				}
+				報酬獲得(アクセ所持数);
 				break;
-			case QuestType::遺物収集:
-				break;
-			case QuestType::魔物発見:
-				break;
-			case QuestType::ダンジョン発見://なんでもいいから発見
-				break;
-			case QuestType::ボス討伐://なんでもいいから討伐
-				break;
-			case QuestType::固定ボス討伐://特定フロアのボス討伐
+			case QuestType::固定FOE討伐://特定フロアのボス討伐
+				if (id != 条件数値)
+				{
+					return false;
+				}
+				報酬獲得(アクセ所持数);
 				break;
 			}
 
-			if (達成度 >= 条件数値)
-			{
-				//EventLog::Add(0, Game::日付, LogType::重要 );
-				return true;
-			}
-
-			return false;
+			return true;
 		}
 	};
 }

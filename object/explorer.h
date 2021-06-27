@@ -216,7 +216,7 @@ namespace SDX_ADE
 
 			現在HP = 補正ステ[StatusType::HP];
 
-			戦闘後回復 = Game::自動回復;
+			戦闘後回復 = 0;
 			レア素材剥取補正 = 0.0;
 			レア素材収集補正 = 0.0;
 			素材剥取量 = 0.0;
@@ -246,14 +246,9 @@ namespace SDX_ADE
 			
 		}
 
-		bool 装備強化(int 装備スロット)
+		void 装備強化(int 装備スロット)
 		{
-			return true;
-		}
-
-		bool 素材チェック(int 装備スロット)
-		{
-			return true;
+			装備[装備スロット] = &Item::equip_data[装備[装備スロット]->ID+1];
 		}
 
 		//スキル画面用

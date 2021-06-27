@@ -46,10 +46,16 @@ namespace SDX_ADE
 				auto& LG = LData(LManagement::素材必要数);
 				auto& LH = LData(LManagement::素材アイコン);
 
+				
 				if (manage->is使用済み == true)
 				{
-					DrawUI(UIType::凹ボタン, Design::Input);
+					DrawUI(UIType::凹ボタン, Design::Base);
 					Camera::Get()->position.y -= 2;					
+				}
+				else
+				if (manage->素材チェック() == false)
+				{
+					DrawUI(UIType::平ボタン, Design::Base);
 				}
 				else
 				{
@@ -153,10 +159,19 @@ namespace SDX_ADE
 			SetPos(LManagement::ウィンドウ, false, true, false);
 			固定縦 = 50;
 			縦内部幅 = 50;
+			int count = 0;
 			for (int i = 0; i < CV::上限投資案 ; i++)
 			{
+				if (投資案[i].manage == nullptr || 投資案[i].manage->ランク > Guild::P->街Lv)
+				{
+					投資案[i].is表示 = false;
+				}
+
+
 				if (投資案[i].is表示 == true)
 				{
+					投資案[i].lineID = count;
+					count++;
 					縦内部幅 += 92;
 				}
 
