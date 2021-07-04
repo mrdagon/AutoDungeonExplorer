@@ -371,9 +371,7 @@ namespace SDX_ADE
 			{
 				部屋探索完了共通();
 
-				double coin = Rand::Get(3);
-
-				switch (Rand::Get(3))
+				switch (Rand::Get(2))
 				{
 				case 0:
 					発見素材種 = CraftType::木材;
@@ -385,7 +383,7 @@ namespace SDX_ADE
 					break;
 				case 2:
 					発見素材種 = CraftType::石材;
-					発見物 = &MIcon::UI[IconType::探索_採掘];
+					発見物 = &MIcon::UI[IconType::探索_採石];
 					break;
 				default:
 					break;
@@ -579,7 +577,7 @@ namespace SDX_ADE
 				{
 					for (int b = 0; b < 抽選回数[a]; b++)
 					{
-						魔物.emplace_back(探索先->雑魚モンスター[b], 探索先->雑魚Lv[b]);
+						魔物.emplace_back(探索先->雑魚モンスター[a], 探索先->雑魚Lv[a]);
 					}
 				}
 
@@ -613,7 +611,6 @@ namespace SDX_ADE
 					Game::ゲームスピード = 1;
 				}
 
-
 				敵.clear();
 				魔物.clear();
 
@@ -637,6 +634,14 @@ namespace SDX_ADE
 				}
 
 				//BGM変更
+				if (探索先->ID % 10 == 9)
+				{
+					MMusic::BGM[BGMType::エリアボス].Play();
+				} else {
+					MMusic::BGM[BGMType::通常ボス].Play();
+
+				}
+
 				//SEを鳴らしたりする
 
 				//戦闘開始時のパッシブ

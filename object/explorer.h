@@ -33,7 +33,7 @@ namespace SDX_ADE
 			装備[1] = ExplorerClass::data[job].初期装備[1];
 			装備[2] = ExplorerClass::data[job].初期装備[2];
 
-			スキルポイント = Lv + 10;
+			スキルポイント = Lv + 2;
 			経験値 = 0;
 
 			Aスキル.resize(CV::最大Aスキル数);
@@ -77,7 +77,7 @@ namespace SDX_ADE
 				Lv = std::max(1, Lv - 低下Lv);
 			}
 
-			スキルポイント = Lv + 0;
+			スキルポイント = Lv + 2;
 		}
 
 		//●人事関連
@@ -97,7 +97,8 @@ namespace SDX_ADE
 		//●Lvアップ時等更新ステータス
 		int Lv = 1;
 		double 経験値 = 0;
-		int スキルポイント;//余っているスキルポイント
+		int スキルポイント = 3;//余っているスキルポイント
+		int 振り直しポイント;
 
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
@@ -139,6 +140,7 @@ namespace SDX_ADE
 
 			レベルアップ判定();//2レベ以上上がった時用の再起呼び出し
 
+			予約スキル習得();
 		}
 
 		//基礎ステータス計算
@@ -261,7 +263,7 @@ namespace SDX_ADE
 			解除失敗
 		};
 
-		int Pスキル予約Lv(int スキルID)
+		int GetPスキル予約Lv(int スキルID)
 		{
 			int 現在Lv = 習得PスキルLv[スキルID];
 			for (int i = 0; i < CV::最大スキル予約数; i++)
@@ -274,7 +276,7 @@ namespace SDX_ADE
 			return 現在Lv;
 		}
 
-		int Aスキル予約Lv(int スキルID)
+		int GetAスキル予約Lv(int スキルID)
 		{
 			int 現在Lv = 習得AスキルLv[スキルID];
 			for (int i = 0; i < CV::最大スキル予約数; i++)
@@ -290,7 +292,7 @@ namespace SDX_ADE
 		Resultスキル強化 Pスキル予約(int スキルID)
 		{
 			//現在Lvと合計予約数を計算
-			int 現在Lv = Pスキル予約Lv(スキルID);
+			int 現在Lv = GetPスキル予約Lv(スキルID);
 
 			//合計が5以上なら強化不可
 			if (現在Lv >= 5) { return Resultスキル強化::予約失敗; }
@@ -308,7 +310,7 @@ namespace SDX_ADE
 		Resultスキル強化 Aスキル予約(int スキルID)
 		{
 			//現在Lvと合計予約数を計算
-			int 現在Lv = Aスキル予約Lv(スキルID);
+			int 現在Lv = GetAスキル予約Lv(スキルID);
 
 			//合計が5以上なら強化不可
 			if (現在Lv >= 5) { return Resultスキル強化::予約失敗; }
@@ -368,6 +370,30 @@ namespace SDX_ADE
 
 			装備Aスキル[スロット] = スキル;
 			return スロット;
+		}
+
+		void 予約スキル習得()
+		{
+			while (1)
+			{
+				if (スキルポイント <= 0) { return; }
+				if (スキル習得予約[0] == 0) { return; }
+
+				if (スキル習得予約[0] < 0)
+				{
+					習得AスキルLv[-スキル習得予約[0]]++;
+				} else {
+					習得PスキルLv[スキル習得予約[0]]++;
+				}
+
+				for (int i = 0; i < CV::最大スキル予約数-1; i++)
+				{
+					スキル習得予約[i] = スキル習得予約[i + 1];
+				}
+				スキル習得予約[CV::最大スキル予約数 - 1] = 0;
+
+				スキルポイント--;
+			}
 		}
 
 		void スキル予約解除(int 予約ID)

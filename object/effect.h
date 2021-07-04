@@ -89,7 +89,7 @@ namespace SDX_ADE
 	{
 	private:
 		const int フレーム時間 = 4;
-		int 加算減産;
+		int 加減算;
 		int フレーム番号 = 0;
 		int アニメ時間 = 0;
 		bool isEnd = false;
@@ -103,7 +103,7 @@ namespace SDX_ADE
 
 		BattleEffect(int id, bool is味方, int 配置ID) :
 			スキルエフェクト(MEffect::エフェクト[id]),
-			加算減産(MEffect::エフェクト種類[id]),
+			加減算(MEffect::エフェクト種類[id]),
 			is味方(is味方),
 			配置ID(配置ID)
 		{}
@@ -124,6 +124,7 @@ namespace SDX_ADE
 			// 代入操作時に行う処理を記述
 			this->スキルエフェクト = コピー元.スキルエフェクト;
 			this->フレーム番号 = コピー元.フレーム番号;
+			this->加減算 = コピー元.加減算;
 			this->アニメ時間 = コピー元.アニメ時間;
 			this->is味方 = コピー元.is味方;
 			this->配置ID = コピー元.配置ID;
@@ -133,18 +134,25 @@ namespace SDX_ADE
 
 		bool Draw(int x ,int y , double 拡大率)
 		{
-
-
-			if (加算減産 == 1 ) { Screen::SetBlendMode(BlendMode::Add); }
+			if (加減算 == 1 ) { Screen::SetBlendMode(BlendMode::Add); }
 			スキルエフェクト[フレーム番号]->DrawRotate({ x,y }, 拡大率, 0);
-			if (加算減産 != 0) { Screen::SetBlendMode(); }
+			if (加減算 != 0) { Screen::SetBlendMode(); }
 
-			アニメ時間 += (int)std::sqrt(Game::ゲームスピード);
-			if (アニメ時間 >= フレーム時間)
+			アニメ時間 += Game::ゲームスピード;
+
+			while (1)
 			{
-				フレーム番号++;
-				アニメ時間 = 0;
+				if (アニメ時間 >= フレーム時間)
+				{
+					フレーム番号++;
+					アニメ時間 -= フレーム時間;
+				}
+				else
+				{
+					break;
+				}
 			}
+
 			if (フレーム番号 >= スキルエフェクト.GetSize())
 			{
 				フレーム番号 = スキルエフェクト.GetSize() - 1;

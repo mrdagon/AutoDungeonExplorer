@@ -61,14 +61,14 @@ namespace SDX_ADE
 				it.名前 = strs[a][0];
 				if (strs[a].size() == 2)
 				{
-					int first = (int)strs[a][1].find('\t');
+					int first = (int)strs[a][1].find('$');
 					//最初の行が概説
 					it.概説 = strs[a][1].substr(0,first);
 					//tabを改行に置き換え
 					if (strs[a][1].length() > first)
 					{
 						it.説明 = strs[a][1].substr(first);
-						std::replace(it.説明.begin(), it.説明.end(), '\t', '\n');
+						std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 					}
 				}
 

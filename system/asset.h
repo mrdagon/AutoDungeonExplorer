@@ -11,94 +11,18 @@ namespace SDX_ADE
 	//ユニット
 	namespace MUnit
 	{
-		
-		EnumArray<ImagePack, UnitImageType> ユニット;
 		ImagePack モンスター[100];
 
 		static void Load()
 		{
-			ユニット[UnitImageType::ゴブリン].Load("file/unit/unit001.png", 12, 3, 4);
-			ユニット[UnitImageType::青ゴブリン].Load("file/unit/unit002.png", 12, 3, 4);
-			ユニット[UnitImageType::犬].Load("file/unit/unit003.png", 12, 3, 4);
-			ユニット[UnitImageType::青犬].Load("file/unit/unit004.png", 12, 3, 4);
-			ユニット[UnitImageType::白猫].Load("file/unit/unit005.png", 12, 3, 4);
-			ユニット[UnitImageType::黒猫].Load("file/unit/unit006.png", 12, 3, 4);
-			ユニット[UnitImageType::兵士].Load("file/unit/unit007.png", 12, 3, 4);
-			ユニット[UnitImageType::赤兵士].Load("file/unit/unit008.png", 12, 3, 4);
-			ユニット[UnitImageType::青兵士].Load("file/unit/unit009.png", 12, 3, 4);
-			ユニット[UnitImageType::メイド].Load("file/unit/unit010.png", 12, 3, 4);
-			ユニット[UnitImageType::ハゲ].Load("file/unit/unit011.png", 12, 3, 4);
-			ユニット[UnitImageType::執事].Load("file/unit/unit012.png", 12, 3, 4);
-			ユニット[UnitImageType::王].Load("file/unit/unit013.png", 12, 3, 4);
-			ユニット[UnitImageType::青王].Load("file/unit/unit014.png", 12, 3, 4);
-			ユニット[UnitImageType::王妃].Load("file/unit/unit015.png", 12, 3, 4);
-			ユニット[UnitImageType::青王妃].Load("file/unit/unit016.png", 12, 3, 4);
-			ユニット[UnitImageType::赤王妃].Load("file/unit/unit017.png", 12, 3, 4);
-			ユニット[UnitImageType::小王子].Load("file/unit/unit018.png", 12, 3, 4);
-			ユニット[UnitImageType::小姫].Load("file/unit/unit019.png", 12, 3, 4);
-			ユニット[UnitImageType::王子].Load("file/unit/unit020.png", 12, 3, 4);
-			ユニット[UnitImageType::姫].Load("file/unit/unit023.png", 12, 3, 4);
-			ユニット[UnitImageType::ドワーフ].Load("file/unit/unit024.png", 12, 3, 4);
-			ユニット[UnitImageType::子ドワーフ].Load("file/unit/unit027.png", 12, 3, 4);
-			ユニット[UnitImageType::茶女性].Load("file/unit/unit028.png", 12, 3, 4);
-			ユニット[UnitImageType::青女性].Load("file/unit/unit029.png", 12, 3, 4);
-			ユニット[UnitImageType::金女性].Load("file/unit/unit031.png", 12, 3, 4);
-			ユニット[UnitImageType::緑女性].Load("file/unit/unit033.png", 12, 3, 4);
-			ユニット[UnitImageType::茶村人].Load("file/unit/unit030.png", 12, 3, 4);
-			ユニット[UnitImageType::金村人].Load("file/unit/unit032.png", 12, 3, 4);
-			ユニット[UnitImageType::金子供].Load("file/unit/unit034.png", 12, 3, 4);
-			ユニット[UnitImageType::三つ編み].Load("file/unit/unit035.png", 12, 3, 4);
-			ユニット[UnitImageType::少年].Load("file/unit/unit036.png", 12, 3, 4);
-			ユニット[UnitImageType::少女].Load("file/unit/unit037.png", 12, 3, 4);
-			ユニット[UnitImageType::緑防止].Load("file/unit/unit038.png", 12, 3, 4);
-			ユニット[UnitImageType::おっさん].Load("file/unit/unit039.png", 12, 3, 4);
-			ユニット[UnitImageType::半裸].Load("file/unit/unit040.png", 12, 3, 4);
-			ユニット[UnitImageType::青オーク].Load("file/unit/unit041.png", 12, 3, 4);
-			ユニット[UnitImageType::赤オーク].Load("file/unit/unit042.png", 12, 3, 4);
-			ユニット[UnitImageType::おばさん].Load("file/unit/unit043.png", 12, 3, 4);
-			ユニット[UnitImageType::おばあさん].Load("file/unit/unit044.png", 12, 3, 4);
-			ユニット[UnitImageType::おじいさん].Load("file/unit/unit045.png", 12, 3, 4);
-			ユニット[UnitImageType::勇者].Load("file/unit/unit048.png", 12, 3, 4);
-			ユニット[UnitImageType::闘士].Load("file/unit/unit050.png", 12, 3, 4);
-			ユニット[UnitImageType::弓士].Load("file/unit/unit053.png", 12, 3, 4);
-			ユニット[UnitImageType::剣聖].Load("file/unit/unit055.png", 12, 3, 4);
-			ユニット[UnitImageType::武術家].Load("file/unit/unit057.png", 12, 3, 4);
-			ユニット[UnitImageType::魔女].Load("file/unit/unit059.png", 12, 3, 4);
-			ユニット[UnitImageType::精霊].Load("file/unit/unit062.png", 12, 3, 4);
-			ユニット[UnitImageType::くの一].Load("file/unit/unit063.png", 12, 3, 4);
-			ユニット[UnitImageType::盗賊].Load("file/unit/unit065.png", 12, 3, 4);
-			ユニット[UnitImageType::レンジャー].Load("file/unit/unit066.png", 12, 3, 4);
-			ユニット[UnitImageType::妖術師].Load("file/unit/unit068.png", 12, 3, 4);
-			ユニット[UnitImageType::大魔導師].Load("file/unit/unit070.png", 12, 3, 4);
-			ユニット[UnitImageType::族長].Load("file/unit/unit071.png", 12, 3, 4);
-			ユニット[UnitImageType::空手家].Load("file/unit/unit073.png", 12, 3, 4);
-			ユニット[UnitImageType::戦士].Load("file/unit/unit075.png", 12, 3, 4);
-			ユニット[UnitImageType::戦士2].Load("file/unit/unit077.png", 12, 3, 4);
-			ユニット[UnitImageType::重装].Load("file/unit/unit078.png", 12, 3, 4);
-			ユニット[UnitImageType::柔術家].Load("file/unit/unit080.png", 12, 3, 4);
-			ユニット[UnitImageType::呪術師].Load("file/unit/unit082.png", 12, 3, 4);
-			ユニット[UnitImageType::暗殺者].Load("file/unit/unit087.png", 12, 3, 4);
-			ユニット[UnitImageType::傭兵].Load("file/unit/unit090.png", 12, 3, 4);
-			ユニット[UnitImageType::老兵].Load("file/unit/unit093.png", 12, 3, 4);
-			ユニット[UnitImageType::戦士3].Load("file/unit/unit094.png", 12, 3, 4);
-			ユニット[UnitImageType::騎士].Load("file/unit/unit097.png", 12, 3, 4);
-			ユニット[UnitImageType::司祭].Load("file/unit/unit099.png", 12, 3, 4);
-
-			ユニット[UnitImageType::スライム].Load("file/monster/mon000.png", 12, 3, 4);
-			ユニット[UnitImageType::赤スライム].Load("file/monster/mon001.png", 12, 3, 4);
-			ユニット[UnitImageType::狼].Load("file/monster/mon002.png", 12, 3, 4);
-			ユニット[UnitImageType::青狼].Load("file/monster/mon003.png", 12, 3, 4);
-			ユニット[UnitImageType::三頭犬].Load("file/monster/mon004.png", 12, 3, 4);
-			ユニット[UnitImageType::スケルトン].Load("file/monster/mon005.png", 12, 3, 4);
-			ユニット[UnitImageType::サハギン].Load("file/monster/mon006.png", 12, 3, 4);
-			ユニット[UnitImageType::インプ].Load("file/monster/mon007.png", 12, 3, 4);
-			ユニット[UnitImageType::トレント].Load("file/monster/mon008.png", 12, 3, 4);
-			ユニット[UnitImageType::グリフィン].Load("file/monster/mon009.png", 12, 3, 4);
-			ユニット[UnitImageType::ドラゴン].Load("file/monster/mon010.png", 12, 3, 4);
-
 			for (int i = 0; i < 100; i++)
 			{
-				モンスター[i].Load("file/monster/mon010.png", 12, 3, 4);
+				std::string path = "file/monster/";
+				path += std::to_string(i / 100);
+				path += std::to_string(i / 10 % 10);
+				path += std::to_string(i % 10);
+				path += ".png";
+				モンスター[i].Load(path.c_str(), 2, 2, 1);
 			}
 		}
 	}
@@ -175,11 +99,11 @@ namespace SDX_ADE
 			UI[IconType::骨材].Load("file/system/mat_004.png");
 
 			素材[CraftType::木材].Load("file/system/mat_002.png");
-			素材[CraftType::石材].Load("file/system/mat_001.png");
+			素材[CraftType::石材].Load("file/system/mat_008.png");
 			素材[CraftType::鉄材].Load("file/system/mat_001.png");
 			素材[CraftType::革材].Load("file/system/mat_003.png");
 			素材[CraftType::骨材].Load("file/system/mat_004.png");
-			素材[CraftType::魔材].Load("file/system/mat_001.png");
+			素材[CraftType::魔材].Load("file/system/mat_010.png");
 
 			for (int i = 0; i < 100; i++)
 			{
@@ -189,8 +113,9 @@ namespace SDX_ADE
 			}
 
 			//探索用
-			UI[IconType::探索_伐採].Load("file/system/dun00.png");
-			UI[IconType::探索_採掘].Load("file/system/dun01.png");
+			UI[IconType::探索_伐採].Load("file/system/wood_get.png");
+			UI[IconType::探索_採掘].Load("file/system/iron_get.png");
+			UI[IconType::探索_採石].Load("file/system/stone_get.png");
 			UI[IconType::探索_財宝].Load("file/system/dun02.png");
 			UI[IconType::探索_地図].Load("file/system/dun03.png");
 			UI[IconType::探索_石版].Load("file/system/dun04.png");
@@ -348,23 +273,31 @@ namespace SDX_ADE
 	//戦闘エフェクト
 	namespace MEffect
 	{
-		ImagePack エフェクト[12];
-		int エフェクト種類[12];//0 通常、1加算、2減算
+		ImagePack エフェクト[200];
+		int エフェクト種類[200];//0 通常、1加算、2減算
 
 		static void Load()
 		{
-			エフェクト[0].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
-			エフェクト[1].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
-			エフェクト[2].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
-			エフェクト[3].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
-			エフェクト[4].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
-			エフェクト[5].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
-			エフェクト[6].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
-			エフェクト[7].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
-			エフェクト[8].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
-			エフェクト[9].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
-			エフェクト[10].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
-			エフェクト[11].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
+			for (int i = 0; i < 200; i++)
+			{
+				エフェクト[i].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
+			}
+
+			エフェクト[1].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
+			エフェクト[2].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
+			エフェクト[6].Load("file/effect/pipo-btleffect006_.png", 7, 7, 1);
+			エフェクト[24].Load("file/effect/pipo-btleffect024.png", 8, 8, 1);
+			エフェクト[27].Load("file/effect/pipo-btleffect027.png", 8, 8, 1);
+			エフェクト[29].Load("file/effect/pipo-btleffect029.png", 8, 8, 1);
+			エフェクト[19].Load("file/effect/pipo-btleffect019.png", 10, 10, 1);
+			エフェクト[20].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
+			エフェクト[45].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
+			エフェクト[17].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
+			エフェクト[121].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
+			エフェクト[122].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
+
+			エフェクト種類[45] = 1;
+
 		}
 	}
 
@@ -376,31 +309,53 @@ namespace SDX_ADE
 
 		static void Load()
 		{
-			立ち絵[0].Load("file/job/BR97.png");
-			立ち絵[1].Load("file/job/BR40.png");
-			立ち絵[2].Load("file/job/BR223.png");
-			立ち絵[3].Load("file/job/BR99.png");
-			立ち絵[4].Load("file/job/BR122.png");
-			立ち絵[5].Load("file/job/BR42.png");
-			立ち絵[6].Load("file/job/BR113.png");
-			立ち絵[7].Load("file/job/BR16.zip");
-			立ち絵[8].Load("file/job/BR200.png");
-			立ち絵[9].Load("file/job/BR92.png");
-			立ち絵[10].Load("file/job/BR207.png");
-			立ち絵[11].Load("file/job/BR44.png");
+			//スレイヤー
+			立ち絵[0].Load("file/job/BR16.zip");
+			ちび[0].Load("file/job/chibi/BR16.png", 9, 3, 6);
 
-			ちび[0].Load("file/job/chibi/BR97.png",9,3,6);
-			ちび[1].Load("file/job/chibi/BR40.png", 9, 3,6);
-			ちび[2].Load("file/job/chibi/BR223.png", 9, 3,6);
-			ちび[3].Load("file/job/chibi/BR99.png", 9, 3,6);
-			ちび[4].Load("file/job/chibi/BR122.png", 9, 3,6);
-			ちび[5].Load("file/job/chibi/BR42.png", 9, 3,6);
-			ちび[6].Load("file/job/chibi/BR113.png", 9, 3,6);
-			ちび[7].Load("file/job/chibi/BR16.png", 9, 3,6);
-			ちび[8].Load("file/job/chibi/BR200.png", 9, 3,6);
-			ちび[9].Load("file/job/chibi/BR92.png", 9, 3,6);
-			ちび[10].Load("file/job/chibi/BR207.png", 9, 3,6);
-			ちび[11].Load("file/job/chibi/BR44.png", 9, 3,6);
+			//ガーディアン
+			立ち絵[1].Load("file/job/BR97.png");
+			ちび[1].Load("file/job/chibi/BR97.png", 9, 3, 6);
+
+			//デッドアイ
+			立ち絵[2].Load("file/job/BR92.png");
+			ちび[2].Load("file/job/chibi/BR92.png", 9, 3, 6);
+
+			//エレメンタリスト
+			立ち絵[3].Load("file/job/BR207.png");
+			ちび[3].Load("file/job/chibi/BR207.png", 9, 3, 6);
+
+			//プリースト
+			立ち絵[4].Load("file/job/BR99.png");
+			ちび[4].Load("file/job/chibi/BR99.png", 9, 3, 6);
+
+			//オカルティスト
+			立ち絵[5].Load("file/job/BR42.png");
+			ちび[5].Load("file/job/chibi/BR42.png", 9, 3, 6);
+
+			//グラディエーター
+			立ち絵[6].Load("file/job/BR40.png");
+			ちび[6].Load("file/job/chibi/BR40.png", 9, 3, 6);
+
+			//アサシン
+			立ち絵[7].Load("file/job/BR200.png");
+			ちび[7].Load("file/job/chibi/BR200.png", 9, 3, 6);
+
+			//バーサーカー
+			立ち絵[8].Load("file/job/BR113.png");
+			ちび[8].Load("file/job/chibi/BR113.png", 9, 3, 6);
+
+			//トリックスター
+			立ち絵[9].Load("file/job/BR44.png");
+			ちび[9].Load("file/job/chibi/BR44.png", 9, 3, 6);
+
+			//ミスティック
+			立ち絵[10].Load("file/job/BR122.png");
+			ちび[10].Load("file/job/chibi/BR122.png", 9, 3, 6);
+
+			//パスファインダー
+			立ち絵[11].Load("file/job/BR223.png");
+			ちび[11].Load("file/job/chibi/BR223.png", 9, 3,6);
 		}
 	}
 
@@ -412,9 +367,9 @@ namespace SDX_ADE
 		static void Load()
 		{
 			BGM[BGMType::準備中].Load("file/music/furattoguild.mp3");
-			BGM[BGMType::探検中].Load("file/music/komichiwokakenukete.mp3");
-			BGM[BGMType::通常ボス].Load("file/music/kinokomonchaku.mp3");
-			BGM[BGMType::エリアボス].Load("file/music/wazawainobisyu.mp3");
+			BGM[BGMType::探検中].Load("file/music/mamonotoyukukouya.mp3");
+			BGM[BGMType::通常ボス].Load("file/music/yudanhakinmotsu.mp3");
+			BGM[BGMType::エリアボス].Load("file/music/imasuguketsudannwo.mp3");
 			BGM[BGMType::タイトル].Load("file/music/ouzokunokeifu.mp3");
 
 			for (auto& it : BGM)

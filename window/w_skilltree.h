@@ -338,7 +338,7 @@ namespace SDX_ADE
 			{
 				auto* it = W_Skilltree::ギルメン->職業->習得Pスキル[lineID];
 				int Lv = W_Skilltree::ギルメン->習得PスキルLv[it->ID];
-				int 予約Lv = W_Skilltree::ギルメン->Pスキル予約Lv(it->ID);
+				int 予約Lv = W_Skilltree::ギルメン->GetPスキル予約Lv(it->ID);
 				auto& LA = LData(LSkill::スキルLv);
 
 				if (押下アニメ > 0)
@@ -396,7 +396,7 @@ namespace SDX_ADE
 			{
 				auto* it = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
 				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
-				int 予約Lv = W_Skilltree::ギルメン->Aスキル予約Lv(it->ID);
+				int 予約Lv = W_Skilltree::ギルメン->GetAスキル予約Lv(it->ID);
 				auto& LA = LData(LSkill::スキルLv);
 
 				if (押下アニメ > 0)
@@ -558,6 +558,12 @@ namespace SDX_ADE
 			確定.clickEvent = [&]()
 			{
 				this->is表示 = false;
+
+				for (int a = 0; a < 100; a++)
+				{
+					Guild::P->探索者[a].予約スキル習得();
+				}
+
 			};
 			前後[0].clickEvent = [&]()
 			{ 

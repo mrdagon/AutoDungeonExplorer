@@ -143,7 +143,7 @@ namespace SDX_ADE
 			{
 				アクター.emplace_back();
 				アクター[a].id = a;
-				アクター[a].画像 = &MUnit::ユニット[UnitImageType(a)];
+				アクター[a].画像 = &MUnit::モンスター[0];
 				アクター[a].名前 = "アクター";
 				アクター[a].名前 += std::to_string(a);
 			}

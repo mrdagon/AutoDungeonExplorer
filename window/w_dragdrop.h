@@ -76,5 +76,13 @@ namespace SDX_ADE
 
 			return false;
 		}
+
+		void Reset()
+		{
+			ダンジョン = nullptr;
+			所持装備 = nullptr;
+			ギルメン装備.メンバー = nullptr;
+			探索者.メンバー = nullptr;
+		}
 	};
 }

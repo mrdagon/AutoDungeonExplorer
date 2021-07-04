@@ -567,7 +567,7 @@ namespace SDX_ADE
 				Draw背景();
 
 				//味方表示
-				for (int i = 0; i < パーティ->味方.size(); i++)
+				for (int i = 0; i < CV::パーティ人数; i++)
 				{
 					switch (i)
 					{
@@ -576,7 +576,7 @@ namespace SDX_ADE
 						case 2:Draw味方(パーティ->メンバー[i], Layout::Data(LBattle::味方C)); break;
 						case 3:Draw味方(パーティ->メンバー[i], Layout::Data(LBattle::味方D)); break;
 						case 4:Draw味方(パーティ->メンバー[i], Layout::Data(LBattle::味方E)); break;
-					}					
+					}
 				}
 
 				//敵表示
@@ -723,6 +723,8 @@ namespace SDX_ADE
 
 			void Draw味方(Explorer* it, Layout& layout )
 			{
+				if (it == nullptr) { return; }
+
 				auto& LA = Layout::Data(LBattle::ライフバー);
 				auto& LB = Layout::Data(LBattle::行動バー);
 
@@ -814,7 +816,7 @@ namespace SDX_ADE
 
 
 				auto img = it.種族->image;
-				int 向き = 7;
+				int 向き = 0;
 				double サイズ = 2;
 
 				if (it.isボス)

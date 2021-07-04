@@ -556,7 +556,7 @@ namespace SDX_ADE
 				if ( !Rand::Coin(Aスキル.命中 - Getステ(StatusType::回避))) { continue; }
 				is回避 = false;
 
-				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス));
+				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス)) / 100;
 
 				for (int b = 0; b < (int)BuffType::COUNT; b++)
 				{
@@ -732,10 +732,19 @@ namespace SDX_ADE
 			case PSkillEffect::回避増加:
 				補正ステ[StatusType::回避] += Pスキル->効果量[0];
 				break;
-			case PSkillEffect::スキルCT増減:
-				for (int a = 0; a < CV::最大Aスキル数; a++)
-				{
-				}
+			case PSkillEffect::HP割合増加:
+				break;
+			case PSkillEffect::STR割合増加:
+				break;
+			case PSkillEffect::INT割合増加:
+				break;
+			case PSkillEffect::DEX割合増加:
+				break;
+			case PSkillEffect::物防割合増加:
+				break;
+			case PSkillEffect::魔防割合増加:
+				break;
+			case PSkillEffect::経験値増加:
 				break;
 			//基礎非戦闘
 			case PSkillEffect::採取増加:
@@ -753,35 +762,93 @@ namespace SDX_ADE
 			case PSkillEffect::戦闘後回復:
 				戦闘後回復 += Pスキル->効果量[0];
 				break;
-			//スキル使用時限定
-			case PSkillEffect::スキル威力増減:
-				//Aスキル->反映率 *= 1.0 + Pスキル->効果量[0];
+			case PSkillEffect::未探索発見率増加:
 				break;
-			case PSkillEffect::スキル効果増減:
-				//Aスキル->バフ効果補正 += Pスキル->効果量[0];
+			case PSkillEffect::魔物部屋率上昇:
 				break;
-			//色んなタイミングで発動可能
+			case PSkillEffect::素材部屋率上昇:
+				break;
+			case PSkillEffect::移動速度上昇:
+				break;
+			//アクティブ効果
 			case PSkillEffect::与ダメージバフ:
-				if (Pスキル->対象 == PSkillTarget::スキル対象)
-				{
-					//Aスキル->バフ確率[BuffType::与ダメ増減] = 1.0;
-					//Aスキル->バフ持続[BuffType::与ダメ増減] = Pスキル->持続時間;
-					//Aスキル->バフ反映率[BuffType::与ダメ増減] = Pスキル->効果量[0];
-				} else {
-					//自己バフ
-					バフ使用(BuffType::与ダメ増減, Pスキル->効果量[0], Pスキル->持続時間);
-				}
 				break;
 			case PSkillEffect::受ダメージバフ:
-				if (Pスキル->対象 == PSkillTarget::スキル対象)
-				{
-					//Aスキル->バフ確率[BuffType::被ダメ軽減] = 1.0;
-					//Aスキル->バフ持続[BuffType::被ダメ軽減] = Pスキル->持続時間;
-					//Aスキル->バフ反映率[BuffType::被ダメ軽減] = Pスキル->効果量[0];
-				} else {
-					//自己
-					バフ使用(BuffType::被ダメ軽減, Pスキル->効果量[0], Pスキル->持続時間);
-				}
+				break;
+			case PSkillEffect::HP1で耐える:
+				break;
+			case PSkillEffect::異常耐性:
+				break;
+			case PSkillEffect::デバフ耐性:
+				break;
+			case PSkillEffect::身代わり:
+				break;
+			case PSkillEffect::CT減少:
+				break;
+			case PSkillEffect::HP回復:
+				break;
+			//スキル強化、属性追加
+			case PSkillEffect::ダメージ増加:
+				break;
+			case PSkillEffect::スキル威力増減:
+				break;
+			case PSkillEffect::スキル効果増減:
+				break;
+			case PSkillEffect::スキルCT増減:
+				break;
+			case PSkillEffect::アクティブスキル発動:
+				break;
+			case PSkillEffect::物理化:
+				break;
+			case PSkillEffect::魔法化:
+				break;
+			case PSkillEffect::隊列無視:
+				break;
+			case PSkillEffect::必中:
+				break;
+			case PSkillEffect::隠れる無視:
+				break;
+			case PSkillEffect::挑発無視:
+				break;
+			case PSkillEffect::異常回復:
+				break;
+			case PSkillEffect::気絶回復:
+				break;
+			case PSkillEffect::防御貫通:
+				break;
+			case PSkillEffect::魔防貫通:
+				break;
+			case PSkillEffect::回避貫通:
+				break;
+			case PSkillEffect::超過回復:
+				break;
+			case PSkillEffect::バフ固定値:
+				break;
+			case PSkillEffect::バフ反映率:
+				break;
+			case PSkillEffect::バフ発動率:
+				break;
+			case PSkillEffect::バフ持続:
+				break;
+			case PSkillEffect::バフ延長:
+				break;
+			case PSkillEffect::デバフ延長:
+				break;
+			case PSkillEffect::バフ強化:
+				break;
+			case PSkillEffect::デバフ強化:
+				break;
+			case PSkillEffect::先制:
+				break;
+			case PSkillEffect::むらっけ:
+				break;
+			case PSkillEffect::吸収:
+				break;
+			case PSkillEffect::処刑:
+				break;
+			case PSkillEffect::異常追撃:
+				break;
+			case PSkillEffect::挑発追撃:
 				break;
 			}
 		}

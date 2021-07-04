@@ -309,7 +309,8 @@ namespace SDX_ADE
 			//BGM変更
 			MMusic::BGM[BGMType::探検中].Play();
 			MSound::効果音[SEType::探索開始].Play();
-
+			W_Drag::Reset();
+			
 			Game::is仕事中 = true;
 
 			Guild::P->探索開始();
