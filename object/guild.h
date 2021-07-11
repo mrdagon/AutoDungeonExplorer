@@ -124,10 +124,10 @@ namespace SDX_ADE
 					味方[a]->隊列ID = a;
 					味方[a]->パーティID = パーティID;
 					味方[a]->基礎ステータス計算();
-				}
-				for (int a = 0; a < (int)味方.size(); a++)
-				{
+					味方[a]->戦闘後回復 += Guild::P->戦闘後回復;
 					味方[a]->基礎Pスキル補正(味方, 敵);
+
+					味方[a]->現在HP = 味方[a]->補正ステ[StatusType::HP];
 				}
 			}
 
@@ -200,10 +200,10 @@ namespace SDX_ADE
 				//アクセサリー獲得
 				for (auto& it : 獲得財宝)
 				{
+					//石碑の欠片は取得出来ないようにする
 					if (it > 0)
 					{
 						Guild::P->アクセサリー所持数[it]++;
-
 					}
 				}
 
@@ -450,7 +450,7 @@ namespace SDX_ADE
 				double レア素材確率 = 0;
 				double 素材数増加率 = 0;
 				double 上位チャンス = (探索先->ID - 探索先->層 * 10) * 0.05;
-				int ランク = Rand::Get(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
+				int ランク = Rand::Coin(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
 
 				//パッシブ補正
 				for (auto& it : 味方)
@@ -492,10 +492,11 @@ namespace SDX_ADE
 				int 素材数 = 1;
 
 				double 上位チャンス = (探索先->ID - 探索先->層 * 10) * 0.05;
-				int ランク = Rand::Get(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
+				int ランク = Rand::Coin(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
 
 				double レア率 = it.種族->レア素材率;
 				double 素材数増加率 = 0;
+				double 素材獲得率 = 0.2;
 				CraftType 素材種 = CraftType::革材;
 
 				switch (Rand::Get(2))
@@ -533,12 +534,15 @@ namespace SDX_ADE
 				if (it.isボス == true)
 				{
 					ランク++;
-					素材数 += 9;
+					素材数 += 4;
+					素材獲得率 = 1.0;
 				}
 
 				//素材獲得
 				for (int a = 0; a < 素材数; a++)
 				{
+					if (Rand::Coin(素材獲得率) == false) { continue; }
+
 					入手素材[素材種][ランク]++;
 					Effect::素材[パーティID].emplace_back(Material::data[素材種][ランク].image, a, it.隊列ID);
 				}
@@ -757,11 +761,13 @@ namespace SDX_ADE
 			void 戦闘勝利()
 			{
 				std::string text = "";
-
+				bool isボス戦後 = false;
+				
 				//クエスト処理
 				switch (探索先->部屋[部屋ID].種類)
 				{
 				case RoomType::ボス:
+					isボス戦後 = true;
 					text = 魔物[0].種族->名前;
 					text += "を討伐";
 					EventLog::Add(text.c_str(), Game::日付, LogType::ボス);
@@ -802,10 +808,19 @@ namespace SDX_ADE
 				//体力回復
 				for (int a = 0; a < (int)味方.size(); a++)
 				{
-					味方[a]->現在HP += (int)((味方[a]->戦闘後回復 + Guild::P->戦闘後回復) * 味方[a]->補正ステ[StatusType::HP]);
+					int 回復量 = (int)((味方[a]->戦闘後回復 + Guild::P->戦闘後回復) * 味方[a]->補正ステ[StatusType::HP]);
+
+					if (isボス戦後 == true)
+					{
+						回復量 = 味方[a]->補正ステ[StatusType::HP];
+					}
+
+					味方[a]->現在HP += 回復量;
 					味方[a]->現在HP = std::min(味方[a]->現在HP, 味方[a]->補正ステ[StatusType::HP]);
-					味方[a]->エフェクトダメージ(-(int)(味方[a]->戦闘後回復 * 味方[a]->補正ステ[StatusType::HP]));
+
+					味方[a]->エフェクトダメージ( -回復量 );
 					味方[a]->現在クールダウン = 0;
+					味方[a]->現在スキルスロット = 0;
 				}
 
 				探索状態 = ExplorType::収集中;
@@ -830,7 +845,6 @@ namespace SDX_ADE
 				MSound::効果音[SE::全滅].Play();
 				Guild::P->総全滅++;
 			}
-
 
 			void 財宝獲得()
 			{
@@ -917,7 +931,7 @@ namespace SDX_ADE
 		Party パーティ[CV::上限パーティ数];
 		Explorer* 控え探索者[CV::最大控え人数];
 
-		int 最大パーティ数 = 3;
+		int 最大パーティ数 = 1;
 
 		int 街Lv = 1;
 		int 街経験値 = 0;
@@ -957,7 +971,7 @@ namespace SDX_ADE
 		{
 			for (int a = 1; a <= 9; a++)
 			{
-				アクセサリー所持数[a] = 3;
+				アクセサリー所持数[a] = 0;
 			}
 
 			for (auto& itA : is素材発見)
@@ -968,28 +982,23 @@ namespace SDX_ADE
 				}
 			}
 
+			for (auto& it : 控え探索者)
+			{
+				it = nullptr;
+			}
+
 			探索者登録(0, "ギルメンA");
 			探索者登録(1, "ギルメンB");
 			探索者登録(2, "ギルメンC");
 			探索者登録(3, "ギルメンD");
 			探索者登録(4, "ギルメンE");
 
-			for (auto& it : 控え探索者)
-			{
-				it = nullptr;
-			}
 
 			//初期、探索者、テスト用
-			for (int a = 0; a < 5; a++)
-			{
-				パーティ[0].メンバー[a] = &Guild::P->探索者[a];
-			}
-
-			探索者登録(5, "ギルメンF");
-			探索者登録(6, "ギルメンG");
-			探索者登録(7, "ギルメンH");
-			探索者登録(8, "ギルメンI");
-			探索者登録(9, "ギルメンJ");
+			//for (int a = 0; a < 5; a++)
+			//{
+			//	パーティ[0].メンバー[a] = &Guild::P->探索者[a];
+			//}
 
 			//パーティ初期化
 			for (int a = 0; a < CV::上限パーティ数; a++)
@@ -1089,6 +1098,14 @@ namespace SDX_ADE
 
 		}
 
+		void 基礎ステ再計算()
+		{
+			for (int i = 0; i < 3; i++)
+			{
+				パーティ->基礎ステ再計算();
+			}
+		}
+
 		//操作処理
 		void 操作_配置変更(int パーティA , int 並びA , int パーティB , int 並びB)
 		{
@@ -1144,7 +1161,7 @@ namespace SDX_ADE
 			std::array<int, CV::上限素材ランク> サブ素材;
 
 			CraftType メイン種 = メンバー->装備[装備スロット]->GetMainRecipe(メイン素材);
-			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(メイン素材);
+			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(サブ素材);
 
 			//素材数チェック
 			for (int i = 0; i < CV::上限素材ランク ; i++)
@@ -1171,7 +1188,7 @@ namespace SDX_ADE
 			std::array<int, CV::上限素材ランク> サブ素材;
 
 			CraftType メイン種 = メンバー->装備[装備スロット]->GetMainRecipe(メイン素材);
-			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(メイン素材);
+			CraftType サブ種 = メンバー->装備[装備スロット]->GetSubRecipe(サブ素材);
 
 			//素材数チェック
 			for (int i = 0; i < CV::上限素材ランク; i++)

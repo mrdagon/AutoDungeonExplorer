@@ -66,7 +66,7 @@ namespace SDX_ADE
 				//投資名 Lv
 				//Design::No1->Draw(UIType::丸フレーム, GetX() + LB.x, GetY() + LB.y, LB.w, LB.h);
 				MFont::L->DrawEdge({ GetX() + LB.並べx , GetY() + LB.並べy }, Design::暗字, { manage->名前 });
-				MFont::L->DrawEdge({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv" , manage->投資Lv });
+				//MFont::L->DrawEdge({ GetX() + LA.x , GetY() + LA.y }, Design::暗字, { "Lv" , manage->投資Lv });
 				//費用
 				for (int i = 0; i < CV::投資コスト最大枠数; i++)
 				{
@@ -82,7 +82,7 @@ namespace SDX_ADE
 					Design::Input->Draw(UIType::丸フレーム, pt.x, pt.y, LE.w , LE.h );
 					MIcon::素材[cost.必要素材種].Draw({ pt.x + LH.x , pt.y + LH.y });
 
-					MFont::M->DrawEdge({ pt.x + LF.x , pt.y +LF.y }, Design::明字, { "★" , cost.必要素材ランク });
+					MFont::M->DrawEdge({ pt.x + LF.x , pt.y +LF.y }, Design::明字, { "★" , cost.必要素材ランク+1 });
 					MFont::M->DrawRotateEdge({ pt.x + LG.x , pt.y + LG.y },1,0, Design::暗字, { "x" , cost.必要素材数 });
 				}
 

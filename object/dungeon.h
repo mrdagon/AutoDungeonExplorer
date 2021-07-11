@@ -128,6 +128,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;

@@ -60,6 +60,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;
@@ -110,6 +111,36 @@ namespace SDX_ADE
 				}
 
 			}
+		}
+
+		int Getステ( StatusType 種類, int Lv)
+		{
+			int hp = 0;
+
+			switch (種類)
+			{
+			case StatusType::HP:
+				hp = int(ステ[種類] * (8.8 + Lv * 1.2) / 5);
+				if (isボス)
+				{
+					return hp * 20;
+				}
+				return hp;
+			case StatusType::力:
+			case StatusType::知:
+			case StatusType::技:
+				return int(ステ[種類] * (8.8 + Lv * 1.2) / 10);
+			case StatusType::物防:
+			case StatusType::魔防:
+				return int(ステ[種類] * (28.8 + Lv * 1.2) / 30);
+			case StatusType::命中:
+			case StatusType::回避:
+				return int(ステ[種類] * (48.8 + Lv * 1.2) / 50);
+			default:
+				return ステ[種類];
+			}
+
+			return 0;
 		}
 	};
 }

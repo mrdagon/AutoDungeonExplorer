@@ -46,7 +46,7 @@ namespace SDX_ADE
 		int 発動率;
 		PSkillTarget 対象;
 
-		PSkillEffect 効果種[2];
+		PSkillEffectType 効果種[2];
 		int 効果量[2];
 
 		PSkillLvType レベル補正_種類[2];
@@ -71,7 +71,7 @@ namespace SDX_ADE
 			return value;
 		}
 
-		int Get発動率(int Lv)
+		double Get発動率(int Lv)
 		{
 			int value = 発動率;
 
@@ -88,7 +88,7 @@ namespace SDX_ADE
 				}
 			}
 
-			return value;
+			return (double)value / 100.0;
 		}
 
 		int Get効果値( int index , int Lv)
@@ -161,6 +161,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				file_data.Read( dummy );
@@ -195,6 +196,44 @@ namespace SDX_ADE
 				file_data.Read(it.レアリティ);
 			}
 		}
+	};
+
+	class PSkillEffect
+	{
+	private:
+		PassiveSkill* Pスキル;
+		int Lv;
+	public:
+		PSkillEffect(PassiveSkill* Pスキル,int Lv) :
+			Pスキル(Pスキル),
+			Lv(Lv)
+		{}
+
+		PSkillEffectType Get効果種(int index)
+		{
+			return Pスキル->効果種[index];
+		}
+
+		int Get条件値()
+		{
+			return Pスキル->Get条件値(Lv);
+		}
+
+		double Get発動率()
+		{
+			return Pスキル->Get発動率(Lv);
+		}
+
+		int Get効果値(int index)
+		{
+			return Pスキル->Get効果値(index,Lv);		
+		}
+
+		int Get持続値()
+		{
+			return Pスキル->Get持続値(Lv);
+		}
+
 	};
 
 

@@ -40,8 +40,8 @@ namespace SDX_ADE
 
 			for (int i = 0; i < (int)ItemType::COUNT; i++)
 			{
-				file_素材種.Read(素材種[(ItemType)i].メイン素材);//画像ID
-				file_素材種.Read(素材種[(ItemType)i].サブ素材);//画像ID
+				//file_素材種.Read(素材種[(ItemType)i].メイン素材);//画像ID
+				//file_素材種.Read(素材種[(ItemType)i].サブ素材);//画像ID
 			}
 
 

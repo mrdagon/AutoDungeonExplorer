@@ -115,8 +115,6 @@ namespace SDX_ADE
 			return false;
 		}
 
-
-
 		static void LoadData()
 		{
 			File file_data("file/data/invest.dat", FileMode::Read, true);
@@ -137,6 +135,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;
@@ -152,6 +151,7 @@ namespace SDX_ADE
 					it.コスト[i].必要素材種 = CraftType(dummy);
 					file_data.Read(it.コスト[i].必要素材数);
 					file_data.Read(it.コスト[i].必要素材ランク);
+					it.コスト[i].必要素材ランク--;
 				}
 			}
 		}

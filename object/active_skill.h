@@ -100,6 +100,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;
@@ -190,22 +191,21 @@ namespace SDX_ADE
 				}
 
 				//スキル属性代入
-				if (it.スキルタグ[(int)SkillType::無属性] == true)
+				if (it.スキルタグ[(int)SkillType::回復] == true)
+				{
+					it.属性 = DamageType::回復;
+				}
+				else if (it.スキルタグ[(int)SkillType::無属性] == true)
 				{
 					it.属性 = DamageType::無属性;
 				}
-				else
-				if ( it.スキルタグ[(int)SkillType::物理] == true)
+				else if ( it.スキルタグ[(int)SkillType::物理] == true)
 				{
 					it.属性 = DamageType::物理;
 				}
 				else if (it.スキルタグ[(int)SkillType::魔法] == true)
 				{
 					it.属性 = DamageType::魔法;
-				}
-				else if (it.スキルタグ[(int)SkillType::回復] == true)
-				{
-					it.属性 = DamageType::回復;
 				}
 				else
 				{
@@ -231,7 +231,6 @@ namespace SDX_ADE
 
 		int 会心率 = 0;
 		int 会心倍率 = 150;
-		//クールタイムは持たない
 
 		ASkillTarget 対象;
 		int 範囲 = 1;
@@ -244,9 +243,14 @@ namespace SDX_ADE
 		EnumArray< int, ASkillSubType> 追加効果;
 		std::vector<ASkill補助効果> 補助効果;
 
-		//+10%みたいなPスキル効果、最後に計算するタイプ
-		//あとから増やすかも
+		//Pスキル補正、最後に計算するタイプ
 		int ダメージ％増加 = 0;
+		int 効果％増加 = 0;
+		int 行動値獲得 = 0;
+		int バフ発動率 = 0;
+		int バフ反映率 = 0;
+		int バフ持続 = 0;
+		int バフ固定値 = 0;
 
 		//ベースAスキルとLvを元に一時計算用のデータを作成
 		ASkillEffect(const ActiveSkill* スキルベース , int Lv):

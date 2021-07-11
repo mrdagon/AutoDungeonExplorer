@@ -136,7 +136,7 @@ namespace SDX_ADE
 			経験値 -= 要求exp;
 			Lv += 1;
 			スキルポイント += 1;
-			レベルアップ演出 = true;
+			レベルアップ演出 = 0;
 
 			レベルアップ判定();//2レベ以上上がった時用の再起呼び出し
 
@@ -148,7 +148,7 @@ namespace SDX_ADE
 		void 基礎ステータス計算()
 		{
 			//とりあえずモンスターはLvで12%で成長、味方はLvで10%成長
-			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 10);
+			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 5);
 			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (9 + Lv) / 10);
 			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (9 + Lv) / 10);
 			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (9 + Lv) / 10);
@@ -166,18 +166,31 @@ namespace SDX_ADE
 			//装備品補正
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
-				補正ステ[StatusType::HP] += 装備[a]->ステ[StatusType::HP];
-				補正ステ[StatusType::力] += 装備[a]->ステ[StatusType::力];
-				補正ステ[StatusType::技] += 装備[a]->ステ[StatusType::技];
-				補正ステ[StatusType::知] += 装備[a]->ステ[StatusType::知];
+				基礎ステ[StatusType::HP] += 装備[a]->ステ[StatusType::HP];
+				基礎ステ[StatusType::力] += 装備[a]->ステ[StatusType::力];
+				基礎ステ[StatusType::技] += 装備[a]->ステ[StatusType::技];
+				基礎ステ[StatusType::知] += 装備[a]->ステ[StatusType::知];
 
-				補正ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
-				補正ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
+				基礎ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
+				基礎ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
 
-				補正ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
-				補正ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
-				補正ステ[StatusType::会心] += 装備[a]->ステ[StatusType::会心];
+				基礎ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
+				基礎ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
+				基礎ステ[StatusType::会心] += 装備[a]->ステ[StatusType::会心];
 			}
+
+			補正ステ[StatusType::HP] = 基礎ステ[StatusType::HP];
+			補正ステ[StatusType::力] = 基礎ステ[StatusType::力];
+			補正ステ[StatusType::技] = 基礎ステ[StatusType::技];
+			補正ステ[StatusType::知] = 基礎ステ[StatusType::知];
+
+			補正ステ[StatusType::命中] = 基礎ステ[StatusType::命中];
+			補正ステ[StatusType::回避] = 基礎ステ[StatusType::回避];
+
+			補正ステ[StatusType::物防] = 基礎ステ[StatusType::物防];
+			補正ステ[StatusType::魔防] = 基礎ステ[StatusType::魔防];
+			補正ステ[StatusType::会心] = 基礎ステ[StatusType::会心];
+			
 
 			//Aスキルセット
 			Aスキル.resize(CV::最大Aスキル数);
@@ -218,7 +231,7 @@ namespace SDX_ADE
 
 			現在HP = 補正ステ[StatusType::HP];
 
-			戦闘後回復 = 0;
+			戦闘後回復 = 0.0;
 			レア素材剥取補正 = 0.0;
 			レア素材収集補正 = 0.0;
 			素材剥取量 = 0.0;
@@ -251,6 +264,8 @@ namespace SDX_ADE
 		void 装備強化(int 装備スロット)
 		{
 			装備[装備スロット] = &Item::equip_data[装備[装備スロット]->ID+1];
+
+			基礎ステータス計算();
 		}
 
 		//スキル画面用
@@ -393,6 +408,7 @@ namespace SDX_ADE
 				スキル習得予約[CV::最大スキル予約数 - 1] = 0;
 
 				スキルポイント--;
+				基礎ステータス計算();
 			}
 		}
 

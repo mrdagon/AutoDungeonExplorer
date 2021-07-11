@@ -36,6 +36,8 @@ namespace SDX_ADE
 			ボタン[4].SetUI(LTitle::ボタン, "アンケート",  4);
 			ボタン[5].SetUI(LTitle::ボタン,"終了", 5);
 
+			ボタン[1].is表示 = false;
+
 			ボタン[0].is縁描画 = false;
 			ボタン[1].is縁描画 = false;
 			ボタン[2].is縁描画 = false;
@@ -160,7 +162,10 @@ namespace SDX_ADE
 
 			for (auto& it : ボタン)
 			{			
-				it.Draw();
+				if (it.is表示 == true)
+				{
+					it.Draw();
+				}
 			}
 
 			//作者名、著作権表記

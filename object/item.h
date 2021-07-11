@@ -65,7 +65,13 @@ namespace SDX_ADE
 
 			for (int i = 0; i < CV::上限素材ランク; i++)
 			{
-				必要数[i] = int(Recipe::必要数[std::min(ランク - 1, 0)][i] * CV::サブ素材必要数);
+				if (ランク > 0)
+				{
+					必要数[i] = int(Recipe::必要数[std::min(ランク - 1, 0)][i] * CV::サブ素材必要数);
+				} else {
+					必要数[i] = 0;
+				}
+
 			}
 			return Recipe::素材種[種類].サブ素材;
 		}
@@ -91,6 +97,7 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;
@@ -156,6 +163,14 @@ namespace SDX_ADE
 					case ItemType::外套:mct = CraftType::革材; sct = CraftType::魔材;
 						break;
 				}
+
+				if ((int)it.種類 >= 0)
+				{
+					Recipe::素材種[it.種類].メイン素材 = mct;
+					Recipe::素材種[it.種類].サブ素材 = sct;
+				}
+
+
 			}
 		}
 
@@ -180,12 +195,13 @@ namespace SDX_ADE
 				if (strs[i].size() == 2)
 				{
 					it.説明 = strs[i][1];
+					std::replace(it.説明.begin(), it.説明.end(), '$', '\n');
 				}
 
 				it.ID = i;
 				file_data.Read( dummy);//画像ID
+				it.image = &MIcon::装備品[dummy];
 				it.種類 = ItemType::アクセサリー;
-				it.image = &MIcon::装備品[(int)it.種類];
 
 				file_data.Read( dummy );
 				if (dummy < 0) { dummy = 0; }

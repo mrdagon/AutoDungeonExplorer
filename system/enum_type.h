@@ -71,7 +71,7 @@ namespace SDX_ADE
 		なし,
 		＠バフ・デバフ,
 		与ダメ増減,//割合増減
-		被ダメ軽減,//割合増減
+		被ダメ増減,//割合増減
 		物防,//+数値
 		魔防,//+数値
 		Str,//+数値
@@ -200,7 +200,7 @@ namespace SDX_ADE
 		その他
 	};
 
-	enum class PSkillEffect
+	enum class PSkillEffectType
 	{
 		なし,
 		＠スキル強化,//●アクティブスキル、通常攻撃強化

@@ -33,8 +33,14 @@ namespace SDX_ADE
 
 			void Click() override
 			{
+				if (Guild::P->パーティ[パーティID].メンバー[隊列ID]->装備[装備スロット]->ID == 0)
+				{
+					return;
+				}
+
 				W_Drag::ギルメン装備.メンバー = Guild::P->パーティ[パーティID].メンバー[隊列ID];
-				W_Drag::ギルメン装備.部位 = 装備スロット;			
+				W_Drag::ギルメン装備.部位 = 装備スロット;
+				Guild::P->基礎ステ再計算();
 			}
 
 			bool Drop() override
@@ -43,11 +49,13 @@ namespace SDX_ADE
 				if (W_Drag::ギルメン装備.メンバー != nullptr)
 				{
 					Guild::P->操作_装備スワップ(Guild::P->パーティ[パーティID].メンバー[隊列ID] , 装備スロット , W_Drag::ギルメン装備.メンバー , W_Drag::ギルメン装備.部位);
+					Guild::P->基礎ステ再計算();
 				}
 				//装備在庫
 				if (W_Drag::所持装備 != nullptr)
 				{
 					Guild::P->操作_装備在庫(Guild::P->パーティ[パーティID].メンバー[隊列ID], W_Drag::所持装備->ID , 装備スロット);
+					Guild::P->基礎ステ再計算();
 				}
 
 				return false;
@@ -98,6 +106,7 @@ namespace SDX_ADE
 				{
 					//SE鳴らして装備強化
 					押下timer = 3;
+					Guild::P->基礎ステ再計算();
 				}
 			}
 
@@ -135,6 +144,7 @@ namespace SDX_ADE
 				スキルツリー.SetMember(Guild::P->パーティ[パーティID].メンバー[隊列ID]);
 				スキルツリー.Init();
 				スキルツリー.OpenPopup();
+				Guild::P->基礎ステ再計算();
 			}
 		};
 
@@ -651,13 +661,13 @@ namespace SDX_ADE
 					double 経験値割合 = it->経験値 / it->Get要求経験値();
 					double 探検前割合 = (double)it->探検前経験値 / it->Get要求経験値();
 
-					if (it->レベルアップ演出)
+					if (it->レベルアップ演出 >= 0)
 					{
 						経験値割合 = 1.0;
 					}
 
 					auto ptg = LC.GetPos(a);
-					Design::Blue.DrawGauge(GetX() + ptg.x, GetY() + ptg.y, LC.w, LC.h,0.5);
+					Design::Blue.DrawGauge(GetX() + ptg.x, GetY() + ptg.y, LC.w, LC.h,経験値割合);
 
 
 					auto ptt = LD.GetPos(a);
@@ -708,11 +718,11 @@ namespace SDX_ADE
 						if (パーティ->入手素材[ct][b] <= 0) { continue; }
 
 						auto ptb = LE.GetPos(cnt);
-						auto& it = Material::data[CraftType::木材][0];
+						auto& it = Material::data[ct][0];
 
 						it.image->DrawRotate({ GetX() + ptb.x , GetY() + ptb.y }, 1, 0);
 						//Lv表示
-						MFont::S->DrawBold({ GetX() + ptb.x + LF.x , GetY() + ptb.y + LF.y }, Design::明字, Design::暗字, { "★" , it.ランク });
+						MFont::S->DrawBold({ GetX() + ptb.x + LF.x , GetY() + ptb.y + LF.y }, Design::明字, Design::暗字, { "★" , (b+1) });
 
 						//素材数表示
 						MFont::S->DrawBold({ GetX() + ptb.x + LF.w, GetY() + ptb.y + LF.h }, Design::明字, Design::暗字, { "x", パーティ->入手素材[ct][b] });
@@ -819,7 +829,7 @@ namespace SDX_ADE
 				int 向き = 0;
 				double サイズ = 2;
 
-				if (it.isボス)
+				if (it.isボス == true)
 				{
 					サイズ = 4;
 					px += 0;
@@ -841,20 +851,30 @@ namespace SDX_ADE
 				int gageW = LA.w;
 				int gageH = LA.h;
 
+				double rate = (double)it.現在クールダウン / it.必要クールダウン[it.現在スキルスロット];
 				if (it.isボス)
 				{
 					gageW *= 2;
 					gageH *= 2;
+					//ライフバー
+					Design::Blue.DrawGauge(px + LA.x - gageW / 2, py + LA.y + 16, LA.w*2, LA.h , (double)it.現在HP / it.補正ステ[StatusType::HP]);
+
+					//行動バー
+					Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y + 16, LB.w*2, LB.h, std::min(rate, 1.0));
 				}
+				else
+				{
+					//ライフバー
+					Design::Blue.DrawGauge(px + LA.x - gageW / 2, py + LA.y, LA.w, LA.h, (double)it.現在HP / it.補正ステ[StatusType::HP]);
+
+					//行動バー
+					Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y, LB.w, LB.h, std::min(rate, 1.0));
+				}
+
+
 
 				Screen::SetDrawMode();
 				Screen::SetBright(Color(パーティ->暗転, パーティ->暗転, パーティ->暗転));
-				//ライフバー
-				Design::Blue.DrawGauge(px + LA.x - gageW / 2, py + LA.y, LA.w, LA.h, (double)it.現在HP / it.補正ステ[StatusType::HP]);
-
-				//行動バー
-				double rate = (double)it.現在クールダウン / it.必要クールダウン[it.現在スキルスロット];
-				Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y, LB.w, LB.h, std::min(rate,1.0));
 			}
 
 			//スキルエフェクトとダメージ回復のエフェクト表示

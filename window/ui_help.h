@@ -263,14 +263,13 @@ namespace SDX_ADE
 
 			//魔物->素材種
 
-			if (魔物->isボス)
+			if (魔物->isボス && 魔物->ボスドロップ[0] > 0)
 			{
 				//ボスドロップ
 				Design::Help->Draw(UIType::丸フレーム, L5);
-				MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ 魔物->ボスドロップ });
-
 				//Boss表示
-				MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字, { "Boss" });
+				MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字, { "Drop" });				
+				MFont::L->DrawRotate(L5.GetSubPos(L5.w / 2, L5.h / 2), 1, 0, Design::暗字,{ Item::accessory_data[魔物->ボスドロップ[0]].名前 });
 			}
 
 			//基礎ステータス
@@ -289,7 +288,7 @@ namespace SDX_ADE
 				}
 				Design::Help->Draw(UIType::丸フレーム, L6, cnt);
 				MFont::L->DrawRotate(L6.GetSubPos(L6.h + 4, L6.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
-				MFont::L->DrawRotate(L6.GetSubPos(L6.w - L6.h, L6.h / 2, cnt), 1, 0, Design::暗字, { (int)魔物->ステ[st], true });
+				MFont::L->DrawRotate(L6.GetSubPos(L6.w - L6.h, L6.h / 2, cnt), 1, 0, Design::暗字, { (int)魔物->Getステ(st,Lv) });
 				cnt++;
 			}
 
@@ -361,7 +360,7 @@ namespace SDX_ADE
 			std::array<int, CV::上限素材ランク> サブ必要数;
 
 			CraftType メイン素材種 = 装備->GetMainRecipe(メイン必要数);
-			CraftType サブ素材種 = 装備->GetMainRecipe(サブ必要数);
+			CraftType サブ素材種 = 装備->GetSubRecipe(サブ必要数);
 
 			Design::Help->Draw(UIType::グループ明, L6);
 
@@ -437,7 +436,7 @@ namespace SDX_ADE
 				}
 				Design::Help->Draw(UIType::丸フレーム, L11, cnt);
 				MFont::L->DrawRotate(L11.GetSubPos(L11.h + 4, L11.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
-				MFont::L->DrawRotate(L11.GetSubPos( L11.w - L11.h , L11.h / 2, cnt), 1, 0, Design::暗字, { (int)探索者->基礎ステ[st], true });
+				MFont::L->DrawRotate(L11.GetSubPos( L11.w - L11.h , L11.h / 2, cnt), 1, 0, Design::暗字, { 探索者->基礎ステ[st] });
 				cnt++;
 			}
 			//装備 - 武器 - 防具 - アクセサリー

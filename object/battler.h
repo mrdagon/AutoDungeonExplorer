@@ -71,7 +71,7 @@ namespace SDX_ADE
 		std::vector<int> PスキルLv;
 
 		//●装備とパッシブ補正後
-		EnumArray<int, StatusType> 基礎ステ;//Lv、装備補正、常時パッシブのステータス
+		EnumArray<int, StatusType> 基礎ステ;//Lv、装備補正、常時パッシブ適用後のステータス
 		EnumArray<int, StatusType> 補正ステ;//条件付き基礎ステータス上昇P効果適用後、および常時パッシブ計算用の一時ステータス
 		EnumArray<int, StatusType> ステ割合上昇;//基礎ステ割合上昇を最後に計算する用
 
@@ -127,6 +127,13 @@ namespace SDX_ADE
 		double レア素材収集補正 = 0.0;
 		double 素材剥取量 = 0.0;
 		double 素材収集量 = 0.0;
+		double 経験値補正 = 0.0;
+
+		double 未探索発見補正 = 0.0;
+		double 魔物部屋補正 = 0.0;
+		double 素材部屋補正 = 0.0;
+		double 移動速度補正 = 0.0;
+		double 活動時間補正 = 0.0;
 
 		//攻撃受け側の一時変数
 		int Hit数 = 0;
@@ -139,8 +146,10 @@ namespace SDX_ADE
 		{
 			//味方と自分の基礎Pスキルによる補正ステ計算
 			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
+			基礎Pスキル反映();
 		}
 
+		//常時ステータス上昇パッシブの計算用
 		void 基礎Pスキル反映()
 		{
 			//Pスキル補正を確定
@@ -156,6 +165,17 @@ namespace SDX_ADE
 			基礎ステ[StatusType::回避] = 補正ステ[StatusType::回避];
 
 			//割合増加を反映
+			基礎ステ[StatusType::HP] += 補正ステ[StatusType::HP] * ステ割合上昇[StatusType::HP] / 100;
+			基礎ステ[StatusType::力] += 補正ステ[StatusType::力] * ステ割合上昇[StatusType::力] / 100;
+			基礎ステ[StatusType::技] += 補正ステ[StatusType::技] * ステ割合上昇[StatusType::技] / 100;
+			基礎ステ[StatusType::知] += 補正ステ[StatusType::知] * ステ割合上昇[StatusType::知] / 100;
+
+			基礎ステ[StatusType::物防] += 補正ステ[StatusType::物防] * ステ割合上昇[StatusType::物防] / 100;
+			基礎ステ[StatusType::魔防] += 補正ステ[StatusType::魔防] * ステ割合上昇[StatusType::魔防] / 100;
+
+			基礎ステ[StatusType::命中] += 補正ステ[StatusType::命中] * ステ割合上昇[StatusType::命中] / 100;
+			基礎ステ[StatusType::回避] += 補正ステ[StatusType::回避] * ステ割合上昇[StatusType::回避] / 100;
+
 		}
 
 		//補正ステータス=基礎ステータスにしてバフ残り時間もリセット
@@ -228,12 +248,19 @@ namespace SDX_ADE
 			BuffType t = BuffType(バフデバフ種);
 			//バフ中のバフ or デバフ中のデバフ、時間、効果量で大きい方に更新
 			//バフ中にデバフ or デバフ中にバフ、時間は大きい方から小さい方を引く、効果は時間が長い方になる
+			//毒は特殊で持続を更新、効果は加算する
 
 			if (効果量 > 0 )
 			{
 				if (バフ[t].効果 > 0)
 				{
-					バフ[t].効果 = std::max(バフ[t].効果,効果量);
+					if (バフデバフ種 == BuffType::猛毒)
+					{
+						バフ[t].効果 += バフ[t].効果;
+					} else {
+						バフ[t].効果 = std::max(バフ[t].効果, 効果量);
+					}
+
 					バフ[t].持続 = std::max(バフ[t].持続, 時間);
 				} else {
 					if (バフ[t].持続 > 時間)
@@ -378,6 +405,20 @@ namespace SDX_ADE
 
 			if (必要クールダウン[現在スキルスロット] <= 現在クールダウン)
 			{
+				//持続ダメージ
+				if (バフ[BuffType::猛毒].持続 > 0)
+				{
+					現在HP -= バフ[BuffType::猛毒].効果;
+					バフ[BuffType::猛毒].効果 /= 2;
+				}
+				if (バフ[BuffType::出血].持続 > 0)
+				{
+					現在HP -= バフ[BuffType::出血].効果;
+				}
+
+
+				if (現在HP <= 0) { return true; }
+
 				//スキルの発動
 				Aスキル使用(Aスキル[現在スキルスロット], 味方, 敵);
 					
@@ -558,39 +599,54 @@ namespace SDX_ADE
 
 				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス)) / 100;
 
-				for (int b = 0; b < (int)BuffType::COUNT; b++)
+				for (auto& it : Aスキル.補助効果)
 				{
-					auto t = BuffType(b);
+					if (Rand::Coin((double)(it.確率+ Aスキル.バフ発動率) / 100) == false ) {continue; }
+					int バフ値 = it.基礎値 + Aスキル.バフ固定値 + (Aスキル.バフ反映率 + it.反映率) * (スキル使用者->補正ステ[StatusType::力] + スキル使用者->補正ステ[StatusType::知] + スキル使用者->補正ステ[StatusType::技]) / 100;
 
-					//if (Aスキル.バフ確率[t] <= 0 || !Rand::Coin(Aスキル.バフ確率[t])) { continue; }
-
-					//バフ使用(t, Aスキル.バフ反映率[t] * Aスキル.バフ効果補正, int(Aスキル.バフ持続[t] * Aスキル.バフ持続補正));
-					//isバフ = (Aスキル.バフ反映率[t] > 0);
-					//isデバフ = (Aスキル.バフ反映率[t] < 0);
-
-					if (isバフ)
+					if (it.種類 == BuffType::スタン)
 					{
-						E光色 = Color(0, 0, 255);
-						E光強さ = 1.0;
+						現在クールダウン -= バフ値;
+						if (現在クールダウン < 0) { 現在クールダウン = 0; }
 					}
-					if(isデバフ){
-						E光色 = Color(128, 0, 128);
-						E光強さ = 1.0;
+					else
+					{
+						バフ使用(it.種類, バフ値 , it.持続 + Aスキル.バフ持続);
 					}
 				}
+			}
+
+			if (スキル使用者->バフ[BuffType::与ダメ増減].持続 > 0)
+			{
+				合計ダメージ = 合計ダメージ * (100 + スキル使用者->バフ[BuffType::与ダメ増減].効果) / 100;
+			}
+
+			if (バフ[BuffType::被ダメ増減].持続 > 0)
+			{
+				合計ダメージ = 合計ダメージ * (100 + バフ[BuffType::被ダメ増減].効果) / 100;
 			}
 
 			//ダメージ、回復処理
 			if (合計ダメージ > 0)
 			{
+
+				if (Aスキル.追加効果[ASkillSubType::吸収] > 0)
+				{
+					int 吸収量 = 合計ダメージ * Aスキル.追加効果[ASkillSubType::吸収] / 100;
+					スキル使用者->現在HP += 吸収量;
+					スキル使用者->エフェクトダメージ(-吸収量);
+				}
+
 				switch (Aスキル.base->属性)
 				{
 				case DamageType::物理:
-					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::物理) + 50.0) * (1.0 - バフ[BuffType::被ダメ軽減].効果));
+					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::物理) + 50.0) * (1.0 - バフ[BuffType::被ダメ増減].効果));
 					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
 					現在HP -= 合計ダメージ;
 					受ダメージログ += 合計ダメージ;
 					スキル使用者->与ダメージログ += 合計ダメージ;
+
+
 					Pスキル条件チェック(PSkillTime::攻撃を受けた時, &Aスキル, 味方, 敵);
 					//エフェクト
 					エフェクト光( Color(255, 0, 0) );
@@ -598,7 +654,7 @@ namespace SDX_ADE
 					エフェクトダメージ(合計ダメージ);
 					break;
 				case DamageType::魔法:
-					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::魔法) + 50.0) * (1.0 - バフ[BuffType::被ダメ軽減].効果));
+					合計ダメージ = (int)(合計ダメージ * 50 / (Get防御(DamageType::魔法) + 50.0) * (1.0 - バフ[BuffType::被ダメ増減].効果));
 					if (合計ダメージ > 現在HP) { 合計ダメージ = 現在HP; }
 					現在HP -= 合計ダメージ;
 					受ダメージログ += 合計ダメージ;
@@ -618,6 +674,11 @@ namespace SDX_ADE
 					エフェクト光(Color(0, 255, 0));
 					エフェクトダメージ(-合計ダメージ);
 					break;
+				}
+
+				if (Aスキル.追加効果[ASkillSubType::処刑] > 0 && 現在HP * 100 < 補正ステ[StatusType::HP] * Aスキル.追加効果[ASkillSubType::処刑])
+				{
+					現在HP = 0;
 				}
 			}
 			else if (is回避)
@@ -654,42 +715,58 @@ namespace SDX_ADE
 		//条件をチェックして、条件にあってるならPスキル処理を呼び出す
 		void Pスキル条件チェック(PSkillTime タイミング,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
-			for (auto &it : Pスキル)
+			int index = -1;
+
+			for (auto &ps : Pスキル)
 			{
-				if (it->タイミング != タイミング) { continue; }
+				index++;
+				int Lv = PスキルLv[index];
+				PSkillEffect it(ps, Lv);
+
+				if (ps->タイミング != タイミング) { continue; }
 				if (Aスキル != nullptr)
 				{
-					//if( it->Aスキル種 != Aスキル->種類) { continue; }
-					//if ( it->装備種 != ItemType::すべて && it->装備種 != Aスキル->装備種) { continue; }
-					//if (it->発動率 <= 0.0 || !Rand::Coin(it->発動率)) { continue; }
+					//スキルタグ一致判定
+					bool check_tag = false;
+					for (int i = 0; i < (int)SkillType::COUNT; i++)
+					{
+						if (Aスキル->base->スキルタグ[i] == true && ps->スキルタグ[i] == true)
+						{
+							check_tag = true;
+							break;
+						}
+					}
+					if (check_tag == false) { continue; }
+
+					if( ps->発動率 <= 0.0 || !Rand::Coin(it.Get発動率())) { continue; }
 				}
 				int num = (int)敵.size();
 
-				switch (it->条件)
+				switch (ps->条件)
 				{
 				case PSkillIf::HP一定以上:
-					if (現在HP / 補正ステ[StatusType::HP] < it->条件値) { continue; }
+					if (現在HP / 補正ステ[StatusType::HP] < it.Get条件値() ) { continue; }
 					break;
 				case PSkillIf::HP一定以下:
-					if (現在HP / 補正ステ[StatusType::HP] > it->条件値) { continue; }
+					if (現在HP / 補正ステ[StatusType::HP] > it.Get条件値() ) { continue; }
 					break;
 				case PSkillIf::敵の数が一定以下:
 					for (int a = 0; a < (int)敵.size(); a++)
 					{
 						if (敵[a]->現在HP <= 0) { num--; }
 					}
-					if (num > it->条件値) { continue; }
+					if (num > it.Get条件値()) { continue; }
 					break;
 				case PSkillIf::敵の数が一定以上:
 					for (int a = 0; a < (int)敵.size(); a++)
 					{
 						if (敵[a]->現在HP <= 0) { num--; }
 					}
-					if (num < it->条件値) { continue; }
+					if (num < it.Get条件値() ) { continue; }
 					break;
 				}
 	
-				if (タイミング == PSkillTime::常時 && it->対象 == PSkillTarget::味方全員 && 味方.size() >0)
+				if (タイミング == PSkillTime::常時 && ps->対象 == PSkillTarget::味方全員 && 味方.size() >0)
 				{
 					for (auto& itB : 味方)
 					{
@@ -702,155 +779,185 @@ namespace SDX_ADE
 			}
 		}
 
-		void Pスキル処理(PassiveSkill* Pスキル,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
+		void Pスキル処理(PSkillEffect& Pスキル,ASkillEffect* Aスキル, std::vector<Battler*> &味方, std::vector<Battler*> &敵)
 		{
 			//とりあえずβのだけ実装
-			switch (Pスキル->効果種[0])
+			for (int i = 0; i < 2; i++)
 			{
-			//基礎限定効果
-			case PSkillEffect::HP増加:
-				補正ステ[StatusType::HP] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::STR増加:
-				補正ステ[StatusType::力] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::INT増加:
-				補正ステ[StatusType::知] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::DEX増加:
-				補正ステ[StatusType::技] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::物防増加:
-				補正ステ[StatusType::物防] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::魔防増加:
-				補正ステ[StatusType::魔防] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::命中増加:
-				補正ステ[StatusType::命中] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::回避増加:
-				補正ステ[StatusType::回避] += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::HP割合増加:
-				break;
-			case PSkillEffect::STR割合増加:
-				break;
-			case PSkillEffect::INT割合増加:
-				break;
-			case PSkillEffect::DEX割合増加:
-				break;
-			case PSkillEffect::物防割合増加:
-				break;
-			case PSkillEffect::魔防割合増加:
-				break;
-			case PSkillEffect::経験値増加:
-				break;
-			//基礎非戦闘
-			case PSkillEffect::採取増加:
-				素材収集量 += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::レア採取増加:
-				レア素材収集補正 += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::剥取増加:
-				素材剥取量 += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::レア剥取増加:
-				レア素材剥取補正 += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::戦闘後回復:
-				戦闘後回復 += Pスキル->効果量[0];
-				break;
-			case PSkillEffect::未探索発見率増加:
-				break;
-			case PSkillEffect::魔物部屋率上昇:
-				break;
-			case PSkillEffect::素材部屋率上昇:
-				break;
-			case PSkillEffect::移動速度上昇:
-				break;
-			//アクティブ効果
-			case PSkillEffect::与ダメージバフ:
-				break;
-			case PSkillEffect::受ダメージバフ:
-				break;
-			case PSkillEffect::HP1で耐える:
-				break;
-			case PSkillEffect::異常耐性:
-				break;
-			case PSkillEffect::デバフ耐性:
-				break;
-			case PSkillEffect::身代わり:
-				break;
-			case PSkillEffect::CT減少:
-				break;
-			case PSkillEffect::HP回復:
-				break;
-			//スキル強化、属性追加
-			case PSkillEffect::ダメージ増加:
-				break;
-			case PSkillEffect::スキル威力増減:
-				break;
-			case PSkillEffect::スキル効果増減:
-				break;
-			case PSkillEffect::スキルCT増減:
-				break;
-			case PSkillEffect::アクティブスキル発動:
-				break;
-			case PSkillEffect::物理化:
-				break;
-			case PSkillEffect::魔法化:
-				break;
-			case PSkillEffect::隊列無視:
-				break;
-			case PSkillEffect::必中:
-				break;
-			case PSkillEffect::隠れる無視:
-				break;
-			case PSkillEffect::挑発無視:
-				break;
-			case PSkillEffect::異常回復:
-				break;
-			case PSkillEffect::気絶回復:
-				break;
-			case PSkillEffect::防御貫通:
-				break;
-			case PSkillEffect::魔防貫通:
-				break;
-			case PSkillEffect::回避貫通:
-				break;
-			case PSkillEffect::超過回復:
-				break;
-			case PSkillEffect::バフ固定値:
-				break;
-			case PSkillEffect::バフ反映率:
-				break;
-			case PSkillEffect::バフ発動率:
-				break;
-			case PSkillEffect::バフ持続:
-				break;
-			case PSkillEffect::バフ延長:
-				break;
-			case PSkillEffect::デバフ延長:
-				break;
-			case PSkillEffect::バフ強化:
-				break;
-			case PSkillEffect::デバフ強化:
-				break;
-			case PSkillEffect::先制:
-				break;
-			case PSkillEffect::むらっけ:
-				break;
-			case PSkillEffect::吸収:
-				break;
-			case PSkillEffect::処刑:
-				break;
-			case PSkillEffect::異常追撃:
-				break;
-			case PSkillEffect::挑発追撃:
-				break;
+				int Num = Pスキル.Get効果値(i);;
+				
+				switch (Pスキル.Get効果種(i))
+				{
+					//基礎限定効果
+				case PSkillEffectType::HP増加:
+					補正ステ[StatusType::HP] += Num;
+					break;
+				case PSkillEffectType::STR増加:
+					補正ステ[StatusType::力] += Num;
+					break;
+				case PSkillEffectType::INT増加:
+					補正ステ[StatusType::知] += Num;
+					break;
+				case PSkillEffectType::DEX増加:
+					補正ステ[StatusType::技] += Num;
+					break;
+				case PSkillEffectType::物防増加:
+					補正ステ[StatusType::物防] += Num;
+					break;
+				case PSkillEffectType::魔防増加:
+					補正ステ[StatusType::魔防] += Num;
+					break;
+				case PSkillEffectType::命中増加:
+					補正ステ[StatusType::命中] += Num;
+					break;
+				case PSkillEffectType::回避増加:
+					補正ステ[StatusType::回避] += Num;
+					break;
+				case PSkillEffectType::HP割合増加:
+					ステ割合上昇[StatusType::HP] += Num;
+					break;
+				case PSkillEffectType::STR割合増加:
+					ステ割合上昇[StatusType::力] += Num;
+					break;
+				case PSkillEffectType::INT割合増加:
+					ステ割合上昇[StatusType::知] += Num;
+					break;
+				case PSkillEffectType::DEX割合増加:
+					ステ割合上昇[StatusType::技] += Num;
+					break;
+				case PSkillEffectType::物防割合増加:
+					ステ割合上昇[StatusType::物防] += Num;
+					break;
+				case PSkillEffectType::魔防割合増加:
+					ステ割合上昇[StatusType::魔防] += Num;
+					break;
+					//基礎非戦闘
+				case PSkillEffectType::経験値増加:
+					経験値補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::採取増加:
+					素材収集量 += (double)Num / 100;
+					break;
+				case PSkillEffectType::レア採取増加:
+					レア素材収集補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::剥取増加:
+					素材剥取量 += (double)Num / 100;
+					break;
+				case PSkillEffectType::レア剥取増加:
+					レア素材剥取補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::戦闘後回復:
+					戦闘後回復 += (double)Num / 100;
+					break;
+				case PSkillEffectType::未探索発見率増加:
+					未探索発見補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::魔物部屋率上昇:
+					魔物部屋補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::素材部屋率上昇:
+					素材部屋補正 += (double)Num / 100;
+					break;
+				case PSkillEffectType::移動速度上昇:
+					移動速度補正 += (double)Num / 100;
+					break;
+					//アクティブ効果
+				case PSkillEffectType::与ダメージバフ:
+					break;
+				case PSkillEffectType::受ダメージバフ:
+					break;
+				case PSkillEffectType::HP1で耐える:
+					break;
+				case PSkillEffectType::異常耐性:
+					break;
+				case PSkillEffectType::デバフ耐性:
+					break;
+				case PSkillEffectType::身代わり:
+					break;
+				case PSkillEffectType::CT減少:
+					break;
+				case PSkillEffectType::HP回復:
+					break;
+					//スキル強化、属性追加
+				case PSkillEffectType::ダメージ増加:
+					Aスキル->ダメージ％増加 += Num;
+					break;
+				case PSkillEffectType::スキル威力増減:
+					Aスキル->ダメージ％増加 += Num;
+					break;
+				case PSkillEffectType::スキル効果増減:
+					Aスキル->効果％増加 += Num;
+					break;
+				case PSkillEffectType::スキルCT増減:
+					Aスキル->行動値獲得 += Num;
+					break;
+				case PSkillEffectType::アクティブスキル発動:
+					break;
+				case PSkillEffectType::物理化:
+					break;
+				case PSkillEffectType::魔法化:
+					break;
+				case PSkillEffectType::隊列無視:
+					break;
+				case PSkillEffectType::必中:
+					break;
+				case PSkillEffectType::隠れる無視:
+					break;
+				case PSkillEffectType::挑発無視:
+					break;
+				case PSkillEffectType::異常回復:
+					break;
+				case PSkillEffectType::気絶回復:
+					break;
+				case PSkillEffectType::防御貫通:
+					break;
+				case PSkillEffectType::魔防貫通:
+					break;
+				case PSkillEffectType::回避貫通:
+					break;
+				case PSkillEffectType::超過回復:
+					break;
+				case PSkillEffectType::バフ固定値:
+					Aスキル->バフ固定値 += Num;
+					break;
+				case PSkillEffectType::バフ反映率:
+					Aスキル->バフ反映率 += Num;
+					break;
+				case PSkillEffectType::バフ発動率:
+					Aスキル->バフ発動率 += Num;
+					break;
+				case PSkillEffectType::バフ持続:
+					Aスキル->バフ持続 += Num;
+					break;
+				case PSkillEffectType::バフ延長:
+					break;
+				case PSkillEffectType::デバフ延長:
+					break;
+				case PSkillEffectType::バフ強化:
+					break;
+				case PSkillEffectType::デバフ強化:
+					break;
+				case PSkillEffectType::先制:
+					break;
+				case PSkillEffectType::むらっけ:
+					break;
+				case PSkillEffectType::吸収:
+					Aスキル->追加効果[ASkillSubType::吸収] += Num;
+					break;
+				case PSkillEffectType::処刑:
+					Aスキル->追加効果[ASkillSubType::処刑] += Num;
+					break;
+				case PSkillEffectType::異常追撃:
+					Aスキル->追加効果[ASkillSubType::異常追撃] += Num;
+					break;
+				case PSkillEffectType::挑発追撃:
+					Aスキル->追加効果[ASkillSubType::挑発追撃] += Num;
+					break;
+				}
 			}
+
+			
 		}
 	};
 }

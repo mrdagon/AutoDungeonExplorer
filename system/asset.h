@@ -153,6 +153,7 @@ namespace SDX_ADE
 			装備品[(int)ItemType::外套].Load("file/equip/armor003.png");
 
 			装備品[(int)ItemType::アクセサリー].Load("file/equip/armor003.png");
+			装備品[17].Load("file/equip/noitem.png");
 
 			アクセサリ[0].Load("file/accessory/boots_007.png");
 			//素材
@@ -278,10 +279,6 @@ namespace SDX_ADE
 
 		static void Load()
 		{
-			for (int i = 0; i < 200; i++)
-			{
-				エフェクト[i].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
-			}
 
 			エフェクト[1].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
 			エフェクト[2].Load("file/effect/pipo-btleffect002.png", 9, 9, 1);
@@ -298,6 +295,14 @@ namespace SDX_ADE
 
 			エフェクト種類[45] = 1;
 
+
+			for (int i = 0; i < 200; i++)
+			{
+				if (エフェクト[i].GetSize() == 0)
+				{
+					エフェクト[i].Load("file/effect/pipo-btleffect001.png", 5, 5, 1);
+				}
+			}
 		}
 	}
 

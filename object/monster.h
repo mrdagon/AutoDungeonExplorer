@@ -52,7 +52,7 @@ namespace SDX_ADE
 
 		void 基礎ステータス計算()
 		{
-			this->基礎ステ[StatusType::HP] = int(種族->ステ[StatusType::HP] * (8.8 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::HP] = int(種族->ステ[StatusType::HP] * (8.8 + Lv * 1.2) / 5);
 
 			this->基礎ステ[StatusType::力] = int(種族->ステ[StatusType::力] * (8.8 + Lv * 1.2) / 10);
 			this->基礎ステ[StatusType::知] = int(種族->ステ[StatusType::知] * (8.8 + Lv * 1.2) / 10);
@@ -98,7 +98,7 @@ namespace SDX_ADE
 
 		int Get経験値()
 		{
-			return 1;
+			return 3 * Lv + Lv * Lv / 4;
 		}
 	};
 }

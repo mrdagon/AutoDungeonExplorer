@@ -27,7 +27,8 @@ namespace SDX_ADE
 				DrawUI( isOver ? UIType::明ボタン : UIType::平ボタン , dt );
 
 				//遺物アイコン
-				Item::accessory_data[itemID].image->DrawRotate({GetCenterX(),GetCenterY()} , 1 , 0);
+
+				Item::accessory_data[itemID].image->DrawRotate({ GetCenterX(),GetCenterY() }, 1, 0);
 
 				//所持数
 				auto& itA = Layout::Data(LItem::アイテム数);

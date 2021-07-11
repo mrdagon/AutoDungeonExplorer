@@ -57,12 +57,14 @@ namespace SDX_ADE
 
 				file_data.Read(種類);
 				file_data.Read(ランク);
+				ランク--;
 				file_data.Read(価格);
 				
 				if ((int)種類 < 0 || ランク < 0 || ランク >= CV::上限素材ランク)
 				{
 					種類 = CraftType::木材;
 					ランク = 0;
+					continue;
 				}
 
 				data[種類][ランク].ID = i;
