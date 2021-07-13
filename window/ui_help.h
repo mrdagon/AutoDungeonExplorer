@@ -130,17 +130,17 @@ namespace SDX_ADE
 
 			//スキル説明
 			Design::Help->Draw(UIType::グループ明, L3);
-			MFont::L->Draw(L3.GetPos(), Design::暗字,{ Aスキル->説明 });
+			MFont::M->Draw(L3.GetPos(), Design::暗字,{ Aスキル->説明 });
 
 			//Lv補正、最大Lvボーナス(とりあえず非表示)
 
 			//クールタイム
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ Aスキル->クールタイム });
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			//MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ Aスキル->クールタイム });
 
 			//隊列
-			Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ (int)Aスキル->適正隊列 });
+			//Design::Help->Draw(UIType::丸フレーム, L5);
+			//MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ (int)Aスキル->適正隊列 });
 		}
 
 		//スキル習得画面
@@ -168,11 +168,11 @@ namespace SDX_ADE
 
 			//スキル説明
 			Design::Help->Draw(UIType::グループ明, L3);
-			MFont::L->Draw(L3.GetPos(), Design::暗字,{ Pスキル->説明 });
+			MFont::M->Draw(L3.GetPos(), Design::暗字,{ Pスキル->説明 });
 
 			//発動条件
-			Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(),1,0, Design::暗字,{ (int)Pスキル->タイミング });
+			//Design::Help->Draw(UIType::丸フレーム, L4);
+			//MFont::L->DrawRotate(L4.GetPos(),1,0, Design::暗字,{ (int)Pスキル->タイミング });
 
 			//Lv補正、最大Lvボーナス(とりあえず非表示)
 		}
@@ -493,15 +493,15 @@ namespace SDX_ADE
 
 			//説明
 			Design::Help->Draw(UIType::グループ明, L3);
-			MFont::L->DrawRotate(L3.GetPos(), 1, 0, Design::暗字,{ 投資->説明 });
+			MFont::M->Draw(L3.GetPos(), Design::暗字,{ 投資->説明 });
 
 			//消費資金
 			//Design::Help->Draw(UIType::丸フレーム, L4);
-			MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 投資->消費資金 , "G" });
+			//MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 投資->消費資金 , "G" });
 
 			//現在レベル
 			//Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ "Lv" , 投資->投資Lv });
+			//MFont::L->DrawRotate(L5.GetPos(), 1, 0, Design::暗字,{ "Lv" , 投資->投資Lv });
 
 			//投資後レベル
 			//投資後効果
@@ -531,7 +531,7 @@ namespace SDX_ADE
 
 			//説明
 			Design::Help->Draw(UIType::グループ明, L5);
-			MFont::L->Draw(L5.GetPos(), Design::暗字, { 依頼->説明 });
+			MFont::M->Draw(L5.GetPos(), Design::暗字, { 依頼->説明 });
 
 			//依頼者ドット
 			//Design::Help->Draw(UIType::丸フレーム, L3);

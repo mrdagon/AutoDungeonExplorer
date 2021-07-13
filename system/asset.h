@@ -290,8 +290,8 @@ namespace SDX_ADE
 			エフェクト[20].Load("file/effect/pipo-btleffect020.png", 10, 10, 1);
 			エフェクト[45].Load("file/effect/pipo-btleffect045.png", 10, 10, 1);
 			エフェクト[17].Load("file/effect/pipo-btleffect017.png", 8, 8, 1);
-			エフェクト[121].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
-			エフェクト[122].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
+			エフェクト[21].Load("file/effect/pipo-btleffect121.png", 8, 5, 2);
+			エフェクト[22].Load("file/effect/pipo-btleffect122.png", 8, 5, 2);
 
 			エフェクト種類[45] = 1;
 

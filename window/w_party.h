@@ -846,6 +846,10 @@ namespace SDX_ADE
 					Screen::SetBlendMode();
 				}
 
+				Screen::SetDrawMode();
+				Screen::SetBright(Color(パーティ->暗転, パーティ->暗転, パーティ->暗転));
+
+
 				int ボスY = (it.isボス) ? 0 : 0;
 
 				int gageW = LA.w;
@@ -870,11 +874,6 @@ namespace SDX_ADE
 					//行動バー
 					Design::Green.DrawGauge(px + LB.x - gageW / 2, py + LB.y, LB.w, LB.h, std::min(rate, 1.0));
 				}
-
-
-
-				Screen::SetDrawMode();
-				Screen::SetBright(Color(パーティ->暗転, パーティ->暗転, パーティ->暗転));
 			}
 
 			//スキルエフェクトとダメージ回復のエフェクト表示

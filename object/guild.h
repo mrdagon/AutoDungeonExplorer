@@ -482,7 +482,7 @@ namespace SDX_ADE
 
 					入手素材[発見素材種][ランク]++;
 
-					Effect::素材[パーティID].emplace_back(Material::data[発見素材種][ランク].image, a);
+					Effect::Add素材(Material::data[発見素材種][ランク].image, a , -1 , パーティID);
 				}
 			}
 
@@ -544,7 +544,7 @@ namespace SDX_ADE
 					if (Rand::Coin(素材獲得率) == false) { continue; }
 
 					入手素材[素材種][ランク]++;
-					Effect::素材[パーティID].emplace_back(Material::data[素材種][ランク].image, a, it.隊列ID);
+					Effect::Add素材(Material::data[素材種][ランク].image, a, it.隊列ID , パーティID);
 				}
 
 				//レアアイテムは勝利時に精算
@@ -1316,14 +1316,7 @@ namespace SDX_ADE
 			{
 				パーティ[i].エフェクト更新();
 			}
-
-
-			for (int a = 0; a < CV::上限パーティ数; a++)
-			{
-				Effect::UpdateAndDelete(Effect::アニメ[a]);
-				Effect::UpdateAndDelete(Effect::素材[a]);
-				Effect::UpdateAndDelete(Effect::文字[a]);
-			}
+			Effect::Update();
 		}
 
 		void 探索終了()

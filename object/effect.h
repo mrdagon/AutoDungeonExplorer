@@ -37,6 +37,7 @@ namespace SDX_ADE
 		int ダメージ量;
 		int 座標X = 0;
 		int 座標Y = 10;
+		bool isEnd = false;
 		const int 表示終了Y = -10;
 		const int 移動Y = -1;
 
@@ -47,40 +48,37 @@ namespace SDX_ADE
 			配置ID(配置ID)
 		{}
 
-		//破棄する場合 trueを返す
-		bool Update()
+		void Set(TextType 種類, int ダメージ量, bool is味方, int 配置ID)
 		{
-			return (座標Y < 表示終了Y);
+			this->種類 = 種類;
+			this->ダメージ量 = ダメージ量;
+			this->is味方 = is味方;
+			this->配置ID = 配置ID;
+
+			座標X = 0;
+			座標Y = 10;
+			isEnd = false;
 		}
 
 		void Draw(int px, int py)
 		{
+			if (isEnd == true) { return; }
+
 			switch (種類)
 			{
 			case TextEffect::TextType::ダメージ:
-				MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, ダメージ色, Color::Black, ダメージ量);
+				MFont::M->DrawBoldRotate({ px , py }, 1, 0, ダメージ色, Color::Black, ダメージ量);
 				break;
 			case TextEffect::TextType::回復:
-				MFont::MAlias.DrawBoldRotate({ px , py }, 1, 0, 回復色, Color::Black, ダメージ量);
+				MFont::M->DrawBoldRotate({ px , py }, 1, 0, 回復色, Color::Black, ダメージ量);
 				break;
 			case TextEffect::TextType::回避:
-				MFont::SAlias.DrawBoldRotate({ px , py }, 1, 0, Color::White, Color::Black, "miss");
+				MFont::M->DrawBoldRotate({ px , py }, 1, 0, Color::White, Color::Black, "miss");
 				break;
 			}
 			座標Y += 移動Y * (int)std::sqrt(Game::ゲームスピード);
 
-		}
-
-		TextEffect& operator=(const TextEffect& コピー元)
-		{
-			// 代入操作時に行う処理を記述
-			this->ダメージ量 = コピー元.ダメージ量;
-			this->種類 = コピー元.種類;
-			this->座標Y = コピー元.座標Y;
-			this->is味方 = コピー元.is味方;
-			this->配置ID = コピー元.配置ID;
-
-			return *this;
+			isEnd = (座標Y < 表示終了Y);
 		}
 	};
 
@@ -92,50 +90,40 @@ namespace SDX_ADE
 		int 加減算;
 		int フレーム番号 = 0;
 		int アニメ時間 = 0;
-		bool isEnd = false;
 
 	public:
 
 		bool is味方;
 		int 配置ID;
+		bool isEnd = false;
 
-		ImagePack& スキルエフェクト;
+		ImagePack* スキルエフェクト;
 
 		BattleEffect(int id, bool is味方, int 配置ID) :
-			スキルエフェクト(MEffect::エフェクト[id]),
+			スキルエフェクト(&MEffect::エフェクト[id]),
 			加減算(MEffect::エフェクト種類[id]),
 			is味方(is味方),
 			配置ID(配置ID)
 		{}
 
-		//破棄する場合 trueを返す
-		bool Update()
-		{
-			if ( isEnd == true)
-			{
-				return true;
-			}
-			
-			return false;
-		}
 
-		BattleEffect& operator=(const BattleEffect& コピー元)
+		void Set(int id, bool is味方, int 配置ID)
 		{
-			// 代入操作時に行う処理を記述
-			this->スキルエフェクト = コピー元.スキルエフェクト;
-			this->フレーム番号 = コピー元.フレーム番号;
-			this->加減算 = コピー元.加減算;
-			this->アニメ時間 = コピー元.アニメ時間;
-			this->is味方 = コピー元.is味方;
-			this->配置ID = コピー元.配置ID;
-
-			return *this;
+			this->スキルエフェクト = &MEffect::エフェクト[id];
+			this->加減算 = MEffect::エフェクト種類[id];
+			this->is味方 = is味方;
+			this->配置ID = 配置ID;
+			this->フレーム番号 = 0;
+			this->アニメ時間 = 0;
+			this->isEnd = false;
 		}
 
 		bool Draw(int x ,int y , double 拡大率)
 		{
+			if (isEnd == true) { return false; }
+
 			if (加減算 == 1 ) { Screen::SetBlendMode(BlendMode::Add); }
-			スキルエフェクト[フレーム番号]->DrawRotate({ x,y }, 拡大率, 0);
+			スキルエフェクト[0][フレーム番号]->DrawRotate({ x,y }, 拡大率, 0);
 			if (加減算 != 0) { Screen::SetBlendMode(); }
 
 			アニメ時間 += Game::ゲームスピード;
@@ -153,9 +141,9 @@ namespace SDX_ADE
 				}
 			}
 
-			if (フレーム番号 >= スキルエフェクト.GetSize())
+			if (フレーム番号 >= スキルエフェクト->GetSize())
 			{
-				フレーム番号 = スキルエフェクト.GetSize() - 1;
+				フレーム番号 = スキルエフェクト->GetSize() - 1;
 				isEnd = true;
 			}
 
@@ -175,6 +163,7 @@ namespace SDX_ADE
 
 		int 座標X = 0;
 		int 座標Y = 0;
+		bool isEnd = false;
 
 		const int 表示終了Y = -20;
 		const int 移動Y = -1;
@@ -185,6 +174,17 @@ namespace SDX_ADE
 			配置ID(配置ID)
 		{}
 
+		void Set(Image* image, int 隠れ時間, int 配置ID)
+		{
+			座標X = 0;
+			座標Y = 0;
+			isEnd = false;
+
+			this->image = image;
+			this->隠れ時間 = 隠れ時間;
+			this->配置ID = 配置ID;
+		}
+
 		//破棄する場合 trueを返す
 		bool Update()
 		{
@@ -193,27 +193,19 @@ namespace SDX_ADE
 				隠れ時間--;
 				return false;
 			}
-
-
-			return (座標Y < 表示終了Y);
 		}
 
 		//描画時に座標を少し移動
 		void Draw(int px,int py)
 		{
+			if (座標Y < 表示終了Y)
+			{
+				isEnd = true;
+				return;
+			}
+
 			image->DrawRotate({ px , py }, 1, 0);
 			座標Y += 移動Y * (int)std::sqrt(Game::ゲームスピード);
-		}
-
-		MaterialEffect& operator=(const MaterialEffect& コピー元)
-		{
-			// 代入操作時に行う処理を記述
-			this->image = コピー元.image;
-			this->隠れ時間 = コピー元.隠れ時間;
-			this->座標Y = コピー元.座標Y;
-			this->配置ID = コピー元.配置ID;
-		
-			return *this;
 		}
 	};
 	
@@ -225,15 +217,59 @@ namespace SDX_ADE
 		inline static std::vector<BattleEffect> アニメ[CV::上限パーティ数];
 		inline static std::vector<MaterialEffect> 素材[CV::上限パーティ数];
 
-		template <class T>
-		static void UpdateAndDelete(std::vector<T>& エフェクト)
+		static void Addアニメ(int id, bool is味方, int 配置ID,int パーティID)
 		{
-			if (エフェクト.size() == 0) { return; }
+			for (int i = 0; i < アニメ[パーティID].size(); i++)
+			{
+				if (アニメ[パーティID][i].isEnd == true)
+				{
+					アニメ[パーティID][i].Set(id, is味方, 配置ID);
+					return;
+				}
+			}
 
-			auto it_del = std::remove_if(エフェクト.begin(), エフェクト.end(),
-				[](T& it) ->bool { return it.Update(); });
+			アニメ[パーティID].emplace_back(id, is味方, 配置ID);
+		}
 
-			エフェクト.erase(it_del, エフェクト.end());
+		static void Add文字(TextEffect::TextType 種類, int ダメージ量, bool is味方, int 配置ID,int パーティID)
+		{
+			for (int i = 0; i < 文字[パーティID].size(); i++)
+			{
+				if (文字[パーティID][i].isEnd == true)
+				{
+					文字[パーティID][i].Set(種類, ダメージ量, is味方, 配置ID);
+					return;
+				}
+			}
+
+			文字[パーティID].emplace_back(種類, ダメージ量, is味方, 配置ID);
+		}
+
+		static void Add素材(Image* image, int 隠れ時間, int 配置ID, int パーティID)
+		{
+			for (int i = 0; i < 素材[パーティID].size(); i++)
+			{
+				if (素材[パーティID][i].isEnd == true)
+				{
+					素材[パーティID][i].Set(image, 隠れ時間, 配置ID);
+					return;
+				}
+			}
+
+			素材[パーティID].emplace_back(image, 隠れ時間, 配置ID);
+		}
+
+
+
+		static void Update()
+		{
+			for (int i = 0; i < CV::上限パーティ数; i++)
+			{
+				for (auto& it : 素材[i])
+				{
+					it.Update();
+				}
+			}
 		}
 
 		static void SaveLoad(File& ファイル, FileMode 読み書きモード)

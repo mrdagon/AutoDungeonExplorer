@@ -339,17 +339,18 @@ namespace SDX_ADE
 		{
 			if (ダメージ == 0)
 			{
-				Effect::文字[パーティID].emplace_back(TextEffect::TextType::回避, 0, is味方, 隊列ID);
+				Effect::Add文字(TextEffect::TextType::回避, 0, is味方, 隊列ID, パーティID);
 			} else if (ダメージ > 0) {
-				Effect::文字[パーティID].emplace_back(TextEffect::TextType::ダメージ, ダメージ , is味方 , 隊列ID);
+				Effect::Add文字(TextEffect::TextType::ダメージ, ダメージ , is味方 , 隊列ID, パーティID);
 			} else {
-				Effect::文字[パーティID].emplace_back(TextEffect::TextType::回復, -ダメージ, is味方, 隊列ID);
+				Effect::Add文字(TextEffect::TextType::回復, -ダメージ, is味方, 隊列ID, パーティID);
 			}
 		}
 
 		void エフェクトアニメ(int ID)
 		{
-			Effect::アニメ[パーティID].emplace_back(ID, is味方, 隊列ID);
+			Effect::Addアニメ(ID, is味方, 隊列ID, パーティID);
+			//Effect::アニメ[パーティID].emplace_back(ID, is味方, 隊列ID);
 		}
 
 		void エフェクトリセット()
@@ -439,6 +440,8 @@ namespace SDX_ADE
 			int 暫定数値 = 1000;
 			int max = 0;
 			int rng = 0;
+
+			int count = 0;
 			
 			switch (Aスキル.対象)
 			{
@@ -495,6 +498,7 @@ namespace SDX_ADE
 				{
 					対象リスト[Rand::Get((int)対象リスト.size() - 1)]->Hit数++;
 				}
+				break;
 			case ASkillTarget::敵後列:
 				Get対象リスト(対象リスト, 敵, Aスキル, true, true, FormationType::後列);
 
@@ -589,12 +593,12 @@ namespace SDX_ADE
 
 			//命中とかに関係無くエフェクト
 			エフェクトアニメ(Aスキル.base->戦闘エフェクト);
-
+			
 			//Hit数だけ命中判定
 			for (int a = 0; a < Hit数; a++)
 			{
 				//命中判定
-				if ( !Rand::Coin(Aスキル.命中 - Getステ(StatusType::回避))) { continue; }
+				if ( !Rand::Coin( double(Aスキル.命中 - Getステ(StatusType::回避))/100.0 )) { continue; }
 				is回避 = false;
 
 				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス)) / 100;
