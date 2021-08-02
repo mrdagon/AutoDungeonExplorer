@@ -126,7 +126,7 @@ namespace SDX_ADE
 
 			//スキル名
 			Design::Help->Draw(UIType::丸フレーム, L2);
-			MFont::L->Draw(L2.GetPos(), Design::暗字,{ Aスキル->名前 });
+			MFont::L->DrawRotate(L2.GetPos(),1,0, Design::暗字,{ Aスキル->名前 });
 
 			//スキル説明
 			Design::Help->Draw(UIType::グループ明, L3);

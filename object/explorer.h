@@ -117,7 +117,7 @@ namespace SDX_ADE
 		/*パーティ非所属キャラ用ステータス計算*/
 		int Get要求経験値()
 		{
-			return (2 + Lv * Lv) * CV::要求経験値;
+			return int((2 + Lv * std::sqrt(Lv)) * CV::要求経験値);
 		}
 
 		double Get経験値率()
@@ -148,7 +148,7 @@ namespace SDX_ADE
 		void 基礎ステータス計算()
 		{
 			//とりあえずモンスターはLvで12%で成長、味方はLvで10%成長
-			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 5);
+			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 4);
 			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (9 + Lv) / 10);
 			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (9 + Lv) / 10);
 			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (9 + Lv) / 10);
@@ -206,6 +206,7 @@ namespace SDX_ADE
 
 			//PスキルSの更新
 			Pスキル.clear();
+			PスキルLv.clear();
 			//習得済みパッシブをpush
 			for (int a = 0; a < CV::上限Pスキル種類; a++)
 			{
@@ -236,6 +237,9 @@ namespace SDX_ADE
 			レア素材収集補正 = 0.0;
 			素材剥取量 = 0.0;
 			素材収集量 = 0.0;
+
+			経験値補正 = 0.0;
+			未探索発見補正 = 0.0;
 
 			//
 			探検前Lv = Lv;

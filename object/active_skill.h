@@ -144,6 +144,12 @@ namespace SDX_ADE
 					file_data.Read(tmp追加効果値[b]);
 				}
 
+				for (int i = 0; i < (int)ASkillSubType::COUNT; i++)
+				{
+					it.追加効果[(ASkillSubType)i] = 0;
+				}
+
+
 				for (int b = 0; b < 5 ; b++)
 				{
 					if ( tmp追加種類[b] != ASkillSubType::なし)

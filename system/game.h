@@ -21,6 +21,8 @@ namespace SDX_ADE
 		static bool isヘルプ = true;
 		static bool isゲーム終了 = false;
 
+		static bool isClear = false;
+
 		static int 最大解像度W = 1600, 最大解像度H = 900;
 		//
 		static bool isメインクエスト = false;//メインクエスト終了フラグ

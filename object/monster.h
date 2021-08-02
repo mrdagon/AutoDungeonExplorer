@@ -68,7 +68,7 @@ namespace SDX_ADE
 
 			if (isボス)
 			{
-				基礎ステ[StatusType::HP] *= 20;
+				基礎ステ[StatusType::HP] *= CV::ボスHP係数;
 			}
 
 			Reset一時補正ステータス();
@@ -98,7 +98,7 @@ namespace SDX_ADE
 
 		int Get経験値()
 		{
-			return 3 * Lv + Lv * Lv / 4;
+			return 3 * Lv + (int)(Lv * std::sqrt(Lv) / 2);
 		}
 	};
 }

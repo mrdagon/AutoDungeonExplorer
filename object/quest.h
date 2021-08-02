@@ -182,6 +182,7 @@ namespace SDX_ADE
 			text += "を完了";
 			EventLog::Add(text.c_str(), Game::日付, LogType::依頼);
 
+
 			switch (種類)
 			{
 			case QuestType::ダンジョン発見://特定階層到達
@@ -203,6 +204,7 @@ namespace SDX_ADE
 				{
 					return false;
 				}
+				Game::isClear = true;
 				報酬獲得(アクセ所持数);
 				break;
 			}

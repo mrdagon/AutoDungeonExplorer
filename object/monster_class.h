@@ -123,7 +123,7 @@ namespace SDX_ADE
 				hp = int(ステ[種類] * (8.8 + Lv * 1.2) / 5);
 				if (isボス)
 				{
-					return hp * 20;
+					return hp * CV::ボスHP係数;
 				}
 				return hp;
 			case StatusType::力:

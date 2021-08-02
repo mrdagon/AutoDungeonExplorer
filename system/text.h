@@ -21,8 +21,8 @@ namespace SDX_ADE
 
 		EnumArray<std::string, StatusType> ステータス;
 
-		std::string タイトル = "だいじぇすと　ダンジョン　 0.2β";
-		const wchar_t* アンケURL = L"https://forms.gle/BBBcruGYX8PTRZ9M9";
+		std::string タイトル = "だいじぇすと　ダンジョン　 0.1β";
+		const wchar_t* アンケURL = L"https://forms.gle/SJKaknpK4YmZpGkm8";
 
 		////Save data
 		const std::string Save_コンフィグファイル名 = "config.sav";

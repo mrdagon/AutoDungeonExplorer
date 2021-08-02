@@ -145,13 +145,29 @@ namespace SDX_ADE
 		void 基礎Pスキル補正(std::vector<Battler*>& 味方, std::vector<Battler*>& 敵)
 		{
 			//味方と自分の基礎Pスキルによる補正ステ計算
+			for (auto& it : ステ割合上昇)
+			{
+				it = 0;
+			}
+
 			Pスキル条件チェック(PSkillTime::常時, nullptr, 味方, 敵);
 			基礎Pスキル反映();
 		}
 
 		//常時ステータス上昇パッシブの計算用
 		void 基礎Pスキル反映()
-		{
+		{			//割合増加を反映
+			補正ステ[StatusType::HP] += 補正ステ[StatusType::HP] * ステ割合上昇[StatusType::HP] / 100;
+			補正ステ[StatusType::力] += 補正ステ[StatusType::力] * ステ割合上昇[StatusType::力] / 100;
+			補正ステ[StatusType::技] += 補正ステ[StatusType::技] * ステ割合上昇[StatusType::技] / 100;
+			補正ステ[StatusType::知] += 補正ステ[StatusType::知] * ステ割合上昇[StatusType::知] / 100;
+
+			補正ステ[StatusType::物防] += 補正ステ[StatusType::物防] * ステ割合上昇[StatusType::物防] / 100;
+			補正ステ[StatusType::魔防] += 補正ステ[StatusType::魔防] * ステ割合上昇[StatusType::魔防] / 100;
+
+			補正ステ[StatusType::命中] += 補正ステ[StatusType::命中] * ステ割合上昇[StatusType::命中] / 100;
+			補正ステ[StatusType::回避] += 補正ステ[StatusType::回避] * ステ割合上昇[StatusType::回避] / 100;
+
 			//Pスキル補正を確定
 			基礎ステ[StatusType::HP] = 補正ステ[StatusType::HP];
 			基礎ステ[StatusType::力] = 補正ステ[StatusType::力];
@@ -164,17 +180,7 @@ namespace SDX_ADE
 			基礎ステ[StatusType::命中] = 補正ステ[StatusType::命中];
 			基礎ステ[StatusType::回避] = 補正ステ[StatusType::回避];
 
-			//割合増加を反映
-			基礎ステ[StatusType::HP] += 補正ステ[StatusType::HP] * ステ割合上昇[StatusType::HP] / 100;
-			基礎ステ[StatusType::力] += 補正ステ[StatusType::力] * ステ割合上昇[StatusType::力] / 100;
-			基礎ステ[StatusType::技] += 補正ステ[StatusType::技] * ステ割合上昇[StatusType::技] / 100;
-			基礎ステ[StatusType::知] += 補正ステ[StatusType::知] * ステ割合上昇[StatusType::知] / 100;
 
-			基礎ステ[StatusType::物防] += 補正ステ[StatusType::物防] * ステ割合上昇[StatusType::物防] / 100;
-			基礎ステ[StatusType::魔防] += 補正ステ[StatusType::魔防] * ステ割合上昇[StatusType::魔防] / 100;
-
-			基礎ステ[StatusType::命中] += 補正ステ[StatusType::命中] * ステ割合上昇[StatusType::命中] / 100;
-			基礎ステ[StatusType::回避] += 補正ステ[StatusType::回避] * ステ割合上昇[StatusType::回避] / 100;
 
 		}
 
@@ -418,7 +424,10 @@ namespace SDX_ADE
 				}
 
 
-				if (現在HP <= 0) { return true; }
+				if (現在HP <= 0) { 
+					現在HP = 0;
+					return true;
+				}
 
 				//スキルの発動
 				Aスキル使用(Aスキル[現在スキルスロット], 味方, 敵);
@@ -432,7 +441,7 @@ namespace SDX_ADE
 			return false;
 		}
 
-		void 対象選択(const ASkillEffect &Aスキル, std::vector<Battler*>& 対象結果, std::vector<Battler*>&味方,std::vector<Battler*> &敵)
+		void 対象選択(ASkillEffect &Aスキル, std::vector<Battler*>& 対象結果, std::vector<Battler*>&味方,std::vector<Battler*> &敵)
 		{
 			//攻撃or回復対象を選択
 			static std::vector<Battler*> 対象リスト;
@@ -447,9 +456,11 @@ namespace SDX_ADE
 			{
 			//味方対象
 			case ASkillTarget::自分:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Hit数+= Aスキル.Hit数;
 				break;
 			case ASkillTarget::弱者:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Get対象リスト(対象リスト, 味方 , Aスキル , false, false , FormationType::前列);
 				for (auto& it : 対象リスト)
 				{
@@ -463,12 +474,14 @@ namespace SDX_ADE
 				if (暫定対象 != nullptr) { 暫定対象->Hit数 += Aスキル.Hit数; }
 				break;
 			case ASkillTarget::前列:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Get対象リスト(対象リスト, 味方, Aスキル,false,false, FormationType::前列);
 
 				rng = Rand::Get((int)対象リスト.size() - 1);
 				対象リスト[rng]->Hit数 += Aスキル.Hit数;
 				break;
 			case ASkillTarget::後列:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Get対象リスト(対象リスト, 味方, Aスキル, false, false, FormationType::後列);
 
 				rng = Rand::Get((int)対象リスト.size() - 1);
@@ -476,6 +489,7 @@ namespace SDX_ADE
 
 				break;
 			case ASkillTarget::前列範囲:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Get対象リスト(対象リスト, 味方, Aスキル,false,false, FormationType::前列);
 
 				for (auto& it : 対象リスト)
@@ -484,6 +498,7 @@ namespace SDX_ADE
 				}
 				break;
 			case ASkillTarget::後列範囲:
+				Aスキル.追加効果[ASkillSubType::必中] = 100;
 				Get対象リスト(対象リスト, 味方, Aスキル, false, false, FormationType::後列);
 				for (auto& it : 対象リスト)
 				{
@@ -598,7 +613,10 @@ namespace SDX_ADE
 			for (int a = 0; a < Hit数; a++)
 			{
 				//命中判定
-				if ( !Rand::Coin( double(Aスキル.命中 - Getステ(StatusType::回避))/100.0 )) { continue; }
+				double hit_rate = double(Aスキル.命中 - Getステ(StatusType::回避)) / 100.0;
+				hit_rate = std::max( double(Aスキル.命中) / 500.0 , hit_rate);
+
+				if (Aスキル.追加効果[ASkillSubType::必中] == 0 && !Rand::Coin( hit_rate )) { continue; }
 				is回避 = false;
 
 				合計ダメージ += (int)(Aスキル.基礎ダメージ + Aスキル.反映率 * スキル使用者->Getステ(Aスキル.base->参照ステータス)) / 100;
@@ -788,7 +806,7 @@ namespace SDX_ADE
 			//とりあえずβのだけ実装
 			for (int i = 0; i < 2; i++)
 			{
-				int Num = Pスキル.Get効果値(i);;
+				int Num = Pスキル.Get効果値(i);
 				
 				switch (Pスキル.Get効果種(i))
 				{

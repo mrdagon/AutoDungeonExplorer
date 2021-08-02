@@ -9,8 +9,8 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		bool isレイアウト = true;
-		constexpr bool isデバッグ = true;
+		bool isレイアウト = false;
+		constexpr bool isデバッグ = false;
 
 		constexpr int ヘルプ待機時間 = 5;//マウスオーバー開始からヘルプ表示までの猶予時間
 		constexpr int スクロール感度 = 30;
@@ -68,6 +68,8 @@ namespace SDX_ADE
 		constexpr int 財宝部屋ID = 10;
 
 		//戦闘関係の定数
+		constexpr int ボスHP係数 = 10;
+
 		constexpr int 初期CT乱数 = 50;
 
 		constexpr int 気絶スタン値 = 100;

@@ -293,10 +293,41 @@ namespace SDX_ADE
 				}
 				if (Game::時間 >= Game::日没時間) 
 				{
+
 					EndDay();
 					break;
 				}
 
+				if (Game::isClear == true)
+				{
+					while (1)
+					{
+						W_Popup test;
+						test.Init();
+
+						test.文章.テキスト = "ボスを討伐しました！\n";
+						test.文章.テキスト += std::to_string(Game::日付 + 1);
+						test.文章.テキスト += " 日目、全滅";
+						test.文章.テキスト += std::to_string(Guild::P->総全滅);
+						test.文章.テキスト += " 回\n";
+						test.文章.テキスト += "β版はここまでです\nアンケートに答えますか？";
+
+						test.OpenPopup();
+
+						if (test.ポップアップリザルト == 1)
+						{
+							ShellExecute(NULL, L"open", TX::アンケURL, NULL, L"", SW_SHOW);
+							test.OpenPopup();
+							break;
+						}
+						else
+						{
+							break;
+						}
+					}
+					Game::isClear = false;
+				}
+				
 				//探索処理
 				Guild::P->探索処理();
 				Game::時間++;

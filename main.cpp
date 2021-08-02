@@ -78,11 +78,14 @@ int main(int argc, char* argv[])
 			game.Init(menu.セーブ);
 		}
 
+		menu.Init();//とりあえずタイトルスキップ
+		menu.Main();
+
+		if (Game::isゲーム終了) { break; }
+
 		game.Init();
 		game.Main();
 
-		menu.Init();//とりあえずタイトルスキップ
-		menu.Main();
 	}
 
 	if (CV::isデバッグ)
