@@ -114,14 +114,14 @@ namespace SDX_ADE
 				file_data.Read(it.ランク);
 
 				file_data.Read(it.ステ[StatusType::HP]);
-				file_data.Read(it.ステ[StatusType::力]);
-				file_data.Read(it.ステ[StatusType::技]);
-				file_data.Read(it.ステ[StatusType::知]);
-				file_data.Read(it.ステ[StatusType::物防]);
-				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::パワー]);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
+				file_data.Read(it.ステ[StatusType::防御]);
+				file_data.Read(dummy);
 				file_data.Read(it.ステ[StatusType::命中]);
 				file_data.Read(it.ステ[StatusType::回避]);
-				file_data.Read(it.ステ[StatusType::会心]);
+				file_data.Read(dummy);
 
 
 				CraftType mct = CraftType::木材;
@@ -129,38 +129,38 @@ namespace SDX_ADE
 				switch (it.種類)
 				{
 					//武器
-					case ItemType::大剣:mct = CraftType::鉄材; sct = CraftType::骨材;
+					case ItemType::大剣:mct = CraftType::鉄材; sct = CraftType::鉄材;
 						break;
-					case ItemType::剣盾:mct = CraftType::木材; sct = CraftType::鉄材;
+					case ItemType::盾:mct = CraftType::木材; sct = CraftType::鉄材;
 						break;
-					case ItemType::大盾:mct = CraftType::鉄材; sct = CraftType::革材;
+					case ItemType::弓:mct = CraftType::鉄材; sct = CraftType::革材;
 						break;
-					case ItemType::円盤:mct = CraftType::骨材; sct = CraftType::石材;
+					case ItemType::本:mct = CraftType::革材; sct = CraftType::魔材;
 						break;
-					case ItemType::斧:mct = CraftType::鉄材; sct = CraftType::木材;
+					case ItemType::聖杖:mct = CraftType::鉄材; sct = CraftType::木材;
 						break;
-					case ItemType::刀:mct = CraftType::鉄材; sct = CraftType::石材;
+					case ItemType::人形:mct = CraftType::鉄材; sct = CraftType::木材;
 						break;
-					case ItemType::弓:mct = CraftType::木材; sct = CraftType::革材;
+					case ItemType::突剣:mct = CraftType::木材; sct = CraftType::革材;
 						break;
-					case ItemType::神杖:mct = CraftType::魔材; sct = CraftType::骨材;
+					case ItemType::刀:mct = CraftType::魔材; sct = CraftType::革材;
 						break;
-					case ItemType::錫杖:mct = CraftType::石材; sct = CraftType::骨材;
+					case ItemType::斧:mct = CraftType::鉄材; sct = CraftType::鉄材;
 						break;
-					case ItemType::導杖:mct = CraftType::魔材; sct = CraftType::木材;
+					case ItemType::邪杖:mct = CraftType::魔材; sct = CraftType::木材;
 						break;
-					case ItemType::書物:mct = CraftType::木材; sct = CraftType::魔材;
+					case ItemType::御札:mct = CraftType::木材; sct = CraftType::魔材;
 						break;
-					case ItemType::水晶:mct = CraftType::石材; sct = CraftType::魔材;
+					case ItemType::短剣:mct = CraftType::鉄材; sct = CraftType::魔材;
 						break;
 					//防具
-					case ItemType::重鎧:mct = CraftType::鉄材; sct = CraftType::石材;
+					case ItemType::鎧:mct = CraftType::鉄材; sct = CraftType::鉄材;
 						break;
-					case ItemType::軽鎧:mct = CraftType::革材; sct = CraftType::鉄材;
+					case ItemType::帷子:mct = CraftType::革材; sct = CraftType::鉄材;
 						break;
-					case ItemType::軽装:mct = CraftType::革材; sct = CraftType::石材;
+					case ItemType::ローブ:mct = CraftType::革材; sct = CraftType::鉄材;
 						break;
-					case ItemType::外套:mct = CraftType::革材; sct = CraftType::魔材;
+					case ItemType::法衣:mct = CraftType::革材; sct = CraftType::魔材;
 						break;
 				}
 
@@ -212,14 +212,14 @@ namespace SDX_ADE
 				file_data.Read(it.ランク);
 
 				file_data.Read(it.ステ[StatusType::HP]);
-				file_data.Read(it.ステ[StatusType::力]);
-				file_data.Read(it.ステ[StatusType::技]);
-				file_data.Read(it.ステ[StatusType::知]);
-				file_data.Read(it.ステ[StatusType::物防]);
-				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::パワー]);
+				file_data.Read( dummy );
+				file_data.Read( dummy);
+				file_data.Read( it.ステ[StatusType::防御] );
+				file_data.Read( dummy );
 				file_data.Read(it.ステ[StatusType::命中]);
 				file_data.Read(it.ステ[StatusType::回避]);
-				file_data.Read(it.ステ[StatusType::会心]);
+				file_data.Read( dummy );
 
 				file_data.Read(it.レアリティ);
 				file_data.Read(it.開放ポイント);

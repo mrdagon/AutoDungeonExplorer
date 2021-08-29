@@ -7,7 +7,7 @@ namespace SDX_ADE
 {
 	using namespace SDX;
 
-	/*ギルメンのクラス*/
+	/*ギルメンの職業と種族*/
 	class ExplorerClass
 	{
 	private:
@@ -24,7 +24,6 @@ namespace SDX_ADE
 		ActiveSkill* 初期Aスキル[CV::最大Aスキル数];//初期スキル
 		std::vector<ActiveSkill*> 習得Aスキル;
 		std::vector<PassiveSkill*> 習得Pスキル;
-
 		std::vector<PassiveSkill*> 習得キースキル;
 
 		//
@@ -78,15 +77,16 @@ namespace SDX_ADE
 				file_data.Read(it.武器種);
 				file_data.Read(it.防具種);
 
+				int dummy = 0;
 				file_data.Read(it.ステ[StatusType::HP]);
-				file_data.Read(it.ステ[StatusType::力]);
-				file_data.Read(it.ステ[StatusType::技]);
-				file_data.Read(it.ステ[StatusType::知]);
-				file_data.Read(it.ステ[StatusType::物防]);
-				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::パワー]);
+				file_data.Read( dummy );
+				file_data.Read(dummy);
+				file_data.Read(it.ステ[StatusType::防御]);
+				file_data.Read(dummy);
 				file_data.Read(it.ステ[StatusType::命中]);
 				file_data.Read(it.ステ[StatusType::回避]);
-				file_data.Read(it.ステ[StatusType::会心]);
+				file_data.Read(dummy);
 
 				for (int i = 0; i < ActiveSkill::data.size(); i++)
 				{

@@ -185,15 +185,8 @@ namespace SDX_ADE
 
 			switch (種類)
 			{
-			case QuestType::ダンジョン発見://特定階層到達
+			case QuestType::階層到達://特定階層到達
 				if (id != 条件数値)
-				{
-					return false;
-				}
-				報酬獲得(アクセ所持数);
-				break;
-			case QuestType::累計FOE討伐://FOEを累計、X体討伐
-				if (id < 条件数値)
 				{
 					return false;
 				}

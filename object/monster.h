@@ -54,17 +54,12 @@ namespace SDX_ADE
 		{
 			this->基礎ステ[StatusType::HP] = int(種族->ステ[StatusType::HP] * (8.8 + Lv * 1.2) / 5);
 
-			this->基礎ステ[StatusType::力] = int(種族->ステ[StatusType::力] * (8.8 + Lv * 1.2) / 10);
-			this->基礎ステ[StatusType::知] = int(種族->ステ[StatusType::知] * (8.8 + Lv * 1.2) / 10);
-			this->基礎ステ[StatusType::技] = int(種族->ステ[StatusType::技] * (8.8 + Lv * 1.2) / 10);
+			this->基礎ステ[StatusType::パワー] = int(種族->ステ[StatusType::パワー] * (8.8 + Lv * 1.2) / 10);
 
-			this->基礎ステ[StatusType::物防] = int(種族->ステ[StatusType::物防] * (28.8 + Lv * 1.2) / 30);
-			this->基礎ステ[StatusType::魔防] = int(種族->ステ[StatusType::魔防] * (28.8 + Lv * 1.2) / 30);
+			this->基礎ステ[StatusType::防御] = int(種族->ステ[StatusType::防御] * (28.8 + Lv * 1.2) / 30);
 
 			this->基礎ステ[StatusType::命中] = int(種族->ステ[StatusType::命中] * (48.8 + Lv * 1.2) / 50);
 			this->基礎ステ[StatusType::回避] = int(種族->ステ[StatusType::回避] * (48.8 + Lv * 1.2) / 50);
-
-			this->基礎ステ[StatusType::会心] = 種族->ステ[StatusType::会心];
 
 			if (isボス)
 			{
@@ -82,7 +77,7 @@ namespace SDX_ADE
 				}
 
 				Aスキル.push_back( 種族->Aスキル[a]);
-				AスキルLv.push_back(種族->AスキルLv[a]);
+				
 				必要クールダウン.push_back(Aスキル[a]->クールタイム);
 			}
 

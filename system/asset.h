@@ -99,10 +99,8 @@ namespace SDX_ADE
 			UI[IconType::骨材].Load("file/system/mat_004.png");
 
 			素材[CraftType::木材].Load("file/system/mat_002.png");
-			素材[CraftType::石材].Load("file/system/mat_008.png");
 			素材[CraftType::鉄材].Load("file/system/mat_001.png");
 			素材[CraftType::革材].Load("file/system/mat_003.png");
-			素材[CraftType::骨材].Load("file/system/mat_004.png");
 			素材[CraftType::魔材].Load("file/system/mat_010.png");
 
 			for (int i = 0; i < 100; i++)
@@ -135,22 +133,22 @@ namespace SDX_ADE
 		{
 			//武器-防具
 			装備品[(int)ItemType::大剣].Load("file/equip/wepon000.png");
-			装備品[(int)ItemType::剣盾].Load("file/equip/wepon001.png");
-			装備品[(int)ItemType::大盾].Load("file/equip/wepon002.png");
-			装備品[(int)ItemType::円盤].Load("file/equip/wepon003.png");
-			装備品[(int)ItemType::斧].Load("file/equip/wepon004.png");
-			装備品[(int)ItemType::刀].Load("file/equip/wepon005.png");
-			装備品[(int)ItemType::弓].Load("file/equip/wepon006.png");
-			装備品[(int)ItemType::神杖].Load("file/equip/wepon007.png");
-			装備品[(int)ItemType::錫杖].Load("file/equip/wepon008.png");
-			装備品[(int)ItemType::導杖].Load("file/equip/wepon009.png");
-			装備品[(int)ItemType::書物].Load("file/equip/wepon010.png");
-			装備品[(int)ItemType::水晶].Load("file/equip/wepon011.png");
+			装備品[(int)ItemType::盾].Load("file/equip/wepon001.png");
+			装備品[(int)ItemType::弓].Load("file/equip/wepon002.png");
+			装備品[(int)ItemType::本].Load("file/equip/wepon003.png");
+			装備品[(int)ItemType::聖杖].Load("file/equip/wepon004.png");
+			装備品[(int)ItemType::人形].Load("file/equip/wepon005.png");
+			装備品[(int)ItemType::突剣].Load("file/equip/wepon006.png");
+			装備品[(int)ItemType::刀].Load("file/equip/wepon007.png");
+			装備品[(int)ItemType::斧].Load("file/equip/wepon008.png");
+			装備品[(int)ItemType::邪杖].Load("file/equip/wepon009.png");
+			装備品[(int)ItemType::御札].Load("file/equip/wepon010.png");
+			装備品[(int)ItemType::短剣].Load("file/equip/wepon011.png");
 
-			装備品[(int)ItemType::重鎧].Load("file/equip/armor000.png");
-			装備品[(int)ItemType::軽鎧].Load("file/equip/armor001.png");
-			装備品[(int)ItemType::軽装].Load("file/equip/armor002.png");
-			装備品[(int)ItemType::外套].Load("file/equip/armor003.png");
+			装備品[(int)ItemType::鎧].Load("file/equip/armor000.png");
+			装備品[(int)ItemType::帷子].Load("file/equip/armor001.png");
+			装備品[(int)ItemType::ローブ].Load("file/equip/armor002.png");
+			装備品[(int)ItemType::法衣].Load("file/equip/armor003.png");
 
 			装備品[(int)ItemType::アクセサリー].Load("file/equip/armor003.png");
 			装備品[17].Load("file/equip/noitem.png");
@@ -180,28 +178,26 @@ namespace SDX_ADE
 
 
 			装備種[ItemType::大剣].Load("file/game_icons/plain-dagger.png");
-			装備種[ItemType::剣盾].Load("file/game_icons/battle-axe.png");
-			装備種[ItemType::大盾].Load("file/game_icons/flanged-mace.png");
-			装備種[ItemType::円盤].Load("file/game_icons/checked-shield.png");
-			装備種[ItemType::斧].Load("file/game_icons/stiletto.png");
-			装備種[ItemType::刀].Load("file/game_icons/trident.png");
-			装備種[ItemType::弓].Load("file/game_icons/pocket-bow.png");
-			装備種[ItemType::神杖].Load("file/game_icons/winchester-rifle.png");
-			装備種[ItemType::錫杖].Load("file/game_icons/orb-wand.png");
-			装備種[ItemType::導杖].Load("file/game_icons/skull-staff.png");
-			装備種[ItemType::書物].Load("file/game_icons/wizard-staff.png");
-			装備種[ItemType::水晶].Load("file/game_icons/lunar-wand.png");
+			装備種[ItemType::盾].Load("file/game_icons/battle-axe.png");
+			装備種[ItemType::弓].Load("file/game_icons/flanged-mace.png");
+			装備種[ItemType::本].Load("file/game_icons/checked-shield.png");
+			装備種[ItemType::聖杖].Load("file/game_icons/stiletto.png");
+			装備種[ItemType::人形].Load("file/game_icons/trident.png");
+			装備種[ItemType::突剣].Load("file/game_icons/pocket-bow.png");
+			装備種[ItemType::刀].Load("file/game_icons/winchester-rifle.png");
+			装備種[ItemType::斧].Load("file/game_icons/orb-wand.png");
+			装備種[ItemType::邪杖].Load("file/game_icons/skull-staff.png");
+			装備種[ItemType::御札].Load("file/game_icons/wizard-staff.png");
+			装備種[ItemType::短剣].Load("file/game_icons/lunar-wand.png");
 
-			装備種[ItemType::重鎧].Load("file/game_icons/breastplate.png");
-			装備種[ItemType::軽鎧].Load("file/game_icons/leather-armor.png");
-			装備種[ItemType::軽装].Load("file/game_icons/robe.png");
-			装備種[ItemType::外套].Load("file/game_icons/Plastron.png");
+			装備種[ItemType::鎧].Load("file/game_icons/breastplate.png");
+			装備種[ItemType::帷子].Load("file/game_icons/leather-armor.png");
+			装備種[ItemType::ローブ].Load("file/game_icons/robe.png");
+			装備種[ItemType::法衣].Load("file/game_icons/Plastron.png");
 
 			装備種[ItemType::すべて].Load("file/game_icons/talk.png");
 
-			ステータス種[StatusType::力].Load("file/game_icons/fist.png");
-			ステータス種[StatusType::技].Load("file/game_icons/juggler.png");
-			ステータス種[StatusType::知].Load("file/game_icons/white-book.png");
+			ステータス種[StatusType::パワー].Load("file/game_icons/fist.png");
 
 			static Image img_emote;
 			img_emote.Load("file/system/emo.png");

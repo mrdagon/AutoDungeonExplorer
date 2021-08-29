@@ -17,20 +17,20 @@ namespace SDX_ADE
 		constexpr int ボタンアニメ時間 = 10;//
 
 		//外部データ件数上限
-		constexpr int 上限Aスキル種類 = 200;
-		constexpr int 上限Pスキル種類 = 200;
+		constexpr int 上限Aスキル種類 = 300;
+		constexpr int 上限Pスキル種類 = 300;
 
-		constexpr int 上限素材種類 = 200;
+		constexpr int 上限素材種類 = 100;
 
 		constexpr int 上限アクセサリ種類 = 200;
 
 		constexpr int 上限ダンジョン数 = 100;
 
-		constexpr int 上限投資案 = 200;
+		constexpr int 上限投資案 = 100;
 
-		constexpr int 上限依頼数 = 200;
+		constexpr int 上限依頼数 = 100;
 
-		constexpr int 上限素材ランク = 10;
+		constexpr int 上限素材ランク = 3;
 		constexpr double サブ素材必要数 = 0.5;
 
 		constexpr int パーティ人数 = 5;
@@ -39,12 +39,11 @@ namespace SDX_ADE
 		constexpr int 上限探索者登録数 = 100;
 		constexpr int 最大控え人数 = 35;
 
-		constexpr int 素材系統 = 6;
+		constexpr int 素材系統 = 4;
 
 		constexpr int 投資コスト最大枠数 = 4;
 
 		constexpr int 最大魔物出現数 = 6;
-		constexpr int 最大財宝配置数 = 6;
 
 		constexpr int 最大地図数 = 2;
 
@@ -70,12 +69,8 @@ namespace SDX_ADE
 		//戦闘関係の定数
 		constexpr int ボスHP係数 = 10;
 
-		constexpr int 初期CT乱数 = 50;
-
-		constexpr int 気絶スタン値 = 100;
-
 		//設定関連
-		constexpr int 最低解像度 = 9;
+		constexpr int 最低解像度 = 8;
 		constexpr int 最大解像度 = 20;
 
 
@@ -83,14 +78,12 @@ namespace SDX_ADE
 
 		constexpr int 最大装備ランク = 99;//+99まで
 
-		constexpr int 最大投資Lv = 10;
-
 		constexpr int 最大Aスキル数 = 4;//一人が戦闘中に装備出来るスキル数
 
 		constexpr int 最大敵Aスキル数 = 8;
 		constexpr int 最大敵Pスキル数 = 8;
 
-		constexpr int 最大キースキル数 = 3;
+		constexpr int 最大キースキル数 = 2;
 
 		constexpr int スキル未予約 = 0;
 		constexpr int 最大スキル予約数 = 100;
@@ -101,9 +94,7 @@ namespace SDX_ADE
 
 		constexpr int 要求経験値 = 200;
 
-		constexpr int 一時間フレーム数 = 720;
-
-		constexpr int 最大投資予約 = 100;
+		constexpr int 一時間フレーム数 = 1440;
 
 		constexpr int 最大強化予約 = 100;
 

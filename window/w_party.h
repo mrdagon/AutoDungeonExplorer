@@ -359,7 +359,6 @@ namespace SDX_ADE
 				if ( it.探索状態 == ExplorType::編成中)
 				{
 					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Input);
-					GetFont()->DrawBoldRotate(GetCenterPos(), 1, 0, Design::暗字, Design::明字, { TX::Party_探索方針[(int)it.探索指示] });
 
 					auto& LA = LData(LParty::探索先変更三角);
 					//三角表示
@@ -369,7 +368,6 @@ namespace SDX_ADE
 					fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
 				} else {
 					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Base);
-					GetFont()->DrawBoldRotate(GetCenterPos(), 1, 0, Design::暗字, Design::明字, { TX::Party_探索方針[(int)it.探索指示] });
 				}
 
 
@@ -439,9 +437,6 @@ namespace SDX_ADE
 					MIcon::UI[IconType::三角].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y - LE.h }, 2, 3.14 / 2);
 					MIcon::UI[IconType::ボス].DrawRotate({ GetX() + xbuf + LE.x,GetY() + LE.y }, 2, 0);
 				}
-
-				//宝箱回収率
-				GetFont()->DrawRotateEdge( GetPos(LC), 1, 0, Design::暗字, { "財宝 "  , it->発見財宝数 , " / " , it->最大財宝数 });
 			}
 
 			bool Drop() override

@@ -12,19 +12,6 @@ namespace SDX_ADE
 	private:
 	public:
 		inline static std::vector<Management> data;
-		inline static const int 必要経験値[CV::最大投資Lv] =
-		{
-			500000,
-			1000000,
-			2000000,
-			4000000,
-			8000000,
-		   15000000,
-		   25000000,
-		   35000000,
-		   50000000,
-		   70000000,
-		};
 
 		Management()
 		{}
@@ -48,8 +35,6 @@ namespace SDX_ADE
 
 		Cost コスト[CV::投資コスト最大枠数];
 
-		int 投資Lv = 0;
-		int 最大投資Lv = 10;
 		bool is使用可 = false;
 		bool is使用済み = false;
 		
@@ -161,7 +146,6 @@ namespace SDX_ADE
 		{
 			for (auto& it : data)
 			{
-				it.投資Lv = 0;
 				it.is使用可 = false;
 			}
 		}

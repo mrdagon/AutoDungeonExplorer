@@ -17,7 +17,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				//街経験値 - 現在値、使用後
-				double rate = (double)Guild::P->街経験値 / Management::必要経験値[Guild::P->街Lv];
+				double rate = 0;
 				Design::Base->DrawGauge(GetX(), GetY(), GetW(), GetH(), rate);
 
 				//街 Lv 現在値のみ

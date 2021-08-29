@@ -34,10 +34,6 @@ namespace SDX_ADE
 
 		bool スキルタグ[(int)SkillType::COUNT];
 
-		ID_PSkill 習得前提PスキルID;//MOD用、今回は使わない
-		int 習得前提PスキルLv;
-		int 習得必要Lv;
-
 		PSkillIf 条件;
 		int 条件値;
 		int 持続時間;//一時バフ用
@@ -46,11 +42,11 @@ namespace SDX_ADE
 		int 発動率;
 		PSkillTarget 対象;
 
-		PSkillEffectType 効果種[2];
-		int 効果量[2];
+		PSkillEffectType 効果種;
+		int 効果量;
 
-		PSkillLvType レベル補正_種類[2];
-		int レベル補正_数値[2];
+		PSkillLvType レベル補正_種類;
+		int レベル補正_数値;
 
 		int Get条件値(int Lv)
 		{
@@ -58,15 +54,11 @@ namespace SDX_ADE
 			Lv -= 1;
 
 			if (Lv <= 0) { return value; }
-
-			for (int i = 0; i < 2; i++)
+			
+			if (レベル補正_種類 == PSkillLvType::条件値)
 			{
-				if (レベル補正_種類[i] == PSkillLvType::条件値)
-				{
-					if (i == 1) { Lv = (Lv + 1) / 5; }
-					value += レベル補正_数値[i] * Lv;
-				}
-			}
+				value += レベル補正_数値 * Lv;
+			}			
 
 			return value;
 		}
@@ -79,44 +71,24 @@ namespace SDX_ADE
 
 			if (Lv <= 0) { return value; }
 
-			for (int i = 0; i < 2; i++)
+			if (レベル補正_種類 == PSkillLvType::発動率)
 			{
-				if (レベル補正_種類[i] == PSkillLvType::発動率)
-				{
-					if (i == 1) { Lv = (Lv + 1) / 5; }
-					value += レベル補正_数値[i]*Lv;
-				}
+				value += レベル補正_数値*Lv;
 			}
 
 			return (double)value / 100.0;
 		}
 
-		int Get効果値( int index , int Lv)
+		int Get効果値( int Lv)
 		{
-			int value = 効果量[index];
+			int value = 効果量;
 			Lv -= 1;
 			if (Lv <= 0) { return value; }
 
-			if (index == 0 )
+			if (レベル補正_種類 == PSkillLvType::効果値1)
 			{
-				for (int i = 0; i < 2; i++)
-				{
-					if (レベル補正_種類[i] == PSkillLvType::効果値1)
-					{
-						if (i == 1) { Lv = (Lv + 1) / 5; }
-						value += レベル補正_数値[i] * Lv;
-					}
-				}
-			} else {
-				for (int i = 0; i < 2; i++)
-				{
-					if (レベル補正_種類[i] == PSkillLvType::効果値2)
-					{
-						if (i == 1) { Lv = (Lv + 1) / 5; }
-						value += レベル補正_数値[i] * Lv;
-					}
-				}
-			}
+				value += レベル補正_数値 * Lv;
+			}				
 
 			return value;
 		}
@@ -128,13 +100,9 @@ namespace SDX_ADE
 
 			if (Lv <= 0) { return value; }
 
-			for (int i = 0; i < 2; i++)
+			if (レベル補正_種類 == PSkillLvType::持続時間)
 			{
-				if (レベル補正_種類[i] == PSkillLvType::持続時間)
-				{
-					if (i == 1) { Lv = (Lv + 1) / 5; }
-					value += レベル補正_数値[i] * Lv;
-				}
+				value += レベル補正_数値 * Lv;
 			}
 
 			return value;
@@ -170,9 +138,9 @@ namespace SDX_ADE
 				file_data.Read(it.isキースキル);
 
 				file_data.Read(it.スキルタグ, (int)SkillType::COUNT);
-				file_data.Read(it.習得前提PスキルID);
-				file_data.Read(it.習得前提PスキルLv);
-				file_data.Read(it.習得必要Lv);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
 
 				file_data.Read(it.条件);
 				file_data.Read(it.条件値);
@@ -181,17 +149,17 @@ namespace SDX_ADE
 				file_data.Read(it.タイミング);
 				file_data.Read(it.発動率);
 				file_data.Read(it.対象);
-				file_data.Read(it.効果種[0]);
-				file_data.Read(it.効果量[0]);
-				file_data.Read(it.効果種[1]);
-				file_data.Read(it.効果量[1]);
+				file_data.Read(it.効果種);
+				file_data.Read(it.効果量);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
 
-				file_data.Read(it.レベル補正_種類[0]);
-				file_data.Read(it.レベル補正_数値[0]);
+				file_data.Read(it.レベル補正_種類);
+				file_data.Read(it.レベル補正_数値);
 
 
-				file_data.Read(it.レベル補正_種類[1]);
-				file_data.Read(it.レベル補正_数値[1]);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
 
 				file_data.Read(it.レアリティ);
 			}
@@ -209,9 +177,9 @@ namespace SDX_ADE
 			Lv(Lv)
 		{}
 
-		PSkillEffectType Get効果種(int index)
+		PSkillEffectType Get効果種()
 		{
-			return Pスキル->効果種[index];
+			return Pスキル->効果種;
 		}
 
 		int Get条件値()
@@ -224,9 +192,9 @@ namespace SDX_ADE
 			return Pスキル->Get発動率(Lv);
 		}
 
-		int Get効果値(int index)
+		int Get効果値()
 		{
-			return Pスキル->Get効果値(index,Lv);		
+			return Pスキル->Get効果値(Lv);		
 		}
 
 		int Get持続値()

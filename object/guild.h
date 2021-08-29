@@ -35,7 +35,6 @@ namespace SDX_ADE
 			int パーティID;
 
 			Dungeon* 探索先 = nullptr;
-			OrderType 探索指示 = OrderType::なし;
 
 			Explorer* メンバー[CV::パーティ人数];
 
@@ -99,12 +98,7 @@ namespace SDX_ADE
 
 			bool 編成_探索指示(int 変化値)
 			{
-				int n = int(探索指示) + 変化値;
-
-				if (n == (int)OrderType::COUNT) { n = 0; }
-				if (n < 0) { n = (int)OrderType::COUNT - 1; }
-
-				探索指示 = OrderType(n);
+				
 			}
 
 			void 基礎ステ再計算()
@@ -191,7 +185,6 @@ namespace SDX_ADE
 					{
 						CraftType ct = (CraftType)a;
 						Guild::P->素材数[ct][b] += 入手素材[ct][b];
-						Guild::P->資金 += Material::data[ct][b].価格 * 入手素材[ct][b];
 						Guild::P->総素材 += 入手素材[ct][b];
 						Guild::P->is素材発見[ct][b] = true;
 					}
@@ -382,7 +375,7 @@ namespace SDX_ADE
 			{
 				部屋探索完了共通();
 
-				switch (Rand::Get(2))
+				switch (Rand::Get(1))
 				{
 				case 0:
 					発見素材種 = CraftType::木材;
@@ -391,10 +384,6 @@ namespace SDX_ADE
 				case 1:
 					発見素材種 = CraftType::鉄材;
 					発見物 = &MIcon::UI[IconType::探索_採掘];
-					break;
-				case 2:
-					発見素材種 = CraftType::石材;
-					発見物 = &MIcon::UI[IconType::探索_採石];
 					break;
 				default:
 					break;
@@ -416,7 +405,7 @@ namespace SDX_ADE
 
 				獲得財宝.push_back(-2);//-2は階段
 
-				Quest::達成チェック(QuestType::ダンジョン発見, 探索先->探索地図ID[部屋ID] + 1, Guild::P->アクセサリー所持数);
+				Quest::達成チェック(QuestType::階層到達, 探索先->探索地図ID[部屋ID] + 1, Guild::P->アクセサリー所持数);
 				Quest::開始チェック(探索先->探索地図ID[部屋ID] + 1);
 
 				//
@@ -488,6 +477,12 @@ namespace SDX_ADE
 					ランク++;
 				}
 
+				if (ランク >= CV::上限素材ランク)
+				{
+					ランク = CV::上限素材ランク - 1;
+				}
+
+
 				for (int a = 0; a < 素材数; a++)
 				{
 
@@ -505,16 +500,15 @@ namespace SDX_ADE
 				double 上位チャンス = (探索先->ID - 探索先->層 * 10) * 0.05;
 				int ランク = Rand::Coin(上位チャンス) ? 探索先->層 + 1 : 探索先->層;
 
-				double レア率 = it.種族->レア素材率;
+				double レア率 = 0.02;
 				double 素材数増加率 = 0;
 				double 素材獲得率 = 0.2;
 				CraftType 素材種 = CraftType::革材;
 
-				switch (Rand::Get(2))
+				switch (Rand::Get(1))
 				{
-				case 0: 素材種 = CraftType::革材; break;
-				case 1: 素材種 = CraftType::骨材; break;
-				case 2: 素材種 = CraftType::魔材; break;
+					case 0: 素材種 = CraftType::革材; break;
+					case 1: 素材種 = CraftType::魔材; break;
 				}
 
 				//パッシブ計算
@@ -536,17 +530,16 @@ namespace SDX_ADE
 					ランク++;
 				}
 
-				//幸運補正
-				if (Rand::Coin(it.種族->レア素材率))
-				{
-					ランク++;
-				}
-
 				if (it.isボス == true)
 				{
 					ランク++;
 					素材数 += 4;
 					素材獲得率 = 1.0;
+				}
+
+				if (ランク >= CV::上限素材ランク)
+				{
+					ランク = CV::上限素材ランク-1;
 				}
 
 				//素材獲得
@@ -804,12 +797,10 @@ namespace SDX_ADE
 					}
 
 					Guild::P->総討伐++;
-					Quest::達成チェック(QuestType::累計FOE討伐, Guild::P->総討伐 , Guild::P->アクセサリー所持数);
 					Quest::達成チェック(QuestType::固定FOE討伐, 探索先->ID+1 , Guild::P->アクセサリー所持数);
 					break;
 				case RoomType::財宝:
 					探索先->部屋[部屋ID].種類 = RoomType::ザコ;
-					探索先->発見財宝数++;
 					財宝獲得();
 					break;
 				}
@@ -860,12 +851,10 @@ namespace SDX_ADE
 			void 財宝獲得()
 			{
 				//探索先->発見財宝++;
-				獲得財宝.push_back(探索先->財宝[部屋ID - 10]->ID);
-				探索先->is財宝発見[部屋ID - 10] = true;
+				獲得財宝.push_back(0);
 				発見物 = &MIcon::UI[IconType::宝箱];
 
 				std::string text = "";
-				text = 探索先->財宝[部屋ID - 10]->名前;
 				text += "を入手";
 
 				EventLog::Add(text.c_str(), Game::日付, LogType::探索);
@@ -930,8 +919,6 @@ namespace SDX_ADE
 			}
 
 		};
-
-		int 資金 = 0;
 
 		EnumArray<int[CV::上限素材ランク], CraftType> 素材数;
 		EnumArray<bool[CV::上限素材ランク], CraftType> is素材発見;

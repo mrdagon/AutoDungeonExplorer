@@ -43,12 +43,7 @@ namespace SDX_ADE
 		bool isボス戦闘中 = false;
 		bool isボス生存 = true;
 
-		int 発見財宝数 = 0;
-		int 最大財宝数;
 		bool is地図発見[CV::最大地図数] = { false,false };
-
-		std::vector<Item*> 財宝;
-		bool is財宝発見[CV::最大財宝配置数];
 
 		std::vector<MonsterClass*> ボスモンスター;
 		std::vector<MonsterClass*> 雑魚モンスター;
@@ -154,15 +149,12 @@ namespace SDX_ADE
 					file_data.Read(it.探索地図ID[b]);//探索地図番号
 				}
 
-				for (int b = 0; b < CV::最大財宝配置数; b++)
-				{
-					file_data.Read(dummy);
-					if (dummy > 0)
-					{
-						it.財宝.emplace_back(&Item::accessory_data[dummy]);
-					}
-				}
-				it.最大財宝数 = (int)it.財宝.size();
+				file_data.Read(dummy);//財宝配置
+				file_data.Read(dummy);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
 
 				file_data.Read(dummy);//部屋数
 
@@ -189,7 +181,7 @@ namespace SDX_ADE
 					it.部屋.emplace_back( i % 2==0 ? RoomType::ザコ : RoomType::素材 );
 				}
 
-				for (int i = 10; i < it.財宝.size()+10; i++)
+				for (int i = 10; i < 15; i++)
 				{
 					it.部屋[i].種類 = RoomType::財宝;
 				}

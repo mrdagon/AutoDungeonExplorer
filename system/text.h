@@ -123,7 +123,7 @@ namespace SDX_ADE
 		std::string Tool_Helpタイトル = "アンケートページを開く";
 
 		//Help Window
-		std::string Help_ステータス[(int)StatusType::COUNT] = {"生命","筋力","技力","知力","物防","魔防","命中","回避" , "会心" };
+		std::string Help_ステータス[(int)StatusType::COUNT] = {"ＨＰ","パワー","防御","命中","回避" };
 		//dungeonHelp、ASkillSubまだ
 
 		//tool barのヘルプ色々
@@ -207,15 +207,11 @@ namespace SDX_ADE
 			Window_略記[WindowType::Delete] = "";
 			Window_ヘルプ[WindowType::Delete] = "本当に除名しますか？\n※除名した探索者は戻せません";
 
-			ステータス[StatusType::HP] = "HP";
-			ステータス[StatusType::力] = "力";
-			ステータス[StatusType::技] = "技";
-			ステータス[StatusType::知] = "知";
-			ステータス[StatusType::物防] = "防御";
-			ステータス[StatusType::魔防] = "抵抗";
+			ステータス[StatusType::HP] = "ＨＰ";
+			ステータス[StatusType::パワー] = "パワー";
+			ステータス[StatusType::防御] = "防御";
 			ステータス[StatusType::命中] = "命中";
 			ステータス[StatusType::回避] = "回避";
-			ステータス[StatusType::会心] = "会心";
 
 			return true;
 		}

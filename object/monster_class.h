@@ -24,7 +24,7 @@ namespace SDX_ADE
 
 		CraftType 素材種;
 
-		double レア素材率 = 0;
+		int サイズ = 1;
 		int ボスドロップ[2] = {};
 		bool isボス;
 
@@ -75,18 +75,17 @@ namespace SDX_ADE
 				file_data.Read(it.ボスドロップ[0]);
 				file_data.Read(it.ボスドロップ[1]);
 
-				file_data.Read(dummyA);
-				it.レア素材率 = (double)dummyA / 100;
+				file_data.Read(it.サイズ);
 
 				file_data.Read(it.ステ[StatusType::HP]);
-				file_data.Read(it.ステ[StatusType::力]);
-				file_data.Read(it.ステ[StatusType::技]);
-				file_data.Read(it.ステ[StatusType::知]);
-				file_data.Read(it.ステ[StatusType::物防]);
-				file_data.Read(it.ステ[StatusType::魔防]);
+				file_data.Read(it.ステ[StatusType::パワー]);
+				file_data.Read(dummyA);
+				file_data.Read(dummyA);
+				file_data.Read(it.ステ[StatusType::防御]);
+				file_data.Read(dummyA);
 				file_data.Read(it.ステ[StatusType::命中]);
 				file_data.Read(it.ステ[StatusType::回避]);
-				file_data.Read(it.ステ[StatusType::会心]);
+				file_data.Read(dummyA);
 
 				for (int b = 0; b < CV::最大敵Aスキル数; b++)
 				{
@@ -126,12 +125,9 @@ namespace SDX_ADE
 					return hp * CV::ボスHP係数;
 				}
 				return hp;
-			case StatusType::力:
-			case StatusType::知:
-			case StatusType::技:
+			case StatusType::パワー:
 				return int(ステ[種類] * (8.8 + Lv * 1.2) / 10);
-			case StatusType::物防:
-			case StatusType::魔防:
+			case StatusType::防御:
 				return int(ステ[種類] * (28.8 + Lv * 1.2) / 30);
 			case StatusType::命中:
 			case StatusType::回避:

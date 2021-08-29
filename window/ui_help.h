@@ -223,14 +223,6 @@ namespace SDX_ADE
 				MFont::L->DrawRotate(L5.GetPos(i), 1, 0, Design::暗字, { "Lv ?" });
 			}
 			
-
-			//財宝
-			for (int i = 0; i < 迷宮->財宝.size(); i++)
-			{
-				Design::Help->Draw(UIType::丸フレーム, L6);
-				迷宮->財宝[i]->image->Draw(L6.GetPos(i));
-				MFont::L->DrawRotate(L6.GetPos(i), 1, 0, Design::暗字,{ 迷宮->財宝[i]->名前});
-			}
 		}
 
 		//ダンジョン一覧から
@@ -278,13 +270,9 @@ namespace SDX_ADE
 				StatusType st = (StatusType)i;
 				switch (st)
 				{
-				case StatusType::力:
-				case StatusType::技:
-				case StatusType::知:
+				case StatusType::パワー:
 					if (魔物->ステ[st] == 0) { continue; }
 					break;
-				case StatusType::会心:
-					continue;
 				}
 				Design::Help->Draw(UIType::丸フレーム, L6, cnt);
 				MFont::L->DrawRotate(L6.GetSubPos(L6.h + 4, L6.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
@@ -426,13 +414,9 @@ namespace SDX_ADE
 				StatusType st = (StatusType)i;
 				switch (st)
 				{
-				case StatusType::力:
-				case StatusType::技:
-				case StatusType::知:
+				case StatusType::パワー:
 					if (探索者->基礎ステ[st] == 0) { continue; }
 					break;
-				case StatusType::会心:
-					continue;
 				}
 				Design::Help->Draw(UIType::丸フレーム, L11, cnt);
 				MFont::L->DrawRotate(L11.GetSubPos(L11.h + 4, L11.h / 2, cnt), 1, 0, Design::暗字, { TX::ステータス[st] });
@@ -606,10 +590,6 @@ namespace SDX_ADE
 			//説明 - 文章作るのが大変なので非表示
 			//Design::Help->Draw(UIType::丸フレーム, L4);
 			//MFont::L->DrawRotate(L4.GetPos(), 1, 0, Design::暗字,{ 素材->説明 });
-
-			//価格
-			Design::Help->Draw(UIType::丸フレーム, L5);
-			MFont::L->Draw(L5.GetPos(), Design::暗字, { "価格 " , 素材->価格 , "G" } );
 
 			//所持数
 			Design::Help->Draw(UIType::丸フレーム, L6);

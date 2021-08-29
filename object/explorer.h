@@ -58,10 +58,6 @@ namespace SDX_ADE
 
 		void スキルリセット(int 低下Lv)
 		{
-			for (auto& it : AスキルLv)
-			{
-				it = 0;
-			}
 			for (auto& it : PスキルLv)
 			{
 				it = 0;
@@ -87,12 +83,12 @@ namespace SDX_ADE
 		//●固定ステータス
 		std::string 名前;
 		ExplorerClass* 職業;
+		ExplorerClass* 種族;
 		
 		//●スキル習得状況
-		std::array<int, CV::上限Aスキル種類> 習得AスキルLv;
 		std::array<int, CV::上限Pスキル種類> 習得PスキルLv;
 
-		int スキル習得予約[CV::最大スキル予約数];//0は未予約 -はAスキル、+はPスキル
+		int スキル習得予約[CV::最大スキル予約数];//0は未予約 +はPスキル
 
 		//●Lvアップ時等更新ステータス
 		int Lv = 1;
@@ -103,7 +99,6 @@ namespace SDX_ADE
 		Item* 装備[CV::装備部位数];//0が武器、1が防具、2がユニーク
 
 		ActiveSkill* 装備Aスキル[CV::最大Aスキル数];
-		//ActiveSkill* 装備Aスキルボス[CV::最大Aスキル数];
 
 		int 探検前Lv;
 		int 探検前経験値;
@@ -149,17 +144,13 @@ namespace SDX_ADE
 		{
 			//とりあえずモンスターはLvで12%で成長、味方はLvで10%成長
 			基礎ステ[StatusType::HP] = int(職業->ステ[StatusType::HP] * (9 + Lv) / 4);
-			基礎ステ[StatusType::力] = int(職業->ステ[StatusType::力] * (9 + Lv) / 10);
-			基礎ステ[StatusType::技] = int(職業->ステ[StatusType::技] * (9 + Lv) / 10);
-			基礎ステ[StatusType::知] = int(職業->ステ[StatusType::知] * (9 + Lv) / 10);
+			基礎ステ[StatusType::パワー] = int(職業->ステ[StatusType::パワー] * (9 + Lv) / 10);
 
 			基礎ステ[StatusType::命中] = int(職業->ステ[StatusType::命中] * (49 + Lv) / 50);
 			基礎ステ[StatusType::回避] = int(職業->ステ[StatusType::回避] * (49 + Lv) / 50);
 
-			基礎ステ[StatusType::物防] = int(職業->ステ[StatusType::物防] * (29 + Lv) / 30);
-			基礎ステ[StatusType::魔防] = int(職業->ステ[StatusType::魔防] * (29 + Lv) / 30);
+			基礎ステ[StatusType::防御] = int(職業->ステ[StatusType::防御] * (29 + Lv) / 30);
 
-			基礎ステ[StatusType::会心] = 職業->ステ[StatusType::会心];
 
 			Reset一時補正ステータス();
 
@@ -167,40 +158,30 @@ namespace SDX_ADE
 			for (int a = 0; a < CV::装備部位数; a++)
 			{
 				基礎ステ[StatusType::HP] += 装備[a]->ステ[StatusType::HP];
-				基礎ステ[StatusType::力] += 装備[a]->ステ[StatusType::力];
-				基礎ステ[StatusType::技] += 装備[a]->ステ[StatusType::技];
-				基礎ステ[StatusType::知] += 装備[a]->ステ[StatusType::知];
+				基礎ステ[StatusType::パワー] += 装備[a]->ステ[StatusType::パワー];
 
 				基礎ステ[StatusType::命中] += 装備[a]->ステ[StatusType::命中];
 				基礎ステ[StatusType::回避] += 装備[a]->ステ[StatusType::回避];
 
-				基礎ステ[StatusType::物防] += 装備[a]->ステ[StatusType::物防];
-				基礎ステ[StatusType::魔防] += 装備[a]->ステ[StatusType::魔防];
-				基礎ステ[StatusType::会心] += 装備[a]->ステ[StatusType::会心];
+				基礎ステ[StatusType::防御] += 装備[a]->ステ[StatusType::防御];
 			}
 
 			補正ステ[StatusType::HP] = 基礎ステ[StatusType::HP];
-			補正ステ[StatusType::力] = 基礎ステ[StatusType::力];
-			補正ステ[StatusType::技] = 基礎ステ[StatusType::技];
-			補正ステ[StatusType::知] = 基礎ステ[StatusType::知];
+			補正ステ[StatusType::パワー] = 基礎ステ[StatusType::パワー];
 
 			補正ステ[StatusType::命中] = 基礎ステ[StatusType::命中];
 			補正ステ[StatusType::回避] = 基礎ステ[StatusType::回避];
 
-			補正ステ[StatusType::物防] = 基礎ステ[StatusType::物防];
-			補正ステ[StatusType::魔防] = 基礎ステ[StatusType::魔防];
-			補正ステ[StatusType::会心] = 基礎ステ[StatusType::会心];
+			補正ステ[StatusType::防御] = 基礎ステ[StatusType::防御];
 			
 
 			//Aスキルセット
 			Aスキル.resize(CV::最大Aスキル数);
-			AスキルLv.resize(CV::最大Aスキル数);
 			必要クールダウン.resize(CV::最大Aスキル数);
 
 			for (int a = 0; a < CV::最大Aスキル数; a++)
 			{
 				Aスキル[a] = 装備Aスキル[a];
-				AスキルLv[a] = 習得AスキルLv[Aスキル[a]->ID];
 				必要クールダウン[a] = Aスキル[a]->クールタイム;
 			}
 
@@ -295,18 +276,6 @@ namespace SDX_ADE
 			return 現在Lv;
 		}
 
-		int GetAスキル予約Lv(int スキルID)
-		{
-			int 現在Lv = 習得AスキルLv[スキルID];
-			for (int i = 0; i < CV::最大スキル予約数; i++)
-			{
-				if (スキル習得予約[i] == -スキルID)
-				{
-					現在Lv++;
-				}
-			}
-			return 現在Lv;
-		}
 
 		Resultスキル強化 Pスキル予約(int スキルID)
 		{
@@ -321,24 +290,6 @@ namespace SDX_ADE
 				if (スキル習得予約[i] == 0)
 				{
 					スキル習得予約[i] = スキルID;
-					break;
-				}
-			}
-		}
-
-		Resultスキル強化 Aスキル予約(int スキルID)
-		{
-			//現在Lvと合計予約数を計算
-			int 現在Lv = GetAスキル予約Lv(スキルID);
-
-			//合計が5以上なら強化不可
-			if (現在Lv >= 5) { return Resultスキル強化::予約失敗; }
-
-			for (int i = 0; i < CV::最大スキル予約数; i++)
-			{
-				if (スキル習得予約[i] == 0)
-				{
-					スキル習得予約[i] = -スキルID;
 					break;
 				}
 			}
@@ -398,13 +349,8 @@ namespace SDX_ADE
 				if (スキルポイント <= 0) { return; }
 				if (スキル習得予約[0] == 0) { return; }
 
-				if (スキル習得予約[0] < 0)
-				{
-					習得AスキルLv[-スキル習得予約[0]]++;
-				} else {
-					習得PスキルLv[スキル習得予約[0]]++;
-				}
-
+				習得PスキルLv[スキル習得予約[0]]++;
+				
 				for (int i = 0; i < CV::最大スキル予約数-1; i++)
 				{
 					スキル習得予約[i] = スキル習得予約[i + 1];

@@ -23,8 +23,6 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				DrawUI(UIType::丸フレーム);
-
-				dungeon->財宝[lineID]->image->DrawRotate(GetCenterPos(), 1, 0);
 			}
 
 			void Over() override
@@ -34,7 +32,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::Item( dungeon->財宝[lineID] ,false);
+
 			}
 		};
 
@@ -79,7 +77,6 @@ namespace SDX_ADE
 
 			std::vector<UIMonster> 出現ボス;
 			std::vector<UIMonster> 出現モンスター;
-			std::vector<UI財宝> 出現財宝;
 
 			//UIButton ボス雑魚表示;
 
@@ -92,9 +89,7 @@ namespace SDX_ADE
 			{
 				dungeon = 参照ダンジョン;
 
-				出現財宝.clear();
 				出現ボス.clear();
-				出現財宝.clear();
 
 				for (int i = 0; i < dungeon->雑魚モンスター.size() ; i++)
 				{
@@ -114,13 +109,6 @@ namespace SDX_ADE
 					出現ボス.back().Lv = dungeon->ボスLv[i];
 				}
 
-
-				for (int i = 0; i < dungeon->財宝.size(); i++)
-				{
-					出現財宝.emplace_back();
-					出現財宝.back().SetUI(LDungeon::財宝, i, this);
-					出現財宝.back().dungeon = dungeon;
-				}
 			}
 
 			void Draw派生() override
@@ -187,11 +175,6 @@ namespace SDX_ADE
 					it.Draw();
 				}
 
-				//財宝表示
-				for (auto& it : 出現財宝)
-				{
-					it.Draw();
-				}
 				//Enemy F.O.E treasure 
 				auto pA = LF.GetPos(0);
 				auto pB = LF.GetPos(1);
@@ -237,13 +220,6 @@ namespace SDX_ADE
 						}
 					}
 					
-					for (auto& it : 出現財宝)
-					{
-						if (it.CheckInput(px, py) == true)
-						{
-							return true;
-						}
-					}
 
 				}
 

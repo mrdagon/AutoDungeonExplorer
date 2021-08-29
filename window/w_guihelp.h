@@ -129,7 +129,7 @@ namespace SDX_ADE
 			}
 			
 			//各種ステータス
-			for (int a = 0; a < 8; a++)
+			for (int a = 0; a < 5; a++)
 			{
 				//ステータス名
 				MFont::MAlias.DrawBold({ 座標.x + Lph(26) , 座標.y + Lph(27) + Lph(28) * a }, Color::White, Color::Black, TX::Help_ステータス[a]);
@@ -139,13 +139,10 @@ namespace SDX_ADE
 				switch (a)
 				{
 					case 0: na = it->基礎ステ[StatusType::HP]; nb = it->補正ステ[StatusType::HP]; break;
-					case 1: na = it->基礎ステ[StatusType::力]; nb = it->補正ステ[StatusType::力]; break;
-					case 2: na = it->基礎ステ[StatusType::技]; nb = it->補正ステ[StatusType::技]; break;
-					case 3: na = it->基礎ステ[StatusType::知]; nb = it->補正ステ[StatusType::知]; break;
-					case 4: na = it->基礎ステ[StatusType::物防]; nb = it->補正ステ[StatusType::物防]; break;
-					case 5: na = it->基礎ステ[StatusType::魔防]; nb = it->補正ステ[StatusType::魔防]; break;
-					case 6: na = it->基礎ステ[StatusType::命中]; nb = it->補正ステ[StatusType::命中]; break;
-					case 7: na = it->基礎ステ[StatusType::回避]; nb = it->補正ステ[StatusType::回避]; break;
+					case 1: na = it->基礎ステ[StatusType::パワー]; nb = it->補正ステ[StatusType::パワー]; break;
+					case 2: na = it->基礎ステ[StatusType::防御]; nb = it->補正ステ[StatusType::防御]; break;
+					case 3: na = it->基礎ステ[StatusType::命中]; nb = it->補正ステ[StatusType::命中]; break;
+					case 4: na = it->基礎ステ[StatusType::回避]; nb = it->補正ステ[StatusType::回避]; break;
 				}
 
 				MFont::MAlias.DrawBold({ 座標.x + Lph(29) , 座標.y + Lph(30) + Lph(31) * a }, Color::White, Color::Black, na , true);
@@ -212,20 +209,17 @@ namespace SDX_ADE
 			int num = 0;
 			std::string ステ名 = "";
 
-			for (int a = 0; a < 8 ; a++)
+			for (int a = 0; a < 5 ; a++)
 			{
 				ステ名 = TX::Help_ステータス[a];
 
 				switch (a)
 				{
 					case 0:num = item->ステ[StatusType::HP]; break;
-					case 1:num = item->ステ[StatusType::力];break;
-					case 2:num = item->ステ[StatusType::技]; break;
-					case 3:num = item->ステ[StatusType::知]; break;
-					case 4:num = item->ステ[StatusType::物防]; break;
-					case 5:num = item->ステ[StatusType::魔防]; break;
-					case 6:num = item->ステ[StatusType::命中]; break;
-					case 7:num = item->ステ[StatusType::回避]; break;
+					case 1:num = item->ステ[StatusType::パワー];break;
+					case 2:num = item->ステ[StatusType::防御]; break;
+					case 3:num = item->ステ[StatusType::命中]; break;
+					case 4:num = item->ステ[StatusType::回避]; break;
 				}
 
 				if (num <= 0) { continue; }

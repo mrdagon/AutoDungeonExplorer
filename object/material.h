@@ -26,7 +26,6 @@ namespace SDX_ADE
 
 		CraftType 種類 = CraftType::木材;
 		int ランク = 0;
-		int 価格 = 10;
 
 		static void LoadData()
 		{
@@ -70,7 +69,6 @@ namespace SDX_ADE
 				data[種類][ランク].ID = i;
 				data[種類][ランク].種類 = 種類;
 				data[種類][ランク].ランク = ランク;
-				data[種類][ランク].価格 = 価格;
 				data[種類][ランク].image = &MIcon::素材[種類];
 
 				data[種類][ランク].名前 = strs[i][0];

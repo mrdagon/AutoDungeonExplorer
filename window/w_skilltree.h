@@ -57,7 +57,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
-				int Lv = W_Skilltree::ギルメン->習得AスキルLv[skill->ID];
+				int Lv = 0;
 				auto& LA = LData(LSkill::スキルLv);
 
 				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
@@ -200,7 +200,7 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				auto* it = W_Skilltree::ギルメン->装備Aスキル[lineID];
-				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
+				int Lv = 0;
 				auto& LA = LData(LSkill::装備スキルLv);
 				auto& LB = LData(LSkill::装備スキルスロット);
 
@@ -395,8 +395,8 @@ namespace SDX_ADE
 			void Draw派生() override
 			{
 				auto* it = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
-				int Lv = W_Skilltree::ギルメン->習得AスキルLv[it->ID];
-				int 予約Lv = W_Skilltree::ギルメン->GetAスキル予約Lv(it->ID);
+				int Lv = 0;
+				int 予約Lv = 0;
 				auto& LA = LData(LSkill::スキルLv);
 
 				if (押下アニメ > 0)
@@ -420,7 +420,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				auto result = W_Skilltree::ギルメン->Aスキル予約(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID);
+				auto result = Explorer::Resultスキル強化::予約失敗;
 
 				if ( result != Explorer::Resultスキル強化::予約失敗)
 				{
