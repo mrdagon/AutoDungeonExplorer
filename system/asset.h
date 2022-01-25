@@ -305,58 +305,63 @@ namespace SDX_ADE
 	//職業立ち絵と歩行グラ
 	namespace MJob
 	{
-		Image 立ち絵[12];//画像数上限は暫定
-		ImagePack ちび[12];
+		Image 立ち絵[13];//画像数上限は暫定
+		ImagePack ちび[13];
 
 		static void Load()
 		{
-			//スレイヤー
+			//タグ用
 			立ち絵[0].Load("file/job/BR16.zip");
 			ちび[0].Load("file/job/chibi/BR16.png", 9, 3, 6);
 
+
+			//スレイヤー
+			立ち絵[1].Load("file/job/BR16.zip");
+			ちび[1].Load("file/job/chibi/BR16.png", 9, 3, 6);
+
 			//ガーディアン
-			立ち絵[1].Load("file/job/BR97.png");
-			ちび[1].Load("file/job/chibi/BR97.png", 9, 3, 6);
+			立ち絵[2].Load("file/job/BR97.png");
+			ちび[2].Load("file/job/chibi/BR97.png", 9, 3, 6);
 
 			//デッドアイ
-			立ち絵[2].Load("file/job/BR92.png");
-			ちび[2].Load("file/job/chibi/BR92.png", 9, 3, 6);
+			立ち絵[3].Load("file/job/BR92.png");
+			ちび[3].Load("file/job/chibi/BR92.png", 9, 3, 6);
 
 			//エレメンタリスト
-			立ち絵[3].Load("file/job/BR207.png");
-			ちび[3].Load("file/job/chibi/BR207.png", 9, 3, 6);
+			立ち絵[4].Load("file/job/BR207.png");
+			ちび[4].Load("file/job/chibi/BR207.png", 9, 3, 6);
 
-			//プリースト
-			立ち絵[4].Load("file/job/BR99.png");
-			ちび[4].Load("file/job/chibi/BR99.png", 9, 3, 6);
+			//クレリック
+			立ち絵[5].Load("file/job/BR99.png");
+			ちび[5].Load("file/job/chibi/BR99.png", 9, 3, 6);
 
 			//オカルティスト
-			立ち絵[5].Load("file/job/BR42.png");
-			ちび[5].Load("file/job/chibi/BR42.png", 9, 3, 6);
+			立ち絵[6].Load("file/job/BR42.png");
+			ちび[6].Load("file/job/chibi/BR42.png", 9, 3, 6);
 
 			//グラディエーター
-			立ち絵[6].Load("file/job/BR40.png");
-			ちび[6].Load("file/job/chibi/BR40.png", 9, 3, 6);
+			立ち絵[7].Load("file/job/BR40.png");
+			ちび[7].Load("file/job/chibi/BR40.png", 9, 3, 6);
 
 			//アサシン
-			立ち絵[7].Load("file/job/BR200.png");
-			ちび[7].Load("file/job/chibi/BR200.png", 9, 3, 6);
+			立ち絵[8].Load("file/job/BR200.png");
+			ちび[8].Load("file/job/chibi/BR200.png", 9, 3, 6);
 
 			//バーサーカー
-			立ち絵[8].Load("file/job/BR113.png");
-			ちび[8].Load("file/job/chibi/BR113.png", 9, 3, 6);
+			立ち絵[9].Load("file/job/BR113.png");
+			ちび[9].Load("file/job/chibi/BR113.png", 9, 3, 6);
 
 			//トリックスター
-			立ち絵[9].Load("file/job/BR44.png");
-			ちび[9].Load("file/job/chibi/BR44.png", 9, 3, 6);
+			立ち絵[10].Load("file/job/BR44.png");
+			ちび[10].Load("file/job/chibi/BR44.png", 9, 3, 6);
 
-			//ミスティック
-			立ち絵[10].Load("file/job/BR122.png");
-			ちび[10].Load("file/job/chibi/BR122.png", 9, 3, 6);
+			//シャーマン
+			立ち絵[11].Load("file/job/BR122.png");
+			ちび[11].Load("file/job/chibi/BR122.png", 9, 3, 6);
 
 			//パスファインダー
-			立ち絵[11].Load("file/job/BR223.png");
-			ちび[11].Load("file/job/chibi/BR223.png", 9, 3,6);
+			立ち絵[12].Load("file/job/BR223.png");
+			ちび[12].Load("file/job/chibi/BR223.png", 9, 3,6);
 		}
 	}
 

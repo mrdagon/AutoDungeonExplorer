@@ -73,8 +73,13 @@ namespace SDX_ADE
 				auto& posD = Layout::Data(LReqruit::分割線);
 				auto& posE = Layout::Data(LReqruit::職業説明文);
 				auto& posF = Layout::Data(LReqruit::職業イラスト);
+				auto& posG = Layout::Data(LReqruit::種族説明文);
+				auto& posH = Layout::Data(LReqruit::ステータス);
+				auto& posI = Layout::Data(LReqruit::ステータス職業);
+				auto& posJ = Layout::Data(LReqruit::ステータス種族);
 
 				auto job = &ExplorerClass::data[W_Recruit::This->表示職業];
+				auto mtype = &ExplorerClass::data[W_Recruit::This->表示種族];
 
 				DrawUI(UIType::グループ暗);
 
@@ -92,10 +97,25 @@ namespace SDX_ADE
 				//ジョブ説明
 				MFont::M->DrawBold({ GetX() + posE.x ,GetY() + posE.y }, Color::White, Color::Black, { job->説明 });
 
+				//種族説明
+				MFont::M->DrawBold({ GetX() + posG.x ,GetY() + posG.y }, Color::White, Color::Black, { mtype->概説 } , true);
+
+				for (int i = 0; i < 5; i++)
+				{
+					MFont::M->DrawBold({ GetX() + posH.x ,GetY() + posH.y + posH.並べy*i }, Color::White, Color::Black, { TX::Help_ステータス[i] });
+					MFont::M->DrawBold({ GetX() + posI.x ,GetY() + posH.y + posH.並べy * i }, Color::White, Color::Black, { job->ステ[(StatusType)i] },true);
+
+					if ( mtype->ステ[(StatusType)i] > 0)
+					{
+						MFont::M->DrawBold({ GetX() + posJ.x ,GetY() + posH.y + posH.並べy * i }, Color::White, Color::Black, { " + " , mtype->ステ[(StatusType)i] },true);
+					}
+				}
+
 				//立ち絵
 				MJob::立ち絵[job->ID].DrawRotate({ GetX() + posF.x ,GetY() + posF.y }, 2, 0);
 
 				W_Recruit::This->表示職業 = W_Recruit::This->選択職業;
+				W_Recruit::This->表示種族 = W_Recruit::This->選択種族;
 			}
 		};
 
@@ -136,19 +156,60 @@ namespace SDX_ADE
 			{
 				W_Recruit::This->表示職業 = lineID;
 			}
+		};
 
+		class UI種族 : public UIObject
+		{
+		public:
+			//選択中は明るい、マウスオーバーでやや明るい
+			void Draw派生() override
+			{
+				UIType ui_now = UIType::丸フレーム;
+				if (lineID == W_Recruit::This->選択種族 || isOver == true)
+				{
+					//選択中は暗い
+					ui_now = UIType::選択丸フレーム;
+				}
+
+				DrawUI(ui_now, Design::Base);
+
+				auto job = &ExplorerClass::data[lineID];
+
+				auto& posA = Layout::Data(LReqruit::職一覧名前);
+				auto& posB = Layout::Data(LReqruit::職一覧アイコン);
+
+				//種族ちびどっと
+				//job->ちびimage[0][1]->DrawRotate({ GetX() + posA.x , GetY() + posA.y }, 2, 0);
+				//種族名
+				MFont::L->DrawRotate({ GetCenterX() + posB.x ,GetCenterY() + posB.y }, 1, 0, Color::Black, { job->名前 });
+			}
+
+			void Click() override
+			{
+				W_Recruit::This->選択種族 = lineID;
+				W_Recruit::This->表示種族 = lineID;
+				MSound::効果音[SE::決定].Play();
+			}
+
+			void Over() override
+			{
+				W_Recruit::This->表示種族 = lineID;
+			}
 		};
 
 	public:
 		static W_Recruit* This;
 		inline static std::string 求人名前;
-		inline static ID_Job 選択職業;
+		inline static ID_Job 選択職業 = 1;
+		inline static ID_Job 選択種族 = 14;
 
-		int 表示職業;
+		int 表示職業 = 1;
+		int 表示種族 = 14;
 
 		UI名前 名前入力欄;
 		UI説明 説明;
 		std::vector<UI職業> 職業;
+		std::vector<UI種族> 種族;
 
 		UITextFrame 一覧枠;
 
@@ -174,17 +235,22 @@ namespace SDX_ADE
 			Hウィンドウ.Init(WindowType::Help);
 			ヘルプウィンドウ = &Hウィンドウ;
 
-			表示職業 = 0;
 			//●初期化
-			職業.resize(ExplorerClass::data.size());
+			職業.resize(12);
+			種族.resize(12);
 			int a = -1;
 
 			名前入力欄.SetUI(LReqruit::名前枠);
 			説明.SetUI(LReqruit::説明枠);
-			for (auto& it : ExplorerClass::data)
+
+			for (int i = 0; i < 12; i++)
 			{
-				a++;
-				職業[a].SetUI(LReqruit::職一覧, a, &一覧枠);
+				職業[i].SetUI(LReqruit::職一覧, i+1, &一覧枠);
+			}
+
+			for (int i = 0; i < 12; i++)
+			{
+				種族[i].SetUI(LReqruit::種族一覧, i+14, &一覧枠);
 			}
 
 			一覧枠.SetUI(LReqruit::職一覧枠,"");
@@ -215,9 +281,10 @@ namespace SDX_ADE
 			AddItem(ランダム名ボタン);
 			AddItem(名前変更ボタン);
 			AddItem(登録ボタン);
-			AddItem(説明);
 			AddItem(職業);
-			AddItem(一覧枠);			
+			AddItem(種族);
+			AddItem(説明);
+			AddItem(一覧枠);
 		}
 
 		void Update()

@@ -15,14 +15,13 @@ namespace SDX_ADE
 		BuffType 種類;
 		int 基礎値;
 		int 反映率;
-		int 確率;
+		//int 確率;
 		int 持続;
 
-		ASkill補助効果(BuffType 種類, int 基礎値, int 反映率, int 確率, int 持続) :
+		ASkill補助効果(BuffType 種類, int 基礎値, int 反映率, int 持続) :
 			種類(種類),
 			基礎値(基礎値),
 			反映率(反映率),
-			確率(確率),
 			持続(持続)
 		{}
 
@@ -173,7 +172,7 @@ namespace SDX_ADE
 					file_data.Read(tmpバフ種[b]);
 					file_data.Read(tmpバフ固定値[b]);
 					file_data.Read(tmpバフ反映率[b]);
-					file_data.Read(tmpバフ発動率[b]);
+					file_data.Read(tmpバフ発動率[b]);//使わない
 					file_data.Read(tmpバフ持続[b]);
 				}
 
@@ -181,7 +180,7 @@ namespace SDX_ADE
 				{
 					if (tmpバフ種[b] != BuffType::なし)
 					{
-						it.補助効果.emplace_back(tmpバフ種[b], tmpバフ固定値[b], tmpバフ反映率[b], tmpバフ発動率[b], tmpバフ持続[b]);
+						it.補助効果.emplace_back(tmpバフ種[b], tmpバフ固定値[b], tmpバフ反映率[b], tmpバフ持続[b]);
 					}
 				}
 

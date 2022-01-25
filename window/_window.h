@@ -23,7 +23,8 @@
 
 //ゲーム画面用ウィンドウ
 #include "w_scenario.h"
-#include "w_skilltree.h"
+#include "w_pskill.h"
+#include "w_askill.h"
 #include "w_toolbar.h"
 #include "w_dungeon.h"
 #include "w_log.h"

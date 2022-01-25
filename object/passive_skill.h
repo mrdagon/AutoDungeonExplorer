@@ -36,76 +36,22 @@ namespace SDX_ADE
 
 		PSkillIf 条件;
 		int 条件値;
-		int 持続時間;//一時バフ用
 
 		PSkillTime タイミング;
-		int 発動率;
+
 		PSkillTarget 対象;
 
 		PSkillEffectType 効果種;
 		int 効果量;
 
-		PSkillLvType レベル補正_種類;
-		int レベル補正_数値;
-
 		int Get条件値(int Lv)
 		{
-			int value = 条件値;
-			Lv -= 1;
-
-			if (Lv <= 0) { return value; }
-			
-			if (レベル補正_種類 == PSkillLvType::条件値)
-			{
-				value += レベル補正_数値 * Lv;
-			}			
-
-			return value;
-		}
-
-		double Get発動率(int Lv)
-		{
-			int value = 発動率;
-
-			Lv -= 1;
-
-			if (Lv <= 0) { return value; }
-
-			if (レベル補正_種類 == PSkillLvType::発動率)
-			{
-				value += レベル補正_数値*Lv;
-			}
-
-			return (double)value / 100.0;
+			return 条件値;
 		}
 
 		int Get効果値( int Lv)
 		{
-			int value = 効果量;
-			Lv -= 1;
-			if (Lv <= 0) { return value; }
-
-			if (レベル補正_種類 == PSkillLvType::効果値1)
-			{
-				value += レベル補正_数値 * Lv;
-			}				
-
-			return value;
-		}
-
-		int Get持続値(int Lv)
-		{
-			int value = 持続時間;
-			Lv -= 1;
-
-			if (Lv <= 0) { return value; }
-
-			if (レベル補正_種類 == PSkillLvType::持続時間)
-			{
-				value += レベル補正_数値 * Lv;
-			}
-
-			return value;
+			return 効果量 * Lv;
 		}
 
 		static void LoadData()
@@ -144,18 +90,18 @@ namespace SDX_ADE
 
 				file_data.Read(it.条件);
 				file_data.Read(it.条件値);
-				file_data.Read(it.持続時間);
+				file_data.Read(dummy);
 
 				file_data.Read(it.タイミング);
-				file_data.Read(it.発動率);
+				file_data.Read(dummy);
 				file_data.Read(it.対象);
 				file_data.Read(it.効果種);
 				file_data.Read(it.効果量);
 				file_data.Read(dummy);
 				file_data.Read(dummy);
 
-				file_data.Read(it.レベル補正_種類);
-				file_data.Read(it.レベル補正_数値);
+				file_data.Read(dummy);
+				file_data.Read(dummy);
 
 
 				file_data.Read(dummy);
@@ -187,21 +133,10 @@ namespace SDX_ADE
 			return Pスキル->Get条件値(Lv);
 		}
 
-		double Get発動率()
-		{
-			return Pスキル->Get発動率(Lv);
-		}
-
 		int Get効果値()
 		{
 			return Pスキル->Get効果値(Lv);		
 		}
-
-		int Get持続値()
-		{
-			return Pスキル->Get持続値(Lv);
-		}
-
 	};
 
 

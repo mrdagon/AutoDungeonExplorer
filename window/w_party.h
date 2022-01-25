@@ -95,9 +95,9 @@ namespace SDX_ADE
 
 				auto& it = member->装備[装備スロット];
 
-				it->image->DrawRotate({ GetCenterX() - 24 , GetCenterY() }, 1, 0);
+				it->image->DrawRotate({ GetCenterX() , GetCenterY() }, 1, 0);
 
-				GetFont()->DrawRotateEdge({ GetCenterX() + 12 , GetCenterY() }, 1, 0, Design::明字, { "★ " , it->ランク });
+				GetFont()->DrawRotateEdge({ GetCenterX() + 8 , GetCenterY() + 4 }, 1, 0, Design::明字, { it->ランク } , true);
 			}
 
 			void Click() override
@@ -116,14 +116,14 @@ namespace SDX_ADE
 			}
 		};
 
-		class UIスキルボタン : public UIObject
+		class UIAスキルボタン : public UIObject
 		{
 		public:
-			inline static W_Skilltree スキルツリー;
+			inline static W_PSkill スキルツリー;
 			int パーティID;
 			int 隊列ID;
 
-			UIスキルボタン()
+			UIAスキルボタン()
 			{
 				SetHelp(&TH::Party::スキルボタン);
 			}
@@ -136,7 +136,7 @@ namespace SDX_ADE
 				auto& LA = LData(LParty::探索者スキルボタン);
 				//スキル
 				//ポイント余りやらの状況
-				GetFont()->DrawEdge({ GetX() + LA.x ,GetY() + LA.y }, Design::暗字, {"スキル"});
+				GetFont()->DrawEdge({ GetX() + LA.x ,GetY() + LA.y }, Design::暗字, {"A-Skill"});
 			}
 
 			void Click() override
@@ -148,11 +148,43 @@ namespace SDX_ADE
 			}
 		};
 
+		class UIPスキルボタン : public UIObject
+		{
+		public:
+			inline static W_PSkill スキルツリー;
+			int パーティID;
+			int 隊列ID;
+
+			UIPスキルボタン()
+			{
+				SetHelp(&TH::Party::スキルボタン);
+			}
+
+			void Draw派生() override
+			{
+				DrawUI(isOver ? UIType::凸明ボタン : UIType::凸ボタン, Design::Input);
+				auto& it = Guild::P->パーティ[パーティID].メンバー[隊列ID];
+
+				auto& LA = LData(LParty::探索者スキルボタン);
+				//スキル
+				//ポイント余りやらの状況
+				GetFont()->DrawEdge({ GetX() + LA.x ,GetY() + LA.y }, Design::暗字, { "P-Skill" });
+			}
+
+			void Click() override
+			{
+				スキルツリー.SetMember(Guild::P->パーティ[パーティID].メンバー[隊列ID]);
+				スキルツリー.Init();
+				スキルツリー.OpenPopup();
+				Guild::P->基礎ステ再計算();
+			}
+		};
 		//パーティ子オブジェクト
 		class UI探索者 : public UIObject
 		{
 		public:
-			UIスキルボタン スキルボタン;
+			UIAスキルボタン Aスキルボタン;
+			UIPスキルボタン Pスキルボタン;
 			UI装備 装備ボタン[2];
 			UI装飾品 装飾品ボタン;
 
@@ -161,7 +193,9 @@ namespace SDX_ADE
 
 			UI探索者()
 			{
-				スキルボタン.SetUI(LParty::探索者スキル, 0, this);
+				Aスキルボタン.SetUI(LParty::探索者スキル, 0, this);
+				Pスキルボタン.SetUI(LParty::探索者スキル, 1, this);
+
 				装備ボタン[0].SetUI(LParty::探索者装備, 0, this);
 				装備ボタン[1].SetUI(LParty::探索者装備, 2, this);
 				装飾品ボタン.SetUI(LParty::探索者装備, 4, this);
@@ -173,8 +207,11 @@ namespace SDX_ADE
 				this->パーティID = パーティID;
 				this->並びID = 隊列ID;
 
-				スキルボタン.パーティID = パーティID;
-				スキルボタン.隊列ID = 並びID;
+				Aスキルボタン.パーティID = パーティID;
+				Aスキルボタン.隊列ID = 並びID;
+
+				Pスキルボタン.パーティID = パーティID;
+				Pスキルボタン.隊列ID = 並びID;
 
 				for (int i = 0; i < 2; i++)
 				{
@@ -229,7 +266,8 @@ namespace SDX_ADE
 				装飾品ボタン.Draw();
 
 				//スキル画面ボタン
-				スキルボタン.Draw();
+				Aスキルボタン.Draw();
+				Pスキルボタン.Draw();
 			}
 
 			bool Check派生(double px, double py) override
@@ -237,7 +275,8 @@ namespace SDX_ADE
 				auto& it = Guild::P->パーティ[パーティID].メンバー[並びID];
 				if (it == nullptr) { return false; }
 
-				if (スキルボタン.CheckInput(px, py) == true){return true; }
+				if (Aスキルボタン.CheckInput(px, py) == true){return true; }
+				if (Pスキルボタン.CheckInput(px, py) == true) { return true; }
 				if (装飾品ボタン.CheckInput(px, py) == true){return true;}
 				if (装備ボタン[0].CheckInput(px, py) == true) { return true; }
 				if (装備ボタン[1].CheckInput(px, py) == true) { return true; }
@@ -348,51 +387,6 @@ namespace SDX_ADE
 			}
 		};
 
-		class UI探索指示 : public UIObject
-		{
-		public:
-			int パーティID;
-			void Draw派生() override
-			{
-				auto& it = Guild::P->パーティ[パーティID];
-
-				if ( it.探索状態 == ExplorType::編成中)
-				{
-					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Input);
-
-					auto& LA = LData(LParty::探索先変更三角);
-					//三角表示
-					Font* fr = mousePos == 2 ? MFont::L : MFont::S;
-					Font* fl = mousePos == 1 ? MFont::L : MFont::S;
-					fl->DrawRotate({ GetX() + LA.x, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { "<" });
-					fr->DrawRotate({ GetX() + LA.x + LA.w, GetY() + LA.y + LA.h }, 1, 0, Design::暗字, { ">" });
-				} else {
-					DrawUI(isOver ? UIType::明ボタン : UIType::凸ボタン, Design::Base);
-				}
-
-
-			}
-
-			void Click() override
-			{
-				if (isLeftDock == true)
-				{
-
-				}
-				else {
-
-				}
-			}
-
-			void Over() override
-			{}
-
-			void DrawHelp() override
-			{
-				UIHelp::Text(&TH::Party::探索指示);
-			}
-		};
-
 		class UI探索先情報 : public UIObject
 		{
 		public:
@@ -458,7 +452,6 @@ namespace SDX_ADE
 			Guild::Party* パーティ;
 			UI探索先情報 探索先;
 			UI探索フロア 探索フロア;
-			UI探索指示 探索指示;
 			UI探索者 探索者[CV::パーティ人数];
 
 			UIパーティ()
@@ -466,7 +459,6 @@ namespace SDX_ADE
 				パーティ = nullptr;
 				探索先.SetUI(LParty::探索先枠,0,this);
 				探索フロア.SetUI(LParty::探索先フロア, 0, &探索先);
-				探索指示.SetUI(LParty::探索先指示, 0, &探索先);
 
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
@@ -479,8 +471,6 @@ namespace SDX_ADE
 				this->パーティ = パーティ;
 				探索先.パーティID = パーティ->パーティID;
 				探索フロア.パーティID = lineID;
-				探索指示.パーティID = lineID;
-
 
 				for (int i = 0; i < CV::パーティ人数; i++)
 				{
@@ -494,7 +484,6 @@ namespace SDX_ADE
 				{
 
 					if (探索フロア.CheckInput(px, py) == true) { return true; }
-					if (探索指示.CheckInput(px, py) == true) { return true; }
 					if (探索先.CheckInput(px, py) == true) { return true; }
 
 					for (int i = 0; i < CV::パーティ人数; i++)
@@ -521,7 +510,6 @@ namespace SDX_ADE
 				//探索先情報は街でもダンジョンでも共通
 				探索先.Draw();
 				探索フロア.Draw();
-				探索指示.Draw();
 
 				if (パーティ->探索状態 == ExplorType::リザルト中)
 				{

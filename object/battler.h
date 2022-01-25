@@ -610,7 +610,6 @@ namespace SDX_ADE
 
 				for (auto& it : Aスキル.補助効果)
 				{
-					if (Rand::Coin((double)(it.確率+ Aスキル.バフ発動率) / 100) == false ) {continue; }
 					int バフ値 = it.基礎値 + Aスキル.バフ固定値 + (Aスキル.バフ反映率 + it.反映率) * (スキル使用者->補正ステ[StatusType::パワー]) / 100;
 
 					if (it.種類 == BuffType::スタン)
@@ -737,7 +736,6 @@ namespace SDX_ADE
 					}
 					if (check_tag == false) { continue; }
 
-					if( ps->発動率 <= 0.0 || !Rand::Coin(it.Get発動率())) { continue; }
 				}
 				int num = (int)敵.size();
 

@@ -8,13 +8,13 @@ namespace SDX_ADE
 	using namespace SDX;
 
 	/*待遇変更ウィンドウ*/
-	class W_Skilltree : public UIWindow
+	class W_PSkill : public UIWindow
 	{
 	private:
 		class GUI_編集中ギルメン : public GUI_Object
 		{
 		public:
-			W_Skilltree* 親;
+			W_PSkill* 親;
 
 			void Draw派生(double px, double py)
 			{
@@ -56,7 +56,7 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				auto* skill = W_PSkill::ギルメン->職業->習得Aスキル[lineID];
 				int Lv = 0;
 				auto& LA = LData(LSkill::スキルLv);
 
@@ -67,20 +67,20 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				int 装備スロット = W_Skilltree::This->スキルコンボボックス.装備スロット;
+				int 装備スロット = W_PSkill::This->スキルコンボボックス.装備スロット;
 
-				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
-				int slot = W_Skilltree::ギルメン->操作_装備Aスキル変更(装備スロット, skill);
+				auto* skill = W_PSkill::ギルメン->職業->習得Aスキル[lineID];
+				int slot = W_PSkill::ギルメン->操作_装備Aスキル変更(装備スロット, skill);
 
-				W_Skilltree::This->装備Aスキル[slot].押下アニメ = CV::ボタンアニメ時間;
-				W_Skilltree::This->装備Aスキル[装備スロット].押下アニメ = CV::ボタンアニメ時間;
+				W_PSkill::This->装備Aスキル[slot].押下アニメ = CV::ボタンアニメ時間;
+				W_PSkill::This->装備Aスキル[装備スロット].押下アニメ = CV::ボタンアニメ時間;
 
-				W_Skilltree::This->スキルコンボボックス.is表示 = false;
+				W_PSkill::This->スキルコンボボックス.is表示 = false;
 			}
 
 			void DrawHelp() override
 			{
-				auto* skill = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				auto* skill = W_PSkill::ギルメン->職業->習得Aスキル[lineID];
 				UIHelp::ASkill(skill);
 			}
 		};
@@ -93,7 +93,7 @@ namespace SDX_ADE
 			
 			void Init()
 			{
-				auto* it = W_Skilltree::ギルメン;
+				auto* it = W_PSkill::ギルメン;
 				item.clear();
 				item.resize(it->職業->習得Aスキル.size());
 
@@ -130,12 +130,12 @@ namespace SDX_ADE
 				if (Input::mouse.Left.on == true && now_over == false)
 				{
 					if (						
-						W_Skilltree::This->装備Aスキル[0].isOver == false && 
-						W_Skilltree::This->装備Aスキル[1].isOver == false &&
-						W_Skilltree::This->装備Aスキル[2].isOver == false &&
-						W_Skilltree::This->装備Aスキル[3].isOver == false )
+						W_PSkill::This->装備Aスキル[0].isOver == false && 
+						W_PSkill::This->装備Aスキル[1].isOver == false &&
+						W_PSkill::This->装備Aスキル[2].isOver == false &&
+						W_PSkill::This->装備Aスキル[3].isOver == false )
 					{
-						W_Skilltree::This->スキルコンボボックス.is表示 = false;
+						W_PSkill::This->スキルコンボボックス.is表示 = false;
 					}
 
 				}
@@ -162,7 +162,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-				auto* it = W_Skilltree::ギルメン;
+				auto* it = W_PSkill::ギルメン;
 				auto& LA = LData(LSkill::探索者ドット);
 				auto& LB = LData(LSkill::探索者立ち絵);
 				auto& LC = LData(LSkill::探索者名前);
@@ -199,7 +199,7 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				auto* it = W_Skilltree::ギルメン->装備Aスキル[lineID];
+				auto* it = W_PSkill::ギルメン->装備Aスキル[lineID];
 				int Lv = 0;
 				auto& LA = LData(LSkill::装備スキルLv);
 				auto& LB = LData(LSkill::装備スキルスロット);
@@ -230,20 +230,20 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				if (W_Skilltree::This->スキルコンボボックス.装備スロット == lineID && W_Skilltree::This->スキルコンボボックス.is表示 == true)
+				if (W_PSkill::This->スキルコンボボックス.装備スロット == lineID && W_PSkill::This->スキルコンボボックス.is表示 == true)
 				{
-					W_Skilltree::This->スキルコンボボックス.is表示 = false;
+					W_PSkill::This->スキルコンボボックス.is表示 = false;
 				} else {
-					W_Skilltree::This->スキルコンボボックス.is表示 = true;
-					W_Skilltree::This->スキルコンボボックス.装備スロット = lineID;
-					W_Skilltree::This->スキルコンボボックス.layout->x = this->GetX();
-					W_Skilltree::This->スキルコンボボックス.layout->y = this->GetY() + this->GetH();
+					W_PSkill::This->スキルコンボボックス.is表示 = true;
+					W_PSkill::This->スキルコンボボックス.装備スロット = lineID;
+					W_PSkill::This->スキルコンボボックス.layout->x = this->GetX();
+					W_PSkill::This->スキルコンボボックス.layout->y = this->GetY() + this->GetH();
 				}
 			}
 
 			void DrawHelp() override
 			{
-				auto* it = W_Skilltree::ギルメン->装備Aスキル[lineID];
+				auto* it = W_PSkill::ギルメン->装備Aスキル[lineID];
 				UIHelp::ASkill( it );
 			}
 		};
@@ -255,9 +255,9 @@ namespace SDX_ADE
 
 			void Draw派生() override
 			{
-				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
+				int no = W_PSkill::ギルメン->スキル習得予約[lineID];
 				auto& LA = LData(LSkill::スキルLv);
-				Design* design = lineID < W_Skilltree::ギルメン->スキルポイント ? &Design::Green : Design::Input;
+				Design* design = lineID < W_PSkill::ギルメン->スキルポイント ? &Design::Green : Design::Input;
 
 				if (追加アニメ > 0)
 				{
@@ -281,13 +281,13 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->スキル予約解除(lineID);
+				W_PSkill::ギルメン->スキル予約解除(lineID);
 			}
 
 			void DrawHelp() override
 			{
 				//AスキルかPスキル
-				int no = W_Skilltree::ギルメン->スキル習得予約[lineID];
+				int no = W_PSkill::ギルメン->スキル習得予約[lineID];
 				if (no > 0)
 				{
 					UIHelp::PSkill(&PassiveSkill::data[no]);
@@ -321,7 +321,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				W_Skilltree::ギルメン->操作_キースキル習得(lineID);
+				W_PSkill::ギルメン->操作_キースキル習得(lineID);
 			}
 
 			void DrawHelp() override
@@ -336,9 +336,9 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-				auto* it = W_Skilltree::ギルメン->職業->習得Pスキル[lineID];
-				int Lv = W_Skilltree::ギルメン->習得PスキルLv[it->ID];
-				int 予約Lv = W_Skilltree::ギルメン->GetPスキル予約Lv(it->ID);
+				auto* it = W_PSkill::ギルメン->職業->習得Pスキル[lineID];
+				int Lv = W_PSkill::ギルメン->習得PスキルLv[it->ID];
+				int 予約Lv = W_PSkill::ギルメン->GetPスキル予約Lv(it->ID);
 				auto& LA = LData(LSkill::スキルLv);
 
 				if (押下アニメ > 0)
@@ -364,7 +364,7 @@ namespace SDX_ADE
 
 			void Click() override
 			{
-				auto result = W_Skilltree::ギルメン->Pスキル予約(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID);
+				auto result = W_PSkill::ギルメン->Pスキル予約(W_PSkill::ギルメン->職業->習得Pスキル[lineID]->ID);
 
 				if ( result != Explorer::Resultスキル強化::予約失敗)
 				{
@@ -374,7 +374,7 @@ namespace SDX_ADE
 
 			void RightClick() override
 			{
-				auto result = W_Skilltree::ギルメン->Pスキル解除(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]->ID);
+				auto result = W_PSkill::ギルメン->Pスキル解除(W_PSkill::ギルメン->職業->習得Pスキル[lineID]->ID);
 
 				if (result != Explorer::Resultスキル強化::解除失敗)
 				{
@@ -384,7 +384,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::PSkill(W_Skilltree::ギルメン->職業->習得Pスキル[lineID]);
+				UIHelp::PSkill(W_PSkill::ギルメン->職業->習得Pスキル[lineID]);
 			}
 		};
 
@@ -394,7 +394,7 @@ namespace SDX_ADE
 		public:
 			void Draw派生() override
 			{
-				auto* it = W_Skilltree::ギルメン->職業->習得Aスキル[lineID];
+				auto* it = W_PSkill::ギルメン->職業->習得Aスキル[lineID];
 				int Lv = 0;
 				int 予約Lv = 0;
 				auto& LA = LData(LSkill::スキルLv);
@@ -430,7 +430,7 @@ namespace SDX_ADE
 
 			void RightClick() override
 			{
-				auto result = W_Skilltree::ギルメン->Aスキル解除(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]->ID);
+				auto result = W_PSkill::ギルメン->Aスキル解除(W_PSkill::ギルメン->職業->習得Aスキル[lineID]->ID);
 
 				if (result != Explorer::Resultスキル強化::解除失敗)
 				{
@@ -440,7 +440,7 @@ namespace SDX_ADE
 
 			void DrawHelp() override
 			{
-				UIHelp::ASkill(W_Skilltree::ギルメン->職業->習得Aスキル[lineID]);
+				UIHelp::ASkill(W_PSkill::ギルメン->職業->習得Aスキル[lineID]);
 			}
 		};
 
@@ -468,7 +468,7 @@ namespace SDX_ADE
 		//忘却 - スキルポイントのリセット
 		//残りスキルポイントと予約状態の表示
 
-		inline static W_Skilltree* This;
+		inline static W_PSkill* This;
 		inline static Explorer* ギルメン;
 
 		W_Popup リセット確認;

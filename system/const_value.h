@@ -9,8 +9,8 @@ namespace SDX_ADE
 	namespace CV
 	{
 		constexpr double バージョン = 0.001;
-		bool isレイアウト = false;
-		constexpr bool isデバッグ = false;
+		bool isレイアウト = true;
+		constexpr bool isデバッグ = true;
 
 		constexpr int ヘルプ待機時間 = 5;//マウスオーバー開始からヘルプ表示までの猶予時間
 		constexpr int スクロール感度 = 30;

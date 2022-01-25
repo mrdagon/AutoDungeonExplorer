@@ -16,7 +16,7 @@ namespace SDX_ADE
 
 		ExplorerClass()
 		{}
-		//
+
 		ImagePack* ちびimage;
 		Image* 立ち絵image;
 
